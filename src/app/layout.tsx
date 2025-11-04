@@ -60,8 +60,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <body>
+    <html lang="en" className={`dark ${inter.variable} ${poppins.variable}`}>
+      <body className="bg-dark-900 text-gray-100">
         <AdminProviders>
           <Navbar />
           <main className="min-h-screen pt-16 md:pt-20">
