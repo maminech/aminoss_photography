@@ -105,7 +105,7 @@ export default function AdminTeamPage() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Team Management</h1>
               <p className="text-sm text-gray-600 mt-1">
                 {team.length} team members • {team.filter(m => m.visible).length} visible
               </p>
@@ -275,7 +275,7 @@ function EditMemberModal({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {member ? 'Edit Team Member' : 'Add Team Member'}
           </h2>
           <button
@@ -447,3 +447,4 @@ function EditMemberModal({
     </div>
   );
 }
+

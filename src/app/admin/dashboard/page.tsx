@@ -244,10 +244,10 @@ function StatCard({
   color: string;
 }) {
   const colors: any = {
-    blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
-    purple: 'bg-purple-100 text-purple-600',
-    orange: 'bg-orange-100 text-orange-600',
+    blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+    purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+    orange: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
   };
 
   return (
@@ -277,15 +277,15 @@ function ActionButton({
   color: string;
 }) {
   const colors: any = {
-    blue: 'bg-blue-100 text-blue-600',
-    purple: 'bg-purple-100 text-purple-600',
-    green: 'bg-green-100 text-green-600',
+    blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+    purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+    green: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
   };
 
   return (
     <Link
       href={href}
-      className="block p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary hover:shadow-md transition group"
+      className="block p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary hover:shadow-md transition group bg-white dark:bg-dark-800"
     >
       <div className={`w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center mb-3 group-hover:scale-110 transition`}>
         <Icon className="w-5 h-5" />

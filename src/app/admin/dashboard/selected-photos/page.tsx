@@ -60,7 +60,7 @@ export default function SelectedPhotosPage() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-6 py-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Photos Selected for Print</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Photos Selected for Print</h1>
             <p className="text-sm text-gray-600 mt-1">
               {Object.keys(data).length} clients • {totalPhotos} total photos selected
             </p>
@@ -90,7 +90,7 @@ export default function SelectedPhotosPage() {
                         {clientName.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <h2 className="text-lg font-bold text-gray-900">{clientName}</h2>
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{clientName}</h2>
                         <p className="text-sm text-gray-600">{group.client.email}</p>
                       </div>
                     </div>
@@ -154,3 +154,4 @@ export default function SelectedPhotosPage() {
     </div>
   );
 }
+
