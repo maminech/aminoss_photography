@@ -1,0 +1,256 @@
+// This is your Prisma schema file
+// Database schema for the admin CMS
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// User authentication
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String
+  image         String?
+  role          String    @default("admin")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Portfolio Images
+model Image {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  cloudinaryId String   @unique
+  url          String
+  thumbnailUrl String
+  title        String?
+  description  String?
+  category     String   @default("all")
+  tags         String[]
+  featured     Boolean  @default(false)
+  order        Int      @default(0)
+  width        Int?
+  height       Int?
+  format       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Videos
+model Video {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  cloudinaryId String   @unique
+  url          String
+  thumbnailUrl String
+  title        String
+  description  String?
+  category     String   @default("all")
+  duration     Int?
+  featured     Boolean  @default(false)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Site Settings
+model SiteSettings {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  siteName          String   @default("Aminoss Photography")
+  tagline           String   @default("Capturing Moments, Creating Memories")
+  description       String?
+  location          String   @default("Sousse, Tunisia")
+  email             String?
+  phone             String?
+  instagramUrl      String?
+  facebookUrl       String?
+  twitterUrl        String?
+  linkedinUrl       String?
+  
+  // Hero Section
+  heroTitle         String   @default("Capturing Life's Beautiful Moments")
+  heroSubtitle      String   @default("Professional Photography & Videography")
+  heroImage         String?
+  
+  // About Page
+  aboutTitle        String   @default("About Me")
+  aboutContent      String   @db.String
+  aboutImage        String?
+  
+  // Services
+  services          Json[]   @default([])
+  
+  // Design Settings
+  primaryColor      String   @default("#c67548")
+  secondaryColor    String   @default("#2d3748")
+  fontHeading       String   @default("Poppins")
+  fontBody          String   @default("Inter")
+  
+  updatedAt         DateTime @updatedAt
+}
+
+// Categories
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  order       Int      @default(0)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Team Members
+model TeamMember {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  role        String
+  bio         String?
+  image       String
+  instagram   String?
+  facebook    String?
+  email       String?
+  order       Int      @default(0)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Client Portal - Clients who can log in to view their photos
+model Client {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String          @unique
+  password      String
+  phone         String?
+  notes         String?         // Admin notes about the client
+  active        Boolean         @default(true)
+  lastActivity  DateTime?       // Last login or activity
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  galleries     ClientGallery[]
+}
+
+// Client Galleries - Collections of photos for each client
+model ClientGallery {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  clientId      String        @db.ObjectId
+  name          String        // e.g., "Wedding Photos - John & Jane"
+  description   String?
+  coverImage    String?       // Cover photo URL
+  expiresAt     DateTime?     // Optional expiration date
+  allowDownload Boolean       @default(true)
+  password      String?       // Optional additional password for gallery
+  downloads     Int           @default(0) // Track number of downloads
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  photos        ClientPhoto[]
+}
+
+// Client Photos - Individual photos in a gallery
+model ClientPhoto {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  galleryId       String        @db.ObjectId
+  cloudinaryId    String
+  url             String
+  thumbnailUrl    String
+  title           String?
+  description     String?
+  width           Int?
+  height          Int?
+  format          String?
+  fileSize        Int?          // in bytes
+  order           Int           @default(0)
+  photoNumber     Int           // Display number (1, 2, 3...)
+  selectedForPrint Boolean      @default(false)
+  createdAt       DateTime      @default(now())
+  gallery         ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+}
+
+// Photography Packs
+model Pack {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  price       Float
+  duration    String    // e.g., "2 hours", "Full day"
+  coverImage  String
+  features    String[]  // List of included features
+  category    String    // e.g., "Wedding", "Portrait", "Fashion"
+  active      Boolean   @default(true)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+}
+
+// Booking Management
+model Booking {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientName    String
+  clientEmail   String
+  clientPhone   String?
+  packId        String?  @db.ObjectId
+  packName      String   // Store pack name for reference
+  requestedDate DateTime
+  alternateDate DateTime?
+  status        String   @default("pending") // pending, confirmed, rejected, cancelled
+  message       String?
+  adminNotes    String?  // Internal notes
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  pack          Pack?    @relation(fields: [packId], references: [id], onDelete: SetNull)
+}
+
+// Blocked Dates (for calendar)
+model BlockedDate {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}

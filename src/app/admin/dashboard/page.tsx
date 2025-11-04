@@ -1,0 +1,318 @@
+'use client';
+
+import { useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { 
+  FiImage, FiSettings, FiLogOut, FiMenu, FiX, 
+  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar
+} from 'react-icons/fi';
+import { MdPalette } from 'react-icons/md';
+
+export default function AdminDashboard() {
+  const { data: session } = useSession();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const menuItems = [
+    { name: 'Overview', icon: FiHome, href: '/admin/dashboard', active: true },
+    { name: 'Photos', icon: FiImage, href: '/admin/dashboard/photos' },
+    { name: 'Design', icon: MdPalette, href: '/admin/dashboard/design' },
+    { name: 'Content', icon: FiFileText, href: '/admin/dashboard/content' },
+    { name: 'Team', icon: FiUsers, href: '/admin/dashboard/team' },
+    { name: 'Clients', icon: FiUser, href: '/admin/dashboard/clients' },
+    { name: 'Packages', icon: FiPackage, href: '/admin/dashboard/packs' },
+    { name: 'Calendar & Bookings', icon: FiCalendar, href: '/admin/dashboard/calendar' },
+    { name: 'Selected for Print', icon: FiCheck, href: '/admin/dashboard/selected-photos' },
+    { name: 'Settings', icon: FiSettings, href: '/admin/dashboard/settings' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden text-gray-500 hover:text-gray-700"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* User Info */}
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
+                {session?.user?.name?.[0] || 'A'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {session?.user?.name || 'Admin'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {session?.user?.email}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                    item.active
+                      ? 'bg-primary text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Footer Actions */}
+          <div className="p-4 border-t border-gray-200">
+            <Link
+              href="/"
+              target="_blank"
+              className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition mb-2"
+            >
+              <FiHome className="w-5 h-5" />
+              <span className="font-medium">View Site</span>
+            </Link>
+            <button
+              onClick={() => signOut({ callbackUrl: '/admin/login' })}
+              className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full"
+            >
+              <FiLogOut className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="lg:ml-64">
+        {/* Top Bar */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+          <div className="flex items-center justify-between px-6 py-4">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden text-gray-500 hover:text-gray-700"
+            >
+              <FiMenu className="w-6 h-6" />
+            </button>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/"
+                target="_blank"
+                className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                View Site
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <main className="p-6">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              title="Total Photos"
+              value="0"
+              icon={FiImage}
+              color="blue"
+            />
+            <StatCard
+              title="Categories"
+              value="6"
+              icon={FiFileText}
+              color="green"
+            />
+            <StatCard
+              title="Featured"
+              value="0"
+              icon={FiImage}
+              color="purple"
+            />
+            <StatCard
+              title="Site Visits"
+              value="--"
+              icon={FiUser}
+              color="orange"
+            />
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <ActionButton
+                title="Sync Photos from Cloudinary"
+                description="Import all photos from your Cloudinary folder"
+                href="/admin/dashboard/photos"
+                icon={FiImage}
+                color="blue"
+              />
+              <ActionButton
+                title="Customize Design"
+                description="Change colors, fonts, and layout"
+                href="/admin/dashboard/design"
+                icon={MdPalette}
+                color="purple"
+              />
+              <ActionButton
+                title="Edit Content"
+                description="Update about page, services, and contact info"
+                href="/admin/dashboard/content"
+                icon={FiFileText}
+                color="green"
+              />
+            </div>
+          </div>
+
+          {/* Getting Started Guide */}
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              🚀 Getting Started
+            </h2>
+            <div className="space-y-3">
+              <Step
+                number={1}
+                title="Upload Photos to Cloudinary"
+                description="Go to your Cloudinary account and upload photos to the 'aminoss-portfolio' folder"
+              />
+              <Step
+                number={2}
+                title="Sync Photos"
+                description="Click 'Sync Photos from Cloudinary' above to automatically import all photos"
+              />
+              <Step
+                number={3}
+                title="Organize & Categorize"
+                description="Manage photos, assign categories, and set featured images"
+              />
+              <Step
+                number={4}
+                title="Customize Your Site"
+                description="Update design, content, and settings to match your brand"
+              />
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+}: {
+  title: string;
+  value: string;
+  icon: any;
+  color: string;
+}) {
+  const colors: any = {
+    blue: 'bg-blue-100 text-blue-600',
+    green: 'bg-green-100 text-green-600',
+    purple: 'bg-purple-100 text-purple-600',
+    orange: 'bg-orange-100 text-orange-600',
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-12 h-12 rounded-lg ${colors[color]} flex items-center justify-center`}>
+          <Icon className="w-6 h-6" />
+        </div>
+      </div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-1">{value}</h3>
+      <p className="text-sm text-gray-600">{title}</p>
+    </div>
+  );
+}
+
+function ActionButton({
+  title,
+  description,
+  href,
+  icon: Icon,
+  color,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  icon: any;
+  color: string;
+}) {
+  const colors: any = {
+    blue: 'bg-blue-100 text-blue-600',
+    purple: 'bg-purple-100 text-purple-600',
+    green: 'bg-green-100 text-green-600',
+  };
+
+  return (
+    <Link
+      href={href}
+      className="block p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition group"
+    >
+      <div className={`w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center mb-3 group-hover:scale-110 transition`}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
+    </Link>
+  );
+}
+
+function Step({
+  number,
+  title,
+  description,
+}: {
+  number: number;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex items-start space-x-3">
+      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
+        {number}
+      </div>
+      <div>
+        <h4 className="font-medium text-gray-900">{title}</h4>
+        <p className="text-sm text-gray-600">{description}</p>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,171 @@
+Cahier des Charges: Aminoss Photography Portfolio
+1️⃣ Project Overview
+
+Project Name: Aminoss Photography Portfolio
+Objective: Create a professional, visually striking photography portfolio that:
+
+Displays all photography and video works
+
+Has an Instagram-style grid layout
+
+Includes professional features: categories, lightbox, video reels, About & Contact pages
+
+Allows easy media uploading and management via Cloudinary
+
+Does not require any client login
+
+Target Audience:
+
+Potential clients (weddings, portraits, fashion, travel)
+
+Art enthusiasts and followers
+
+Agencies seeking professional photographers
+
+2️⃣ Functional Requirements
+2.1 Home Page
+
+Hero section with featured photo or video
+
+Instagram-style photo grid showcasing latest works
+
+Categories filter: Weddings, Portrait, Travel, Fashion, Videos
+
+Smooth hover effects and animations
+
+Lightbox popup for full image/video view
+
+2.2 Gallery Page
+
+Full grid layout with infinite scroll
+
+Filters by category
+
+Lightbox view with:
+
+Image/video full display
+
+Description of the work
+
+Camera & lens info (optional)
+
+Location/project info
+
+2.3 Videos / Reels Page
+
+Embedded videos (Cloudinary, YouTube, Vimeo)
+
+Fullscreen playback
+
+Categories or playlist organization
+
+2.4 About Page
+
+Photographer biography and philosophy
+
+Awards, exhibitions, collaborations
+
+Option to download PDF portfolio
+
+2.5 Contact Page
+
+Contact form (name, email, message)
+
+Social media links (Instagram, Facebook, YouTube)
+
+Optional booking information
+
+2.6 Admin / CMS
+
+No client login required
+
+Only the photographer can manage content
+
+Admin functions:
+
+Add, edit, remove images/videos
+
+Manage categories and featured projects
+
+Upload media directly to Cloudinary
+
+3️⃣ Non-Functional Requirements
+3.1 Performance
+
+Fast loading times
+
+Fully responsive design (desktop, tablet, mobile)
+
+Optimized images via Cloudinary (resizing, compression)
+
+3.2 Security
+
+HTTPS / SSL support (via Vercel)
+
+Sanitized contact form inputs
+
+3.3 Scalability
+
+Can host thousands of photos/videos
+
+Easy to add new categories or collections
+
+3.4 SEO & Marketing
+
+SEO-friendly URLs, meta tags, structured data
+
+Social sharing tags (Open Graph for Facebook, Twitter cards)
+
+Optional analytics integration (Google Analytics, Facebook Pixel)
+
+4️⃣ Technical Specifications
+Component	Technology / Tool
+Frontend	Next.js + TailwindCSS
+Hosting	Vercel (free plan)
+Images / Video Storage	Cloudinary (free plan)
+Backend / API	Optional Node.js + Express (only if a CMS is needed)
+Database	Optional (not required if using Cloudinary)
+5️⃣ Design Guidelines
+
+Layout: Instagram-style grid
+
+Theme: Modern, minimal, elegant
+
+Colors: Neutral background (white/black) + accent colors for branding
+
+Typography: Clean, professional fonts
+
+Animations: Hover zoom, fade-in images, smooth lightbox transitions
+
+UX: Easy navigation, interactive image and video browsing
+
+6️⃣ Deployment & Maintenance
+
+Frontend: Vercel (free)
+
+Media Storage: Cloudinary
+
+Maintenance: Upload new photos/videos via Cloudinary or optional CMS
+
+No authentication required for visitors
+
+7️⃣ Project Timeline (Estimated)
+Phase	Duration	Tasks
+Design	1 week	Wireframes, UI/UX mockups, colors, typography
+Development	2-3 weeks	Frontend, grid layout, lightbox, pages
+Integration	1 week	Cloudinary integration, optional CMS
+Testing	1 week	Responsiveness, speed, SEO, functionality
+Deployment	2 days	Hosting on Vercel, domain setup
+8️⃣ Deliverables
+
+Fully functional portfolio website
+
+Home, Gallery, Videos, About, Contact pages
+
+Instagram-style grid design with lightbox
+
+Fully responsive, fast, SEO-friendly
+
+Cloudinary integration for all media
+
+Optional CMS for content management
