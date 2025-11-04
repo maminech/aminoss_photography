@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiMail, FiLock, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
 import Logo from '@/components/Logo';
 
-export default function ClientLoginPage() {
-  const router = useRouter();
+function ClientLoginForm() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
@@ -168,5 +167,17 @@ export default function ClientLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ClientLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 dark:from-dark-900 to-gray-100 dark:to-dark-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    }>
+      <ClientLoginForm />
+    </Suspense>
   );
 }
