@@ -5,7 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { 
   FiImage, FiSettings, FiLogOut, FiMenu, FiX, 
-  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar
+  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo
 } from 'react-icons/fi';
 import { MdPalette } from 'react-icons/md';
 
@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const menuItems = [
     { name: 'Overview', icon: FiHome, href: '/admin/dashboard', active: true },
     { name: 'Photos', icon: FiImage, href: '/admin/dashboard/photos' },
+    { name: 'Videos & Reels', icon: FiVideo, href: '/admin/dashboard/videos' },
     { name: 'Design', icon: MdPalette, href: '/admin/dashboard/design' },
     { name: 'Content', icon: FiFileText, href: '/admin/dashboard/content' },
     { name: 'Team', icon: FiUsers, href: '/admin/dashboard/team' },

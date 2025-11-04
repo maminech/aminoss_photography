@@ -27,18 +27,36 @@ interface Story {
   category: string;
 }
 
-const stories: Story[] = [
-  { id: '1', title: 'Weddings', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=80', category: 'wedding' },
-  { id: '2', title: 'Portraits', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80', category: 'portrait' },
-  { id: '3', title: 'Fashion', image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80', category: 'fashion' },
-  { id: '4', title: 'Events', image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&q=80', category: 'event' },
-  { id: '5', title: 'Travel', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', category: 'travel' },
-];
+// Generate stories from actual images in the feed
+const generateStoriesFromImages = (images: MediaItem[]): Story[] => {
+  const categories = ['weddings', 'portraits', 'fashion', 'events', 'travel'];
+  const stories: Story[] = [];
+  
+  categories.forEach((category) => {
+    // Find first image from each category
+    const categoryImage = images.find(img => 
+      img.category?.toLowerCase().includes(category.slice(0, -1)) || 
+      img.tags?.some(tag => tag.toLowerCase().includes(category.slice(0, -1)))
+    );
+    
+    if (categoryImage) {
+      stories.push({
+        id: category,
+        title: category.charAt(0).toUpperCase() + category.slice(1),
+        image: categoryImage.thumbnailUrl || categoryImage.url,
+        category: category,
+      });
+    }
+  });
+  
+  return stories;
+};
 
 export default function InstagramFeed({ images, onImageClick }: InstagramFeedProps) {
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [stories, setStories] = useState<Story[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +65,14 @@ export default function InstagramFeed({ images, onImageClick }: InstagramFeedPro
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    // Generate stories from actual images
+    if (images.length > 0) {
+      const generatedStories = generateStoriesFromImages(images);
+      setStories(generatedStories);
+    }
+  }, [images]);
 
   const toggleLike = (id: string) => {
     setLikedPosts(prev => {
@@ -75,10 +101,11 @@ export default function InstagramFeed({ images, onImageClick }: InstagramFeedPro
   return (
     <div className="min-h-screen bg-white dark:bg-dark-900">
       {/* Stories Bar */}
-      <div className="sticky top-16 z-40 bg-white dark:bg-dark-900 border-b border-gray-200 dark:border-gray-800 py-3">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-            {stories.map((story) => (
+      {stories.length > 0 && (
+        <div className="sticky top-16 z-40 bg-white dark:bg-dark-900 border-b border-gray-200 dark:border-gray-800 py-3">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {stories.map((story) => (
               <Link 
                 key={story.id}
                 href={`/gallery?category=${story.category}`}
@@ -108,10 +135,11 @@ export default function InstagramFeed({ images, onImageClick }: InstagramFeedPro
                   </span>
                 </motion.div>
               </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Feed */}
       <div className="max-w-2xl mx-auto">
@@ -159,13 +187,6 @@ export default function InstagramFeed({ images, onImageClick }: InstagramFeedPro
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 672px"
               />
-              {image.type === 'video' && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                    <Play className="w-8 h-8 text-white fill-white ml-1" />
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Post Actions */}
