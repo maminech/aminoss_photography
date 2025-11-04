@@ -30,23 +30,38 @@ export default function ClientDashboardPage() {
   const [client, setClient] = useState<Client | null>(null);
   const [galleries, setGalleries] = useState<Gallery[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    checkAuth();
-    fetchGalleries();
+    // Middleware ensures we're authenticated, just fetch data
+    loadClientData();
   }, []);
 
-  const checkAuth = async () => {
+  const loadClientData = async () => {
     try {
-      const res = await fetch('/api/client/auth/me');
-      if (res.ok) {
-        const data = await res.json();
-        setClient(data.client);
+      // Fetch client info
+      const clientRes = await fetch('/api/client/auth/me');
+      if (clientRes.ok) {
+        const clientData = await clientRes.json();
+        setClient(clientData.client);
+        setAuthChecked(true);
       } else {
-        router.push('/client/login');
+        // Session expired, logout
+        handleLogout();
+        return;
+      }
+
+      // Fetch galleries
+      const galleriesRes = await fetch('/api/client/galleries');
+      if (galleriesRes.ok) {
+        const galleriesData = await galleriesRes.json();
+        setGalleries(galleriesData);
       }
     } catch (error) {
-      router.push('/client/login');
+      console.error('Error loading data:', error);
+      handleLogout();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,14 +74,18 @@ export default function ClientDashboardPage() {
       }
     } catch (error) {
       console.error('Error fetching galleries:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleLogout = async () => {
-    await fetch('/api/client/auth/logout', { method: 'POST' });
-    router.push('/client/login');
+    try {
+      await fetch('/api/client/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Always redirect to login after logout
+      window.location.href = '/client/login';
+    }
   };
 
   const formatDate = (dateString: string) => {

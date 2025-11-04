@@ -1,20 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
+import { FiMail, FiLock, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
 import Logo from '@/components/Logo';
 
 export default function ClientLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  const callbackUrl = searchParams?.get('callbackUrl') || '/client/dashboard';
+  const expired = searchParams?.get('expired');
+
+  useEffect(() => {
+    if (expired === 'true') {
+      setError('Your session has expired. Please log in again.');
+    }
+  }, [expired]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +41,8 @@ export default function ClientLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push('/client/dashboard');
+        // Successful login - redirect to callback URL
+        window.location.href = callbackUrl;
       } else {
         setError(data.error || 'Login failed');
       }
@@ -43,28 +54,28 @@ export default function ClientLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 dark:from-dark-900 to-gray-100 dark:to-dark-800 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Back to Home */}
         <Link
           href="/"
-          className="inline-flex items-center text-sm text-gray-600 hover:text-primary-600 mb-8 transition"
+          className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 mb-8 transition"
         >
           <FiArrowLeft className="w-4 h-4 mr-2" />
           Back to Home
         </Link>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-primary-600 px-8 py-6">
+          <div className="bg-primary-600 dark:bg-primary-700 px-8 py-6">
             <div className="flex justify-center mb-4">
               <div className="bg-white p-3 rounded-lg">
                 <Logo size="md" variant="light" />
               </div>
             </div>
             <h1 className="text-2xl font-bold text-white text-center">Client Portal</h1>
-            <p className="text-primary-100 text-center mt-2">
+            <p className="text-primary-100 dark:text-primary-200 text-center mt-2">
               Access your photos and galleries
             </p>
           </div>
@@ -72,19 +83,20 @@ export default function ClientLoginPage() {
           {/* Form */}
           <div className="p-8">
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
-                {error}
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg text-sm flex items-start gap-3">
+                <FiAlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiMail className="text-gray-400" />
+                    <FiMail className="text-gray-400 dark:text-gray-500" />
                   </div>
                   <input
                     type="email"
@@ -93,19 +105,19 @@ export default function ClientLoginPage() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     required
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent transition"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     placeholder="your@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiLock className="text-gray-400" />
+                    <FiLock className="text-gray-400 dark:text-gray-500" />
                   </div>
                   <input
                     type="password"
@@ -114,7 +126,7 @@ export default function ClientLoginPage() {
                       setFormData({ ...formData, password: e.target.value })
                     }
                     required
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent transition"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     placeholder="••••••••"
                   />
                 </div>
@@ -136,12 +148,12 @@ export default function ClientLoginPage() {
               </button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-gray-600">
+            <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
               <p>
                 Need help? Contact{' '}
                 <a
                   href="mailto:aminoss.photography@gmail.com"
-                  className="text-primary-600 hover:text-primary-700 font-medium"
+                  className="text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 font-medium"
                 >
                   aminoss.photography@gmail.com
                 </a>
@@ -151,7 +163,7 @@ export default function ClientLoginPage() {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Your login credentials were sent to you via email by your photographer.
         </p>
       </div>
