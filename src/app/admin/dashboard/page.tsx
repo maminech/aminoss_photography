@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Mobile Sidebar Backdrop */}
       {sidebarOpen && (
         <div
@@ -38,33 +38,33 @@ export default function AdminDashboard() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white dark:bg-dark-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Admin Panel</h2>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-gray-500 hover:text-gray-700"
+              className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             >
               <FiX className="w-6 h-6" />
             </button>
           </div>
 
           {/* User Info */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
                 {session?.user?.name?.[0] || 'A'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                   {session?.user?.name || 'Admin'}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {session?.user?.email}
                 </p>
               </div>
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
                     item.active
                       ? 'bg-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -93,18 +93,18 @@ export default function AdminDashboard() {
           </nav>
 
           {/* Footer Actions */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <Link
               href="/"
               target="_blank"
-              className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition mb-2"
+              className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition mb-2"
             >
               <FiHome className="w-5 h-5" />
               <span className="font-medium">View Site</span>
             </Link>
             <button
               onClick={() => signOut({ callbackUrl: '/admin/login' })}
-              className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full"
+              className="flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition w-full"
             >
               <FiLogOut className="w-5 h-5" />
               <span className="font-medium">Logout</span>
@@ -116,20 +116,20 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <div className="lg:ml-64">
         {/* Top Bar */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
           <div className="flex items-center justify-between px-6 py-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-500 hover:text-gray-700"
+              className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             >
               <FiMenu className="w-6 h-6" />
             </button>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard Overview</h1>
             <div className="flex items-center space-x-4">
               <Link
                 href="/"
                 target="_blank"
-                className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition"
               >
                 View Site
               </Link>
@@ -168,8 +168,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Quick Actions
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -198,8 +198,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Getting Started Guide */}
-          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-xl p-6 border border-primary/20 dark:border-primary/30">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               🚀 Getting Started
             </h2>
             <div className="space-y-3">
@@ -250,14 +250,14 @@ function StatCard({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
         <div className={`w-12 h-12 rounded-lg ${colors[color]} flex items-center justify-center`}>
           <Icon className="w-6 h-6" />
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-1">{value}</h3>
-      <p className="text-sm text-gray-600">{title}</p>
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{value}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
     </div>
   );
 }
@@ -284,13 +284,13 @@ function ActionButton({
   return (
     <Link
       href={href}
-      className="block p-4 border-2 border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition group"
+      className="block p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary hover:shadow-md transition group"
     >
       <div className={`w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center mb-3 group-hover:scale-110 transition`}>
         <Icon className="w-5 h-5" />
       </div>
-      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
+      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{title}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
     </Link>
   );
 }
@@ -310,8 +310,8 @@ function Step({
         {number}
       </div>
       <div>
-        <h4 className="font-medium text-gray-900">{title}</h4>
-        <p className="text-sm text-gray-600">{description}</p>
+        <h4 className="font-medium text-gray-900 dark:text-gray-100">{title}</h4>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
       </div>
     </div>
   );
