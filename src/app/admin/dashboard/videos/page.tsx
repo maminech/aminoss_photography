@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FiRefreshCw, FiUpload, FiTrash2, FiEdit2, FiX, FiStar, FiPlay, FiVideo } from 'react-icons/fi';
 import Image from 'next/image';
+import { CldUploadWidget } from 'next-cloudinary';
 
 interface VideoData {
   id: string;
@@ -153,15 +154,38 @@ export default function AdminVideosPage() {
                 <FiRefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
                 <span>{syncing ? 'Syncing...' : 'Sync from Cloudinary'}</span>
               </button>
-              <a
-                href="https://cloudinary.com/console"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition"
+              <CldUploadWidget
+                uploadPreset="aminoss_preset"
+                options={{
+                  resourceType: 'video',
+                  sources: ['local', 'url', 'camera'],
+                  multiple: true,
+                  maxFiles: 10,
+                  clientAllowedFormats: ['mp4', 'mov', 'avi', 'webm', 'mkv'],
+                  maxFileSize: 100000000, // 100MB
+                }}
+                onSuccess={(result: any) => {
+                  console.log('Upload success:', result);
+                  // Auto sync after upload
+                  setTimeout(() => {
+                    syncFromCloudinary();
+                  }, 1000);
+                }}
+                onError={(error: any) => {
+                  console.error('Upload error:', error);
+                  alert('❌ Upload failed: ' + error.message);
+                }}
               >
-                <FiUpload className="w-4 h-4" />
-                <span>Upload to Cloudinary</span>
-              </a>
+                {({ open }) => (
+                  <button
+                    onClick={() => open()}
+                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    <FiUpload className="w-4 h-4" />
+                    <span>Upload Videos</span>
+                  </button>
+                )}
+              </CldUploadWidget>
             </div>
           </div>
         </div>
@@ -178,10 +202,9 @@ export default function AdminVideosPage() {
                 How to Upload Videos
               </h3>
               <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside">
-                <li>Go to <a href="https://cloudinary.com/console" target="_blank" className="underline font-medium">Cloudinary Console</a></li>
-                <li>Upload your videos (MP4, MOV, AVI, etc.)</li>
-                <li>Click "Sync from Cloudinary" button above</li>
-                <li>Edit titles, descriptions, and categories</li>
+                <li>Click "Upload Videos" button above to upload directly (MP4, MOV, AVI, WebM, MKV supported)</li>
+                <li>Or manually upload to <a href="https://cloudinary.com/console" target="_blank" className="underline font-medium">Cloudinary Console</a> and click "Sync from Cloudinary"</li>
+                <li>Edit titles, descriptions, and categories for each video</li>
                 <li>Mark videos as featured for homepage display</li>
               </ol>
             </div>

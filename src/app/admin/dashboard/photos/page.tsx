@@ -124,14 +124,14 @@ export default function AdminPhotosPage() {
     : images.filter((img) => img.category === filterCategory);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
         <div className="px-6 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Photos Management</h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {images.length} photos • {images.filter(i => i.featured).length} featured
               </p>
             </div>
@@ -148,7 +148,7 @@ export default function AdminPhotosPage() {
                 href="https://cloudinary.com/console"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition"
               >
                 <FiUpload className="w-4 h-4" />
                 <span>Upload to Cloudinary</span>
@@ -161,7 +161,7 @@ export default function AdminPhotosPage() {
       {/* Main Content */}
       <main className="p-6">
         {/* Category Filter */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
           <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Filter by Category</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
@@ -171,7 +171,7 @@ export default function AdminPhotosPage() {
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   filterCategory === cat
                     ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-dark-600'
                 }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -186,12 +186,12 @@ export default function AdminPhotosPage() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : filteredImages.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
             <FiUpload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               No Photos Yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               Upload photos to your Cloudinary folder, then click "Sync from Cloudinary"
             </p>
             <a
@@ -209,7 +209,7 @@ export default function AdminPhotosPage() {
             {filteredImages.map((image) => (
               <div
                 key={image.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden group"
+                className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden group"
               >
                 {/* Image */}
                 <div className="relative aspect-square">
@@ -257,11 +257,11 @@ export default function AdminPhotosPage() {
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1 truncate">
                     {image.title || 'Untitled'}
                   </h4>
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
                     {image.category} • {image.width}x{image.height}
                   </p>
                   {image.description && (
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                       {image.description}
                     </p>
                   )}
@@ -313,12 +313,12 @@ function EditImageModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Edit Photo</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           >
             <FiX className="w-6 h-6" />
           </button>
@@ -337,21 +337,21 @@ function EditImageModal({
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Title
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
               placeholder="Photo title"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Description
             </label>
             <textarea
@@ -360,14 +360,14 @@ function EditImageModal({
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
               placeholder="Photo description"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
             </label>
             <select
@@ -375,7 +375,7 @@ function EditImageModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -394,19 +394,19 @@ function EditImageModal({
               onChange={(e) =>
                 setFormData({ ...formData, featured: e.target.checked })
               }
-              className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+              className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
             />
-            <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+            <label htmlFor="featured" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Set as featured photo
             </label>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
             >
               Cancel
             </button>
