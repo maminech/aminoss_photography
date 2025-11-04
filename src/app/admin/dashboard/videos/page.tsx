@@ -155,6 +155,7 @@ export default function AdminVideosPage() {
                 <span>{syncing ? 'Syncing...' : 'Sync from Cloudinary'}</span>
               </button>
               <CldUploadWidget
+                cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
                 uploadPreset="aminoss_preset"
                 options={{
                   resourceType: 'video',
