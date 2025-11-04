@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AdminProviders from '@/components/AdminProviders';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import '@/styles/globals.css';
 
 const inter = Inter({ 
@@ -60,15 +61,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${poppins.variable}`}>
-      <body className="bg-dark-900 text-gray-100">
-        <AdminProviders>
-          <Navbar />
-          <main className="min-h-screen pt-16 md:pt-20">
-            {children}
-          </main>
-          <Footer />
-        </AdminProviders>
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
+      <body className="bg-white dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+        <ThemeProvider>
+          <AdminProviders>
+            <Navbar />
+            <main className="min-h-screen pt-16 md:pt-20">
+              {children}
+            </main>
+            <Footer />
+          </AdminProviders>
+        </ThemeProvider>
       </body>
     </html>
   );

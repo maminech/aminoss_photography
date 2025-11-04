@@ -100,10 +100,10 @@ export default function HomePage() {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
               Featured Work
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
               A glimpse into my latest photography projects
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function HomePage() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="aspect-square bg-gray-200 animate-pulse rounded-lg" />
+                <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse rounded-lg" />
               ))}
             </div>
           ) : (
@@ -133,7 +133,7 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className="py-16 md:py-24 bg-gray-50 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-24 bg-gray-50 dark:bg-dark-800 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -142,10 +142,10 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
           >
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
                 What I Do
               </h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
                 Specialized photography services tailored to your needs
               </p>
             </div>
@@ -163,11 +163,11 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+                  className="bg-white dark:bg-dark-700 p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow"
                 >
                   <div className="text-5xl mb-4">{service.icon}</div>
-                  <h3 className="text-xl font-display font-bold mb-2">{service.title}</h3>
-                  <p className="text-gray-600">{service.description}</p>
+                  <h3 className="text-xl font-display font-bold mb-2 text-gray-900 dark:text-gray-100">{service.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">{service.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -184,10 +184,10 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-6 text-gray-900 dark:text-gray-100">
               Let's Create Something Beautiful
             </h2>
-            <p className="text-gray-600 text-lg mb-8">
+            <p className="text-gray-600 dark:text-gray-400 text-lg mb-8">
               Ready to book your session or have a project in mind? Get in touch!
             </p>
             <Link href="/contact">

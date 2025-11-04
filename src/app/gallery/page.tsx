@@ -53,10 +53,10 @@ export default function GalleryPage() {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
               Gallery
             </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto mb-8">
               Explore my photography collection across different categories
             </p>
             <CategoryFilter
@@ -68,14 +68,14 @@ export default function GalleryPage() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[...Array(9)].map((_, i) => (
-                <div key={i} className="aspect-square bg-gray-200 animate-pulse rounded-lg" />
+                <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse rounded-lg" />
               ))}
             </div>
           ) : filteredImages.length > 0 ? (
             <GalleryGrid images={filteredImages} onImageClick={openLightbox} />
           ) : (
             <div className="text-center py-16">
-              <p className="text-gray-500 text-lg">No images found in this category.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No images found in this category.</p>
             </div>
           )}
         </motion.div>
