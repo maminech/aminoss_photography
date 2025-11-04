@@ -159,7 +159,7 @@ export default function AdminClientsPage() {
         {clients.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <FiUsers className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Clients Yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Clients Yet</h3>
             <p className="text-gray-600 mb-6">
               Create your first client account to start sharing photos
             </p>
@@ -183,7 +183,7 @@ export default function AdminClientsPage() {
                 <a href={`/admin/dashboard/clients/${client.id}`} className="block p-6 cursor-pointer">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1 group-hover:text-primary transition">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-primary transition">
                         {client.name}
                       </h3>
                       <div className="flex items-center text-sm text-gray-600 mb-1">

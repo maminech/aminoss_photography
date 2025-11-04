@@ -138,7 +138,7 @@ export default function SettingsPage() {
           {/* Profile Information */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <FiUser className="w-5 h-5" />
                 Profile Information
               </h2>
@@ -187,7 +187,7 @@ export default function SettingsPage() {
           {/* Change Password */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <FiLock className="w-5 h-5" />
                 Change Password
               </h2>

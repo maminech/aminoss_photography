@@ -73,7 +73,7 @@ export default function SelectedPhotosPage() {
         {Object.keys(data).length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <FiImage className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Photos Selected Yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Photos Selected Yet</h3>
             <p className="text-gray-600">
               Photos selected by clients for printing will appear here
             </p>

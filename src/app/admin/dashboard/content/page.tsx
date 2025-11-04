@@ -105,7 +105,7 @@ export default function AdminContentPage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Content Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Content Management</h1>
           <button
             onClick={saveContent}
             disabled={saving}
@@ -143,7 +143,7 @@ export default function AdminContentPage() {
         {/* About Page Tab */}
         {activeTab === 'about' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">About Page Content</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">About Page Content</h2>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -212,7 +212,7 @@ export default function AdminContentPage() {
         {/* Hero Tab */}
         {activeTab === 'hero' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Homepage Hero Section</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Homepage Hero Section</h2>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -278,12 +278,12 @@ export default function AdminContentPage() {
         {/* Services Tab */}
         {activeTab === 'services' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Services Offered</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Services Offered</h2>
 
             {content.services?.map((service, index) => (
               <div key={index} className="p-4 border border-gray-200 rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900">Service {index + 1}</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Service {index + 1}</h3>
                   <button
                     onClick={() => {
                       const newServices = content.services.filter((_, i) => i !== index);
@@ -341,7 +341,7 @@ export default function AdminContentPage() {
         {/* Contact Tab */}
         {activeTab === 'contact' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Contact Information</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Contact Information</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -416,7 +416,7 @@ export default function AdminContentPage() {
             </div>
 
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Social Media Links</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Social Media Links</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

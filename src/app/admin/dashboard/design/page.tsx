@@ -101,7 +101,7 @@ export default function AdminDesignPage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Design Customization</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Design Customization</h1>
           <button
             onClick={saveDesign}
             disabled={saving}
@@ -117,7 +117,7 @@ export default function AdminDesignPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Color Settings */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-900">Colors</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Colors</h2>
 
             {/* Primary Color */}
             <div>
@@ -220,7 +220,7 @@ export default function AdminDesignPage() {
 
           {/* Typography Settings */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-            <h2 className="text-xl font-bold text-gray-900">Typography</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Typography</h2>
 
             {/* Heading Font */}
             <div>
@@ -288,7 +288,7 @@ export default function AdminDesignPage() {
 
           {/* Preview */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Live Preview</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Live Preview</h2>
             <div className="border-2 border-gray-200 rounded-lg p-8 space-y-6">
               <div style={{ fontFamily: design.fontHeading }}>
                 <h1 className="text-4xl font-bold mb-2">Your Portfolio</h1>

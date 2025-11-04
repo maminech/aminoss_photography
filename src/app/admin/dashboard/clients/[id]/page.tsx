@@ -228,10 +228,10 @@ export default function ClientDetailPage() {
       {/* Main Content */}
       <main className="p-6">
         {client.galleries.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
             <FiImage className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Galleries Yet</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Galleries Yet</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               Create a gallery to organize and share photos with {client.name}
             </p>
             <button
@@ -264,12 +264,12 @@ export default function ClientDetailPage() {
                 )}
 
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {gallery.name}
                   </h3>
                   
                   {gallery.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
                       {gallery.description}
                     </p>
                   )}

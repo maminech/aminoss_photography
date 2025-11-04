@@ -162,7 +162,7 @@ export default function AdminPhotosPage() {
       <main className="p-6">
         {/* Category Filter */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-          <h3 className="font-medium text-gray-900 mb-3">Filter by Category</h3>
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Filter by Category</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
@@ -188,7 +188,7 @@ export default function AdminPhotosPage() {
         ) : filteredImages.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <FiUpload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               No Photos Yet
             </h3>
             <p className="text-gray-600 mb-6">
@@ -233,13 +233,13 @@ export default function AdminPhotosPage() {
                         setSelectedImage(image);
                         setEditModalOpen(true);
                       }}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                     >
                       <FiEdit2 className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => toggleFeatured(image)}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                     >
                       <FiStar className="w-5 h-5" />
                     </button>
@@ -254,7 +254,7 @@ export default function AdminPhotosPage() {
 
                 {/* Info */}
                 <div className="p-4">
-                  <h4 className="font-medium text-gray-900 mb-1 truncate">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1 truncate">
                     {image.title || 'Untitled'}
                   </h4>
                   <p className="text-xs text-gray-500 mb-2">

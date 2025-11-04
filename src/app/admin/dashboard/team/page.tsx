@@ -129,7 +129,7 @@ export default function AdminTeamPage() {
         {team.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <FiPlus className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               No Team Members Yet
             </h3>
             <p className="text-gray-600 mb-6">
@@ -173,13 +173,13 @@ export default function AdminTeamPage() {
                         setSelectedMember(member);
                         setEditModalOpen(true);
                       }}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                     >
                       <FiEdit2 className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => toggleVisibility(member)}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                     >
                       {member.visible ? (
                         <FiEyeOff className="w-5 h-5" />
@@ -198,7 +198,7 @@ export default function AdminTeamPage() {
 
                 {/* Info */}
                 <div className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-1 truncate">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 truncate">
                     {member.name}
                   </h4>
                   <p className="text-sm text-primary-600 mb-2 truncate">

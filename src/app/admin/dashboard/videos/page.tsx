@@ -275,7 +275,7 @@ export default function AdminVideosPage() {
                         setSelectedVideo(video);
                         setPreviewModalOpen(true);
                       }}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                       title="Preview"
                     >
                       <FiPlay className="w-5 h-5" />
@@ -285,14 +285,14 @@ export default function AdminVideosPage() {
                         setSelectedVideo(video);
                         setEditModalOpen(true);
                       }}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                       title="Edit"
                     >
                       <FiEdit2 className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => toggleFeatured(video)}
-                      className="p-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition"
+                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
                       title="Toggle Featured"
                     >
                       <FiStar className="w-5 h-5" />

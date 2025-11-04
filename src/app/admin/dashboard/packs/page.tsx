@@ -183,7 +183,7 @@ export default function AdminPacksPage() {
         {packs.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <FiPackage className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Packages Yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Packages Yet</h3>
             <p className="text-gray-600 mb-6">Create your first photography package</p>
             <button
               onClick={() => openModal()}
