@@ -155,7 +155,6 @@ export default function AdminVideosPage() {
                 <span>{syncing ? 'Syncing...' : 'Sync from Cloudinary'}</span>
               </button>
               <CldUploadWidget
-                cloudName="dc67gl8fu"
                 uploadPreset="aminoss_preset"
                 options={{
                   resourceType: 'video',

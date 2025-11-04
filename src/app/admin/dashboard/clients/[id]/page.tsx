@@ -442,7 +442,6 @@ export default function ClientDetailPage() {
 
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <CldUploadWidget
-                  cloudName="dc67gl8fu"
                   uploadPreset="aminoss_portfolio"
                   onSuccess={handleUploadSuccess}
                   options={{
