@@ -14,6 +14,8 @@ interface ImageData {
   category: string;
   tags: string[];
   featured: boolean;
+  showOnHomepage: boolean;
+  showInGallery: boolean;
   order: number;
   width?: number;
   height?: number;
@@ -94,19 +96,47 @@ export default function AdminPhotosPage() {
   };
 
   // Delete image
-  const deleteImage = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this image?')) return;
+  const deleteImage = async (id: string, cloudinaryId: string) => {
+    const options = await new Promise<'database' | 'both' | null>((resolve) => {
+      const choice = confirm(
+        '❌ Delete this photo?\n\n' +
+        'Click OK to delete from DATABASE ONLY (keeps in Cloudinary)\n' +
+        'Click Cancel then choose "Delete from Both" to delete everywhere'
+      );
+      
+      if (choice) {
+        resolve('database');
+      } else {
+        const deleteBoth = confirm(
+          '⚠️ DELETE FROM BOTH?\n\n' +
+          'This will permanently delete the photo from:\n' +
+          '✓ Your website database\n' +
+          '✓ Cloudinary storage\n\n' +
+          'This CANNOT be undone!\n\n' +
+          'Click OK to delete from BOTH'
+        );
+        resolve(deleteBoth ? 'both' : null);
+      }
+    });
+
+    if (!options) return; // User cancelled
 
     try {
-      const res = await fetch(`/api/admin/images?id=${id}`, {
+      const deleteFromCloudinary = options === 'both';
+      const res = await fetch(`/api/admin/images?id=${id}&deleteFromCloudinary=${deleteFromCloudinary}`, {
         method: 'DELETE',
       });
 
       if (res.ok) {
+        const data = await res.json();
+        alert(`✅ ${data.message}`);
         fetchImages();
+      } else {
+        alert('❌ Failed to delete image');
       }
     } catch (error) {
       console.error('Error deleting image:', error);
+      alert('❌ Failed to delete image');
     }
   };
 
@@ -132,7 +162,7 @@ export default function AdminPhotosPage() {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Photos Management</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {images.length} photos • {images.filter(i => i.featured).length} featured
+                {images.length} photos • {images.filter(i => i.featured).length} featured • {images.filter(i => i.showOnHomepage).length} on homepage
               </p>
             </div>
             <div className="flex items-center space-x-3">
@@ -219,12 +249,26 @@ export default function AdminPhotosPage() {
                     fill
                     className="object-cover"
                   />
-                  {image.featured && (
-                    <div className="absolute top-2 right-2 bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
-                      <FiStar className="w-3 h-3" />
-                      <span>Featured</span>
-                    </div>
-                  )}
+                  
+                  {/* Badges */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-1">
+                    {image.featured && (
+                      <div className="bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
+                        <FiStar className="w-3 h-3" />
+                        <span>Featured</span>
+                      </div>
+                    )}
+                    {image.showOnHomepage && (
+                      <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Homepage
+                      </div>
+                    )}
+                    {!image.showInGallery && (
+                      <div className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Hidden
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Overlay Actions */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center space-x-2">
@@ -244,7 +288,7 @@ export default function AdminPhotosPage() {
                       <FiStar className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => deleteImage(image.id)}
+                      onClick={() => deleteImage(image.id, image.cloudinaryId)}
                       className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                     >
                       <FiTrash2 className="w-5 h-5" />
@@ -304,6 +348,9 @@ function EditImageModal({
     description: image.description || '',
     category: image.category,
     featured: image.featured,
+    showOnHomepage: image.showOnHomepage,
+    showInGallery: image.showInGallery,
+    order: image.order,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -397,8 +444,56 @@ function EditImageModal({
               className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
             />
             <label htmlFor="featured" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Set as featured photo
+              ⭐ Set as featured photo (highlighted everywhere)
             </label>
+          </div>
+
+          {/* Show on Homepage */}
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="showOnHomepage"
+              checked={formData.showOnHomepage}
+              onChange={(e) =>
+                setFormData({ ...formData, showOnHomepage: e.target.checked })
+              }
+              className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
+            />
+            <label htmlFor="showOnHomepage" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              🏠 Show on homepage gallery
+            </label>
+          </div>
+
+          {/* Show in Gallery */}
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="showInGallery"
+              checked={formData.showInGallery}
+              onChange={(e) =>
+                setFormData({ ...formData, showInGallery: e.target.checked })
+              }
+              className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
+            />
+            <label htmlFor="showInGallery" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              📸 Show in gallery page
+            </label>
+          </div>
+
+          {/* Display Order */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Display Order (lower numbers appear first)
+            </label>
+            <input
+              type="number"
+              value={formData.order}
+              onChange={(e) =>
+                setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
+              }
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+              placeholder="0"
+            />
           </div>
 
           {/* Actions */}

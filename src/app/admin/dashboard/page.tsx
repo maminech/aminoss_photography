@@ -1,17 +1,55 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { 
   FiImage, FiSettings, FiLogOut, FiMenu, FiX, 
-  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo
+  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo, FiMail
 } from 'react-icons/fi';
 import { MdPalette } from 'react-icons/md';
+
+interface DashboardStats {
+  totalPhotos: number;
+  totalVideos: number;
+  featuredPhotos: number;
+  totalClients: number;
+  totalBookings: number;
+  totalTeamMembers: number;
+  unreadMessages: number;
+}
 
 export default function AdminDashboard() {
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalPhotos: 0,
+    totalVideos: 0,
+    featuredPhotos: 0,
+    totalClients: 0,
+    totalBookings: 0,
+    totalTeamMembers: 0,
+    unreadMessages: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Fetch dashboard stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/admin/dashboard/stats');
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const menuItems = [
     { name: 'Overview', icon: FiHome, href: '/admin/dashboard', active: true },
@@ -23,6 +61,7 @@ export default function AdminDashboard() {
     { name: 'Clients', icon: FiUser, href: '/admin/dashboard/clients' },
     { name: 'Packages', icon: FiPackage, href: '/admin/dashboard/packs' },
     { name: 'Calendar & Bookings', icon: FiCalendar, href: '/admin/dashboard/calendar' },
+    { name: 'Messages', icon: FiMail, href: '/admin/dashboard/messages', badge: stats.unreadMessages > 0 ? stats.unreadMessages : undefined },
     { name: 'Selected for Print', icon: FiCheck, href: '/admin/dashboard/selected-photos' },
     { name: 'Settings', icon: FiSettings, href: '/admin/dashboard/settings' },
   ];
@@ -87,7 +126,12 @@ export default function AdminDashboard() {
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.name}</span>
+                  <span className="font-medium flex-1">{item.name}</span>
+                  {item.badge && item.badge > 0 && (
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -144,25 +188,27 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <StatCard
               title="Total Photos"
-              value="0"
+              value={loading ? '...' : stats.totalPhotos.toString()}
               icon={FiImage}
               color="blue"
             />
             <StatCard
-              title="Categories"
-              value="6"
-              icon={FiFileText}
+              title="Total Videos"
+              value={loading ? '...' : stats.totalVideos.toString()}
+              icon={FiVideo}
               color="green"
             />
             <StatCard
-              title="Featured"
-              value="0"
-              icon={FiImage}
-              color="purple"
+              title="Messages"
+              value={loading ? '...' : stats.unreadMessages.toString()}
+              icon={FiMail}
+              color="red"
+              subtitle="Unread"
+              link="/admin/dashboard/messages"
             />
             <StatCard
-              title="Site Visits"
-              value="--"
+              title="Clients"
+              value={loading ? '...' : stats.totalClients.toString()}
               icon={FiUser}
               color="orange"
             />
@@ -237,28 +283,49 @@ function StatCard({
   value,
   icon: Icon,
   color,
+  subtitle,
+  link,
 }: {
   title: string;
   value: string;
   icon: any;
   color: string;
+  subtitle?: string;
+  link?: string;
 }) {
   const colors: any = {
     blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
     green: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
     purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
     orange: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
+    red: 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
   };
 
-  return (
-    <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+  const content = (
+    <>
       <div className="flex items-center justify-between mb-4">
         <div className={`w-12 h-12 rounded-lg ${colors[color]} flex items-center justify-center`}>
           <Icon className="w-6 h-6" />
         </div>
       </div>
       <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{value}</h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        {subtitle ? `${subtitle} ${title}` : title}
+      </p>
+    </>
+  );
+
+  if (link) {
+    return (
+      <Link href={link} className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition cursor-pointer">
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      {content}
     </div>
   );
 }

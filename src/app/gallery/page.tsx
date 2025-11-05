@@ -18,10 +18,45 @@ export default function GalleryPage() {
 
   useEffect(() => {
     const loadImages = async () => {
-      const data = await getSampleImages('all');
-      setAllImages(data);
-      setFilteredImages(data);
-      setLoading(false);
+      try {
+        // Load real images from database that are visible in gallery
+        const res = await fetch('/api/admin/images');
+        if (res.ok) {
+          const data = await res.json();
+          // Filter images that should be shown in gallery
+          const galleryImages = data.filter((img: any) => img.showInGallery !== false);
+          // Map to MediaItem format
+          const mappedImages = galleryImages.map((img: any) => ({
+            id: img.id,
+            publicId: img.cloudinaryId,
+            url: img.url,
+            thumbnailUrl: img.thumbnailUrl,
+            title: img.title || 'Untitled',
+            description: img.description || '',
+            category: img.category,
+            width: img.width,
+            height: img.height,
+            format: img.format,
+            createdAt: img.createdAt,
+            tags: img.tags || [],
+          }));
+          setAllImages(mappedImages);
+          setFilteredImages(mappedImages);
+        } else {
+          // Fallback to sample data
+          const data = await getSampleImages('all');
+          setAllImages(data);
+          setFilteredImages(data);
+        }
+      } catch (error) {
+        console.error('Error loading images:', error);
+        // Fallback to sample data on error
+        const data = await getSampleImages('all');
+        setAllImages(data);
+        setFilteredImages(data);
+      } finally {
+        setLoading(false);
+      }
     };
     loadImages();
   }, []);

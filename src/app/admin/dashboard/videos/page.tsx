@@ -15,6 +15,8 @@ interface VideoData {
   category: string;
   tags: string[];
   featured: boolean;
+  showOnHomepage: boolean;
+  showInGallery: boolean;
   order: number;
   width?: number;
   height?: number;
@@ -97,19 +99,47 @@ export default function AdminVideosPage() {
   };
 
   // Delete video
-  const deleteVideo = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this video?')) return;
+  const deleteVideo = async (id: string, cloudinaryId: string) => {
+    const options = await new Promise<'database' | 'both' | null>((resolve) => {
+      const choice = confirm(
+        '❌ Delete this video?\n\n' +
+        'Click OK to delete from DATABASE ONLY (keeps in Cloudinary)\n' +
+        'Click Cancel then choose "Delete from Both" to delete everywhere'
+      );
+      
+      if (choice) {
+        resolve('database');
+      } else {
+        const deleteBoth = confirm(
+          '⚠️ DELETE FROM BOTH?\n\n' +
+          'This will permanently delete the video from:\n' +
+          '✓ Your website database\n' +
+          '✓ Cloudinary storage\n\n' +
+          'This CANNOT be undone!\n\n' +
+          'Click OK to delete from BOTH'
+        );
+        resolve(deleteBoth ? 'both' : null);
+      }
+    });
+
+    if (!options) return; // User cancelled
 
     try {
-      const res = await fetch(`/api/admin/videos?id=${id}`, {
+      const deleteFromCloudinary = options === 'both';
+      const res = await fetch(`/api/admin/videos?id=${id}&deleteFromCloudinary=${deleteFromCloudinary}`, {
         method: 'DELETE',
       });
 
       if (res.ok) {
+        const data = await res.json();
+        alert(`✅ ${data.message}`);
         fetchVideos();
+      } else {
+        alert('❌ Failed to delete video');
       }
     } catch (error) {
       console.error('Error deleting video:', error);
+      alert('❌ Failed to delete video');
     }
   };
 
@@ -142,7 +172,7 @@ export default function AdminVideosPage() {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Videos & Reels</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {videos.length} videos • {videos.filter(v => v.featured).length} featured
+                {videos.length} videos • {videos.filter(v => v.featured).length} featured • {videos.filter(v => v.showOnHomepage).length} on homepage
               </p>
             </div>
             <div className="flex items-center space-x-3">
@@ -270,12 +300,26 @@ export default function AdminVideosPage() {
                     fill
                     className="object-cover"
                   />
-                  {video.featured && (
-                    <div className="absolute top-2 right-2 bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold flex items-center space-x-1 z-10">
-                      <FiStar className="w-3 h-3" />
-                      <span>Featured</span>
-                    </div>
-                  )}
+                  
+                  {/* Badges */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-1 z-10">
+                    {video.featured && (
+                      <div className="bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
+                        <FiStar className="w-3 h-3" />
+                        <span>Featured</span>
+                      </div>
+                    )}
+                    {video.showOnHomepage && (
+                      <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Homepage
+                      </div>
+                    )}
+                    {!video.showInGallery && (
+                      <div className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        Hidden
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Duration Badge */}
                   {video.duration && (
@@ -321,7 +365,7 @@ export default function AdminVideosPage() {
                       <FiStar className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => deleteVideo(video.id)}
+                      onClick={() => deleteVideo(video.id, video.cloudinaryId)}
                       className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                       title="Delete"
                     >
@@ -393,6 +437,9 @@ function EditVideoModal({
     description: video.description || '',
     category: video.category,
     featured: video.featured,
+    showOnHomepage: video.showOnHomepage,
+    showInGallery: video.showInGallery,
+    order: video.order,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -489,8 +536,56 @@ function EditVideoModal({
               className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
             />
             <label htmlFor="featured" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Set as featured video
+              ⭐ Set as featured video (highlighted everywhere)
             </label>
+          </div>
+
+          {/* Show on Homepage */}
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="showOnHomepage"
+              checked={formData.showOnHomepage}
+              onChange={(e) =>
+                setFormData({ ...formData, showOnHomepage: e.target.checked })
+              }
+              className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+            />
+            <label htmlFor="showOnHomepage" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              🏠 Show on homepage video section
+            </label>
+          </div>
+
+          {/* Show in Gallery */}
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="showInGallery"
+              checked={formData.showInGallery}
+              onChange={(e) =>
+                setFormData({ ...formData, showInGallery: e.target.checked })
+              }
+              className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+            />
+            <label htmlFor="showInGallery" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              🎥 Show in videos page
+            </label>
+          </div>
+
+          {/* Display Order */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Display Order (lower numbers appear first)
+            </label>
+            <input
+              type="number"
+              value={formData.order}
+              onChange={(e) =>
+                setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
+              }
+              className="input-field"
+              placeholder="0"
+            />
           </div>
 
           {/* Actions */}

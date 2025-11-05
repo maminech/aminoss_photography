@@ -54,7 +54,9 @@ export default function AdminCalendarPage() {
       const res = await fetch('/api/admin/bookings');
       if (res.ok) {
         const data = await res.json();
-        setBookings(data.filter((b: Booking) => b.status === 'confirmed'));
+        // API returns { bookings, blockedDates }
+        const bookingsArray = data.bookings || data;
+        setBookings(Array.isArray(bookingsArray) ? bookingsArray.filter((b: Booking) => b.status === 'confirmed') : []);
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);

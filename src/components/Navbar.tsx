@@ -84,14 +84,14 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md shadow-md' 
-          : 'bg-white/50 dark:bg-dark-900/50 backdrop-blur-sm'
+          ? 'glass shadow-xl border-b' 
+          : 'bg-white/30 dark:bg-dark-900/30 backdrop-blur-md'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="group">
+          <Link href="/" className="group transform transition-transform hover:scale-105">
             <Logo size="md" variant="light" />
           </Link>
 
@@ -101,17 +101,17 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors relative group ${
+                className={`text-sm font-medium transition-all duration-200 relative group px-3 py-2 rounded-xl ${
                   pathname === link.href
-                    ? 'text-primary-600 dark:text-primary-500'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500'
+                    ? 'text-primary-600 dark:text-primary-400 glass'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:glass'
                 }`}
               >
                 {link.label}
                 {pathname === link.href && (
                   <motion.div
                     layoutId="activeNav"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-500"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
                     initial={false}
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />

@@ -163,6 +163,7 @@ export async function DELETE(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
+    const deleteFromCloudinary = searchParams.get('deleteFromCloudinary') === 'true';
 
     if (!id) {
       return NextResponse.json({ error: 'Image ID required' }, { status: 400 });
@@ -176,14 +177,26 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Image not found' }, { status: 404 });
     }
 
-    // Optional: Delete from Cloudinary too
-    // await cloudinary.uploader.destroy(image.cloudinaryId);
+    // Delete from Cloudinary if requested
+    if (deleteFromCloudinary) {
+      try {
+        await cloudinary.uploader.destroy(image.cloudinaryId);
+      } catch (cloudinaryError) {
+        console.error('Error deleting from Cloudinary:', cloudinaryError);
+        // Continue with database deletion even if Cloudinary fails
+      }
+    }
 
+    // Delete from database
     await prisma.image.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: 'Image deleted successfully' });
+    return NextResponse.json({ 
+      message: deleteFromCloudinary 
+        ? 'Image deleted from database and Cloudinary' 
+        : 'Image deleted from database only'
+    });
   } catch (error: any) {
     console.error('Error deleting image:', error);
     return NextResponse.json(

@@ -22,6 +22,7 @@ export default function PacksPage() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [filter, setFilter] = useState('all');
   const [showFloatingButton, setShowFloatingButton] = useState(false);
+  const [bookingStatus, setBookingStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const [bookingForm, setBookingForm] = useState({
     clientName: '',
@@ -71,6 +72,7 @@ export default function PacksPage() {
   const closeBookingModal = () => {
     setBookingModalOpen(false);
     setSelectedPack(null);
+    setBookingStatus('idle');
     setBookingForm({
       clientName: '',
       clientEmail: '',
@@ -86,6 +88,8 @@ export default function PacksPage() {
 
     if (!selectedPack) return;
 
+    setBookingStatus('loading');
+
     try {
       const res = await fetch('/api/bookings', {
         method: 'POST',
@@ -98,33 +102,41 @@ export default function PacksPage() {
       });
 
       if (res.ok) {
-        alert('🎉 Booking request sent successfully! We\'ll contact you soon.');
-        closeBookingModal();
+        setBookingStatus('success');
+        setTimeout(() => {
+          closeBookingModal();
+        }, 2000);
       } else {
-        alert('❌ Failed to send booking request. Please try again.');
+        const data = await res.json();
+        setBookingStatus('error');
+        console.error('Booking error:', data.error);
       }
     } catch (error) {
-      alert('❌ An error occurred. Please try again.');
+      setBookingStatus('error');
+      console.error('Booking submission error:', error);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading packages...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900 pt-20">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 via-white to-primary/5 py-16 px-4">
+      <section className="bg-gradient-to-br from-primary/10 via-white dark:via-dark-800 to-primary/5 py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+            className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4"
           >
             Photography Packages
           </motion.h1>
@@ -132,7 +144,7 @@ export default function PacksPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
           >
             Discover our professional photography packages tailored to capture your special moments
           </motion.p>
@@ -140,7 +152,7 @@ export default function PacksPage() {
       </section>
 
       {/* Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-30">
+      <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center space-x-2 overflow-x-auto">
             {categories.map((category) => (
@@ -150,7 +162,7 @@ export default function PacksPage() {
                 className={`px-6 py-2 rounded-full font-medium transition whitespace-nowrap ${
                   filter === category
                     ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-dark-600'
                 }`}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -163,9 +175,32 @@ export default function PacksPage() {
       {/* Packs Grid - Instagram Style */}
       <main className="max-w-7xl mx-auto px-4 py-12">
         {filteredPacks.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-600 text-lg">No packages available at the moment.</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <div className="max-w-md mx-auto">
+              <div className="text-6xl mb-4">📦</div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                No Packages Available
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">
+                {filter === 'all' 
+                  ? "We're currently updating our packages. Check back soon!"
+                  : `No packages found in the "${filter}" category.`
+                }
+              </p>
+              {filter !== 'all' && (
+                <button
+                  onClick={() => setFilter('all')}
+                  className="btn-primary"
+                >
+                  View All Packages
+                </button>
+              )}
+            </div>
+          </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {filteredPacks.map((pack, index) => (
@@ -174,7 +209,7 @@ export default function PacksPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group touch-manipulation"
+                className="bg-white dark:bg-dark-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group touch-manipulation"
               >
                 {/* Cover Image */}
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -192,16 +227,16 @@ export default function PacksPage() {
 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{pack.name}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{pack.description}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{pack.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{pack.description}</p>
 
                   {/* Price & Duration */}
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                    <div className="flex items-center space-x-2 text-primary">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center space-x-2 text-primary dark:text-primary-400">
                       <FiDollarSign className="w-5 h-5" />
                       <span className="text-2xl font-bold">{pack.price} TND</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-gray-600">
+                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
                       <FiClock className="w-4 h-4" />
                       <span className="text-sm font-medium">{pack.duration}</span>
                     </div>
@@ -210,13 +245,13 @@ export default function PacksPage() {
                   {/* Features */}
                   <ul className="space-y-2 mb-6">
                     {pack.features.slice(0, 4).map((feature, idx) => (
-                      <li key={idx} className="flex items-start space-x-2 text-sm text-gray-700">
-                        <FiCheck className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <li key={idx} className="flex items-start space-x-2 text-sm text-gray-700 dark:text-gray-300">
+                        <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
                     ))}
                     {pack.features.length > 4 && (
-                      <li className="text-sm text-primary font-medium">
+                      <li className="text-sm text-primary dark:text-primary-400 font-medium">
                         +{pack.features.length - 4} more features
                       </li>
                     )}
@@ -243,17 +278,17 @@ export default function PacksPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-dark-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           >
-            <div className="p-4 md:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Book: {selectedPack.name}</h2>
-              <p className="text-gray-600 mt-1 text-sm md:text-base">{selectedPack.price} TND • {selectedPack.duration}</p>
+            <div className="p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-dark-800 z-10">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Book: {selectedPack.name}</h2>
+              <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">{selectedPack.price} TND • {selectedPack.duration}</p>
             </div>
 
             <form onSubmit={handleSubmitBooking} className="p-4 md:p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Your Name *
                   </label>
                   <input
@@ -261,13 +296,13 @@ export default function PacksPage() {
                     value={bookingForm.clientName}
                     onChange={(e) => setBookingForm({ ...bookingForm, clientName: e.target.value })}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email Address *
                   </label>
                   <input
@@ -275,28 +310,28 @@ export default function PacksPage() {
                     value={bookingForm.clientEmail}
                     onChange={(e) => setBookingForm({ ...bookingForm, clientEmail: e.target.value })}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                     placeholder="john@example.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Phone Number
                 </label>
                 <input
                   type="tel"
                   value={bookingForm.clientPhone}
                   onChange={(e) => setBookingForm({ ...bookingForm, clientPhone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Preferred Date *
                   </label>
                   <input
@@ -305,12 +340,12 @@ export default function PacksPage() {
                     onChange={(e) => setBookingForm({ ...bookingForm, requestedDate: e.target.value })}
                     required
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Alternate Date (optional)
                   </label>
                   <input
@@ -318,37 +353,69 @@ export default function PacksPage() {
                     value={bookingForm.alternateDate}
                     onChange={(e) => setBookingForm({ ...bookingForm, alternateDate: e.target.value })}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Message (optional)
                 </label>
                 <textarea
                   value={bookingForm.message}
                   onChange={(e) => setBookingForm({ ...bookingForm, message: e.target.value })}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="Tell us about your project, special requests, or any questions..."
                 />
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+              {/* Status Messages */}
+              {bookingStatus === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-lg border border-green-200 dark:border-green-700"
+                >
+                  ✓ Booking request sent successfully! We'll contact you soon.
+                </motion.div>
+              )}
+
+              {bookingStatus === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-700"
+                >
+                  ✗ Failed to send booking request. Please try again.
+                </motion.div>
+              )}
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={closeBookingModal}
-                  className="px-4 md:px-6 py-3 md:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition touch-manipulation"
+                  disabled={bookingStatus === 'loading'}
+                  className="px-4 md:px-6 py-3 md:py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 md:px-6 py-3 md:py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition touch-manipulation"
+                  disabled={bookingStatus === 'loading' || bookingStatus === 'success'}
+                  className="px-4 md:px-6 py-3 md:py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  Send Booking Request
+                  {bookingStatus === 'loading' ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                      Sending...
+                    </>
+                  ) : bookingStatus === 'success' ? (
+                    <>✓ Sent</>
+                  ) : (
+                    'Send Booking Request'
+                  )}
                 </button>
               </div>
             </form>

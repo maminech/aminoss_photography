@@ -39,10 +39,10 @@ export default function AboutPage() {
         >
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
               About Me
             </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
               Passionate photographer capturing life's beautiful moments
             </p>
           </div>
@@ -69,8 +69,8 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col justify-center"
             >
-              <h2 className="text-3xl font-display font-bold mb-4">Hello, I'm Aminoss</h2>
-              <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
+              <h2 className="text-3xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">Hello, I'm Aminoss</h2>
+              <div className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
                 <p>
                   I'm a professional photographer based in Sousse, Tunisia, with a passion for 
                   capturing authentic moments and creating timeless memories.
@@ -101,13 +101,13 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-gray-50 rounded-2xl p-8 md:p-12 mb-16"
+            className="glass-card bg-gray-50 dark:bg-dark-800 mb-16"
           >
             <div className="flex items-center gap-3 mb-6">
-              <FiCamera className="w-8 h-8 text-primary-600" />
-              <h2 className="text-3xl font-display font-bold">My Philosophy</h2>
+              <FiCamera className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+              <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-gray-100">My Philosophy</h2>
             </div>
-            <p className="text-gray-700 text-lg leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
               I believe that the best photographs are those that capture genuine emotions and 
               authentic moments. My approach is to blend into the background, allowing natural 
               interactions to unfold while being ready to capture those fleeting, perfect moments. 
@@ -125,8 +125,8 @@ export default function AboutPage() {
             className="mb-16"
           >
             <div className="flex items-center gap-3 mb-8">
-              <FiAward className="w-8 h-8 text-primary-600" />
-              <h2 className="text-3xl font-display font-bold">Awards & Exhibitions</h2>
+              <FiAward className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+              <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-gray-100">Awards & Exhibitions</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
@@ -157,11 +157,11 @@ export default function AboutPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white p-6 rounded-lg shadow-md border-l-4 border-primary-600"
+                  className="glass-card bg-white dark:bg-dark-800 border-l-4 border-primary-600 dark:border-primary-400"
                 >
-                  <span className="text-primary-600 font-bold text-lg">{award.year}</span>
-                  <h3 className="text-xl font-semibold mt-2 mb-1">{award.title}</h3>
-                  <p className="text-gray-600">{award.organization}</p>
+                  <span className="text-primary-600 dark:text-primary-400 font-bold text-lg">{award.year}</span>
+                  <h3 className="text-xl font-semibold mt-2 mb-1 text-gray-900 dark:text-gray-100">{award.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">{award.organization}</p>
                 </motion.div>
               ))}
             </div>
@@ -175,10 +175,10 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             className="mb-16"
           >
-            <h2 className="text-3xl font-display font-bold mb-4 text-center">
+            <h2 className="text-3xl font-display font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
               Meet The Team
             </h2>
-            <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
               Behind every great shot is a dedicated team of professionals working together to bring your vision to life.
             </p>
             
@@ -186,12 +186,12 @@ export default function AboutPage() {
               {teamMembers.length === 0 ? (
                 // Show placeholder while loading
                 [...Array(6)].map((_, index) => (
-                  <div key={index} className="bg-gray-100 rounded-xl shadow-lg overflow-hidden animate-pulse">
-                    <div className="aspect-square bg-gray-300"></div>
+                  <div key={index} className="glass-card bg-gray-100 dark:bg-dark-800 overflow-hidden animate-pulse">
+                    <div className="aspect-square bg-gray-300 dark:bg-dark-700"></div>
                     <div className="p-6">
-                      <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                      <div className="h-4 bg-gray-300 rounded w-2/3 mb-3"></div>
-                      <div className="h-16 bg-gray-300 rounded"></div>
+                      <div className="h-6 bg-gray-300 dark:bg-dark-700 rounded mb-2"></div>
+                      <div className="h-4 bg-gray-300 dark:bg-dark-700 rounded w-2/3 mb-3"></div>
+                      <div className="h-16 bg-gray-300 dark:bg-dark-700 rounded"></div>
                     </div>
                   </div>
                 ))
@@ -203,7 +203,7 @@ export default function AboutPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
+                    className="glass-card bg-white dark:bg-dark-800 overflow-hidden hover:shadow-xl transition-shadow group"
                   >
                     {/* Photo */}
                     <div className="relative aspect-square overflow-hidden">
@@ -217,17 +217,17 @@ export default function AboutPage() {
                     
                     {/* Info */}
                     <div className="p-6">
-                      <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                      <p className="text-primary-600 font-semibold mb-3">{member.role}</p>
+                      <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-gray-100">{member.name}</h3>
+                      <p className="text-primary-600 dark:text-primary-400 font-semibold mb-3">{member.role}</p>
                       {member.bio && (
-                        <p className="text-gray-600 text-sm mb-4">{member.bio}</p>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{member.bio}</p>
                       )}
                       {member.instagram && (
                         <a
                           href={`https://instagram.com/${member.instagram.replace('@', '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-gray-500 hover:text-primary-600 transition-colors"
+                          className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                         >
                           {member.instagram}
                         </a>
@@ -247,30 +247,30 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             className="mb-16"
           >
-            <h2 className="text-3xl font-display font-bold mb-8 text-center">
+            <h2 className="text-3xl font-display font-bold mb-8 text-center text-gray-900 dark:text-gray-100">
               Equipment & Expertise
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-4">Cameras</h3>
-                <ul className="space-y-2 text-gray-700">
+              <div className="glass-card text-center bg-white dark:bg-dark-800">
+                <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Cameras</h3>
+                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                   <li>Canon EOS R5</li>
                   <li>Sony A7R IV</li>
                   <li>Fujifilm X-T4</li>
                 </ul>
               </div>
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-4">Lenses</h3>
-                <ul className="space-y-2 text-gray-700">
+              <div className="glass-card text-center bg-white dark:bg-dark-800">
+                <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Lenses</h3>
+                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                   <li>24-70mm f/2.8</li>
                   <li>70-200mm f/2.8</li>
                   <li>50mm f/1.2</li>
                   <li>85mm f/1.4</li>
                 </ul>
               </div>
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-4">Specializations</h3>
-                <ul className="space-y-2 text-gray-700">
+              <div className="glass-card text-center bg-white dark:bg-dark-800">
+                <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Specializations</h3>
+                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                   <li>Wedding Photography</li>
                   <li>Portrait Sessions</li>
                   <li>Fashion Editorial</li>
@@ -286,16 +286,16 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center bg-primary-600 text-white rounded-2xl p-12"
+            className="text-center glass-card bg-primary-600 dark:bg-primary-700 text-white"
           >
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
               Let's Work Together
             </h2>
-            <p className="text-xl mb-8 text-primary-100">
+            <p className="text-xl mb-8 text-primary-100 dark:text-primary-200">
               Ready to create something amazing?
             </p>
             <Link href="/contact">
-              <button className="bg-white text-primary-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
+              <button className="bg-white text-primary-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg">
                 Get in Touch
               </button>
             </Link>

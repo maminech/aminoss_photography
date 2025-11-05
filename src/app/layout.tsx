@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AdminProviders from '@/components/AdminProviders';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import DynamicStyles from '@/components/DynamicStyles';
 import '@/styles/globals.css';
 
 const inter = Inter({ 
@@ -65,6 +66,7 @@ export default function RootLayout({
       <body className="bg-white dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         <ThemeProvider>
           <AdminProviders>
+            <DynamicStyles />
             <Navbar />
             <main className="min-h-screen pt-16 md:pt-20">
               {children}

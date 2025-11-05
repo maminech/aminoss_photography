@@ -63,6 +63,8 @@ export async function POST(request: NextRequest) {
           category: resource.context?.custom?.category || 'videos',
           tags: resource.tags || [],
           featured: false,
+          showOnHomepage: false,
+          showInGallery: true, // Show by default in gallery
           order: 0,
           width: resource.width || 1920,
           height: resource.height || 1080,
@@ -75,9 +77,17 @@ export async function POST(request: NextRequest) {
         });
 
         if (existing) {
+          // Only update technical fields, preserve user settings
           await prisma.video.update({
             where: { id: existing.id },
-            data: videoData,
+            data: {
+              url: videoData.url,
+              thumbnailUrl: videoData.thumbnailUrl,
+              width: videoData.width,
+              height: videoData.height,
+              duration: videoData.duration,
+              format: videoData.format,
+            },
           });
           updatedCount++;
         } else {
@@ -140,16 +150,43 @@ export async function DELETE(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const deleteFromCloudinary = searchParams.get('deleteFromCloudinary') === 'true';
 
     if (!id) {
       return NextResponse.json({ error: 'Video ID required' }, { status: 400 });
     }
 
+    // Get video details
+    const video = await prisma.video.findUnique({
+      where: { id },
+    });
+
+    if (!video) {
+      return NextResponse.json({ error: 'Video not found' }, { status: 404 });
+    }
+
+    // Delete from Cloudinary if requested
+    if (deleteFromCloudinary) {
+      try {
+        await cloudinary.uploader.destroy(video.cloudinaryId, {
+          resource_type: 'video',
+        });
+      } catch (cloudinaryError) {
+        console.error('Error deleting from Cloudinary:', cloudinaryError);
+        // Continue with database deletion even if Cloudinary fails
+      }
+    }
+
+    // Delete from database
     await prisma.video.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: 'Video deleted successfully' });
+    return NextResponse.json({ 
+      message: deleteFromCloudinary 
+        ? 'Video deleted from database and Cloudinary' 
+        : 'Video deleted from database only'
+    });
   } catch (error) {
     console.error('Error deleting video:', error);
     return NextResponse.json({ error: 'Failed to delete video' }, { status: 500 });

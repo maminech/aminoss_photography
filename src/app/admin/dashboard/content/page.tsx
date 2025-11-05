@@ -79,7 +79,7 @@ export default function AdminContentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -87,8 +87,8 @@ export default function AdminContentPage() {
 
   if (!content) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p>Error loading content</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
+        <p className="text-gray-900 dark:text-gray-100">Error loading content</p>
       </div>
     );
   }
@@ -101,9 +101,9 @@ export default function AdminContentPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
         <div className="px-6 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Content Management</h1>
           <button
@@ -118,7 +118,7 @@ export default function AdminContentPage() {
       </header>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700">
         <div className="px-6">
           <div className="flex space-x-8">
             {tabs.map((tab) => (
@@ -128,7 +128,7 @@ export default function AdminContentPage() {
                 className={`py-4 px-2 border-b-2 font-medium transition ${
                   activeTab === tab.id
                     ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
                 {tab.label}
@@ -142,11 +142,11 @@ export default function AdminContentPage() {
       <main className="p-6 max-w-4xl">
         {/* About Page Tab */}
         {activeTab === 'about' && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">About Page Content</h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 About Title
               </label>
               <input
@@ -155,13 +155,13 @@ export default function AdminContentPage() {
                 onChange={(e) =>
                   setContent({ ...content, aboutTitle: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                 placeholder="About Me"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 About Content
               </label>
               <textarea
@@ -170,16 +170,16 @@ export default function AdminContentPage() {
                   setContent({ ...content, aboutContent: e.target.value })
                 }
                 rows={12}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                 placeholder="Tell your story here..."
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 This text appears on the About page. You can use line breaks for paragraphs.
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 About Page Image URL
               </label>
               <div className="flex items-center space-x-3">
@@ -189,20 +189,20 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, aboutImage: e.target.value })
                   }
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="https://res.cloudinary.com/..."
                 />
                 <a
                   href="https://cloudinary.com/console/media_library"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center space-x-2"
+                  className="px-4 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition flex items-center space-x-2"
                 >
                   <FiUpload className="w-4 h-4" />
                   <span>Upload</span>
                 </a>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Upload an image to Cloudinary and paste the URL here
               </p>
             </div>
