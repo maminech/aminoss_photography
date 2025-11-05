@@ -588,7 +588,7 @@ export default function AdminCalendarPage() {
         </div>
       </main>
 
-      {/* Bookings Modal */}
+      {/* Events & Bookings Modal */}
       <AnimatePresence>
         {showBookingsModal && selectedDate && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -596,12 +596,12 @@ export default function AdminCalendarPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-dark-800 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="sticky top-0 bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+              <div className="sticky top-0 bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between z-10">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                    Bookings for {selectedDate.toLocaleDateString('en-US', { 
+                    {selectedDate.toLocaleDateString('en-US', { 
                       weekday: 'long', 
                       year: 'numeric', 
                       month: 'long', 
@@ -609,23 +609,131 @@ export default function AdminCalendarPage() {
                     })}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {selectedDateBookings.length} confirmed booking(s)
+                    {selectedDateEvents.length} event(s) • {selectedDateBookings.length} booking(s)
                   </p>
                 </div>
-                <button
-                  onClick={() => {
-                    setShowBookingsModal(false);
-                    setSelectedDate(null);
-                    setSelectedDateBookings([]);
-                  }}
-                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  <FiX className="w-6 h-6" />
-                </button>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      setShowBookingsModal(false);
+                      openEventModal(selectedDate);
+                    }}
+                    className="px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition flex items-center space-x-2"
+                  >
+                    <FiPlus className="w-4 h-4" />
+                    <span>Add Event</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowBookingsModal(false);
+                      setSelectedDate(null);
+                      setSelectedDateBookings([]);
+                      setSelectedDateEvents([]);
+                    }}
+                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    <FiX className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
 
-              <div className="p-6 space-y-4">
-                {selectedDateBookings.map((booking, index) => (
+              <div className="p-6 space-y-6">
+                {/* Calendar Events */}
+                {selectedDateEvents.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center space-x-2">
+                      <FiCalendar className="w-5 h-5" />
+                      <span>Your Events</span>
+                    </h3>
+                    <div className="space-y-3">
+                      {selectedDateEvents.map((event) => {
+                        const eventType = EVENT_TYPES.find(t => t.value === event.eventType);
+                        const status = STATUSES.find(s => s.value === event.status);
+                        return (
+                          <div
+                            key={event.id}
+                            className="bg-gray-50 dark:bg-dark-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
+                                    {event.title}
+                                  </h4>
+                                  <span className={`px-2 py-0.5 rounded-full text-xs text-white ${eventType?.color}`}>
+                                    {eventType?.label}
+                                  </span>
+                                  <span className={`px-2 py-0.5 rounded-full text-xs text-white ${status?.color}`}>
+                                    {status?.label}
+                                  </span>
+                                </div>
+                                {event.clientName && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center space-x-1">
+                                    <FiUser className="w-3 h-3" />
+                                    <span>{event.clientName}</span>
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() => {
+                                    setShowBookingsModal(false);
+                                    openEventModal(selectedDate, event);
+                                  }}
+                                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition"
+                                >
+                                  <FiEdit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => deleteEvent(event.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"
+                                >
+                                  <FiTrash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 text-sm">
+                              {event.startTime && (
+                                <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                                  <FiClock className="w-4 h-4" />
+                                  <span>{event.startTime}{event.endTime && ` - ${event.endTime}`}</span>
+                                </div>
+                              )}
+                              {event.location && (
+                                <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                                  <FiMapPin className="w-4 h-4" />
+                                  <span>{event.location}</span>
+                                </div>
+                              )}
+                              {event.price && (
+                                <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                                  <FiDollarSign className="w-4 h-4" />
+                                  <span>${event.price}{event.deposit && ` (${event.deposit} paid)`}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {event.notes && (
+                              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                                <p className="text-sm text-gray-700 dark:text-gray-300">{event.notes}</p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Confirmed Bookings */}
+                {selectedDateBookings.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center space-x-2">
+                      <FiCheckCircle className="w-5 h-5" />
+                      <span>Confirmed Bookings</span>
+                    </h3>
+                    <div className="space-y-3">{selectedDateBookings.map((booking, index) => (
                   <div
                     key={booking.id}
                     className="bg-gray-50 dark:bg-dark-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
@@ -673,6 +781,26 @@ export default function AdminCalendarPage() {
                     )}
                   </div>
                 ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty state */}
+                {selectedDateEvents.length === 0 && selectedDateBookings.length === 0 && (
+                  <div className="text-center py-8">
+                    <FiCalendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">No events or bookings on this date</p>
+                    <button
+                      onClick={() => {
+                        setShowBookingsModal(false);
+                        openEventModal(selectedDate);
+                      }}
+                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                    >
+                      Create First Event
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="sticky bottom-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
@@ -681,11 +809,245 @@ export default function AdminCalendarPage() {
                     setShowBookingsModal(false);
                     setSelectedDate(null);
                     setSelectedDateBookings([]);
+                    setSelectedDateEvents([]);
                   }}
                   className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-dark-600 transition"
                 >
                   Close
                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Event Creation/Edit Modal */}
+      <AnimatePresence>
+        {showEventModal && selectedDate && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full my-8"
+            >
+              <div className="sticky top-0 bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between rounded-t-xl z-10">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                    {editingEvent ? 'Edit Event' : 'Create Event'}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowEventModal(false);
+                    setEditingEvent(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Event Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={eventForm.title}
+                    onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    placeholder="e.g., Wedding Photography Session"
+                  />
+                </div>
+
+                {/* Client Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <FiUser className="inline w-4 h-4 mr-1" />
+                    Client Name
+                  </label>
+                  <input
+                    type="text"
+                    value={eventForm.clientName}
+                    onChange={(e) => setEventForm({ ...eventForm, clientName: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Client's name"
+                  />
+                </div>
+
+                {/* Event Type & Status */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Event Type
+                    </label>
+                    <select
+                      value={eventForm.eventType}
+                      onChange={(e) => setEventForm({ ...eventForm, eventType: e.target.value as any })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    >
+                      {EVENT_TYPES.map((type) => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Status
+                    </label>
+                    <select
+                      value={eventForm.status}
+                      onChange={(e) => setEventForm({ ...eventForm, status: e.target.value as any })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    >
+                      {STATUSES.map((status) => (
+                        <option key={status.value} value={status.value}>
+                          {status.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Time */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <FiClock className="inline w-4 h-4 mr-1" />
+                      Start Time
+                    </label>
+                    <input
+                      type="time"
+                      value={eventForm.startTime}
+                      onChange={(e) => setEventForm({ ...eventForm, startTime: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      End Time
+                    </label>
+                    <input
+                      type="time"
+                      value={eventForm.endTime}
+                      onChange={(e) => setEventForm({ ...eventForm, endTime: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <FiMapPin className="inline w-4 h-4 mr-1" />
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={eventForm.location}
+                    onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Venue or address"
+                  />
+                </div>
+
+                {/* Price & Deposit */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <FiDollarSign className="inline w-4 h-4 mr-1" />
+                      Price
+                    </label>
+                    <input
+                      type="number"
+                      value={eventForm.price}
+                      onChange={(e) => setEventForm({ ...eventForm, price: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Deposit Paid
+                    </label>
+                    <input
+                      type="number"
+                      value={eventForm.deposit}
+                      onChange={(e) => setEventForm({ ...eventForm, deposit: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Notes
+                  </label>
+                  <textarea
+                    value={eventForm.notes}
+                    onChange={(e) => setEventForm({ ...eventForm, notes: e.target.value })}
+                    rows={4}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Additional notes or requirements..."
+                  />
+                </div>
+              </div>
+
+              <div className="sticky bottom-0 bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between rounded-b-xl">
+                {editingEvent && (
+                  <button
+                    onClick={() => {
+                      deleteEvent(editingEvent.id);
+                    }}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center space-x-2"
+                  >
+                    <FiTrash2 className="w-4 h-4" />
+                    <span>Delete</span>
+                  </button>
+                )}
+                <div className={`flex items-center space-x-3 ${editingEvent ? '' : 'ml-auto'}`}>
+                  <button
+                    onClick={() => {
+                      setShowEventModal(false);
+                      setEditingEvent(null);
+                    }}
+                    className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveEvent}
+                    disabled={saving}
+                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50 flex items-center space-x-2"
+                  >
+                    {saving ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FiCheck className="w-4 h-4" />
+                        <span>{editingEvent ? 'Update' : 'Create'} Event</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
