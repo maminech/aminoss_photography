@@ -39,7 +39,13 @@ export default function AdminContentPage() {
       const res = await fetch('/api/admin/settings');
       if (res.ok) {
         const data = await res.json();
+        // Ensure services is an array
+        if (!data.services || !Array.isArray(data.services)) {
+          data.services = [];
+        }
         setContent(data);
+      } else {
+        console.error('Failed to fetch content:', await res.text());
       }
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -54,20 +60,27 @@ export default function AdminContentPage() {
 
     try {
       setSaving(true);
+      console.log('💾 Saving content...', content);
+      
       const res = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(content),
       });
 
+      const responseData = await res.json();
+      console.log('📨 Response:', responseData);
+
       if (res.ok) {
         alert('✅ Content saved successfully!');
+        fetchContent(); // Refresh to show saved data
       } else {
-        alert('❌ Failed to save content');
+        console.error('❌ Save failed:', responseData);
+        alert(`❌ Failed to save content: ${responseData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error saving content:', error);
-      alert('❌ Failed to save content');
+      console.error('❌ Error saving content:', error);
+      alert(`❌ Failed to save content: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
     }
