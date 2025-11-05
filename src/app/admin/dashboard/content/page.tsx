@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { FiSave, FiImage, FiUpload } from 'react-icons/fi';
+import { CldUploadWidget } from 'next-cloudinary';
 
 interface ContentData {
   siteName: string;
   tagline: string;
+  description?: string;
   location: string;
   email: string;
   phone: string;
@@ -155,7 +157,7 @@ export default function AdminContentPage() {
       <main className="p-6 max-w-4xl">
         {/* About Page Tab */}
         {activeTab === 'about' && (
-          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 dark:border-gray-700 p-6 space-y-6">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">About Page Content</h2>
 
             <div>
@@ -168,7 +170,7 @@ export default function AdminContentPage() {
                 onChange={(e) =>
                   setContent({ ...content, aboutTitle: e.target.value })
                 }
-                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="About Me"
               />
             </div>
@@ -183,7 +185,7 @@ export default function AdminContentPage() {
                   setContent({ ...content, aboutContent: e.target.value })
                 }
                 rows={12}
-                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Tell your story here..."
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -193,8 +195,17 @@ export default function AdminContentPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                About Page Image URL
+                About Page Image
               </label>
+              {content.aboutImage && (
+                <div className="mb-3">
+                  <img
+                    src={content.aboutImage}
+                    alt="About preview"
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                </div>
+              )}
               <div className="flex items-center space-x-3">
                 <input
                   type="text"
@@ -202,21 +213,55 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, aboutImage: e.target.value })
                   }
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
-                  placeholder="https://res.cloudinary.com/..."
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                  placeholder="Image URL"
+                  readOnly
                 />
-                <a
-                  href="https://cloudinary.com/console/media_library"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition flex items-center space-x-2"
+                <CldUploadWidget
+                  uploadPreset="aminoss_portfolio"
+                  options={{
+                    folder: 'content/about',
+                    resourceType: 'image',
+                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                    maxFiles: 1,
+                  }}
+                  onSuccess={(result: any) => {
+                    setContent({ ...content, aboutImage: result.info.secure_url });
+                    alert('✅ Image uploaded successfully!');
+                  }}
                 >
-                  <FiUpload className="w-4 h-4" />
-                  <span>Upload</span>
-                </a>
+                  {({ open }) => (
+                    <button
+                      type="button"
+                      onClick={() => open()}
+                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition flex items-center space-x-2"
+                    >
+                      <FiUpload className="w-4 h-4" />
+                      <span>Upload</span>
+                    </button>
+                  )}
+                </CldUploadWidget>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Upload an image to Cloudinary and paste the URL here
+                Upload to: /content/about/ folder (organized automatically)
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Site Description (SEO)
+              </label>
+              <textarea
+                value={content.description || ''}
+                onChange={(e) =>
+                  setContent({ ...content, description: e.target.value })
+                }
+                rows={3}
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Brief description of your photography business..."
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Used for SEO and social media previews
               </p>
             </div>
           </div>
@@ -259,8 +304,17 @@ export default function AdminContentPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Hero Background Image URL
+                Hero Background Image
               </label>
+              {content.heroImage && (
+                <div className="mb-3">
+                  <img
+                    src={content.heroImage}
+                    alt="Hero preview"
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                </div>
+              )}
               <div className="flex items-center space-x-3">
                 <input
                   type="text"
@@ -268,21 +322,37 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, heroImage: e.target.value })
                   }
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="https://res.cloudinary.com/..."
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                  placeholder="Image URL"
+                  readOnly
                 />
-                <a
-                  href="https://cloudinary.com/console/media_library"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex items-center space-x-2"
+                <CldUploadWidget
+                  uploadPreset="aminoss_portfolio"
+                  options={{
+                    folder: 'content/hero',
+                    resourceType: 'image',
+                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                    maxFiles: 1,
+                  }}
+                  onSuccess={(result: any) => {
+                    setContent({ ...content, heroImage: result.info.secure_url });
+                    alert('✅ Hero image uploaded successfully!');
+                  }}
                 >
-                  <FiUpload className="w-4 h-4" />
-                  <span>Upload</span>
-                </a>
+                  {({ open }) => (
+                    <button
+                      type="button"
+                      onClick={() => open()}
+                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition flex items-center space-x-2"
+                    >
+                      <FiUpload className="w-4 h-4" />
+                      <span>Upload</span>
+                    </button>
+                  )}
+                </CldUploadWidget>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Optional: Leave empty to use featured photos
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Upload to: /content/hero/ folder (organized automatically). Leave empty to use featured photos.
               </p>
             </div>
           </div>

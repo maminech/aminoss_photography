@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiRefreshCw, FiUpload, FiTrash2, FiEdit2, FiX, FiStar, FiCheck } from 'react-icons/fi';
+import { FiUpload, FiTrash2, FiEdit2, FiX, FiStar, FiCheck } from 'react-icons/fi';
 import Image from 'next/image';
+import { CldUploadWidget } from 'next-cloudinary';
 
 interface ImageData {
   id: string;
@@ -27,21 +28,12 @@ interface ImageData {
 export default function AdminPhotosPage() {
   const [images, setImages] = useState<ImageData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [syncModalOpen, setSyncModalOpen] = useState(false);
-  const [syncFolder, setSyncFolder] = useState('portfolio');
   const [filterCategory, setFilterCategory] = useState('all');
 
   const categories = ['all', 'weddings', 'portraits', 'travel', 'fashion', 'events'];
-  
-  // Recommended folder structure
-  const cloudinaryFolders = [
-    { value: 'portfolio', label: '📸 Portfolio (Main Gallery)', description: 'Your main website portfolio photos' },
-    { value: 'content', label: '🎨 Content (Homepage/About)', description: 'Website content images' },
-    { value: '', label: '📁 Root Folder', description: 'All photos in root (not recommended)' },
-  ];
 
   // Fetch images
   const fetchImages = async () => {
@@ -59,30 +51,40 @@ export default function AdminPhotosPage() {
     }
   };
 
-  // Sync from Cloudinary
-  const syncFromCloudinary = async () => {
+  // Handle upload success
+  const handleUploadSuccess = async (result: any) => {
     try {
-      setSyncing(true);
-      const res = await fetch('/api/admin/images', {
+      setUploading(true);
+      const response = await fetch('/api/admin/images/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder: syncFolder }),
+        body: JSON.stringify({
+          cloudinaryId: result.info.public_id,
+          url: result.info.secure_url,
+          thumbnailUrl: result.info.thumbnail_url || result.info.secure_url,
+          width: result.info.width,
+          height: result.info.height,
+          format: result.info.format,
+          category: 'weddings', // default category
+          tags: [],
+          featured: false,
+          showOnHomepage: false,
+          showInGallery: true,
+        }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        alert(`✅ ${data.message}`);
-        setSyncModalOpen(false);
+      if (response.ok) {
+        alert('✅ Photo uploaded successfully!');
         fetchImages();
       } else {
-        const error = await res.json();
-        alert(`❌ Error: ${error.error}`);
+        const error = await response.json();
+        alert(`❌ Error: ${error.error || 'Failed to save photo'}`);
       }
     } catch (error) {
-      console.error('Error syncing:', error);
-      alert('❌ Failed to sync images');
+      console.error('Error saving photo:', error);
+      alert('❌ Failed to save photo');
     } finally {
-      setSyncing(false);
+      setUploading(false);
     }
   };
 
@@ -175,25 +177,30 @@ export default function AdminPhotosPage() {
                 {images.length} photos • {images.filter(i => i.featured).length} featured • {images.filter(i => i.showOnHomepage).length} on homepage
               </p>
             </div>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setSyncModalOpen(true)}
-                disabled={syncing}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
-              >
-                <FiRefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                <span>{syncing ? 'Syncing...' : 'Sync from Cloudinary'}</span>
-              </button>
-              <a
-                href="https://cloudinary.com/console"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition"
-              >
-                <FiUpload className="w-4 h-4" />
-                <span>Upload to Cloudinary</span>
-              </a>
-            </div>
+            <CldUploadWidget
+              uploadPreset="aminoss_portfolio"
+              options={{
+                folder: 'portfolio',
+                resourceType: 'image',
+                clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                multiple: true,
+                maxFiles: 50,
+              }}
+              onSuccess={(result: any) => {
+                handleUploadSuccess(result);
+              }}
+            >
+              {({ open }) => (
+                <button
+                  onClick={() => open()}
+                  disabled={uploading}
+                  className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
+                >
+                  <FiUpload className="w-4 h-4" />
+                  <span>{uploading ? 'Uploading...' : 'Upload Photos'}</span>
+                </button>
+              )}
+            </CldUploadWidget>
           </div>
         </div>
       </header>
@@ -232,17 +239,8 @@ export default function AdminPhotosPage() {
               No Photos Yet
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Upload photos to your Cloudinary folder, then click "Sync from Cloudinary"
+              Click "Upload Photos" to add your portfolio images
             </p>
-            <a
-              href="https://cloudinary.com/console"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
-            >
-              <FiUpload className="w-5 h-5" />
-              <span>Go to Cloudinary</span>
-            </a>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -337,117 +335,6 @@ export default function AdminPhotosPage() {
           onSave={(data) => updateImage(selectedImage.id, data)}
           categories={categories.filter((c) => c !== 'all')}
         />
-      )}
-
-      {/* Sync Modal */}
-      {syncModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Sync from Cloudinary</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Select which folder to sync photos from
-                </p>
-              </div>
-              <button 
-                onClick={() => setSyncModalOpen(false)} 
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-              >
-                <FiX className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* Folder Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  Select Cloudinary Folder
-                </label>
-                <div className="space-y-3">
-                  {cloudinaryFolders.map((folder) => (
-                    <label
-                      key={folder.value}
-                      className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition ${
-                        syncFolder === folder.value
-                          ? 'border-primary bg-primary/5 dark:bg-primary/10'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="syncFolder"
-                        value={folder.value}
-                        checked={syncFolder === folder.value}
-                        onChange={(e) => setSyncFolder(e.target.value)}
-                        className="mt-1 w-4 h-4 text-primary border-gray-300 dark:border-gray-600 focus:ring-primary"
-                      />
-                      <div className="ml-3 flex-1">
-                        <div className="font-medium text-gray-900 dark:text-gray-100">
-                          {folder.label}
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                          {folder.description}
-                        </div>
-                        {folder.value && (
-                          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
-                            Path: /{folder.value}
-                          </div>
-                        )}
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Info Box */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3 flex-1">
-                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                      Recommended Folder Structure
-                    </h3>
-                    <div className="mt-2 text-sm text-blue-700 dark:text-blue-400">
-                      <p className="mb-2">Organize your Cloudinary files like this:</p>
-                      <ul className="list-disc list-inside space-y-1 font-mono text-xs">
-                        <li><strong>portfolio/</strong> - Main website gallery photos</li>
-                        <li><strong>content/</strong> - Homepage, about, banner images</li>
-                        <li><strong>clients/[name]/</strong> - Client-specific galleries</li>
-                        <li><strong>videos/</strong> - Portfolio videos</li>
-                        <li><strong>packs/</strong> - Package cover images</li>
-                      </ul>
-                      <p className="mt-2">This keeps your Cloudinary organized and prevents syncing wrong photos!</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button
-                  type="button"
-                  onClick={() => setSyncModalOpen(false)}
-                  className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={syncFromCloudinary}
-                  disabled={syncing}
-                  className="flex items-center space-x-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
-                >
-                  <FiRefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                  <span>{syncing ? 'Syncing...' : `Sync from ${syncFolder || 'root'}`}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
