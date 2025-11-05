@@ -177,7 +177,7 @@ export default function ClientDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -188,27 +188,27 @@ export default function ClientDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.push('/admin/dashboard/clients')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition"
               >
-                <FiArrowLeft className="w-5 h-5" />
+                <FiArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
-                <p className="text-sm text-gray-600">{client.email}</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{client.name}</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{client.email}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setGalleryModalOpen(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-600 transition"
               >
                 <FiPlus className="w-4 h-4" />
                 <span>New Gallery</span>
@@ -247,10 +247,10 @@ export default function ClientDetailPage() {
             {client.galleries.map((gallery) => (
               <div
                 key={gallery.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition"
+                className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition"
               >
                 {gallery.coverImage ? (
-                  <div className="aspect-video bg-gray-100 relative">
+                  <div className="aspect-video bg-gray-100 dark:bg-dark-700 relative">
                     <img
                       src={gallery.coverImage}
                       alt={gallery.name}
@@ -258,8 +258,8 @@ export default function ClientDetailPage() {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <FiImage className="w-12 h-12 text-gray-400" />
+                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-700 dark:to-dark-600 flex items-center justify-center">
+                    <FiImage className="w-12 h-12 text-gray-400 dark:text-gray-500" />
                   </div>
                 )}
 
@@ -274,7 +274,7 @@ export default function ClientDetailPage() {
                     </p>
                   )}
 
-                  <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+                  <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3">
                     <span className="flex items-center">
                       <FiImage className="w-4 h-4 mr-1" />
                       {gallery._count.photos} photos
@@ -287,20 +287,20 @@ export default function ClientDetailPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-2 pt-3 border-t border-gray-100">
+                  <div className="flex items-center space-x-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                     <button
                       onClick={() => {
                         setSelectedGallery(gallery.id);
                         setUploadModalOpen(true);
                       }}
-                      className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-primary/10 text-primary rounded hover:bg-primary/20 transition text-sm"
+                      className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-400 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition text-sm"
                     >
                       <FiUpload className="w-4 h-4" />
                       <span>Upload</span>
                     </button>
                     <button
                       onClick={() => handleDeleteGallery(gallery.id)}
-                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition"
+                      className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition"
                     >
                       <FiTrash2 className="w-4 h-4" />
                     </button>
@@ -315,17 +315,17 @@ export default function ClientDetailPage() {
       {/* Create Gallery Modal */}
       {galleryModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Create New Gallery</h2>
-              <button onClick={() => setGalleryModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Create New Gallery</h2>
+              <button onClick={() => setGalleryModalOpen(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                 <FiX className="w-6 h-6" />
               </button>
             </div>
 
             <form onSubmit={handleCreateGallery} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Gallery Name *
                 </label>
                 <input
@@ -333,45 +333,45 @@ export default function ClientDetailPage() {
                   value={galleryForm.name}
                   onChange={(e) => setGalleryForm({ ...galleryForm, name: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="Wedding Photos - June 2025"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Description
                 </label>
                 <textarea
                   value={galleryForm.description}
                   onChange={(e) => setGalleryForm({ ...galleryForm, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="Beautiful moments from your special day..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Expiration Date (optional)
                 </label>
                 <input
                   type="date"
                   value={galleryForm.expiresAt}
                   onChange={(e) => setGalleryForm({ ...galleryForm, expiresAt: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Gallery Password (optional)
                 </label>
                 <input
                   type="password"
                   value={galleryForm.password}
                   onChange={(e) => setGalleryForm({ ...galleryForm, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="Extra protection for this gallery"
                 />
               </div>
@@ -382,18 +382,18 @@ export default function ClientDetailPage() {
                   id="allowDownload"
                   checked={galleryForm.allowDownload}
                   onChange={(e) => setGalleryForm({ ...galleryForm, allowDownload: e.target.checked })}
-                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                  className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
                 />
-                <label htmlFor="allowDownload" className="text-sm font-medium text-gray-700">
+                <label htmlFor="allowDownload" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Allow downloads
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => setGalleryModalOpen(false)}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
                 >
                   Cancel
                 </button>
@@ -412,24 +412,24 @@ export default function ClientDetailPage() {
       {/* Bulk Upload Modal */}
       {uploadModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Bulk Upload Photos</h2>
-              <button onClick={() => { setUploadModalOpen(false); setUploadedPhotos([]); }} className="text-gray-500 hover:text-gray-700">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Bulk Upload Photos</h2>
+              <button onClick={() => { setUploadModalOpen(false); setUploadedPhotos([]); }} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                 <FiX className="w-6 h-6" />
               </button>
             </div>
 
             <div className="p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Select Gallery *
                 </label>
                 <select
                   value={selectedGallery}
                   onChange={(e) => setSelectedGallery(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="">Choose a gallery...</option>
                   {client.galleries.map((gallery) => (
@@ -440,7 +440,7 @@ export default function ClientDetailPage() {
                 </select>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-dark-700/50">
                 <CldUploadWidget
                   uploadPreset="aminoss_portfolio"
                   onSuccess={handleUploadSuccess}
@@ -462,19 +462,19 @@ export default function ClientDetailPage() {
                     </button>
                   )}
                 </CldUploadWidget>
-                <p className="text-sm text-gray-600 mt-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
                   Upload multiple photos at once (JPG, PNG, WEBP)
                 </p>
               </div>
 
               {uploadedPhotos.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Uploaded Photos ({uploadedPhotos.length})
                   </h3>
                   <div className="grid grid-cols-4 gap-3 max-h-80 overflow-y-auto">
                     {uploadedPhotos.map((photo, idx) => (
-                      <div key={idx} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group">
+                      <div key={idx} className="relative aspect-square bg-gray-100 dark:bg-dark-700 rounded-lg overflow-hidden group">
                         <img
                           src={photo.thumbnailUrl}
                           alt={`Upload ${idx + 1}`}
@@ -492,11 +492,11 @@ export default function ClientDetailPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => { setUploadModalOpen(false); setUploadedPhotos([]); }}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
                 >
                   Cancel
                 </button>
