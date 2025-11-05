@@ -79,7 +79,7 @@ export default function AdminContentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 dark:bg-dark-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -87,7 +87,7 @@ export default function AdminContentPage() {
 
   if (!content) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 dark:bg-dark-900 flex items-center justify-center">
         <p className="text-gray-900 dark:text-gray-100">Error loading content</p>
       </div>
     );
@@ -101,9 +101,9 @@ export default function AdminContentPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 sticky top-0 z-30">
         <div className="px-6 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Content Management</h1>
           <button
@@ -118,7 +118,7 @@ export default function AdminContentPage() {
       </header>
 
       {/* Tabs */}
-      <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700">
         <div className="px-6">
           <div className="flex space-x-8">
             {tabs.map((tab) => (
@@ -142,7 +142,7 @@ export default function AdminContentPage() {
       <main className="p-6 max-w-4xl">
         {/* About Page Tab */}
         {activeTab === 'about' && (
-          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 dark:border-gray-700 p-6 space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">About Page Content</h2>
 
             <div>
@@ -155,7 +155,7 @@ export default function AdminContentPage() {
                 onChange={(e) =>
                   setContent({ ...content, aboutTitle: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                 placeholder="About Me"
               />
             </div>
@@ -170,7 +170,7 @@ export default function AdminContentPage() {
                   setContent({ ...content, aboutContent: e.target.value })
                 }
                 rows={12}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                 placeholder="Tell your story here..."
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -189,7 +189,7 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, aboutImage: e.target.value })
                   }
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
                   placeholder="https://res.cloudinary.com/..."
                 />
                 <a
@@ -211,11 +211,11 @@ export default function AdminContentPage() {
 
         {/* Hero Tab */}
         {activeTab === 'hero' && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Homepage Hero Section</h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Hero Title
               </label>
               <input
@@ -224,13 +224,13 @@ export default function AdminContentPage() {
                 onChange={(e) =>
                   setContent({ ...content, heroTitle: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Capturing Life's Beautiful Moments"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Hero Subtitle
               </label>
               <input
@@ -239,13 +239,13 @@ export default function AdminContentPage() {
                 onChange={(e) =>
                   setContent({ ...content, heroSubtitle: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Professional Photography & Videography"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Hero Background Image URL
               </label>
               <div className="flex items-center space-x-3">
@@ -255,7 +255,7 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, heroImage: e.target.value })
                   }
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="https://res.cloudinary.com/..."
                 />
                 <a
@@ -277,11 +277,11 @@ export default function AdminContentPage() {
 
         {/* Services Tab */}
         {activeTab === 'services' && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Services Offered</h2>
 
             {content.services?.map((service, index) => (
-              <div key={index} className="p-4 border border-gray-200 rounded-lg space-y-3">
+              <div key={index} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">Service {index + 1}</h3>
                   <button
@@ -303,7 +303,7 @@ export default function AdminContentPage() {
                     newServices[index].title = e.target.value;
                     setContent({ ...content, services: newServices });
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Service title"
                 />
 
@@ -315,7 +315,7 @@ export default function AdminContentPage() {
                     setContent({ ...content, services: newServices });
                   }}
                   rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Service description"
                 />
               </div>
@@ -331,7 +331,7 @@ export default function AdminContentPage() {
                   ],
                 });
               }}
-              className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-primary hover:text-primary transition"
+              className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 hover:border-primary hover:text-primary transition"
             >
               + Add Service
             </button>
@@ -340,12 +340,12 @@ export default function AdminContentPage() {
 
         {/* Contact Tab */}
         {activeTab === 'contact' && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Contact Information</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Site Name
                 </label>
                 <input
@@ -354,12 +354,12 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, siteName: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Tagline
                 </label>
                 <input
@@ -368,12 +368,12 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, tagline: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Location
                 </label>
                 <input
@@ -382,12 +382,12 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, location: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email
                 </label>
                 <input
@@ -396,12 +396,12 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, email: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Phone
                 </label>
                 <input
@@ -410,16 +410,16 @@ export default function AdminContentPage() {
                   onChange={(e) =>
                     setContent({ ...content, phone: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-6">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Social Media Links</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Instagram URL
                   </label>
                   <input
@@ -428,13 +428,13 @@ export default function AdminContentPage() {
                     onChange={(e) =>
                       setContent({ ...content, instagramUrl: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="https://instagram.com/username"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Facebook URL
                   </label>
                   <input
@@ -443,13 +443,13 @@ export default function AdminContentPage() {
                     onChange={(e) =>
                       setContent({ ...content, facebookUrl: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="https://facebook.com/username"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Twitter URL
                   </label>
                   <input
@@ -458,13 +458,13 @@ export default function AdminContentPage() {
                     onChange={(e) =>
                       setContent({ ...content, twitterUrl: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="https://twitter.com/username"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     LinkedIn URL
                   </label>
                   <input
@@ -473,7 +473,7 @@ export default function AdminContentPage() {
                     onChange={(e) =>
                       setContent({ ...content, linkedinUrl: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="https://linkedin.com/in/username"
                   />
                 </div>

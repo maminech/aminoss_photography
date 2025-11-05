@@ -287,23 +287,32 @@ export default function ClientDetailPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex flex-col space-y-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                     <button
-                      onClick={() => {
-                        setSelectedGallery(gallery.id);
-                        setUploadModalOpen(true);
-                      }}
-                      className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-400 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition text-sm"
+                      onClick={() => router.push(`/admin/dashboard/galleries/${gallery.id}`)}
+                      className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition text-sm font-medium"
                     >
-                      <FiUpload className="w-4 h-4" />
-                      <span>Upload</span>
+                      <FiEye className="w-4 h-4" />
+                      <span>Manage Photos</span>
                     </button>
-                    <button
-                      onClick={() => handleDeleteGallery(gallery.id)}
-                      className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition"
-                    >
-                      <FiTrash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => {
+                          setSelectedGallery(gallery.id);
+                          setUploadModalOpen(true);
+                        }}
+                        className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-400 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition text-sm"
+                      >
+                        <FiUpload className="w-4 h-4" />
+                        <span>Quick Upload</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteGallery(gallery.id)}
+                        className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition"
+                      >
+                        <FiTrash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

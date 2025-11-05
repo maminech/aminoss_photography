@@ -132,14 +132,14 @@ export default function AdminClientsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 sticky top-0 z-30">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Client Management</h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {clients.length} total clients • {clients.filter(c => c.active).length} active
               </p>
             </div>
@@ -160,7 +160,7 @@ export default function AdminClientsPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <FiUsers className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Clients Yet</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               Create your first client account to start sharing photos
             </p>
             <button
@@ -250,7 +250,7 @@ export default function AdminClientsPage() {
       {modalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {selectedClient ? 'Edit Client' : 'Add New Client'}
               </h2>
@@ -343,7 +343,7 @@ export default function AdminClientsPage() {
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={closeModal}
