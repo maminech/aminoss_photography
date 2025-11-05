@@ -57,9 +57,10 @@ export default function AdminPhotosPage() {
       setUploading(true);
       
       // Generate thumbnail URL with Cloudinary transformation
+      // Using larger size and higher quality for crisp display
       const thumbnailUrl = result.info.secure_url.replace(
         '/upload/',
-        '/upload/w_400,h_400,c_fill,q_auto,f_auto/'
+        '/upload/w_800,h_800,c_fill,q_90,f_auto/'
       );
       
       // Extract filename from public_id and clean it up for title

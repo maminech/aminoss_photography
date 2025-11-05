@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
         thumbnailUrl: cloudinary.url(resource.public_id, {
           transformation: [
             { width: 800, height: 800, crop: 'fill' },
-            { quality: 'auto' },
+            { quality: '90' },
             { fetch_format: 'auto' },
           ],
         }),
