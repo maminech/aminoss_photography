@@ -33,9 +33,18 @@ export default function AdminVideosPage() {
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [syncModalOpen, setSyncModalOpen] = useState(false);
+  const [syncFolder, setSyncFolder] = useState('videos');
   const [filterCategory, setFilterCategory] = useState('all');
 
   const categories = ['all', 'weddings', 'events', 'fashion', 'travel', 'reels', 'commercial'];
+  
+  // Recommended folder structure
+  const cloudinaryFolders = [
+    { value: 'videos', label: '🎥 Videos (Main Portfolio)', description: 'Your main website portfolio videos' },
+    { value: 'reels', label: '📱 Reels/Social Media', description: 'Short-form content and reels' },
+    { value: '', label: '📁 Root Folder', description: 'All videos in root (not recommended)' },
+  ];
 
   // Fetch videos
   const fetchVideos = async () => {
@@ -60,12 +69,13 @@ export default function AdminVideosPage() {
       const res = await fetch('/api/admin/videos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder: '', action: 'sync' }),
+        body: JSON.stringify({ folder: syncFolder, action: 'sync' }),
       });
 
       if (res.ok) {
         const data = await res.json();
         alert(`✅ ${data.message}`);
+        setSyncModalOpen(false);
         fetchVideos();
       } else {
         const error = await res.json();
@@ -177,7 +187,7 @@ export default function AdminVideosPage() {
             </div>
             <div className="flex items-center space-x-3">
               <button
-                onClick={syncFromCloudinary}
+                onClick={() => setSyncModalOpen(true)}
                 disabled={syncing}
                 className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
               >
@@ -416,6 +426,113 @@ export default function AdminVideosPage() {
             setSelectedVideo(null);
           }}
         />
+      )}
+
+      {/* Sync Modal */}
+      {syncModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Sync Videos from Cloudinary</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Select which folder to sync videos from
+                </p>
+              </div>
+              <button 
+                onClick={() => setSyncModalOpen(false)} 
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Folder Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                  Select Cloudinary Folder
+                </label>
+                <div className="space-y-3">
+                  {cloudinaryFolders.map((folder) => (
+                    <label
+                      key={folder.value}
+                      className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition ${
+                        syncFolder === folder.value
+                          ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="syncFolder"
+                        value={folder.value}
+                        checked={syncFolder === folder.value}
+                        onChange={(e) => setSyncFolder(e.target.value)}
+                        className="mt-1 w-4 h-4 text-primary border-gray-300 dark:border-gray-600 focus:ring-primary"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="font-medium text-gray-900 dark:text-gray-100">
+                          {folder.label}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          {folder.description}
+                        </div>
+                        {folder.value && (
+                          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
+                            Path: /{folder.value}
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <FiVideo className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                      Recommended Folder Structure
+                    </h3>
+                    <div className="mt-2 text-sm text-blue-700 dark:text-blue-400">
+                      <p className="mb-2">Organize your Cloudinary videos like this:</p>
+                      <ul className="list-disc list-inside space-y-1 font-mono text-xs">
+                        <li><strong>videos/</strong> - Main portfolio videos</li>
+                        <li><strong>reels/</strong> - Short-form content</li>
+                        <li><strong>clients/[name]/videos/</strong> - Client deliveries</li>
+                      </ul>
+                      <p className="mt-2">This prevents syncing personal or client-only videos!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setSyncModalOpen(false)}
+                  className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={syncFromCloudinary}
+                  disabled={syncing}
+                  className="flex items-center space-x-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
+                >
+                  <FiRefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                  <span>{syncing ? 'Syncing...' : `Sync from ${syncFolder || 'root'}`}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
