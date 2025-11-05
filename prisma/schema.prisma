@@ -264,6 +264,24 @@ model BlockedDate {
   createdAt DateTime @default(now())
 }
 
+// Calendar Events (bookings, notes, reminders)
+model CalendarEvent {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  date        DateTime
+  title       String
+  clientName  String?
+  eventType   String   @default("other") // wedding, portrait, event, travel, other
+  startTime   String?
+  endTime     String?
+  location    String?
+  price       Float?
+  deposit     Float?
+  notes       String?  @db.String
+  status      String   @default("pending") // pending, confirmed, completed, cancelled
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 // Contact Messages
 model ContactMessage {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId

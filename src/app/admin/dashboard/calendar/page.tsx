@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiCalendar, FiX, FiPlus, FiCheck, FiAlertCircle, FiClock, FiCheckCircle, FiXCircle, FiEye } from 'react-icons/fi';
+import { FiCalendar, FiX, FiPlus, FiCheck, FiAlertCircle, FiClock, FiCheckCircle, FiXCircle, FiEye, FiEdit2, FiTrash2, FiUser, FiMapPin, FiDollarSign } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
@@ -10,6 +10,23 @@ interface BlockedDate {
   date: string;
   reason?: string;
   createdAt: string;
+}
+
+interface CalendarEvent {
+  id: string;
+  date: string;
+  title: string;
+  clientName?: string;
+  eventType: 'wedding' | 'portrait' | 'event' | 'travel' | 'other';
+  startTime?: string;
+  endTime?: string;
+  location?: string;
+  price?: number;
+  deposit?: number;
+  notes?: string;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Booking {
@@ -31,22 +48,56 @@ const MONTHS = [
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+const EVENT_TYPES = [
+  { value: 'wedding', label: '💒 Wedding', color: 'bg-pink-500' },
+  { value: 'portrait', label: '📸 Portrait', color: 'bg-blue-500' },
+  { value: 'event', label: '🎉 Event', color: 'bg-purple-500' },
+  { value: 'travel', label: '✈️ Travel', color: 'bg-green-500' },
+  { value: 'other', label: '📝 Other', color: 'bg-gray-500' },
+];
+
+const STATUSES = [
+  { value: 'pending', label: 'Pending', color: 'bg-yellow-500' },
+  { value: 'confirmed', label: 'Confirmed', color: 'bg-green-500' },
+  { value: 'completed', label: 'Completed', color: 'bg-blue-500' },
+  { value: 'cancelled', label: 'Cancelled', color: 'bg-red-500' },
+];
+
 export default function AdminCalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [blockReason, setBlockReason] = useState('');
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showBookingsModal, setShowBookingsModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
   const [selectedDateBookings, setSelectedDateBookings] = useState<Booking[]>([]);
+  const [selectedDateEvents, setSelectedDateEvents] = useState<CalendarEvent[]>([]);
   const [saving, setSaving] = useState(false);
+
+  // Event form state
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    clientName: '',
+    eventType: 'other' as const,
+    startTime: '',
+    endTime: '',
+    location: '',
+    price: '',
+    deposit: '',
+    notes: '',
+    status: 'pending' as const,
+  });
 
   useEffect(() => {
     fetchBlockedDates();
     fetchBookings();
+    fetchCalendarEvents();
   }, []);
 
   const fetchBookings = async () => {
@@ -60,6 +111,18 @@ export default function AdminCalendarPage() {
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);
+    }
+  };
+
+  const fetchCalendarEvents = async () => {
+    try {
+      const res = await fetch('/api/admin/calendar/events');
+      if (res.ok) {
+        const data = await res.json();
+        setCalendarEvents(data);
+      }
+    } catch (error) {
+      console.error('Error fetching calendar events:', error);
     }
   };
 
@@ -124,6 +187,106 @@ export default function AdminCalendarPage() {
     }
   };
 
+  // Event CRUD operations
+  const openEventModal = (date: Date, event?: CalendarEvent) => {
+    setSelectedDate(date);
+    setEditingEvent(event || null);
+    
+    if (event) {
+      setEventForm({
+        title: event.title,
+        clientName: event.clientName || '',
+        eventType: event.eventType as any,
+        startTime: event.startTime || '',
+        endTime: event.endTime || '',
+        location: event.location || '',
+        price: event.price?.toString() || '',
+        deposit: event.deposit?.toString() || '',
+        notes: event.notes || '',
+        status: event.status as any,
+      });
+    } else {
+      setEventForm({
+        title: '',
+        clientName: '',
+        eventType: 'other',
+        startTime: '',
+        endTime: '',
+        location: '',
+        price: '',
+        deposit: '',
+        notes: '',
+        status: 'pending',
+      });
+    }
+    
+    setShowEventModal(true);
+  };
+
+  const saveEvent = async () => {
+    if (!selectedDate || !eventForm.title.trim()) {
+      alert('Please enter an event title');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const eventData = {
+        date: selectedDate.toISOString(),
+        title: eventForm.title,
+        clientName: eventForm.clientName || null,
+        eventType: eventForm.eventType,
+        startTime: eventForm.startTime || null,
+        endTime: eventForm.endTime || null,
+        location: eventForm.location || null,
+        price: eventForm.price ? parseFloat(eventForm.price) : null,
+        deposit: eventForm.deposit ? parseFloat(eventForm.deposit) : null,
+        notes: eventForm.notes || null,
+        status: eventForm.status,
+      };
+
+      const res = await fetch('/api/admin/calendar/events', {
+        method: editingEvent ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingEvent ? { id: editingEvent.id, ...eventData } : eventData),
+      });
+
+      if (res.ok) {
+        await fetchCalendarEvents();
+        setShowEventModal(false);
+        setEditingEvent(null);
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to save event');
+      }
+    } catch (error) {
+      console.error('Error saving event:', error);
+      alert('Failed to save event');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteEvent = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this event?')) return;
+
+    try {
+      const res = await fetch('/api/admin/calendar/events', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+
+      if (res.ok) {
+        await fetchCalendarEvents();
+        setShowEventModal(false);
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event');
+    }
+  };
+
   const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -171,27 +334,42 @@ export default function AdminCalendarPage() {
     });
   };
 
+  const getEventsForDate = (date: Date) => {
+    return calendarEvents.filter(event => {
+      const eventDate = new Date(event.date);
+      return (
+        eventDate.getDate() === date.getDate() &&
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getFullYear() === date.getFullYear()
+      );
+    });
+  };
+
   const hasBookingsOnDate = (date: Date) => {
     return getBookingsForDate(date).length > 0;
+  };
+
+  const hasEventsOnDate = (date: Date) => {
+    return getEventsForDate(date).length > 0;
   };
 
   const handleDateClick = (day: number) => {
     const date = new Date(currentYear, currentMonth, day);
     const blocked = getBlockedDateInfo(date);
     const dateBookings = getBookingsForDate(date);
+    const dateEvents = getEventsForDate(date);
 
-    if (dateBookings.length > 0) {
-      // Show bookings for this date
-      setSelectedDateBookings(dateBookings);
-      setSelectedDate(date);
+    // Open event modal to show all events/bookings or create new
+    setSelectedDate(date);
+    setSelectedDateBookings(dateBookings);
+    setSelectedDateEvents(dateEvents);
+    
+    // If there are events or bookings, show them
+    if (dateEvents.length > 0 || dateBookings.length > 0) {
       setShowBookingsModal(true);
-    } else if (blocked) {
-      // Unblock if already blocked
-      unblockDate(blocked.id);
     } else if (!isPastDate(date)) {
-      // Block if not blocked and not past
-      setSelectedDate(date);
-      setShowBlockModal(true);
+      // Allow creating a new event
+      openEventModal(date);
     }
   };
 
@@ -231,7 +409,11 @@ export default function AdminCalendarPage() {
       const blocked = isDateBlocked(date);
       const blockedInfo = getBlockedDateInfo(date);
       const hasBookings = hasBookingsOnDate(date);
+      const hasEvents = hasEventsOnDate(date);
+      const eventsForDate = getEventsForDate(date);
       const bookingsCount = getBookingsForDate(date).length;
+      const eventsCount = eventsForDate.length;
+      const totalItems = bookingsCount + eventsCount;
       const past = isPastDate(date);
       const today = new Date().toDateString() === date.toDateString();
 
@@ -245,8 +427,8 @@ export default function AdminCalendarPage() {
           className={`aspect-square p-2 rounded-lg border-2 transition-all relative group ${
             today
               ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-              : hasBookings
-              ? 'border-green-500 bg-green-50 dark:bg-green-900/20 cursor-pointer'
+              : hasBookings || hasEvents
+              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-pointer'
               : blocked
               ? 'border-red-500 bg-red-50 dark:bg-red-900/20 cursor-pointer'
               : past
@@ -256,28 +438,45 @@ export default function AdminCalendarPage() {
         >
           <div className="flex flex-col items-center justify-center h-full">
             <span className={`text-sm md:text-base font-medium ${
-              hasBookings ? 'text-green-600 dark:text-green-400' : blocked ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'
+              hasBookings || hasEvents ? 'text-blue-600 dark:text-blue-400' : blocked ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'
             }`}>
               {day}
             </span>
-            {hasBookings && (
+            {(hasBookings || hasEvents) && (
               <div className="flex items-center gap-1 mt-1">
-                <FiCheckCircle className="w-3 h-3 md:w-4 md:h-4 text-green-600 dark:text-green-400" />
-                <span className="text-xs text-green-600 dark:text-green-400">{bookingsCount}</span>
+                <FiCalendar className="w-3 h-3 md:w-4 md:h-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-xs text-blue-600 dark:text-blue-400">{totalItems}</span>
               </div>
             )}
-            {blocked && !hasBookings && (
+            {blocked && !hasBookings && !hasEvents && (
               <FiX className="w-3 h-3 md:w-4 md:h-4 text-red-600 dark:text-red-400 mt-1" />
             )}
-            {!past && !blocked && !hasBookings && (
+            {!past && !blocked && !hasBookings && !hasEvents && (
               <FiPlus className="w-3 h-3 md:w-4 md:h-4 text-primary-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+            
+            {/* Event type indicators */}
+            {hasEvents && eventsForDate.length > 0 && (
+              <div className="flex gap-0.5 mt-1">
+                {eventsForDate.slice(0, 3).map(event => {
+                  const eventType = EVENT_TYPES.find(t => t.value === event.eventType);
+                  return (
+                    <div 
+                      key={event.id} 
+                      className={`w-1.5 h-1.5 rounded-full ${eventType?.color || 'bg-gray-500'}`}
+                    />
+                  );
+                })}
+              </div>
             )}
           </div>
           
           {/* Tooltip */}
-          {(blockedInfo?.reason || hasBookings) && (
+          {(blockedInfo?.reason || hasBookings || hasEvents) && (
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-              {hasBookings ? `${bookingsCount} booking(s)` : blockedInfo?.reason}
+              {hasBookings && `${bookingsCount} booking(s) `}
+              {hasEvents && `${eventsCount} event(s)`}
+              {blockedInfo?.reason}
             </div>
           )}
         </motion.button>
