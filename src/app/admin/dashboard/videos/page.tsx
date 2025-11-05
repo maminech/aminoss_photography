@@ -198,27 +198,53 @@ export default function AdminVideosPage() {
                 uploadPreset="aminoss_preset"
                 options={{
                   resourceType: 'video',
-                  sources: ['local', 'url', 'camera'],
+                  sources: ['local', 'url'],
                   multiple: true,
                   maxFiles: 10,
-                  clientAllowedFormats: ['mp4', 'mov', 'avi', 'webm', 'mkv'],
-                  maxFileSize: 100000000, // 100MB
+                  clientAllowedFormats: ['mp4', 'mov', 'avi', 'webm', 'mkv', 'flv', 'wmv'],
+                  maxFileSize: 500000000, // 500MB (increased)
+                  folder: 'videos',
+                  showAdvancedOptions: true,
+                  cropping: false,
+                  styles: {
+                    palette: {
+                      window: "#ffffff",
+                      windowBorder: "#90a0b3",
+                      tabIcon: "#0078FF",
+                      menuIcons: "#5A616A",
+                      textDark: "#000000",
+                      textLight: "#FFFFFF",
+                      link: "#0078FF",
+                      action: "#FF620C",
+                      inactiveTabIcon: "#0E2F5A",
+                      error: "#F44235",
+                      inProgress: "#0078FF",
+                      complete: "#20B832",
+                      sourceBg: "#E4EBF1"
+                    }
+                  }
                 }}
                 onSuccess={(result: any) => {
                   console.log('Upload success:', result);
-                  // Auto sync after upload
-                  setTimeout(() => {
-                    syncFromCloudinary();
-                  }, 1000);
+                  if (result?.info?.resource_type === 'video') {
+                    alert('✅ Video uploaded successfully! Syncing...');
+                    // Auto sync after upload
+                    setTimeout(() => {
+                      fetchVideos();
+                    }, 2000);
+                  }
                 }}
                 onError={(error: any) => {
                   console.error('Upload error:', error);
-                  alert('❌ Upload failed: ' + error.message);
+                  const errorMsg = error?.status === 'error' 
+                    ? 'Upload failed. Please check file format and size.' 
+                    : error?.message || 'Unknown error';
+                  alert('❌ Upload failed: ' + errorMsg);
                 }}
               >
                 {({ open }) => (
                   <button
-                    onClick={() => open()}
+                    onClick={() => open?.()}
                     className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                   >
                     <FiUpload className="w-4 h-4" />
