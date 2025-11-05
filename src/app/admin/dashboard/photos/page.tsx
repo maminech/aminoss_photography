@@ -55,13 +55,30 @@ export default function AdminPhotosPage() {
   const handleUploadSuccess = async (result: any) => {
     try {
       setUploading(true);
+      
+      // Generate thumbnail URL with Cloudinary transformation
+      const thumbnailUrl = result.info.secure_url.replace(
+        '/upload/',
+        '/upload/w_400,h_400,c_fill,q_auto,f_auto/'
+      );
+      
+      // Extract filename from public_id and clean it up for title
+      const filename = result.info.public_id.split('/').pop() || 'Untitled';
+      // Remove Cloudinary ID suffix (e.g., "_abc123") and replace underscores/hyphens with spaces
+      const cleanTitle = filename
+        .replace(/_[a-z0-9]{6}$/i, '') // Remove Cloudinary suffix
+        .replace(/[_-]/g, ' ') // Replace underscores and hyphens with spaces
+        .replace(/\s+/g, ' ') // Normalize multiple spaces
+        .trim();
+      
       const response = await fetch('/api/admin/images/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           cloudinaryId: result.info.public_id,
           url: result.info.secure_url,
-          thumbnailUrl: result.info.thumbnail_url || result.info.secure_url,
+          thumbnailUrl: thumbnailUrl,
+          title: cleanTitle || null,
           width: result.info.width,
           height: result.info.height,
           format: result.info.format,
@@ -307,7 +324,8 @@ export default function AdminPhotosPage() {
                 {/* Info */}
                 <div className="p-4">
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1 truncate">
-                    {image.title || 'Untitled'}
+                    {image.title || 
+                      (image.cloudinaryId.split('/').pop()?.replace(/_[a-z0-9]{6}$/i, '').replace(/[_-]/g, ' ') || 'Untitled')}
                   </h4>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
                     {image.category} • {image.width}x{image.height}
