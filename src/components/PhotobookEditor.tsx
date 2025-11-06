@@ -140,6 +140,8 @@ export default function PhotobookEditor({
     setCreatingPhotobook(true);
     setFormat(selectedFormat);
     
+    console.log('Selecting format:', selectedFormat, 'for gallery:', galleryId);
+    
     // Create photobook in database
     try {
       const res = await fetch('/api/client/photobook', {
@@ -152,8 +154,11 @@ export default function PhotobookEditor({
         })
       });
 
+      console.log('Response status:', res.status);
+      const data = await res.json();
+      console.log('Response data:', data);
+
       if (res.ok) {
-        const data = await res.json();
         setPhotobookId(data.photobook.id);
         
         // Add a small delay for smooth transition
@@ -162,15 +167,16 @@ export default function PhotobookEditor({
           setCreatingPhotobook(false);
         }, 300);
       } else {
-        const error = await res.json();
-        console.error('Error creating photobook:', error);
-        alert('Error creating photobook. Please try again.');
+        console.error('Error creating photobook:', data);
+        alert(`Error creating photobook: ${data.error || 'Unknown error'}${data.details ? '\n' + data.details : ''}`);
         setCreatingPhotobook(false);
+        setFormat(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating photobook:', error);
-      alert('Error creating photobook. Please try again.');
+      alert(`Error creating photobook: ${error.message || 'Network error'}`);
       setCreatingPhotobook(false);
+      setFormat(null);
     }
   };
 

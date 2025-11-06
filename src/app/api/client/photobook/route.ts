@@ -6,7 +6,7 @@ import * as bcrypt from 'bcryptjs';
 // Get photobook for a gallery
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const clientCookie = cookieStore.get('client-session');
 
     if (!clientCookie) {
@@ -56,23 +56,38 @@ export async function GET(request: NextRequest) {
 // Create new photobook
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const clientCookie = cookieStore.get('client-session');
 
+    console.log('Client cookie:', clientCookie ? 'exists' : 'missing');
+
     if (!clientCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized - No session cookie' }, { status: 401 });
     }
 
-    const sessionData = JSON.parse(clientCookie.value);
+    let sessionData;
+    try {
+      sessionData = JSON.parse(clientCookie.value);
+      console.log('Session data:', sessionData);
+    } catch (parseError) {
+      console.error('Failed to parse session cookie:', parseError);
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+    }
+
     const client = await prisma.client.findUnique({
       where: { id: sessionData.clientId },
     });
+
+    console.log('Client found:', client ? 'yes' : 'no');
 
     if (!client) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
-    const { galleryId, format, title } = await request.json();
+    const body = await request.json();
+    const { galleryId, format, title } = body;
+
+    console.log('Request body:', { galleryId, format, title });
 
     if (!galleryId || !format) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -86,11 +101,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Existing photobook:', existing ? 'found' : 'not found');
+
     if (existing) {
       return NextResponse.json({ photobook: existing });
     }
 
     // Create new photobook
+    console.log('Creating new photobook...');
     const photobook = await prisma.photobook.create({
       data: {
         clientId: client.id,
@@ -98,14 +116,21 @@ export async function POST(request: NextRequest) {
         format: format,
         title: title || 'My Photobook',
         status: 'draft',
+        totalPages: 0,
       },
     });
 
+    console.log('Photobook created:', photobook.id);
     return NextResponse.json({ photobook });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create photobook error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return NextResponse.json(
-      { error: 'Failed to create photobook' },
+      { error: 'Failed to create photobook', details: error.message },
       { status: 500 }
     );
   }
@@ -114,7 +139,7 @@ export async function POST(request: NextRequest) {
 // Update photobook (save progress)
 export async function PUT(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const clientCookie = cookieStore.get('client-session');
 
     if (!clientCookie) {
