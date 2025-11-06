@@ -26,7 +26,7 @@ export default function GalleryGrid({ images, onImageClick }: GalleryGridProps) 
   };
 
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 md:gap-6 space-y-4 md:space-y-6">
+    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8">
       <AnimatePresence>
         {images.map((image, index) => {
           const aspectRatio = getImageAspectRatio(image);
@@ -40,10 +40,10 @@ export default function GalleryGrid({ images, onImageClick }: GalleryGridProps) 
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="group relative break-inside-avoid overflow-hidden rounded-lg bg-gray-100 dark:bg-dark-800 cursor-pointer mb-4 md:mb-6"
+              className="group relative break-inside-avoid overflow-hidden rounded-lg sm:rounded-xl bg-gray-100 dark:bg-dark-800 cursor-pointer mb-6 md:mb-8 active:scale-[0.98] transition-transform"
               onClick={() => onImageClick(index)}
             >
-              <div className="relative w-full">
+              <div className="relative w-full min-h-[200px]">
                 <Image
                   src={image.url}
                   alt={image.title}
@@ -62,12 +62,12 @@ export default function GalleryGrid({ images, onImageClick }: GalleryGridProps) 
                 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white font-semibold text-lg mb-1">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                    <h3 className="text-white font-semibold text-base sm:text-lg mb-1 line-clamp-2">
                       {image.title}
                     </h3>
                     {image.category && (
-                      <p className="text-gray-300 text-sm capitalize">
+                      <p className="text-gray-300 text-xs sm:text-sm capitalize">
                         {image.category}
                       </p>
                     )}

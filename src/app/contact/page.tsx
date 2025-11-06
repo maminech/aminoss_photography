@@ -51,7 +51,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-16 sm:py-20 md:py-24 px-3 sm:px-4 md:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -59,23 +59,23 @@ export default function ContactPage() {
           transition={{ duration: 0.6 }}
         >
           {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">
               Get In Touch
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
               Let's discuss your photography needs and create something amazing together
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
             {/* Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Name
@@ -87,7 +87,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="input-field"
+                    className="input-field text-base min-h-[48px]"
                     placeholder="Your name"
                   />
                 </div>
@@ -103,7 +103,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="input-field"
+                    className="input-field text-base min-h-[48px]"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -118,7 +118,7 @@ export default function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="input-field"
+                    className="input-field text-base min-h-[48px]"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
@@ -134,7 +134,7 @@ export default function ContactPage() {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="input-field resize-none"
+                    className="input-field resize-none text-base"
                     placeholder="Tell me about your project..."
                   />
                 </div>
@@ -142,7 +142,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="btn-primary w-full inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary w-full inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] text-base"
                 >
                   {status === 'loading' ? (
                     <>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-lg border border-green-200 dark:border-green-700"
+                    className="p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-lg border border-green-200 dark:border-green-700 text-sm sm:text-base"
                   >
                     ✓ Message sent successfully! I'll get back to you soon.
                   </motion.div>
@@ -171,7 +171,7 @@ export default function ContactPage() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-700"
+                    className="p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-700 text-sm sm:text-base"
                   >
                     ✗ {errorMessage}
                   </motion.div>
@@ -184,32 +184,31 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="space-y-8"
-            >
+              className="space-y-6 sm:space-y-8">
               {/* Info Cards */}
-              <div className="bg-gray-50 dark:bg-dark-800 rounded-2xl p-8 space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                    <FiMail className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+              <div className="bg-gray-50 dark:bg-dark-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 space-y-5 sm:space-y-6">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex-shrink-0">
+                    <FiMail className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1 text-gray-900 dark:text-gray-100">Email</h3>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-base sm:text-lg mb-1 text-gray-900 dark:text-gray-100">Email</h3>
                     <a
                       href="mailto:aminoss.photography@gmail.com"
-                      className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                      className="text-sm sm:text-base text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors break-all"
                     >
                       aminoss.photography@gmail.com
                     </a>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-                    <FiMapPin className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex-shrink-0">
+                    <FiMapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1 text-gray-900 dark:text-gray-100">Location</h3>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <h3 className="font-semibold text-base sm:text-lg mb-1 text-gray-900 dark:text-gray-100">Location</h3>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                       Sousse, Tunisia
                     </p>
                   </div>
@@ -218,8 +217,8 @@ export default function ContactPage() {
 
               {/* Social Links */}
               <div>
-                <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-gray-100">Follow Me</h3>
-                <div className="flex gap-4">
+                <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Follow Me</h3>
+                <div className="flex gap-3 sm:gap-4">
                   {[
                     { icon: FiInstagram, href: 'https://www.instagram.com/ami_noss.photography', label: 'Instagram' },
                     { icon: FiFacebook, href: 'https://www.facebook.com/mohamed.chalghoum.266885', label: 'Facebook' },
@@ -230,24 +229,24 @@ export default function ContactPage() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-colors group"
+                      className="p-3.5 sm:p-4 min-w-[48px] min-h-[48px] bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-colors group flex items-center justify-center"
                       aria-label={social.label}
                     >
-                      <social.icon className="w-6 h-6" />
+                      <social.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </a>
                   ))}
                 </div>
               </div>
 
               {/* Business Hours */}
-              <div className="bg-gray-50 dark:bg-dark-800 rounded-2xl p-8">
-                <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-gray-100">Availability</h3>
-                <div className="space-y-2 text-gray-600 dark:text-gray-400">
+              <div className="bg-gray-50 dark:bg-dark-800 rounded-xl sm:rounded-2xl p-6 sm:p-8">
+                <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Availability</h3>
+                <div className="space-y-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
                   <p>Monday - Friday: 9:00 AM - 7:00 PM</p>
                   <p>Saturday: 10:00 AM - 6:00 PM</p>
                   <p>Sunday: By appointment only</p>
                 </div>
-                <p className="mt-4 text-sm text-gray-500 dark:text-gray-500">
+                <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-500 dark:text-gray-500">
                   Response time: Usually within 24 hours
                 </p>
               </div>

@@ -179,12 +179,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white dark:bg-dark-900">
       {/* Instagram Profile Header - Exact Layout */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-4">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-6 sm:pt-8 pb-3 sm:pb-4">
         {/* Profile Section */}
-        <div className="flex gap-6 sm:gap-8 md:gap-20 mb-11">
+        <div className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-20 mb-8 sm:mb-11">
           {/* Profile Picture - Left Side */}
           <div className="flex-shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-full overflow-hidden bg-white dark:bg-dark-800">
+            <div className="w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-full overflow-hidden bg-white dark:bg-dark-800">
               <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
                 {settings.heroImage ? (
                   <Image
@@ -206,58 +206,58 @@ export default function HomePage() {
           {/* Profile Info - Right Side */}
           <div className="flex-1 min-w-0">
             {/* Username and Buttons */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mb-4 sm:mb-5">
-              <h1 className="text-lg sm:text-xl font-light text-gray-900 dark:text-gray-100 truncate">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 md:gap-5 mb-3 sm:mb-4 md:mb-5">
+              <h1 className="text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate">
                 {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
               </h1>
-              <div className="flex gap-2 sm:gap-3">
+              <div className="flex gap-1.5 sm:gap-2 md:gap-3">
                 <Link href="/contact" className="flex-1 sm:flex-initial">
-                  <button className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition text-sm whitespace-nowrap">
+                  <button className="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 min-h-[44px] bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
                     Message
                   </button>
                 </Link>
                 <Link href="/gallery" className="flex-1 sm:flex-initial">
-                  <button className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-sm whitespace-nowrap">
+                  <button className="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 min-h-[44px] bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
                     Gallery
                   </button>
                 </Link>
-                <button className="p-2 hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition active:scale-95 hidden sm:block">
+                <button className="p-2.5 min-w-[44px] min-h-[44px] hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition active:scale-95 hidden sm:flex items-center justify-center">
                   <FiSettings className="w-5 h-5 text-gray-900 dark:text-gray-100" />
                 </button>
               </div>
             </div>
 
             {/* Stats */}
-            <div className="flex gap-6 sm:gap-10 mb-4 sm:mb-5 text-sm sm:text-base">
-              <div>
-                <span className="font-semibold text-gray-900 dark:text-gray-100">
+            <div className="flex gap-4 xs:gap-5 sm:gap-6 md:gap-10 mb-3 sm:mb-4 md:mb-5 text-xs xs:text-sm sm:text-base">
+              <div className="flex-shrink-0">
+                <span className="font-semibold text-gray-900 dark:text-gray-100 block sm:inline">
                   {images.length + videos.length}
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-1">posts</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 sm:ml-1 block sm:inline text-xs sm:text-sm">posts</span>
               </div>
-              <div>
-                <span className="font-semibold text-gray-900 dark:text-gray-100">
+              <div className="flex-shrink-0">
+                <span className="font-semibold text-gray-900 dark:text-gray-100 block sm:inline">
                   2,847
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-1">followers</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 sm:ml-1 block sm:inline text-xs sm:text-sm">followers</span>
               </div>
-              <div>
-                <span className="font-semibold text-gray-900 dark:text-gray-100">
+              <div className="flex-shrink-0">
+                <span className="font-semibold text-gray-900 dark:text-gray-100 block sm:inline">
                   312
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-1">following</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 sm:ml-1 block sm:inline text-xs sm:text-sm">following</span>
               </div>
             </div>
 
             {/* Bio */}
-            <div>
+            <div className="text-xs sm:text-sm">
               <div className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                 {settings.tagline || 'Professional Photographer'}
               </div>
-              <div className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-line">
+              <div className="text-gray-900 dark:text-gray-100 whitespace-pre-line break-words">
                 {settings.description || '📸 Capturing life\'s precious moments\n✨ Weddings | Portraits | Events\n📍 Available worldwide\n👇 Book your session'}
               </div>
-              <Link href="/contact" className="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mt-1 inline-block">
+              <Link href="/contact" className="font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mt-1 inline-block break-all">
                 aminossphotography.com
               </Link>
             </div>
@@ -265,9 +265,9 @@ export default function HomePage() {
         </div>
 
         {/* Highlights - Instagram Stories Style */}
-        <div className="flex gap-8 sm:gap-12 md:gap-16 overflow-x-auto pb-4 mb-1 no-scrollbar px-1">
-          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-purple-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
+        <div className="flex gap-6 xs:gap-8 sm:gap-10 md:gap-12 lg:gap-16 overflow-x-auto pb-4 mb-1 no-scrollbar px-1 -mx-1 snap-x snap-mandatory scroll-smooth touch-pan-x">
+          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-purple-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[0].coverImage ? (
                   <Image
@@ -287,8 +287,8 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Gallery</span>
           </button>
           
-          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-blue-400 to-purple-500 p-0.5 bg-white dark:bg-dark-900">
+          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-blue-400 to-purple-500 p-0.5 bg-white dark:bg-dark-900">
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[1].coverImage ? (
                   <Image
@@ -308,8 +308,8 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Videos</span>
           </button>
           
-          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-orange-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
+          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-orange-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[2].coverImage ? (
                   <Image
@@ -329,8 +329,8 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Packages</span>
           </button>
           
-          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-green-400 to-blue-500 p-0.5 bg-white dark:bg-dark-900">
+          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-green-400 to-blue-500 p-0.5 bg-white dark:bg-dark-900">
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[3].coverImage ? (
                   <Image
@@ -353,31 +353,31 @@ export default function HomePage() {
       </div>
 
       {/* Tabs - Instagram Style */}
-      <div className="border-t border-gray-200 dark:border-gray-800">
+      <div className="border-t border-gray-200 dark:border-gray-800 sticky top-0 bg-white dark:bg-dark-900 z-10">
         <div className="max-w-4xl mx-auto flex justify-center">
           <button
             onClick={() => setActiveTab('posts')}
-            className={`flex items-center justify-center gap-1.5 px-4 py-3 border-t transition ${
+            className={`flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3.5 sm:py-4 border-t-2 transition min-h-[48px] ${
               activeTab === 'posts'
                 ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white'
                 : 'border-transparent text-gray-400 dark:text-gray-500'
             }`}
           >
-            <BsGrid3X3 className="w-3 h-3" />
-            <span className="text-xs font-semibold uppercase tracking-widest">
+            <BsGrid3X3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
               POSTS
             </span>
           </button>
           <button
             onClick={() => setActiveTab('videos')}
-            className={`flex items-center justify-center gap-1.5 px-4 py-3 border-t transition ${
+            className={`flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3.5 sm:py-4 border-t-2 transition min-h-[48px] ${
               activeTab === 'videos'
                 ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white'
                 : 'border-transparent text-gray-400 dark:text-gray-500'
             }`}
           >
-            <MdVideoLibrary className="w-3 h-3" />
-            <span className="text-xs font-semibold uppercase tracking-widest">
+            <MdVideoLibrary className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
               VIDEOS
             </span>
           </button>
@@ -387,33 +387,33 @@ export default function HomePage() {
       {/* Instagram Grid - Exactly 3 columns */}
       <div className="max-w-4xl mx-auto">
         {loading ? (
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
             {[...Array(9)].map((_, i) => (
               <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse" />
             ))}
           </div>
         ) : displayMedia.length === 0 ? (
-          <div className="text-center py-20 px-4">
-            <div className="w-16 h-16 rounded-full border-2 border-gray-900 dark:border-white mx-auto mb-4 flex items-center justify-center">
+          <div className="text-center py-16 sm:py-20 px-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-gray-900 dark:border-white mx-auto mb-4 flex items-center justify-center">
               {activeTab === 'posts' ? (
-                <BsGrid3X3 className="w-7 h-7 text-gray-900 dark:text-white" />
+                <BsGrid3X3 className="w-6 h-6 sm:w-7 sm:h-7 text-gray-900 dark:text-white" />
               ) : (
-                <MdVideoLibrary className="w-7 h-7 text-gray-900 dark:text-white" />
+                <MdVideoLibrary className="w-6 h-6 sm:w-7 sm:h-7 text-gray-900 dark:text-white" />
               )}
             </div>
-            <h3 className="text-3xl font-light text-gray-900 dark:text-white mb-2">
+            <h3 className="text-2xl sm:text-3xl font-light text-gray-900 dark:text-white mb-2">
               No Posts Yet
             </h3>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
             {displayMedia.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
-                className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800"
+                className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 active:opacity-75 transition-opacity"
                 onClick={() => {
                   if (activeTab === 'posts') {
                     openLightbox(index);
@@ -430,25 +430,25 @@ export default function HomePage() {
                 
                 {/* Video indicator - top right */}
                 {'isReel' in item && (
-                  <div className="absolute top-3 right-3 z-10">
-                    <MdVideoLibrary className="w-5 h-5 text-white drop-shadow-lg" />
+                  <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
+                    <MdVideoLibrary className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" />
                   </div>
                 )}
 
                 {/* Instagram hover overlay with likes and comments */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="flex items-center gap-6 text-white font-semibold">
-                    <div className="flex items-center gap-2">
-                      <svg className="w-6 h-6 fill-current" viewBox="0 0 48 48">
+                  <div className="flex items-center gap-4 sm:gap-6 text-white font-semibold text-xs sm:text-base">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 48 48">
                         <path d="M34.6 3.1c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5s1.1-.2 1.6-.5c1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z"></path>
                       </svg>
-                      <span>247</span>
+                      <span className="hidden xs:inline">247</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-6 h-6 fill-current" viewBox="0 0 48 48">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 48 48">
                         <path d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"></path>
                       </svg>
-                      <span>18</span>
+                      <span className="hidden xs:inline">18</span>
                     </div>
                   </div>
                 </div>

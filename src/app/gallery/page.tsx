@@ -110,18 +110,18 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen py-20 sm:py-24 md:py-28 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-16 sm:py-20 md:py-24 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-2 sm:mb-3 md:mb-4 text-gray-900 dark:text-gray-100">
               Gallery
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-4 sm:mb-6 md:mb-8 px-4">
               Explore my photography collection across different categories
             </p>
             <CategoryFilter
@@ -130,12 +130,12 @@ export default function GalleryPage() {
             />
             
             {/* Sorting Controls */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-6 px-4">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
-              <div className="flex gap-2">
+            <div className="flex flex-col xs:flex-row flex-wrap items-center justify-center gap-2 sm:gap-3 mt-4 sm:mt-6 px-4">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 w-full xs:w-auto text-center xs:text-left">Sort by:</span>
+              <div className="flex gap-2 w-full xs:w-auto justify-center">
                 <button
                   onClick={() => handleSortChange('date')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 xs:flex-initial px-4 sm:px-5 py-2.5 sm:py-3 min-h-[44px] rounded-lg text-sm font-medium transition-all ${
                     sortBy === 'date'
                       ? 'bg-primary-600 text-white'
                       : 'bg-gray-100 dark:bg-dark-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-dark-700'
@@ -145,7 +145,7 @@ export default function GalleryPage() {
                 </button>
                 <button
                   onClick={() => handleSortChange('title')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 xs:flex-initial px-4 sm:px-5 py-2.5 sm:py-3 min-h-[44px] rounded-lg text-sm font-medium transition-all ${
                     sortBy === 'title'
                       ? 'bg-primary-600 text-white'
                       : 'bg-gray-100 dark:bg-dark-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-dark-700'
@@ -154,23 +154,23 @@ export default function GalleryPage() {
                   Title {sortBy === 'title' && (sortOrder === 'desc' ? '↓' : '↑')}
                 </button>
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-500">
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 w-full xs:w-auto text-center xs:text-left">
                 ({filteredImages.length} {filteredImages.length === 1 ? 'photo' : 'photos'})
               </span>
             </div>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {[...Array(9)].map((_, i) => (
-                <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse rounded-lg" />
+                <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse rounded-lg sm:rounded-xl" />
               ))}
             </div>
           ) : filteredImages.length > 0 ? (
             <GalleryGrid images={filteredImages} onImageClick={openLightbox} />
           ) : (
-            <div className="text-center py-16">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">No images found in this category.</p>
+            <div className="text-center py-12 sm:py-16">
+              <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg">No images found in this category.</p>
             </div>
           )}
         </motion.div>

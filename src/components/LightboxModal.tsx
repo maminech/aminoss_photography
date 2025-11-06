@@ -133,16 +133,16 @@ export default function LightboxModal({
         >
           {/* Top Bar - Mobile & Desktop */}
           <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
-            <div className="flex items-center justify-between p-3 md:p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               {/* Left: Counter */}
               <div className="flex items-center space-x-3">
-                <span className="text-white text-sm md:text-base font-medium">
+                <span className="text-white text-sm sm:text-base font-medium">
                   {currentIndex + 1} / {images.length}
                 </span>
               </div>
 
               {/* Right: Actions */}
-              <div className="flex items-center space-x-2 md:space-x-3">
+              <div className="flex items-center space-x-1.5 sm:space-x-2">
                 {/* Zoom Controls */}
                 <button
                   onClick={(e) => {
@@ -150,12 +150,12 @@ export default function LightboxModal({
                     setZoom(Math.max(zoom - 0.5, 1));
                   }}
                   disabled={zoom <= 1}
-                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation disabled:opacity-30"
+                  className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95 disabled:opacity-30"
                   aria-label="Zoom out"
                 >
                   <FiZoomOut className="w-5 h-5" />
                 </button>
-                <span className="text-white text-sm font-medium min-w-[45px] text-center">
+                <span className="text-white text-xs sm:text-sm font-medium min-w-[35px] sm:min-w-[45px] text-center hidden xs:block">
                   {Math.round(zoom * 100)}%
                 </span>
                 <button
@@ -164,7 +164,7 @@ export default function LightboxModal({
                     setZoom(Math.min(zoom + 0.5, 3));
                   }}
                   disabled={zoom >= 3}
-                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation disabled:opacity-30"
+                  className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95 disabled:opacity-30"
                   aria-label="Zoom in"
                 >
                   <FiZoomIn className="w-5 h-5" />
@@ -174,7 +174,7 @@ export default function LightboxModal({
                     e.stopPropagation();
                     setShowInfo(!showInfo);
                   }}
-                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation"
+                  className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95"
                   aria-label="Toggle info"
                 >
                   <FiInfo className="w-5 h-5" />
@@ -184,14 +184,14 @@ export default function LightboxModal({
                     e.stopPropagation();
                     // Share functionality
                   }}
-                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation hidden md:flex"
+                  className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95 hidden md:flex"
                   aria-label="Share"
                 >
                   <FiShare2 className="w-5 h-5" />
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation"
+                  className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95"
                   aria-label="Close"
                 >
                   <FiX className="w-6 h-6" />
@@ -214,12 +214,12 @@ export default function LightboxModal({
                     if (currentIndex > 0) onPrevious();
                   }}
                   disabled={currentIndex === 0}
-                  className={`absolute left-2 md:left-6 z-20 p-3 md:p-4 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation ${
+                  className={`absolute left-2 sm:left-4 md:left-6 z-20 p-3 sm:p-4 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95 ${
                     currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : ''
                   }`}
                   aria-label="Previous"
                 >
-                  <FiChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
+                  <FiChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
                 </button>
                 <button
                   onClick={(e) => {
@@ -227,12 +227,12 @@ export default function LightboxModal({
                     if (currentIndex < images.length - 1) onNext();
                   }}
                   disabled={currentIndex === images.length - 1}
-                  className={`absolute right-2 md:right-6 z-20 p-3 md:p-4 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation ${
+                  className={`absolute right-2 sm:right-4 md:right-6 z-20 p-3 sm:p-4 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95 ${
                     currentIndex === images.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
                   }`}
                   aria-label="Next"
                 >
-                  <FiChevronRight className="w-6 h-6 md:w-8 md:h-8" />
+                  <FiChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
                 </button>
               </>
             )}
@@ -244,7 +244,7 @@ export default function LightboxModal({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="relative w-full h-full flex items-center justify-center px-4 md:px-20 py-20 md:py-24"
+              className="relative w-full h-full flex items-center justify-center px-3 xs:px-4 sm:px-12 md:px-20 py-16 sm:py-20 md:py-24"
               drag={zoom === 1}
               dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
               dragElastic={0.3}
@@ -295,26 +295,26 @@ export default function LightboxModal({
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                  className="md:hidden absolute bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-xl border-t border-white/10 rounded-t-3xl"
+                  className="md:hidden absolute bottom-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-xl border-t border-white/10 rounded-t-3xl max-h-[70vh] overflow-y-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="p-6 max-h-[60vh] overflow-y-auto">
+                  <div className="p-5 sm:p-6">
                     {/* Drag Handle */}
-                    <div className="w-12 h-1.5 bg-white/30 rounded-full mx-auto mb-6"></div>
+                    <div className="w-12 h-1.5 bg-white/30 rounded-full mx-auto mb-5 sm:mb-6"></div>
                     
-                    <h2 className="text-xl font-bold text-white mb-2">
+                    <h2 className="text-lg sm:text-xl font-bold text-white mb-2 break-words">
                       {currentImage.title || 'Untitled'}
                     </h2>
                     
                     {currentImage.description && (
-                      <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                      <p className="text-gray-300 text-sm leading-relaxed mb-4 break-words">
                         {currentImage.description}
                       </p>
                     )}
                     
                     {currentImage.category && (
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="px-3 py-1 bg-white/10 text-white text-xs font-medium rounded-full capitalize">
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        <span className="px-3 py-1.5 bg-white/10 text-white text-xs font-medium rounded-full capitalize">
                           {currentImage.category}
                         </span>
                       </div>
@@ -326,7 +326,7 @@ export default function LightboxModal({
                         {currentImage.tags.map((tag, idx) => (
                           <span
                             key={idx}
-                            className="px-2 py-1 bg-white/5 text-gray-400 text-xs rounded"
+                            className="px-2 py-1 bg-white/5 text-gray-400 text-xs rounded break-all"
                           >
                             #{tag}
                           </span>
@@ -335,12 +335,12 @@ export default function LightboxModal({
                     )}
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-4 border-t border-white/10">
-                      <button className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition touch-manipulation">
+                    <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
+                      <button className="flex items-center justify-center gap-2 py-3 min-h-[48px] bg-white/10 hover:bg-white/20 text-white rounded-xl transition active:scale-95">
                         <FiHeart className="w-5 h-5" />
                         <span className="font-medium">Like</span>
                       </button>
-                      <button className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition touch-manipulation">
+                      <button className="flex items-center justify-center gap-2 py-3 min-h-[48px] bg-white/10 hover:bg-white/20 text-white rounded-xl transition active:scale-95">
                         <FiDownload className="w-5 h-5" />
                         <span className="font-medium">Save</span>
                       </button>
@@ -485,11 +485,11 @@ export default function LightboxModal({
 
                     {/* Actions */}
                     <div className="p-6 border-t border-white/10 space-y-3">
-                      <button className="w-full flex items-center justify-center gap-2 py-3 bg-white text-black hover:bg-gray-200 rounded-xl transition font-medium">
+                      <button className="w-full flex items-center justify-center gap-2 py-3 min-h-[48px] bg-white text-black hover:bg-gray-200 rounded-xl transition active:scale-95 font-medium">
                         <FiDownload className="w-5 h-5" />
                         <span>Download Image</span>
                       </button>
-                      <button className="w-full flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition font-medium">
+                      <button className="w-full flex items-center justify-center gap-2 py-3 min-h-[48px] bg-white/10 hover:bg-white/20 text-white rounded-xl transition active:scale-95 font-medium">
                         <FiShare2 className="w-5 h-5" />
                         <span>Share</span>
                       </button>

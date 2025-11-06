@@ -172,10 +172,11 @@ export default function InstagramSync() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all active:scale-95 shadow-lg"
+        className="flex items-center gap-2 px-3 xs:px-4 py-2 min-h-[44px] text-sm sm:text-base bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all active:scale-95 shadow-lg"
       >
-        <FiInstagram className="w-5 h-5" />
-        <span className="font-medium">Sync from Instagram</span>
+        <FiInstagram className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span className="font-medium hidden xs:inline">Sync from Instagram</span>
+        <span className="font-medium xs:hidden">Sync IG</span>
       </button>
 
       <AnimatePresence>
@@ -195,43 +196,43 @@ export default function InstagramSync() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[90vh] bg-white dark:bg-dark-800 rounded-xl shadow-2xl z-50 overflow-hidden"
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] xs:w-[calc(100%-3rem)] sm:w-full max-w-4xl max-h-[90vh] bg-white dark:bg-dark-800 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <FiInstagram className="w-6 h-6 text-white" />
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                    <FiInstagram className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                    <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                       Instagram Sync
                     </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden xs:block">
                       Import photos and videos from your Instagram account
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                  className="p-2 min-w-[44px] min-h-[44px] hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition active:scale-95"
                 >
                   <FiX className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
 
               {/* Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1">
                 {/* Alerts */}
                 {error && (
-                  <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
+                  <div className="mb-4 p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2 sm:gap-3">
                     <FiAlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-red-900 dark:text-red-100">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-red-900 dark:text-red-100 break-words">
                         {error}
                       </p>
                       {error.includes('not configured') && (
-                        <p className="text-xs text-red-700 dark:text-red-300 mt-2">
+                        <p className="text-[10px] xs:text-xs text-red-700 dark:text-red-300 mt-2 break-words">
                           Add these to your .env file:
                           <br />
                           • INSTAGRAM_APP_ID
@@ -244,7 +245,7 @@ export default function InstagramSync() {
                             href="https://developers.facebook.com/docs/instagram-basic-display-api/getting-started"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="underline hover:text-red-900 dark:hover:text-red-100"
+                            className="underline hover:text-red-900 dark:hover:text-red-100 break-all"
                           >
                             View Setup Guide
                           </a>
@@ -255,9 +256,9 @@ export default function InstagramSync() {
                 )}
 
                 {success && (
-                  <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
+                  <div className="mb-4 p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-2 sm:gap-3">
                     <FiCheck className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                    <p className="text-xs sm:text-sm font-medium text-green-900 dark:text-green-100 break-words">
                       {success}
                     </p>
                   </div>
@@ -265,20 +266,20 @@ export default function InstagramSync() {
 
                 {/* Empty State */}
                 {media.length === 0 && (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
-                      <FiInstagram className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+                  <div className="text-center py-8 sm:py-12">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
+                      <FiInstagram className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600 dark:text-purple-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       Connect Your Instagram Account
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-5 sm:mb-6 max-w-md mx-auto px-4">
                       Import your Instagram photos and videos directly to your portfolio.
                     </p>
                     <button
                       onClick={handleConnect}
                       disabled={loading}
-                      className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                      className="px-5 sm:px-6 py-2.5 sm:py-3 min-h-[48px] text-sm sm:text-base bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                     >
                       {loading ? 'Connecting...' : 'Connect Instagram'}
                     </button>
@@ -289,28 +290,28 @@ export default function InstagramSync() {
                 {media.length > 0 && (
                   <>
                     {/* Selection Controls */}
-                    <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         {selectedMedia.size} of {media.length} selected
                       </p>
                       <div className="flex gap-2">
                         <button
                           onClick={selectAll}
-                          className="text-sm px-3 py-1.5 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition"
+                          className="text-xs sm:text-sm px-2 xs:px-3 py-1.5 min-h-[44px] text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition active:scale-95"
                         >
                           Select All
                         </button>
                         <button
                           onClick={deselectAll}
-                          className="text-sm px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                          className="text-xs sm:text-sm px-2 xs:px-3 py-1.5 min-h-[44px] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition active:scale-95"
                         >
-                          Deselect All
+                          Deselect
                         </button>
                       </div>
                     </div>
 
                     {/* Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                       {media.map((item) => (
                         <motion.div
                           key={item.id}
@@ -353,17 +354,17 @@ export default function InstagramSync() {
 
               {/* Footer */}
               {media.length > 0 && (
-                <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900">
+                <div className="flex flex-col xs:flex-row items-stretch xs:items-center justify-end gap-2 xs:gap-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900 flex-shrink-0">
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition"
+                    className="px-4 py-2 min-h-[48px] text-sm sm:text-base text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition active:scale-95"
                   >
                     Cancel
                   </button>
                     <button
                       onClick={handleImport}
                       disabled={selectedMedia.size === 0 || importing}
-                      className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                      className="flex items-center justify-center gap-2 px-5 sm:px-6 py-2 min-h-[48px] text-sm sm:text-base bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                     >
                       <FiDownload className="w-4 h-4" />
                       {importing
