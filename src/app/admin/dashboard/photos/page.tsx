@@ -388,8 +388,6 @@ export default function AdminPhotosPage() {
               </button>
             ))}
           </div>
-        </div>}
-          </div>
         </div>
 
         {/* Images Grid */}
