@@ -18,15 +18,15 @@ interface CategoryFilterProps {
 
 export default function CategoryFilter({ activeCategory, onCategoryChange }: CategoryFilterProps) {
   return (
-    <div className="flex flex-wrap justify-center gap-3 mb-8">
+    <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 px-2">
       {categories.map((category) => (
         <motion.button
           key={category.value}
           onClick={() => onCategoryChange(category.value)}
-          className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+          className={`px-5 sm:px-6 py-2.5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all ${
             activeCategory === category.value
               ? 'bg-primary-600 text-white shadow-lg'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
           }`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

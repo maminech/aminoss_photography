@@ -53,6 +53,10 @@ export default function GalleryGrid({ images, onImageClick }: GalleryGridProps) 
                     loadedImages.has(image.id) ? 'opacity-100' : 'opacity-0'
                   }`}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  quality={95}
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YzZjRmNiIvPjwvc3ZnPg=="
                   onLoad={() => handleImageLoad(image.id)}
                 />
                 

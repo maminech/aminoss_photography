@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FiUpload, FiTrash2, FiEdit2, FiX, FiStar, FiCheck } from 'react-icons/fi';
 import Image from 'next/image';
 import { CldUploadWidget } from 'next-cloudinary';
+import InstagramSync from '@/components/InstagramSync';
 
 interface ImageData {
   id: string;
@@ -32,6 +33,8 @@ export default function AdminPhotosPage() {
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [filterCategory, setFilterCategory] = useState('all');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectAll, setSelectAll] = useState(false);
 
   const categories = ['all', 'weddings', 'portraits', 'travel', 'fashion', 'events'];
 
@@ -175,6 +178,87 @@ export default function AdminPhotosPage() {
     await updateImage(image.id, { featured: !image.featured });
   };
 
+  // Bulk helpers
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds(new Set());
+      setSelectAll(false);
+    } else {
+      const ids = new Set(filteredImages.map((i) => i.id));
+      setSelectedIds(ids);
+      setSelectAll(true);
+    }
+  };
+
+  const bulkUpdate = async (data: Partial<ImageData>) => {
+    if (selectedIds.size === 0) return;
+    try {
+      const res = await fetch('/api/admin/images/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedIds), action: 'update', data }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        alert(json.message || 'Updated selected photos');
+        setSelectedIds(new Set());
+        setSelectAll(false);
+        fetchImages();
+      } else {
+        const err = await res.json();
+        alert(`❌ ${err.error || 'Bulk update failed'}`);
+      }
+    } catch (error) {
+      console.error('Bulk update error:', error);
+      alert('❌ Bulk update failed');
+    }
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    const confirmDelete = confirm(
+      `Delete ${selectedIds.size} selected photos?\n\nClick OK to delete from DATABASE ONLY. Click Cancel then choose "Delete from Both" to delete everywhere.`
+    );
+
+    let deleteBoth = false;
+    if (!confirmDelete) {
+      deleteBoth = confirm('⚠️ DELETE FROM BOTH? This will remove files from Cloudinary too. Click OK to proceed.');
+      if (!deleteBoth) return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/images/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedIds), action: 'delete', deleteFromCloudinary: deleteBoth }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        alert(json.message || 'Deleted selected photos');
+        setSelectedIds(new Set());
+        setSelectAll(false);
+        fetchImages();
+      } else {
+        const err = await res.json();
+        alert(`❌ ${err.error || 'Bulk delete failed'}`);
+      }
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      alert('❌ Bulk delete failed');
+    }
+  };
+
   useEffect(() => {
     fetchImages();
   }, []);
@@ -195,30 +279,89 @@ export default function AdminPhotosPage() {
                 {images.length} photos • {images.filter(i => i.featured).length} featured • {images.filter(i => i.showOnHomepage).length} on homepage
               </p>
             </div>
-            <CldUploadWidget
-              uploadPreset="aminoss_portfolio"
-              options={{
-                folder: 'portfolio',
-                resourceType: 'image',
-                clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                multiple: true,
-                maxFiles: 50,
-              }}
-              onSuccess={(result: any) => {
-                handleUploadSuccess(result);
-              }}
-            >
-              {({ open }) => (
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Instagram Sync Button */}
+              <InstagramSync />
+              
+              {/* Upload Photos Button */}
+              <CldUploadWidget
+                uploadPreset="aminoss_portfolio"
+                options={{
+                  folder: 'portfolio',
+                  resourceType: 'image',
+                  clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                  multiple: true,
+                  maxFiles: 50,
+                }}
+                onSuccess={(result: any) => {
+                  handleUploadSuccess(result);
+                }}
+              >
+                {({ open }) => (
+                  <button
+                    onClick={() => open()}
+                    disabled={uploading}
+                    className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50 active:scale-95"
+                  >
+                    <FiUpload className="w-4 h-4" />
+                    <span>{uploading ? 'Uploading...' : 'Upload Photos'}</span>
+                  </button>
+                )}
+              </CldUploadWidget>
+            </div>
+
+            {/* Bulk actions bar (visible when photos are selected) */}
+            {selectedIds.size > 0 && (
+              <div className="mt-3 p-3 rounded-lg bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                <div className="text-sm text-gray-800 dark:text-gray-200">
+                  {selectedIds.size} selected
+                </div>
                 <button
-                  onClick={() => open()}
-                  disabled={uploading}
-                  className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
+                  onClick={() => bulkDelete()}
+                  className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                 >
-                  <FiUpload className="w-4 h-4" />
-                  <span>{uploading ? 'Uploading...' : 'Upload Photos'}</span>
+                  Delete
                 </button>
-              )}
-            </CldUploadWidget>
+                <button
+                  onClick={() => bulkDelete()}
+                  className="px-3 py-2 bg-red-600/90 text-white rounded-lg hover:bg-red-700 transition"
+                >
+                  Delete from both
+                </button>
+                <button
+                  onClick={() => bulkUpdate({ featured: true })}
+                  className="px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                >
+                  Set Featured
+                </button>
+                <button
+                  onClick={() => bulkUpdate({ showOnHomepage: true })}
+                  className="px-3 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition"
+                >
+                  Show on Homepage
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedIds(new Set());
+                    setSelectAll(false);
+                  }}
+                  className="px-3 py-2 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
+                >
+                  Clear
+                </button>
+                <div className="ml-auto">
+                  <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-700"
+                    />
+                    Select all
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -269,6 +412,16 @@ export default function AdminPhotosPage() {
               >
                 {/* Image */}
                 <div className="relative aspect-square">
+                  {/* Selection checkbox */}
+                  <div className="absolute top-2 left-2 z-30">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(image.id)}
+                      onChange={() => toggleSelectOne(image.id)}
+                      className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-700 text-primary focus:ring-primary"
+                    />
+                  </div>
+
                   <Image
                     src={image.thumbnailUrl}
                     alt={image.title || 'Photo'}
@@ -303,19 +456,19 @@ export default function AdminPhotosPage() {
                         setSelectedImage(image);
                         setEditModalOpen(true);
                       }}
-                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
+                      className="p-2 bg-white/95 dark:bg-dark-700/95 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition shadow-sm"
                     >
                       <FiEdit2 className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => toggleFeatured(image)}
-                      className="p-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition"
+                      className="p-2 bg-white/95 dark:bg-dark-700/95 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-600 transition shadow-sm"
                     >
                       <FiStar className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => deleteImage(image.id, image.cloudinaryId)}
-                      className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow-sm"
                     >
                       <FiTrash2 className="w-5 h-5" />
                     </button>

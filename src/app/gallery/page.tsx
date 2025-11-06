@@ -12,6 +12,8 @@ export default function GalleryPage() {
   const [allImages, setAllImages] = useState<MediaItem[]>([]);
   const [filteredImages, setFilteredImages] = useState<MediaItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'title'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -63,7 +65,35 @@ export default function GalleryPage() {
 
   const handleCategoryChange = (category: Category) => {
     setActiveCategory(category);
-    setFilteredImages(filterImagesByCategory(allImages, category));
+    const filtered = filterImagesByCategory(allImages, category);
+    setFilteredImages(sortImages(filtered));
+  };
+
+  const sortImages = (images: MediaItem[]) => {
+    const sorted = [...images].sort((a, b) => {
+      if (sortBy === 'date') {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      } else {
+        const titleA = a.title.toLowerCase();
+        const titleB = b.title.toLowerCase();
+        return sortOrder === 'asc' 
+          ? titleA.localeCompare(titleB)
+          : titleB.localeCompare(titleA);
+      }
+    });
+    return sorted;
+  };
+
+  const handleSortChange = (newSortBy: 'date' | 'title') => {
+    if (sortBy === newSortBy) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(newSortBy);
+      setSortOrder('desc');
+    }
+    setFilteredImages(sortImages(filteredImages));
   };
 
   const openLightbox = (index: number) => {
@@ -80,24 +110,54 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-20 sm:py-24 md:py-28 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
+          <div className="text-center mb-8 sm:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">
               Gallery
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+            <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
               Explore my photography collection across different categories
             </p>
             <CategoryFilter
               activeCategory={activeCategory}
               onCategoryChange={handleCategoryChange}
             />
+            
+            {/* Sorting Controls */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-6 px-4">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleSortChange('date')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    sortBy === 'date'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-100 dark:bg-dark-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-dark-700'
+                  }`}
+                >
+                  Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+                <button
+                  onClick={() => handleSortChange('title')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    sortBy === 'title'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-100 dark:bg-dark-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-dark-700'
+                  }`}
+                >
+                  Title {sortBy === 'title' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-500">
+                ({filteredImages.length} {filteredImages.length === 1 ? 'photo' : 'photos'})
+              </span>
+            </div>
           </div>
 
           {loading ? (

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { FiX, FiChevronLeft, FiChevronRight, FiDownload, FiHeart, FiShare2, FiInfo } from 'react-icons/fi';
+import { FiX, FiChevronLeft, FiChevronRight, FiDownload, FiHeart, FiShare2, FiInfo, FiZoomIn, FiZoomOut } from 'react-icons/fi';
 import { MediaItem } from '@/types';
 
 interface LightboxModalProps {
@@ -25,12 +25,15 @@ export default function LightboxModal({
 }: LightboxModalProps) {
   const [showInfo, setShowInfo] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
   const currentImage = images[currentIndex];
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-200, 0, 200], [0.5, 1, 0.5]);
 
   useEffect(() => {
     setImageLoaded(false);
+    setZoom(1); // Reset zoom when changing images
   }, [currentIndex]);
 
   useEffect(() => {
@@ -39,24 +42,39 @@ export default function LightboxModal({
       
       switch (e.key) {
         case 'Escape':
-          onClose();
+          if (zoom > 1) {
+            setZoom(1);
+          } else {
+            onClose();
+          }
           break;
         case 'ArrowLeft':
-          if (currentIndex > 0) onPrevious();
+          if (currentIndex > 0 && zoom === 1) onPrevious();
           break;
         case 'ArrowRight':
-          if (currentIndex < images.length - 1) onNext();
+          if (currentIndex < images.length - 1 && zoom === 1) onNext();
           break;
         case 'i':
         case 'I':
           setShowInfo(!showInfo);
+          break;
+        case '+':
+        case '=':
+          setZoom(Math.min(zoom + 0.5, 3));
+          break;
+        case '-':
+        case '_':
+          setZoom(Math.max(zoom - 0.5, 1));
+          break;
+        case '0':
+          setZoom(1);
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentIndex, images.length, showInfo, onClose, onNext, onPrevious]);
+  }, [isOpen, currentIndex, images.length, showInfo, zoom, onClose, onNext, onPrevious]);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -73,7 +91,15 @@ export default function LightboxModal({
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 100;
     const velocity = info.velocity.x;
+    const velocityY = info.velocity.y;
     const offset = info.offset.x;
+    const offsetY = info.offset.y;
+
+    // Swipe down to close (mobile)
+    if (offsetY > threshold || velocityY > 500) {
+      onClose();
+      return;
+    }
 
     // Swipe left (next image)
     if (offset < -threshold || velocity < -500) {
@@ -117,6 +143,32 @@ export default function LightboxModal({
 
               {/* Right: Actions */}
               <div className="flex items-center space-x-2 md:space-x-3">
+                {/* Zoom Controls */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoom(Math.max(zoom - 0.5, 1));
+                  }}
+                  disabled={zoom <= 1}
+                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation disabled:opacity-30"
+                  aria-label="Zoom out"
+                >
+                  <FiZoomOut className="w-5 h-5" />
+                </button>
+                <span className="text-white text-sm font-medium min-w-[45px] text-center">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoom(Math.min(zoom + 0.5, 3));
+                  }}
+                  disabled={zoom >= 3}
+                  className="p-2 md:p-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all touch-manipulation disabled:opacity-30"
+                  aria-label="Zoom in"
+                >
+                  <FiZoomIn className="w-5 h-5" />
+                </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -193,11 +245,12 @@ export default function LightboxModal({
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
               className="relative w-full h-full flex items-center justify-center px-4 md:px-20 py-20 md:py-24"
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
+              drag={zoom === 1}
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
               dragElastic={0.3}
               onDragEnd={handleDragEnd}
-              style={{ x, opacity }}
+              onDragStart={() => setIsDragging(true)}
+              style={{ x: zoom === 1 ? x : 0, opacity: zoom === 1 ? opacity : 1 }}
             >
               {/* Loading Spinner */}
               {!imageLoaded && (
@@ -207,7 +260,16 @@ export default function LightboxModal({
               )}
 
               {/* Image */}
-              <div className="relative max-w-7xl max-h-full w-full h-full">
+              <motion.div 
+                className="relative max-w-7xl max-h-full w-full h-full"
+                animate={{ scale: zoom }}
+                transition={{ duration: 0.2 }}
+                style={{ cursor: zoom > 1 ? 'grab' : 'default' }}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  setZoom(zoom === 1 ? 2 : 1);
+                }}
+              >
                 <Image
                   src={currentImage.url}
                   alt={currentImage.title || 'Image'}
@@ -217,9 +279,9 @@ export default function LightboxModal({
                   draggable={false}
                   onLoadingComplete={() => setImageLoaded(true)}
                   sizes="100vw"
-                  quality={95}
+                  quality={100}
                 />
-              </div>
+              </motion.div>
             </motion.div>
           </div>
 

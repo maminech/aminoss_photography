@@ -8,6 +8,7 @@ import { FiGrid, FiVideo, FiBookmark, FiSettings, FiMail } from 'react-icons/fi'
 import { BsGrid3X3 } from 'react-icons/bs';
 import { MdVideoLibrary } from 'react-icons/md';
 import LightboxModal from '@/components/LightboxModal';
+import StoriesViewer from '@/components/StoriesViewer';
 import { MediaItem } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 
@@ -38,6 +39,8 @@ export default function HomePage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [storiesOpen, setStoriesOpen] = useState(false);
+  const [initialHighlightIndex, setInitialHighlightIndex] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -123,15 +126,65 @@ export default function HomePage() {
 
   const displayMedia = activeTab === 'posts' ? images : videos;
 
+  // Instagram Stories highlights data
+  const highlights = [
+    {
+      id: 'gallery',
+      name: 'Gallery',
+      coverImage: images[0]?.thumbnailUrl || '/placeholder.jpg',
+      stories: images.slice(0, 6).map((img) => ({
+        id: img.id,
+        image: img.url,
+        title: img.title
+      }))
+    },
+    {
+      id: 'videos',
+      name: 'Videos',
+      coverImage: videos[0]?.thumbnailUrl || '/placeholder.jpg',
+      stories: videos.slice(0, 4).map((vid) => ({
+        id: vid.id,
+        image: vid.thumbnailUrl,
+        title: vid.title
+      }))
+    },
+    {
+      id: 'packages',
+      name: 'Packages',
+      coverImage: images[1]?.thumbnailUrl || '/placeholder.jpg',
+      stories: [
+        { id: 'pack-1', image: images[2]?.url || '/placeholder.jpg', title: '📦 Wedding Package' },
+        { id: 'pack-2', image: images[3]?.url || '/placeholder.jpg', title: '👨‍👩‍👧 Family Sessions' },
+        { id: 'pack-3', image: images[4]?.url || '/placeholder.jpg', title: '🎉 Event Coverage' },
+        { id: 'pack-4', image: images[5]?.url || '/placeholder.jpg', title: '📸 Portrait Sessions' },
+      ]
+    },
+    {
+      id: 'contact',
+      name: 'Contact',
+      coverImage: images[2]?.thumbnailUrl || '/placeholder.jpg',
+      stories: [
+        { id: 'contact-1', image: images[6]?.url || '/placeholder.jpg', title: '📱 Book Your Session' },
+        { id: 'contact-2', image: images[7]?.url || '/placeholder.jpg', title: '✉️ Get in Touch' },
+        { id: 'contact-3', image: images[8]?.url || '/placeholder.jpg', title: '📍 Location' },
+      ]
+    }
+  ];
+
+  const openStories = (index: number) => {
+    setInitialHighlightIndex(index);
+    setStoriesOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-dark-900">
       {/* Instagram Profile Header - Exact Layout */}
-      <div className="max-w-4xl mx-auto px-4 pt-8 pb-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-4">
         {/* Profile Section */}
-        <div className="flex gap-8 md:gap-20 mb-11">
+        <div className="flex gap-6 sm:gap-8 md:gap-20 mb-11">
           {/* Profile Picture - Left Side */}
           <div className="flex-shrink-0">
-            <div className="w-20 h-20 md:w-36 md:h-36 rounded-full overflow-hidden bg-white dark:bg-dark-800">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-full overflow-hidden bg-white dark:bg-dark-800">
               <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
                 {settings.heroImage ? (
                   <Image
@@ -153,27 +206,29 @@ export default function HomePage() {
           {/* Profile Info - Right Side */}
           <div className="flex-1 min-w-0">
             {/* Username and Buttons */}
-            <div className="flex items-center gap-5 mb-5">
-              <h1 className="text-xl font-light text-gray-900 dark:text-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mb-4 sm:mb-5">
+              <h1 className="text-lg sm:text-xl font-light text-gray-900 dark:text-gray-100 truncate">
                 {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
               </h1>
-              <Link href="/contact">
-                <button className="px-6 py-1.5 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition text-sm">
-                  Message
+              <div className="flex gap-2 sm:gap-3">
+                <Link href="/contact" className="flex-1 sm:flex-initial">
+                  <button className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition text-sm whitespace-nowrap">
+                    Message
+                  </button>
+                </Link>
+                <Link href="/gallery" className="flex-1 sm:flex-initial">
+                  <button className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-sm whitespace-nowrap">
+                    Gallery
+                  </button>
+                </Link>
+                <button className="p-2 hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition active:scale-95 hidden sm:block">
+                  <FiSettings className="w-5 h-5 text-gray-900 dark:text-gray-100" />
                 </button>
-              </Link>
-              <Link href="/gallery">
-                <button className="px-6 py-1.5 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 transition text-sm">
-                  View Gallery
-                </button>
-              </Link>
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition">
-                <FiSettings className="w-5 h-5 text-gray-900 dark:text-gray-100" />
-              </button>
+              </div>
             </div>
 
             {/* Stats */}
-            <div className="flex gap-10 mb-5">
+            <div className="flex gap-6 sm:gap-10 mb-4 sm:mb-5 text-sm sm:text-base">
               <div>
                 <span className="font-semibold text-gray-900 dark:text-gray-100">
                   {images.length + videos.length}
@@ -209,40 +264,91 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Highlights */}
-        <div className="flex gap-16 overflow-x-auto pb-4 mb-1 no-scrollbar">
-          <Link href="/gallery" className="flex flex-col items-center gap-1 flex-shrink-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-gray-200 dark:ring-gray-700 p-0.5 bg-white dark:bg-dark-800">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
-                <BsGrid3X3 className="w-5 h-5 md:w-6 md:h-6 text-white" />
+        {/* Highlights - Instagram Stories Style */}
+        <div className="flex gap-8 sm:gap-12 md:gap-16 overflow-x-auto pb-4 mb-1 no-scrollbar px-1">
+          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-purple-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                {highlights[0].coverImage ? (
+                  <Image
+                    src={highlights[0].coverImage}
+                    alt="Gallery"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+                    <BsGrid3X3 className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  </div>
+                )}
               </div>
             </div>
             <span className="text-xs text-gray-900 dark:text-gray-100">Gallery</span>
-          </Link>
-          <Link href="/videos" className="flex flex-col items-center gap-1 flex-shrink-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-gray-200 dark:ring-gray-700 p-0.5 bg-white dark:bg-dark-800">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                <MdVideoLibrary className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          </button>
+          
+          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-blue-400 to-purple-500 p-0.5 bg-white dark:bg-dark-900">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                {highlights[1].coverImage ? (
+                  <Image
+                    src={highlights[1].coverImage}
+                    alt="Videos"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                    <MdVideoLibrary className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  </div>
+                )}
               </div>
             </div>
             <span className="text-xs text-gray-900 dark:text-gray-100">Videos</span>
-          </Link>
-          <Link href="/packs" className="flex flex-col items-center gap-1 flex-shrink-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-gray-200 dark:ring-gray-700 p-0.5 bg-white dark:bg-dark-800">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
-                <FiBookmark className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          </button>
+          
+          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-orange-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                {highlights[2].coverImage ? (
+                  <Image
+                    src={highlights[2].coverImage}
+                    alt="Packages"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
+                    <FiBookmark className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  </div>
+                )}
               </div>
             </div>
             <span className="text-xs text-gray-900 dark:text-gray-100">Packages</span>
-          </Link>
-          <Link href="/about" className="flex flex-col items-center gap-1 flex-shrink-0">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-gray-200 dark:ring-gray-700 p-0.5 bg-white dark:bg-dark-800">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
-                <FiMail className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          </button>
+          
+          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-green-400 to-blue-500 p-0.5 bg-white dark:bg-dark-900">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                {highlights[3].coverImage ? (
+                  <Image
+                    src={highlights[3].coverImage}
+                    alt="Contact"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
+                    <FiMail className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  </div>
+                )}
               </div>
             </div>
             <span className="text-xs text-gray-900 dark:text-gray-100">Contact</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -361,6 +467,15 @@ export default function HomePage() {
         onNext={nextImage}
         onPrevious={previousImage}
       />
+
+      {/* Instagram Stories Viewer */}
+      {storiesOpen && (
+        <StoriesViewer
+          highlights={highlights}
+          onClose={() => setStoriesOpen(false)}
+          initialHighlightIndex={initialHighlightIndex}
+        />
+      )}
     </div>
   );
 }

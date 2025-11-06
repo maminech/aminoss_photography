@@ -170,13 +170,13 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - Larger touch target */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
+            className="md:hidden p-3 -mr-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
             aria-label="Toggle menu"
           >
-            {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+            {isOpen ? <FiX className="w-7 h-7" /> : <FiMenu className="w-7 h-7" />}
           </button>
         </div>
       </div>
@@ -190,16 +190,16 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-gray-700"
           >
-            <div className="px-4 py-4 space-y-3">
+            <div className="px-4 py-6 space-y-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block py-2 text-base font-medium transition-colors ${
+                  className={`block py-3.5 px-4 text-base font-medium rounded-lg transition-all ${
                     pathname === link.href
-                      ? 'text-primary-600 dark:text-primary-500'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500'
+                      ? 'text-primary-600 dark:text-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >
                   {link.label}
@@ -207,31 +207,31 @@ export default function Navbar() {
               ))}
               
               {/* Mobile Theme Toggle */}
-              <div className="pt-3 pb-3 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
                 <ThemeToggle />
               </div>
               
               {/* Mobile Auth Buttons */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
                 {session ? (
                   <>
                     <Link
                       href="/admin/dashboard"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors"
+                      className="flex items-center justify-center space-x-2 w-full px-4 py-3.5 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors active:scale-95"
                     >
-                      <FiSettings className="w-4 h-4" />
-                      <span className="text-sm font-medium">Admin Panel</span>
+                      <FiSettings className="w-5 h-5" />
+                      <span className="text-base font-medium">Admin Panel</span>
                     </Link>
                     <button
                       onClick={() => {
                         handleAdminLogout();
                         setIsOpen(false);
                       }}
-                      className="flex items-center justify-center space-x-2 w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      className="flex items-center justify-center space-x-2 w-full px-4 py-3.5 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95"
                     >
-                      <FiLogOut className="w-4 h-4" />
-                      <span className="text-sm font-medium">Logout</span>
+                      <FiLogOut className="w-5 h-5" />
+                      <span className="text-base font-medium">Logout</span>
                     </button>
                   </>
                 ) : isClient ? (
@@ -239,30 +239,30 @@ export default function Navbar() {
                     <Link
                       href="/client/dashboard"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                      className="flex items-center justify-center space-x-2 w-full px-4 py-3.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors active:scale-95"
                     >
-                      <FiUser className="w-4 h-4" />
-                      <span className="text-sm font-medium">{clientName}</span>
+                      <FiUser className="w-5 h-5" />
+                      <span className="text-base font-medium">{clientName}</span>
                     </Link>
                     <button
                       onClick={() => {
                         handleClientLogout();
                         setIsOpen(false);
                       }}
-                      className="flex items-center justify-center space-x-2 w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      className="flex items-center justify-center space-x-2 w-full px-4 py-3.5 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95"
                     >
-                      <FiLogOut className="w-4 h-4" />
-                      <span className="text-sm font-medium">Logout</span>
+                      <FiLogOut className="w-5 h-5" />
+                      <span className="text-base font-medium">Logout</span>
                     </button>
                   </>
                 ) : (
                   <Link
                     href="/client/login"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-3.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors active:scale-95"
                   >
-                    <FiUser className="w-4 h-4" />
-                    <span className="text-sm font-medium">Client Login</span>
+                    <FiUser className="w-5 h-5" />
+                    <span className="text-base font-medium">Client Login</span>
                   </Link>
                 )}
               </div>
