@@ -1,26 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import * as bcrypt from 'bcryptjs';
+import { jwtVerify } from 'jose';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || 'your-secret-key'
+);
+
+async function getClientFromToken(request: NextRequest) {
+  const token = request.cookies.get('client-token')?.value;
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload.clientId as string;
+  } catch {
+    return null;
+  }
+}
 
 // Get photobook for a gallery
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const clientCookie = cookieStore.get('client-session');
+    const clientId = await getClientFromToken(request);
 
-    if (!clientCookie) {
+    if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Verify client session
-    const sessionData = JSON.parse(clientCookie.value);
-    const client = await prisma.client.findUnique({
-      where: { id: sessionData.clientId },
-    });
-
-    if (!client) {
-      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -33,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Get existing photobook if any
     const photobook = await prisma.photobook.findFirst({
       where: {
-        clientId: client.id,
+        clientId: clientId,
         galleryId: galleryId,
       },
       include: {
@@ -56,32 +61,12 @@ export async function GET(request: NextRequest) {
 // Create new photobook
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const clientCookie = cookieStore.get('client-session');
+    const clientId = await getClientFromToken(request);
 
-    console.log('Client cookie:', clientCookie ? 'exists' : 'missing');
+    console.log('Client ID from token:', clientId);
 
-    if (!clientCookie) {
-      return NextResponse.json({ error: 'Unauthorized - No session cookie' }, { status: 401 });
-    }
-
-    let sessionData;
-    try {
-      sessionData = JSON.parse(clientCookie.value);
-      console.log('Session data:', sessionData);
-    } catch (parseError) {
-      console.error('Failed to parse session cookie:', parseError);
-      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
-    }
-
-    const client = await prisma.client.findUnique({
-      where: { id: sessionData.clientId },
-    });
-
-    console.log('Client found:', client ? 'yes' : 'no');
-
-    if (!client) {
-      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+    if (!clientId) {
+      return NextResponse.json({ error: 'Unauthorized - No client token' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -96,7 +81,7 @@ export async function POST(request: NextRequest) {
     // Check if photobook already exists
     const existing = await prisma.photobook.findFirst({
       where: {
-        clientId: client.id,
+        clientId: clientId,
         galleryId: galleryId,
       },
     });
@@ -111,7 +96,7 @@ export async function POST(request: NextRequest) {
     console.log('Creating new photobook...');
     const photobook = await prisma.photobook.create({
       data: {
-        clientId: client.id,
+        clientId: clientId,
         galleryId: galleryId,
         format: format,
         title: title || 'My Photobook',
@@ -139,14 +124,12 @@ export async function POST(request: NextRequest) {
 // Update photobook (save progress)
 export async function PUT(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const clientCookie = cookieStore.get('client-session');
+    const clientId = await getClientFromToken(request);
 
-    if (!clientCookie) {
+    if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const sessionData = JSON.parse(clientCookie.value);
     const { photobookId, title, notes, pages } = await request.json();
 
     if (!photobookId) {
@@ -158,7 +141,7 @@ export async function PUT(request: NextRequest) {
       where: { id: photobookId },
     });
 
-    if (!photobook || photobook.clientId !== sessionData.clientId) {
+    if (!photobook || photobook.clientId !== clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 

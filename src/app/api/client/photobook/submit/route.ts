@@ -1,18 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { jwtVerify } from 'jose';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || 'your-secret-key'
+);
+
+async function getClientFromToken(request: NextRequest) {
+  const token = request.cookies.get('client-token')?.value;
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload.clientId as string;
+  } catch {
+    return null;
+  }
+}
 
 // Submit photobook for review
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const clientCookie = cookieStore.get('client-session');
+    const clientId = await getClientFromToken(request);
 
-    if (!clientCookie) {
+    if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const sessionData = JSON.parse(clientCookie.value);
     const { photobookId, title, notes, pages } = await request.json();
 
     if (!photobookId) {
@@ -24,7 +38,7 @@ export async function POST(request: NextRequest) {
       where: { id: photobookId },
     });
 
-    if (!photobook || photobook.clientId !== sessionData.clientId) {
+    if (!photobook || photobook.clientId !== clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
