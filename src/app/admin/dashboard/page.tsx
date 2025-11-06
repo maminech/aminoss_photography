@@ -5,7 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { 
   FiImage, FiSettings, FiLogOut, FiMenu, FiX, 
-  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo, FiMail
+  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo, FiMail, FiBook
 } from 'react-icons/fi';
 import { MdPalette } from 'react-icons/md';
 
@@ -61,6 +61,7 @@ export default function AdminDashboard() {
     { name: 'Clients', icon: FiUser, href: '/admin/dashboard/clients' },
     { name: 'Packages', icon: FiPackage, href: '/admin/dashboard/packs' },
     { name: 'Calendar & Bookings', icon: FiCalendar, href: '/admin/dashboard/calendar' },
+    { name: 'Photobooks', icon: FiBook, href: '/admin/dashboard/photobooks' },
     { name: 'Messages', icon: FiMail, href: '/admin/dashboard/messages', badge: stats.unreadMessages > 0 ? stats.unreadMessages : undefined },
     { name: 'Selected for Print', icon: FiCheck, href: '/admin/dashboard/selected-photos' },
     { name: 'Settings', icon: FiSettings, href: '/admin/dashboard/settings' },

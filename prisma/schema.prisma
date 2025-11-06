@@ -221,6 +221,40 @@ model ClientPhoto {
   gallery         ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
 }
 
+// Photobook - Client's custom photobook creation
+model Photobook {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  clientId      String         @db.ObjectId
+  galleryId     String         @db.ObjectId
+  title         String         @default("My Photobook")
+  format        String         // "20x30" or "30x30"
+  status        String         @default("draft") // draft, submitted, approved, printing, completed
+  coverPhotoUrl String?
+  totalPages    Int            @default(0)
+  approvedAt    DateTime?
+  submittedAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  pages         PhotobookPage[]
+  notes         String?        // Client notes for admin
+  adminNotes    String?        // Admin notes
+}
+
+// Photobook Page - Individual pages in a photobook
+model PhotobookPage {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  photobookId String      @db.ObjectId
+  pageNumber  Int         // 1, 2, 3, 4...
+  layoutType  String      // "full", "split", "triple", "quad", "collage-3", "collage-4"
+  photos      Json        // Array of photo objects: [{ photoId, url, position, rotation, zoom }]
+  notes       String?     // Page-specific notes
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  photobook   Photobook   @relation(fields: [photobookId], references: [id], onDelete: Cascade)
+
+  @@unique([photobookId, pageNumber])
+}
+
 // Photography Packs
 model Pack {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId

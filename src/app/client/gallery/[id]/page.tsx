@@ -15,8 +15,10 @@ import {
   FiAlertCircle,
   FiChevronLeft,
   FiChevronRight,
-  FiDownloadCloud
+  FiDownloadCloud,
+  FiBook
 } from 'react-icons/fi';
+import PhotobookEditor from '@/components/PhotobookEditor';
 
 interface Photo {
   id: string;
@@ -48,6 +50,8 @@ export default function ClientGalleryPage() {
   const [saving, setSaving] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [photobookEditorOpen, setPhotobookEditorOpen] = useState(false);
+  const [showPhotobookPrompt, setShowPhotobookPrompt] = useState(false);
 
   useEffect(() => {
     fetchGallery();
@@ -111,7 +115,13 @@ export default function ClientGalleryPage() {
       if (promises) {
         await Promise.all(promises);
         setShowConfirmation(true);
-        setTimeout(() => setShowConfirmation(false), 3000);
+        setTimeout(() => {
+          setShowConfirmation(false);
+          // Show photobook prompt after successful save
+          if (selectedPhotos.size > 0) {
+            setShowPhotobookPrompt(true);
+          }
+        }, 3000);
       }
     } catch (error) {
       alert('Error saving selections. Please try again.');
@@ -224,6 +234,16 @@ export default function ClientGalleryPage() {
                   <span className="sm:hidden">{downloading ? '...' : 'Download'}</span>
                 </button>
               )}
+              {selectedPhotos.size > 0 && (
+                <button
+                  onClick={() => setPhotobookEditorOpen(true)}
+                  className="flex items-center gap-2 px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition touch-manipulation text-sm md:text-base font-semibold"
+                >
+                  <FiBook className="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="hidden sm:inline">Create Photobook</span>
+                  <span className="sm:hidden">Photobook</span>
+                </button>
+              )}
               <button
                 onClick={saveSelections}
                 disabled={saving}
@@ -251,6 +271,70 @@ export default function ClientGalleryPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Photobook Prompt */}
+      <AnimatePresence>
+        {showPhotobookPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowPhotobookPrompt(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white dark:bg-dark-800 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl"
+            >
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FiBook className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Create a Photobook? 📖
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  You've selected {selectedPhotos.size} amazing photo{selectedPhotos.size !== 1 ? 's' : ''}! 
+                  Would you like to design a beautiful photobook with them?
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => setShowPhotobookPrompt(false)}
+                    className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition font-medium"
+                  >
+                    Maybe Later
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowPhotobookPrompt(false);
+                      setPhotobookEditorOpen(true);
+                    }}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-primary to-purple-500 text-white rounded-lg hover:from-primary/90 hover:to-purple-500/90 transition font-semibold shadow-lg"
+                  >
+                    Let's Create! 🎨
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Photobook Editor */}
+      {photobookEditorOpen && gallery && (
+        <PhotobookEditor
+          galleryId={gallery.id}
+          selectedPhotos={gallery.photos.filter(p => selectedPhotos.has(p.id))}
+          onClose={() => setPhotobookEditorOpen(false)}
+          onComplete={() => {
+            setPhotobookEditorOpen(false);
+            router.push('/client/dashboard');
+          }}
+        />
+      )}
 
       {/* Main Content */}
       <main className="p-3 md:p-6">
