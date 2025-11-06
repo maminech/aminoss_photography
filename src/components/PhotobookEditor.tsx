@@ -106,6 +106,7 @@ export default function PhotobookEditor({
   const [title, setTitle] = useState('My Photobook');
   const [notes, setNotes] = useState('');
   const [photobookId, setPhotobookId] = useState<string | null>(null);
+  const [creatingPhotobook, setCreatingPhotobook] = useState(false);
 
   useEffect(() => {
     // Load existing photobook if any
@@ -134,6 +135,9 @@ export default function PhotobookEditor({
   };
 
   const selectFormat = async (selectedFormat: '20x30' | '30x30') => {
+    if (creatingPhotobook) return; // Prevent double-click
+    
+    setCreatingPhotobook(true);
     setFormat(selectedFormat);
     
     // Create photobook in database
@@ -151,10 +155,22 @@ export default function PhotobookEditor({
       if (res.ok) {
         const data = await res.json();
         setPhotobookId(data.photobook.id);
-        setStep('design');
+        
+        // Add a small delay for smooth transition
+        setTimeout(() => {
+          setStep('design');
+          setCreatingPhotobook(false);
+        }, 300);
+      } else {
+        const error = await res.json();
+        console.error('Error creating photobook:', error);
+        alert('Error creating photobook. Please try again.');
+        setCreatingPhotobook(false);
       }
     } catch (error) {
+      console.error('Error creating photobook:', error);
       alert('Error creating photobook. Please try again.');
+      setCreatingPhotobook(false);
     }
   };
 
@@ -368,8 +384,14 @@ export default function PhotobookEditor({
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => selectFormat('20x30')}
-                    className="relative bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-6 md:p-8 text-left hover:border-blue-400 dark:hover:border-blue-500 transition group"
+                    disabled={creatingPhotobook}
+                    className="relative bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-6 md:p-8 text-left hover:border-blue-400 dark:hover:border-blue-500 transition group disabled:opacity-60 disabled:cursor-not-allowed min-h-[280px] md:min-h-[320px] touch-manipulation active:scale-95"
                   >
+                    {creatingPhotobook && format === null ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-dark-900/80 rounded-xl">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                      </div>
+                    ) : null}
                     <div className="aspect-[2/3] bg-white dark:bg-dark-700 rounded-lg shadow-lg mb-4 flex items-center justify-center border-4 border-blue-300 dark:border-blue-600 group-hover:scale-105 transition">
                       <span className="text-4xl md:text-6xl">📖</span>
                     </div>
@@ -388,8 +410,14 @@ export default function PhotobookEditor({
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => selectFormat('30x30')}
-                    className="relative bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-2 border-purple-200 dark:border-purple-700 rounded-xl p-6 md:p-8 text-left hover:border-purple-400 dark:hover:border-purple-500 transition group"
+                    disabled={creatingPhotobook}
+                    className="relative bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-2 border-purple-200 dark:border-purple-700 rounded-xl p-6 md:p-8 text-left hover:border-purple-400 dark:hover:border-purple-500 transition group disabled:opacity-60 disabled:cursor-not-allowed min-h-[280px] md:min-h-[320px] touch-manipulation active:scale-95"
                   >
+                    {creatingPhotobook && format === null ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-dark-900/80 rounded-xl">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                      </div>
+                    ) : null}
                     <div className="aspect-square bg-white dark:bg-dark-700 rounded-lg shadow-lg mb-4 flex items-center justify-center border-4 border-purple-300 dark:border-purple-600 group-hover:scale-105 transition">
                       <span className="text-4xl md:text-6xl">📕</span>
                     </div>
@@ -404,6 +432,17 @@ export default function PhotobookEditor({
                     </div>
                   </motion.button>
                 </div>
+
+                {creatingPhotobook && (
+                  <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                      <p className="text-blue-900 dark:text-blue-100 font-medium">
+                        Creating your photobook...
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="mt-6 md:mt-8 p-4 md:p-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
                   <div className="flex items-start gap-3">
