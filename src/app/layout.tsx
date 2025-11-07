@@ -93,13 +93,7 @@ export default function RootLayout({
           <LayoutThemeProvider>
             <AdminProviders>
               <DynamicStyles />
-              <ThemeWrapper>
-                <Navbar />
-                <main className="min-h-screen pt-16 md:pt-20">
-                  {children}
-                </main>
-                <Footer />
-              </ThemeWrapper>
+              {children}
             </AdminProviders>
           </LayoutThemeProvider>
         </ThemeProvider>
