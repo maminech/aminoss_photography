@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create JWT token
+    // Create JWT token (30 days for persistent login)
     const token = await new SignJWT({
       clientId: client.id,
       email: client.email,
@@ -56,8 +56,14 @@ export async function POST(request: NextRequest) {
       type: 'client',
     })
       .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('7d')
+      .setExpirationTime('30d')
       .sign(JWT_SECRET);
+
+    // Update last activity
+    await prisma.client.update({
+      where: { id: client.id },
+      data: { lastActivity: new Date() },
+    });
 
     // Create response with token in cookie
     const response = NextResponse.json({
@@ -73,7 +79,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 30, // 30 days
       path: '/',
     });
 

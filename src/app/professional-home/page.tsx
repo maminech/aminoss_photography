@@ -1,20 +1,19 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { FiInstagram, FiFacebook, FiTwitter, FiPhone, FiMail, FiMapPin } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiChevronLeft, FiChevronRight, FiInstagram, FiFacebook, FiMail, FiPhone, FiMenu, FiX } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 export default function ProfessionalHomePage() {
   const { currentTheme } = useLayoutTheme();
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Only render this page when Professional theme is active
   if (currentTheme !== 'professional') {
     return null;
   }
@@ -22,7 +21,7 @@ export default function ProfessionalHomePage() {
   useEffect(() => {
     const loadImages = async () => {
       try {
-        const res = await fetch('/api/admin/images?featured=true&limit=30');
+        const res = await fetch('/api/admin/images?featured=true&limit=10');
         if (res.ok) {
           const data = await res.json();
           setImages(data);
@@ -33,39 +32,24 @@ export default function ProfessionalHomePage() {
         setLoading(false);
       }
     };
-
     loadImages();
   }, []);
 
-  const categories = [
-    { id: 'all', name: 'All', count: images.length },
-    { id: 'portraits', name: 'Portraits', count: images.filter(img => img.category === 'portraits').length },
-    { id: 'fashion', name: 'Fashion', count: images.filter(img => img.category === 'fashion').length },
-    { id: 'lifestyle', name: 'Lifestyle', count: images.filter(img => img.category === 'lifestyle').length },
-    { id: 'nature', name: 'Nature', count: images.filter(img => img.category === 'nature').length },
-    { id: 'studio', name: 'Studio', count: images.filter(img => img.category === 'studio').length },
-  ];
+  useEffect(() => {
+    if (images.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [images.length]);
 
-  const filteredImages = activeCategory === 'all' 
-    ? images 
-    : images.filter(img => img.category === activeCategory);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80; // Header height
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({
-        top: elementPosition - offset,
-        behavior: 'smooth'
-      });
-    }
-    setIsMenuOpen(false);
-  };
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+  const goToSlide = (index: number) => setCurrentSlide(index);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600 font-lato">Loading...</p>
@@ -75,497 +59,285 @@ export default function ProfessionalHomePage() {
   }
 
   return (
-    <div className="novo-one-page bg-white">
-      {/* Fixed Navigation */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, delay: 1.8 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100"
+    <div className="novo-fullscreen-home fixed inset-0 overflow-hidden bg-white">
+      {/* Fixed Navigation Overlay */}
+      <motion.nav 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        transition={{ duration: 0.8, delay: 2 }} 
+        className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/60 to-transparent"
       >
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2 }}
-              className="text-2xl font-playfair font-bold tracking-tight text-[#1a1a1a]"
-            >
+            <Link href="/gallery" className="text-xl sm:text-2xl font-playfair font-bold tracking-tight text-white hover:text-[#d4af37] transition-colors z-50">
               AMINOSS
-            </motion.div>
+            </Link>
 
-            {/* Desktop Menu */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2.2 }}
-              className="hidden md:flex items-center gap-10"
-            >
-              <button onClick={() => scrollToSection('home')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors duration-300">
-                Home
-              </button>
-              <button onClick={() => scrollToSection('about')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors duration-300">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
+              <Link 
+                href="/gallery" 
+                className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
+              >
+                Gallery
+              </Link>
+              <Link 
+                href="/about" 
+                className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
+              >
                 About
-              </button>
-              <button onClick={() => scrollToSection('portfolio')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors duration-300">
-                Portfolio
-              </button>
-              <button onClick={() => scrollToSection('categories')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors duration-300">
-                Categories
-              </button>
-              <button onClick={() => scrollToSection('contact')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors duration-300">
+              </Link>
+              <Link 
+                href="/videos" 
+                className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
+              >
+                Videos
+              </Link>
+              <Link 
+                href="/packs" 
+                className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
+              >
+                Packages
+              </Link>
+              <Link 
+                href="/contact" 
+                className="px-4 lg:px-6 py-2 lg:py-3 bg-[#d4af37] text-white font-lato text-xs lg:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300"
+              >
                 Contact
-              </button>
-            </motion.div>
+              </Link>
+            </div>
 
             {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden z-50 w-10 h-10 flex items-center justify-center text-white hover:text-[#d4af37] transition-colors"
+              aria-label="Toggle menu"
             >
-              <span className={`w-6 h-0.5 bg-[#1a1a1a] transition-transform duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-              <span className={`w-6 h-0.5 bg-[#1a1a1a] transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
-              <span className={`w-6 h-0.5 bg-[#1a1a1a] transition-transform duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+              {mobileMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white border-t border-gray-100"
-          >
-            <div className="container mx-auto px-6 py-6 flex flex-col gap-4">
-              <button onClick={() => scrollToSection('home')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors text-left">
-                Home
-              </button>
-              <button onClick={() => scrollToSection('about')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors text-left">
-                About
-              </button>
-              <button onClick={() => scrollToSection('portfolio')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors text-left">
-                Portfolio
-              </button>
-              <button onClick={() => scrollToSection('categories')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors text-left">
-                Categories
-              </button>
-              <button onClick={() => scrollToSection('contact')} className="text-sm uppercase tracking-[0.2em] font-lato font-medium text-gray-700 hover:text-[#d4af37] transition-colors text-left">
-                Contact
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </motion.nav>
-
-      {/* Hero Section - Full Screen with Parallax */}
-      <section id="home" className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image with Parallax */}
-        <motion.div
-          initial={{ scale: 1.2, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
-          className="absolute inset-0"
-        >
-          {images[0] && (
-            <Image
-              src={images[0].url}
-              alt="Hero Background"
-              fill
-              className="object-cover"
-              priority
-              quality={90}
-            />
-          )}
-          <div className="absolute inset-0 bg-black/40" />
-        </motion.div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 container mx-auto px-6 text-center text-white">
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-playfair font-bold mb-6 leading-tight"
-          >
-            My name is Aminoss,
-            <br />
-            I'm a photographer.
-          </motion.h1>
-          
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: '80px', opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="h-[1px] bg-[#d4af37] mx-auto mb-8"
-          />
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="text-lg md:text-xl lg:text-2xl font-lato font-light max-w-3xl mx-auto leading-relaxed"
-          >
-            The world without photography will be meaningless to us if there is no light and color, which opens up our minds and expresses passion.
-          </motion.p>
-
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.8 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2"
-          >
-            <motion.button
-              onClick={() => scrollToSection('about')}
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              className="flex flex-col items-center gap-2 text-white/70 hover:text-white transition-colors"
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden bg-black/95 backdrop-blur-lg"
             >
-              <span className="text-xs uppercase tracking-[0.2em] font-lato">Scroll</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </motion.button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8 leading-tight">
-              About Me
-            </h2>
-            
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '60px' }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="h-[1px] bg-[#d4af37] mx-auto mb-12"
-            />
-
-            <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-4xl mx-auto mb-12">
-              Photography is more than just capturing moments—it's about telling stories, evoking emotions, 
-              and preserving memories that last a lifetime. With years of experience and a passion for visual 
-              storytelling, I specialize in creating stunning images that reflect the beauty and authenticity 
-              of every subject.
-            </p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <Link 
-                href="/about"
-                className="inline-block px-8 py-3 bg-transparent border border-[#1a1a1a] text-[#1a1a1a] font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#1a1a1a] hover:text-white transition-all duration-300"
-              >
-                Read More
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Latest Photos Section */}
-      <section id="portfolio" className="py-24 md:py-32 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
-              Latest Photos
-            </h2>
-            
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '60px' }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="h-[1px] bg-[#d4af37] mx-auto"
-            />
-          </motion.div>
-
-          {/* Photo Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {images.slice(0, 6).map((image, index) => (
-              <motion.div
-                key={image.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="group relative aspect-square overflow-hidden bg-gray-200"
-              >
-                <Image
-                  src={image.url}
-                  alt={image.title || `Photo ${index + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="text-xl font-playfair font-bold mb-2">
-                      {image.title || `Photo ${index + 1}`}
-                    </h3>
-                    <p className="text-sm font-lato uppercase tracking-[0.2em] text-[#d4af37]">
-                      {image.category || 'Photography'}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* View All Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center mt-16"
-          >
-            <Link 
-              href="/gallery"
-              className="inline-block px-10 py-4 bg-[#1a1a1a] text-white font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300"
-            >
-              View All Photos
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Categories Section */}
-      <section id="categories" className="py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
-              Categories
-            </h2>
-            
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '60px' }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="h-[1px] bg-[#d4af37] mx-auto mb-12"
-            />
-
-            {/* Category Filter Buttons */}
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`px-6 py-2 font-lato font-medium text-sm uppercase tracking-[0.2em] transition-all duration-300 ${
-                    activeCategory === category.id
-                      ? 'text-[#d4af37] border-b-2 border-[#d4af37]'
-                      : 'text-gray-600 hover:text-[#1a1a1a]'
-                  }`}
+              <div className="container mx-auto px-4 py-6 flex flex-col space-y-4">
+                <Link 
+                  href="/gallery" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
                 >
-                  {category.name}
-                  <span className="ml-2 text-xs">({category.count})</span>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Filtered Photos Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {filteredImages.slice(0, 9).map((image, index) => (
-              <motion.div
-                key={`${image.id}-${index}`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                className="group relative aspect-[4/5] overflow-hidden bg-gray-200"
-              >
-                <Image
-                  src={image.url}
-                  alt={image.title || `Photo ${index + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="text-center text-white p-6">
-                    <h3 className="text-lg font-playfair font-bold mb-2">
-                      {image.title || 'Untitled'}
-                    </h3>
-                    <div className="w-12 h-[1px] bg-[#d4af37] mx-auto mb-3" />
-                    <p className="text-xs font-lato uppercase tracking-[0.2em] text-gray-300">
-                      {image.category || 'Photography'}
-                    </p>
-                  </div>
+                  Gallery
+                </Link>
+                <Link 
+                  href="/about" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
+                >
+                  About
+                </Link>
+                <Link 
+                  href="/videos" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
+                >
+                  Videos
+                </Link>
+                <Link 
+                  href="/packs" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
+                >
+                  Packages
+                </Link>
+                <Link 
+                  href="/contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-center px-6 py-3 bg-[#d4af37] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 mt-2"
+                >
+                  Contact
+                </Link>
+                {/* Mobile Social Links */}
+                <div className="flex items-center justify-center space-x-4 pt-4 border-t border-white/10">
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
+                    <FiInstagram className="w-5 h-5" />
+                  </a>
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
+                    <FiFacebook className="w-5 h-5" />
+                  </a>
+                  <a href="mailto:contact@aminossphotography.com" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
+                    <FiMail className="w-5 h-5" />
+                  </a>
+                  <a href="tel:+1234567890" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
+                    <FiPhone className="w-5 h-5" />
+                  </a>
                 </div>
-              </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+      <div className="relative w-full h-full">
+        <AnimatePresence mode="wait">
+          {images.length > 0 && (
+            <motion.div key={currentSlide} initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 1.5, ease: 'easeInOut' }} className="absolute inset-0">
+              <Image src={images[currentSlide]?.url || '/placeholder.jpg'} alt={images[currentSlide]?.title || 'Portfolio'} fill className="object-cover" priority={currentSlide === 0} quality={90} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {images.length > 1 && (<>
+          <button 
+            onClick={prevSlide} 
+            className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300 group touch-manipulation" 
+            aria-label="Previous"
+          >
+            <FiChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:transform group-hover:-translate-x-1 transition-transform" />
+          </button>
+          <button 
+            onClick={nextSlide} 
+            className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300 group touch-manipulation" 
+            aria-label="Next"
+          >
+            <FiChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:transform group-hover:translate-x-1 transition-transform" />
+          </button>
+          <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center space-x-2 sm:space-x-3">
+            {images.map((_, index) => (
+              <button 
+                key={index} 
+                onClick={() => goToSlide(index)} 
+                className={`transition-all duration-300 touch-manipulation ${index === currentSlide ? 'w-6 sm:w-8 h-1.5 sm:h-2 bg-[#d4af37]' : 'w-1.5 sm:w-2 h-1.5 sm:h-2 bg-white/50 hover:bg-white/80'}`} 
+                aria-label={`Slide ${index + 1}`} 
+              />
             ))}
           </div>
-        </div>
-      </section>
+        </>)}
+      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 50 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 1, delay: 2.2 }} 
+        className="absolute inset-0 flex flex-col items-center justify-center z-30 text-center px-4 sm:px-6"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-playfair font-bold text-white mb-4 sm:mb-6 leading-tight">
+          Capturing Life's
+          <br />
+          Beautiful Moments
+        </h1>
+        
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: '60px' }}
+          transition={{ duration: 0.8, delay: 2.5 }}
+          className="h-[2px] bg-[#d4af37] mb-6 sm:mb-8"
+        />
 
-      {/* Contact Section */}
-      <section id="contact" className="py-24 md:py-32 bg-gray-50">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 font-lato max-w-xl lg:max-w-2xl mb-8 sm:mb-10 lg:mb-12 leading-relaxed px-4">
+          Professional photography that tells your unique story through artistry and passion
+        </p>
+
+        <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none px-4">
+          <Link
+            href="/gallery"
+            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-block text-center touch-manipulation"
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
-              Contact
-            </h2>
-            
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '60px' }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="h-[1px] bg-[#d4af37] mx-auto mb-12"
-            />
-
-            <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed mb-12">
-              Ready to capture your story? Let's create something beautiful together.
-            </p>
-          </motion.div>
-
-          {/* Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-12">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="flex flex-col items-center text-center"
-            >
-              <div className="w-16 h-16 rounded-full bg-[#d4af37] flex items-center justify-center mb-4">
-                <FiPhone className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-2">Phone</h3>
-              <a 
-                href="tel:+1234567890"
-                className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors"
-              >
-                +1 (800) 456 37 11
-              </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="flex flex-col items-center text-center"
-            >
-              <div className="w-16 h-16 rounded-full bg-[#d4af37] flex items-center justify-center mb-4">
-                <FiMail className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-2">Email</h3>
-              <a 
-                href="mailto:contact@aminossphotography.com"
-                className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors"
-              >
-                contact@aminossphotography.com
-              </a>
-            </motion.div>
-          </div>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            View Gallery
+          </Link>
+          <Link
+            href="/contact"
+            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-block text-center touch-manipulation"
           >
-            <Link 
-              href="/contact"
-              className="inline-block px-10 py-4 bg-[#1a1a1a] text-white font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300"
-            >
-              Send Message
-            </Link>
-            <Link 
-              href="/booking"
-              className="inline-block px-10 py-4 bg-transparent border border-[#1a1a1a] text-[#1a1a1a] font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#1a1a1a] hover:text-white transition-all duration-300"
-            >
-              Book Session
-            </Link>
-          </motion.div>
-
-          {/* Social Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex justify-center gap-6 mt-12"
-          >
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
-            >
-              <FiInstagram className="w-5 h-5" />
-            </a>
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
-            >
-              <FiFacebook className="w-5 h-5" />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
-            >
-              <FiTwitter className="w-5 h-5" />
-            </a>
-          </motion.div>
+            Get in Touch
+          </Link>
         </div>
-      </section>
+      </motion.div>
+      {/* Social Links - Bottom Left (Desktop Only) */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 2.8 }}
+        className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 lg:bottom-8 lg:left-8 z-40 hidden lg:flex flex-col space-y-4"
+      >
+        <a
+          href="https://instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300"
+        >
+          <FiInstagram className="w-5 h-5" />
+        </a>
+        <a
+          href="https://facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300"
+        >
+          <FiFacebook className="w-5 h-5" />
+        </a>
+        <a
+          href="mailto:contact@aminossphotography.com"
+          className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300"
+        >
+          <FiMail className="w-5 h-5" />
+        </a>
+        <a
+          href="tel:+1234567890"
+          className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300"
+        >
+          <FiPhone className="w-5 h-5" />
+        </a>
+      </motion.div>
 
-      {/* Footer */}
-      <footer className="bg-white py-8 border-t border-gray-200">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-gray-600 font-lato text-sm">
-            © {new Date().getFullYear()} Aminoss Photography. All rights reserved.
-          </p>
-          <p className="text-gray-500 font-lato text-xs mt-2">
-            Professional Photography Services | Available Worldwide
-          </p>
-        </div>
-      </footer>
+      {/* Copyright - Bottom Right (Desktop Only) */}
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 2.8 }}
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-40 text-white/70 font-lato text-xs sm:text-sm hidden lg:block"
+      >
+        © 2025 Aminoss Photography
+      </motion.div>
+      <style jsx global>{`
+        .novo-fullscreen-home {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          overflow: hidden;
+        }
+
+        body:has(.novo-fullscreen-home) {
+          overflow: hidden;
+          touch-action: pan-y pinch-zoom;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+          .novo-fullscreen-home {
+            height: 100dvh; /* Use dynamic viewport height for mobile */
+          }
+        }
+
+        /* Prevent iOS bounce scroll */
+        html, body {
+          overscroll-behavior: none;
+        }
+
+        /* Touch-friendly targets */
+        .touch-manipulation {
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+        }
+      `}</style>
     </div>
   );
 }

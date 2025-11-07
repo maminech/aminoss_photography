@@ -40,6 +40,12 @@ export const metadata: Metadata = {
   description: 'Aminoss Photography offers professional photography and videography services in Sousse, Tunisia. Specializing in weddings, portraits, fashion, and travel photography.',
   keywords: 'photography, Tunisia, Sousse photographer, wedding photographer, portrait photographer, fashion photography, travel photography, videography, Sousse photographer',
   authors: [{ name: 'Aminoss' }],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   icons: {
     icon: '/favicon.svg',
     apple: '/favicon.svg',

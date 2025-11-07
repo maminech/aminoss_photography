@@ -40,9 +40,11 @@ export default function AdminLayout({
         position="top-right"
         toastOptions={{
           duration: 3000,
+          className: 'dark:bg-dark-800 dark:text-gray-100',
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: 'var(--bg-secondary)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border-primary)',
           },
           success: {
             duration: 3000,
@@ -50,12 +52,20 @@ export default function AdminLayout({
               primary: '#10b981',
               secondary: '#fff',
             },
+            style: {
+              background: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
+            },
           },
           error: {
             duration: 4000,
             iconTheme: {
               primary: '#ef4444',
               secondary: '#fff',
+            },
+            style: {
+              background: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
             },
           },
         }}
