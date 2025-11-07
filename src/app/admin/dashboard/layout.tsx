@@ -2,6 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Toaster } from 'react-hot-toast';
 
 export default function AdminLayout({
@@ -10,6 +11,14 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/admin/login');
+    }
+  }, [status, router]);
 
   // Show loading state while checking authentication
   if (status === 'loading') {
