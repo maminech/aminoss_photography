@@ -197,6 +197,18 @@ export default function AdminDesignPage() {
     'Playfair Display',
     'Lora',
     'Merriweather',
+    'Raleway',
+    'Nunito',
+    'Quicksand',
+    'Josefin Sans',
+    'Bebas Neue',
+    'Cormorant Garamond',
+    'Cinzel',
+    'Great Vibes',
+    'Dancing Script',
+    'Pacifico',
+    'Righteous',
+    'Archivo Black',
   ];
 
   return (
