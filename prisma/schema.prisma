@@ -193,19 +193,24 @@ model Client {
 
 // Client Galleries - Collections of photos for each client
 model ClientGallery {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  clientId      String        @db.ObjectId
-  name          String        // e.g., "Wedding Photos - John & Jane"
-  description   String?
-  coverImage    String?       // Cover photo URL
-  expiresAt     DateTime?     // Optional expiration date
-  allowDownload Boolean       @default(true)
-  password      String?       // Optional additional password for gallery
-  downloads     Int           @default(0) // Track number of downloads
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  photos        ClientPhoto[]
+  id                  String        @id @default(auto()) @map("_id") @db.ObjectId
+  clientId            String        @db.ObjectId
+  name                String        // e.g., "Wedding Photos - John & Jane"
+  description         String?
+  coverImage          String?       // Cover photo URL
+  expiresAt           DateTime?     // Optional expiration date
+  allowDownload       Boolean       @default(true)
+  password            String?       // Optional additional password for gallery
+  downloads           Int           @default(0) // Track number of downloads
+  // Guest Upload Settings
+  guestUploadEnabled  Boolean       @default(false) // Enable guest photo uploads
+  qrCodeUrl           String?       // Generated QR code for guest uploads
+  eventDate           DateTime?     // Event date for wedding/events
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  client              Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  photos              ClientPhoto[]
+  guestUploads        GuestUpload[] // Guest uploaded photos
 }
 
 // Client Photos - Individual photos in a gallery
@@ -384,4 +389,28 @@ model InstagramStory {
   order           Int               @default(0)
   createdAt       DateTime          @default(now())
   highlight       InstagramHighlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+}
+
+// Guest Uploads - Photos uploaded by wedding guests via QR code
+model GuestUpload {
+  id                  String        @id @default(auto()) @map("_id") @db.ObjectId
+  galleryId           String        @db.ObjectId // Event/gallery this belongs to
+  uploadGroupId       String        // UUID - groups all photos from one guest session
+  uploaderName        String        // Guest's name
+  message             String        @db.String // Heartfelt message (max 200 chars)
+  cloudinaryId        String        // Cloudinary public ID
+  fileUrl             String        // Full resolution URL
+  thumbnailUrl        String        // Thumbnail URL
+  width               Int?
+  height              Int?
+  format              String?
+  fileSize            Int?          // in bytes
+  isSelectedForPrint  Boolean       @default(false) // Only ONE per uploadGroupId can be true
+  status              String        @default("pending") // pending, approved, rejected
+  uploadedAt          DateTime      @default(now())
+  gallery             ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  
+  @@index([galleryId])
+  @@index([uploadGroupId])
+  @@index([isSelectedForPrint])
 }

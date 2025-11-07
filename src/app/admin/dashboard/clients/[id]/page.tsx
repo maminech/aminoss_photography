@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FiArrowLeft, FiUpload, FiPlus, FiImage, FiCalendar, FiTrash2, FiEye, FiDownload, FiX } from 'react-icons/fi';
+import { FiArrowLeft, FiUpload, FiPlus, FiImage, FiCalendar, FiTrash2, FiEye, FiDownload, FiX, FiUsers, FiQrCode } from 'react-icons/fi';
 import { CldUploadWidget } from 'next-cloudinary';
+import Image from 'next/image';
 
 interface Client {
   id: string;
@@ -21,8 +22,12 @@ interface Gallery {
   expiresAt?: string;
   allowDownload: boolean;
   createdAt: string;
+  guestUploadEnabled?: boolean;
+  qrCodeUrl?: string;
+  eventDate?: string;
   _count: {
     photos: number;
+    guestUploads?: number;
   };
 }
 
@@ -47,6 +52,9 @@ export default function ClientDetailPage() {
   const [selectedGallery, setSelectedGallery] = useState<string>('');
   const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [selectedGalleryForQr, setSelectedGalleryForQr] = useState<Gallery | null>(null);
+  const [generatingQr, setGeneratingQr] = useState(false);
 
   const [galleryForm, setGalleryForm] = useState({
     name: '',
@@ -175,6 +183,46 @@ export default function ClientDetailPage() {
     }
   };
 
+  const handleGenerateQr = async (gallery: Gallery) => {
+    setSelectedGalleryForQr(gallery);
+    setQrModalOpen(true);
+
+    if (gallery.qrCodeUrl) {
+      return; // QR already generated
+    }
+
+    setGeneratingQr(true);
+
+    try {
+      const res = await fetch(`/api/admin/events/${gallery.id}/generate-qr`, {
+        method: 'POST',
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Update local state
+        setSelectedGalleryForQr({ ...gallery, qrCodeUrl: data.qrCodeDataURL });
+        fetchClientData();
+      } else {
+        const data = await res.json();
+        alert(`❌ ${data.error}`);
+      }
+    } catch (error) {
+      alert('❌ Failed to generate QR code');
+    } finally {
+      setGeneratingQr(false);
+    }
+  };
+
+  const handleDownloadQr = () => {
+    if (!selectedGalleryForQr?.qrCodeUrl) return;
+
+    const link = document.createElement('a');
+    link.href = selectedGalleryForQr.qrCodeUrl;
+    link.download = `qr-code-${selectedGalleryForQr.name.replace(/\s+/g, '-')}.png`;
+    link.click();
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
@@ -295,24 +343,41 @@ export default function ClientDetailPage() {
                       <FiEye className="w-4 h-4" />
                       <span>Manage Photos</span>
                     </button>
-                    <div className="flex items-center space-x-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={() => {
                           setSelectedGallery(gallery.id);
                           setUploadModalOpen(true);
                         }}
-                        className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-400 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition text-sm"
+                        className="flex items-center justify-center space-x-1 px-3 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-400 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition text-sm"
                       >
                         <FiUpload className="w-4 h-4" />
-                        <span>Quick Upload</span>
+                        <span>Upload</span>
                       </button>
                       <button
-                        onClick={() => handleDeleteGallery(gallery.id)}
-                        className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition"
+                        onClick={() => handleGenerateQr(gallery)}
+                        className="flex items-center justify-center space-x-1 px-3 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded hover:bg-pink-200 dark:hover:bg-pink-900/50 transition text-sm"
+                        title="Guest Upload QR Code"
                       >
-                        <FiTrash2 className="w-4 h-4" />
+                        <FiQrCode className="w-4 h-4" />
+                        <span>QR</span>
                       </button>
                     </div>
+                    {gallery.guestUploadEnabled && (
+                      <button
+                        onClick={() => router.push(`/admin/dashboard/events/${gallery.id}/guest-uploads`)}
+                        className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded hover:bg-purple-200 dark:hover:bg-purple-900/50 transition text-sm"
+                      >
+                        <FiUsers className="w-4 h-4" />
+                        <span>Guest Uploads {gallery._count?.guestUploads ? `(${gallery._count.guestUploads})` : ''}</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDeleteGallery(gallery.id)}
+                      className="w-full p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition text-sm"
+                    >
+                      <FiTrash2 className="w-4 h-4 mx-auto" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -414,6 +479,83 @@ export default function ClientDetailPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Modal */}
+      {qrModalOpen && selectedGalleryForQr && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Guest Upload QR Code</h2>
+              <button onClick={() => setQrModalOpen(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  {selectedGalleryForQr.name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Wedding guests can scan this QR code to upload their photos
+                </p>
+              </div>
+
+              {generatingQr ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400">Generating QR Code...</p>
+                </div>
+              ) : selectedGalleryForQr.qrCodeUrl ? (
+                <div className="space-y-4">
+                  <div className="flex justify-center">
+                    <div className="bg-white p-4 rounded-xl shadow-lg">
+                      <Image
+                        src={selectedGalleryForQr.qrCodeUrl}
+                        alt="QR Code"
+                        width={300}
+                        height={300}
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-800">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                      <strong>Upload URL:</strong>
+                    </p>
+                    <code className="text-xs bg-white dark:bg-dark-700 px-3 py-2 rounded block break-all">
+                      {typeof window !== 'undefined' ? `${window.location.origin}/events/${selectedGalleryForQr.id}/guest-upload` : ''}
+                    </code>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleDownloadQr}
+                      className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                    >
+                      <FiDownload className="w-5 h-5" />
+                      <span>Download QR Code</span>
+                    </button>
+                    <button
+                      onClick={() => router.push(`/admin/dashboard/events/${selectedGalleryForQr.id}/guest-uploads`)}
+                      className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
+                    >
+                      <FiUsers className="w-5 h-5" />
+                      <span>Manage Uploads</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FiQrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400">No QR code yet</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
