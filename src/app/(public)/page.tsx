@@ -243,7 +243,10 @@ export default function HomePage() {
           <div className="flex-1 min-w-0">
             {/* Username */}
             <div className="flex items-center gap-3 mb-3 sm:mb-4 md:mb-5">
-              <h1 className="text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate">
+              <h1 
+                className="text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate"
+                style={{ fontFamily: settings.fontHeading || 'Poppins, sans-serif' }}
+              >
                 {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
               </h1>
               <button 
@@ -277,8 +280,11 @@ export default function HomePage() {
             </div>
 
             {/* Bio */}
-            <div className="text-xs sm:text-sm">
-              <div className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            <div className="text-xs sm:text-sm" style={{ fontFamily: settings.fontBody || 'Inter, sans-serif' }}>
+              <div 
+                className="font-semibold text-gray-900 dark:text-gray-100 mb-1"
+                style={{ fontFamily: settings.fontHeading || 'Poppins, sans-serif' }}
+              >
                 {settings.tagline || 'Professional Photographer'}
               </div>
               <div className="text-gray-900 dark:text-gray-100 whitespace-pre-line break-words">
