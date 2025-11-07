@@ -8,7 +8,7 @@ import { FiChevronLeft, FiChevronRight, FiInstagram, FiFacebook, FiMail, FiPhone
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 export default function ProfessionalHomePage() {
-  const { currentTheme, setTheme } = useLayoutTheme();
+  const { currentTheme, switchTheme } = useLayoutTheme();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -246,18 +246,18 @@ export default function ProfessionalHomePage() {
 
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none px-4">
           <button
-            onClick={() => setTheme('professional')}
+            onClick={() => switchTheme('simple')}
             className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
-          >
-            <FiLayers className="w-4 h-4" />
-            Professional Mode
-          </button>
-          <button
-            onClick={() => setTheme('simple')}
-            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
           >
             <FiGrid className="w-4 h-4" />
             Simple Mode
+          </button>
+          <button
+            onClick={() => switchTheme('professional')}
+            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
+          >
+            <FiLayers className="w-4 h-4" />
+            Professional Mode
           </button>
         </div>
       </motion.div>
