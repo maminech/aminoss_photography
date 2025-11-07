@@ -20,6 +20,8 @@ function AdminLoginForm() {
     setError('');
     setLoading(true);
 
+    console.log('Login attempt started...');
+
     try {
       const result = await signIn('credentials', {
         email,
@@ -27,20 +29,26 @@ function AdminLoginForm() {
         redirect: false,
       });
 
+      console.log('SignIn result:', result);
+
       if (result?.error) {
+        console.error('Login error:', result.error);
         setError('Invalid email or password');
         setLoading(false);
       } else if (result?.ok) {
+        console.log('Login successful, redirecting in 500ms...');
         // Wait a moment for cookie to be set, then redirect
         setTimeout(() => {
+          console.log('Redirecting to:', callbackUrl);
           window.location.href = callbackUrl;
         }, 500);
       } else {
+        console.error('Unexpected result:', result);
         setError('An unexpected error occurred');
         setLoading(false);
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login exception:', error);
       setError('An error occurred. Please try again.');
       setLoading(false);
     }
@@ -131,7 +139,7 @@ function AdminLoginForm() {
 
         {/* Setup Notice */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
             First time? Visit{' '}
             <a
               href="/admin/setup"
@@ -140,6 +148,15 @@ function AdminLoginForm() {
               /admin/setup
             </a>{' '}
             to create your admin account
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-500">
+            Debugging issues?{' '}
+            <a
+              href="/admin/debug"
+              className="text-primary-600 dark:text-primary-500 hover:underline"
+            >
+              Check debug page
+            </a>
           </p>
         </div>
       </div>
