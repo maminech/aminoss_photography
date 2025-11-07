@@ -239,34 +239,17 @@ export default function HomePage() {
 
           {/* Profile Info - Right Side */}
           <div className="flex-1 min-w-0">
-            {/* Username and Action Buttons (Instagram Style) */}
-            <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4 md:mb-5">
+            {/* Username */}
+            <div className="flex items-center gap-3 mb-3 sm:mb-4 md:mb-5">
               <h1 className="text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate">
                 {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
               </h1>
-              
-              {/* Instagram-style action buttons below username */}
-              <div className="flex gap-1.5 sm:gap-2">
-                <button className="flex-1 px-3 py-1.5 sm:py-2 bg-[#0095f6] text-white rounded-lg font-semibold hover:bg-[#1877f2] active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
-                  Following
-                </button>
-                <Link href="/contact" className="flex-1">
-                  <button className="w-full px-3 py-1.5 sm:py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
-                    Message
-                  </button>
-                </Link>
-                <Link href="/packs" className="flex-1">
-                  <button className="w-full px-3 py-1.5 sm:py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
-                    Demande un devis
-                  </button>
-                </Link>
-                <button 
-                  onClick={() => setShowThemeSwitcher(true)}
-                  className="p-1.5 sm:p-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition"
-                >
-                  <FiSettings className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              </div>
+              <button 
+                onClick={() => setShowThemeSwitcher(true)}
+                className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition active:scale-95"
+              >
+                <FiSettings className="w-5 h-5 text-gray-900 dark:text-gray-100" />
+              </button>
             </div>
 
             {/* Stats */}
@@ -304,6 +287,25 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Action Buttons - Below Bio, Above Highlights */}
+        <div className="flex gap-2 mb-6 sm:mb-8">
+          <Link href="/packs" className="flex-1">
+            <button className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm">
+              Demande un devis
+            </button>
+          </Link>
+          <Link href="/contact" className="flex-1">
+            <button className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm">
+              Message
+            </button>
+          </Link>
+          <Link href="/about" className="flex-1">
+            <button className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm">
+              About us
+            </button>
+          </Link>
         </div>
 
         {/* Highlights - Instagram Stories Style */}
