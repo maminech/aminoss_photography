@@ -36,14 +36,24 @@ function AdminLoginForm() {
         setError(`Login failed: ${result.error}`);
         setLoading(false);
       } else if (result?.ok) {
-        console.log('Login successful! Waiting for session to be set...');
+        console.log('Login successful! Verifying session...');
         
-        // Wait a bit longer for the session cookie to be properly set
-        setTimeout(() => {
-          console.log('Redirecting to:', callbackUrl);
-          // Use hard reload to ensure session is properly loaded
+        // Wait for session to be set, then verify it
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Verify session was created
+        const sessionResponse = await fetch('/api/auth/session');
+        const sessionData = await sessionResponse.json();
+        console.log('Session after login:', sessionData);
+        
+        if (sessionData?.user) {
+          console.log('Session verified! Redirecting to:', callbackUrl);
           window.location.href = callbackUrl;
-        }, 500);
+        } else {
+          console.error('Session not created properly:', sessionData);
+          setError('Login succeeded but session not created. Please try again.');
+          setLoading(false);
+        }
       } else {
         console.error('Unexpected result:', result);
         setError('Login failed - unexpected response. Check console for details.');
