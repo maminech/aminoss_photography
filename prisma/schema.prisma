@@ -274,20 +274,25 @@ model Pack {
 
 // Booking Management
 model Booking {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  clientName    String
-  clientEmail   String
-  clientPhone   String?
-  packId        String?  @db.ObjectId
-  packName      String   // Store pack name for reference
-  requestedDate DateTime
-  alternateDate DateTime?
-  status        String   @default("pending") // pending, confirmed, rejected, cancelled
-  message       String?
-  adminNotes    String?  // Internal notes
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  pack          Pack?    @relation(fields: [packId], references: [id], onDelete: SetNull)
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String   // Client name
+  email             String   // Client email
+  phone             String   // Client phone
+  packId            String?  @db.ObjectId
+  packageName       String?  // Store pack name for reference
+  packagePrice      Float?   // Store pack price for reference
+  eventType         String   // wedding, engagement, studio, portrait, fashion, event, commercial, other
+  eventDate         DateTime // Requested date
+  timeSlot          String   // morning, afternoon, evening, all-day
+  location          String   // Event location
+  message           String?  @db.String
+  status            String   @default("pending") // pending, approved, rejected, cancelled
+  contractGenerated Boolean  @default(false) // Whether contract PDF was generated
+  calendarEventId   String?  // Google Calendar event ID
+  adminNotes        String?  @db.String // Internal notes
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  pack              Pack?    @relation(fields: [packId], references: [id], onDelete: SetNull)
 }
 
 // Blocked Dates (for calendar)
@@ -332,4 +337,17 @@ model ContactMessage {
   userAgent   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Remerciements (Thank You Messages/Images)
+model Remerciement {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      String   // image, text, testimonial
+  content   String   @db.String // Message text or image description
+  author    String?  // Client name (optional)
+  image     String?  // Image URL (optional)
+  active    Boolean  @default(true) // Whether to show in carousel
+  order     Int      @default(0) // Display order in carousel
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
