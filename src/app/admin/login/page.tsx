@@ -25,15 +25,16 @@ function AdminLoginForm() {
         email,
         password,
         redirect: false,
-        callbackUrl,
       });
 
       if (result?.error) {
         setError('Invalid email or password');
         setLoading(false);
       } else if (result?.ok) {
-        // Successful login - force a hard redirect to ensure session is loaded
-        window.location.href = callbackUrl;
+        // Wait a moment for cookie to be set, then redirect
+        setTimeout(() => {
+          window.location.href = callbackUrl;
+        }, 500);
       } else {
         setError('An unexpected error occurred');
         setLoading(false);
