@@ -63,7 +63,10 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
+    console.log('Middleware: Checking /admin/login, token:', token ? 'Found' : 'Not found');
+
     if (token) {
+      console.log('Middleware: User already logged in, redirecting to dashboard');
       return NextResponse.redirect(new URL('/admin/dashboard', request.url));
     }
   }

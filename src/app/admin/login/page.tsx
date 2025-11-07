@@ -36,17 +36,14 @@ function AdminLoginForm() {
         setError(`Login failed: ${result.error}`);
         setLoading(false);
       } else if (result?.ok) {
-        console.log('Login successful! Redirecting...');
-        // Use multiple redirect strategies for reliability
+        console.log('Login successful! Waiting for session to be set...');
         
-        // Strategy 1: Next.js router
-        router.push(callbackUrl);
-        
-        // Strategy 2: Hard reload after a short delay (fallback)
+        // Wait a bit longer for the session cookie to be properly set
         setTimeout(() => {
-          console.log('Fallback redirect to:', callbackUrl);
-          window.location.replace(callbackUrl);
-        }, 1000);
+          console.log('Redirecting to:', callbackUrl);
+          // Use hard reload to ensure session is properly loaded
+          window.location.href = callbackUrl;
+        }, 500);
       } else {
         console.error('Unexpected result:', result);
         setError('Login failed - unexpected response. Check console for details.');
