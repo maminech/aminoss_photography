@@ -13,33 +13,49 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('NextAuth: authorize called with email:', credentials?.email);
+        
         if (!credentials?.email || !credentials?.password) {
+          console.error('NextAuth: Missing credentials');
           throw new Error('Invalid credentials');
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
 
-        if (!user || !user.password) {
-          throw new Error('Invalid credentials');
+          console.log('NextAuth: User lookup result:', user ? 'Found' : 'Not found');
+
+          if (!user || !user.password) {
+            console.error('NextAuth: User not found or no password');
+            throw new Error('Invalid credentials');
+          }
+
+          const isCorrectPassword = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          console.log('NextAuth: Password check:', isCorrectPassword ? 'Valid' : 'Invalid');
+
+          if (!isCorrectPassword) {
+            console.error('NextAuth: Invalid password');
+            throw new Error('Invalid credentials');
+          }
+
+          console.log('NextAuth: Authentication successful for user:', user.email);
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error('NextAuth: authorize error:', error);
+          throw error;
         }
-
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isCorrectPassword) {
-          throw new Error('Invalid credentials');
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
       },
     }),
   ],

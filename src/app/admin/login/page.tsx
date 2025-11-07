@@ -20,7 +20,7 @@ function AdminLoginForm() {
     setError('');
     setLoading(true);
 
-    console.log('Login attempt started...');
+    console.log('Login attempt started...', { email, hasPassword: !!password });
 
     try {
       const result = await signIn('credentials', {
@@ -29,27 +29,24 @@ function AdminLoginForm() {
         redirect: false,
       });
 
-      console.log('SignIn result:', result);
+      console.log('SignIn result:', JSON.stringify(result, null, 2));
 
       if (result?.error) {
         console.error('Login error:', result.error);
-        setError('Invalid email or password');
+        setError(`Login failed: ${result.error}`);
         setLoading(false);
       } else if (result?.ok) {
-        console.log('Login successful, redirecting in 500ms...');
-        // Wait a moment for cookie to be set, then redirect
-        setTimeout(() => {
-          console.log('Redirecting to:', callbackUrl);
-          window.location.href = callbackUrl;
-        }, 500);
+        console.log('Login successful! Session created.');
+        // Force reload to get the session
+        window.location.href = callbackUrl;
       } else {
         console.error('Unexpected result:', result);
-        setError('An unexpected error occurred');
+        setError('Login failed - unexpected response. Check console for details.');
         setLoading(false);
       }
     } catch (error) {
       console.error('Login exception:', error);
-      setError('An error occurred. Please try again.');
+      setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setLoading(false);
     }
   };
