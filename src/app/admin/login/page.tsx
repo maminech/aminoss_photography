@@ -2,11 +2,12 @@
 
 import { useState, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { FiLock, FiMail, FiAlertCircle } from 'react-icons/fi';
 
 function AdminLoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -28,13 +29,16 @@ function AdminLoginForm() {
 
       if (result?.error) {
         setError('Invalid email or password');
-      } else {
-        // Successful login - use window.location for full page reload
-        window.location.href = callbackUrl;
+        setLoading(false);
+      } else if (result?.ok) {
+        // Successful login - wait a bit for session to be established, then redirect
+        setTimeout(() => {
+          router.push(callbackUrl);
+          router.refresh();
+        }, 100);
       }
     } catch (error) {
       setError('An error occurred. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
