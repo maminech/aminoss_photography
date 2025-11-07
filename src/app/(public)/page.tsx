@@ -38,6 +38,8 @@ interface SiteSettings {
   description?: string;
   aboutContent?: string;
   heroImage?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
 }
 
 export default function HomePage() {
@@ -292,17 +294,51 @@ export default function HomePage() {
         {/* Action Buttons - Below Bio, Above Highlights */}
         <div className="flex gap-2 mb-6 sm:mb-8">
           <Link href="/packs" className="flex-1">
-            <button className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm">
+            <button 
+              className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm text-white"
+              style={{ 
+                backgroundColor: settings.primaryColor || '#c67548',
+                opacity: 0.95
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.95'}
+            >
               Demande un devis
             </button>
           </Link>
           <Link href="/contact" className="flex-1">
-            <button className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm">
+            <button 
+              className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm"
+              style={{ 
+                backgroundColor: settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb',
+                color: settings.secondaryColor || '#111827',
+                border: `2px solid ${settings.secondaryColor || '#d1d5db'}`
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}30` : '#d1d5db';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb';
+              }}
+            >
               Message
             </button>
           </Link>
           <Link href="/about" className="flex-1">
-            <button className="w-full px-4 py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm">
+            <button 
+              className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm"
+              style={{ 
+                backgroundColor: settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb',
+                color: settings.secondaryColor || '#111827',
+                border: `2px solid ${settings.secondaryColor || '#d1d5db'}`
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}30` : '#d1d5db';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb';
+              }}
+            >
               About us
             </button>
           </Link>
@@ -311,7 +347,10 @@ export default function HomePage() {
         {/* Highlights - Instagram Stories Style */}
         <div className="flex gap-6 xs:gap-8 sm:gap-10 md:gap-12 lg:gap-16 overflow-x-auto pb-4 mb-1 no-scrollbar px-1 -mx-1 snap-x snap-mandatory scroll-smooth touch-pan-x">
           <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
-            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-purple-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
+            <div 
+              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
+              style={{ borderColor: settings.primaryColor || '#c67548' }}
+            >
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[0].coverImage ? (
                   <Image
@@ -322,7 +361,10 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+                  <div 
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
+                  >
                     <BsGrid3X3 className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                 )}
@@ -332,7 +374,10 @@ export default function HomePage() {
           </button>
           
           <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
-            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-blue-400 to-purple-500 p-0.5 bg-white dark:bg-dark-900">
+            <div 
+              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
+              style={{ borderColor: settings.primaryColor || '#c67548' }}
+            >
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[1].coverImage ? (
                   <Image
@@ -343,7 +388,10 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                  <div 
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
+                  >
                     <MdVideoLibrary className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                 )}
@@ -353,7 +401,10 @@ export default function HomePage() {
           </button>
           
           <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
-            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-orange-400 to-pink-500 p-0.5 bg-white dark:bg-dark-900">
+            <div 
+              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
+              style={{ borderColor: settings.primaryColor || '#c67548' }}
+            >
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[2].coverImage ? (
                   <Image
@@ -364,7 +415,10 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
+                  <div 
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
+                  >
                     <FiBookmark className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                 )}
@@ -374,7 +428,10 @@ export default function HomePage() {
           </button>
           
           <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
-            <div className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 ring-gradient-to-br from-green-400 to-blue-500 p-0.5 bg-white dark:bg-dark-900">
+            <div 
+              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
+              style={{ borderColor: settings.primaryColor || '#c67548' }}
+            >
               <div className="w-full h-full rounded-full overflow-hidden">
                 {highlights[3].coverImage ? (
                   <Image
@@ -385,7 +442,10 @@ export default function HomePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
+                  <div 
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
+                  >
                     <FiMail className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                 )}
