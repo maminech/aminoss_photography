@@ -116,6 +116,21 @@ export default function StoriesViewer({
   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
     setDragStart({ x: touch.clientX, y: touch.clientY });
+    setIsPaused(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!dragStart) return;
+    
+    const touch = e.touches[0];
+    const deltaY = touch.clientY - dragStart.y;
+    
+    // Only prevent default if swiping horizontally (for navigation)
+    // Allow vertical scroll to work naturally
+    if (Math.abs(deltaY) > 50) {
+      // Vertical swipe detected, allow it
+      return;
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -125,9 +140,10 @@ export default function StoriesViewer({
     const deltaX = touch.clientX - dragStart.x;
     const deltaY = touch.clientY - dragStart.y;
 
-    // Detect swipe down to close
-    if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 100) {
+    // Detect swipe down to close (requires significant downward swipe)
+    if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 150) {
       onClose();
+      setDragStart(null);
       return;
     }
 
@@ -142,6 +158,7 @@ export default function StoriesViewer({
     }
 
     setDragStart(null);
+    setIsPaused(false);
   };
 
   if (!currentStory) return null;
@@ -152,8 +169,10 @@ export default function StoriesViewer({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
         className="fixed inset-0 z-[200] bg-black"
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onMouseDown={(e) => {
           const screenWidth = window.innerWidth;
@@ -163,6 +182,7 @@ export default function StoriesViewer({
             goToNextStory();
           }
         }}
+        style={{ touchAction: 'pan-y' }}
       >
         {/* Progress bars */}
         <div className="absolute top-0 left-0 right-0 z-20 flex gap-1 p-2">
@@ -212,22 +232,23 @@ export default function StoriesViewer({
         </div>
 
         {/* Story Image */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <motion.div
             key={currentStory.id}
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             className="relative w-full h-full"
           >
             <Image
               src={currentStory.image}
               alt={currentStory.title || 'Story'}
               fill
-              className="object-contain"
+              className="object-contain select-none"
               priority
               quality={95}
+              draggable={false}
             />
           </motion.div>
         </div>

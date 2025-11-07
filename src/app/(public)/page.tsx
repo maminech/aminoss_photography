@@ -351,8 +351,8 @@ export default function HomePage() {
         </div>
 
         {/* Highlights - Instagram Stories Style */}
-        <div className="flex gap-6 xs:gap-8 sm:gap-10 md:gap-12 lg:gap-16 overflow-x-auto pb-4 mb-1 no-scrollbar px-1 -mx-1 snap-x snap-mandatory scroll-smooth touch-pan-x">
-          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+        <div className="flex gap-4 xs:gap-5 sm:gap-6 md:gap-8 overflow-x-auto pb-4 mb-1 no-scrollbar px-4 -mx-4 snap-x snap-proximity scroll-smooth">
+          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -379,7 +379,7 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Gallery</span>
           </button>
           
-          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -406,7 +406,7 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Videos</span>
           </button>
           
-          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -433,7 +433,7 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Packages</span>
           </button>
           
-          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-start">
+          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}

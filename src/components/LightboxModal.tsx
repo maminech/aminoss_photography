@@ -89,26 +89,27 @@ export default function LightboxModal({
   }, [isOpen]);
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    setIsDragging(false);
     const threshold = 100;
     const velocity = info.velocity.x;
     const velocityY = info.velocity.y;
     const offset = info.offset.x;
     const offsetY = info.offset.y;
 
-    // Swipe down to close (mobile)
-    if (offsetY > threshold || velocityY > 500) {
+    // Only allow swipe down to close if swiping down significantly
+    if (Math.abs(offsetY) > Math.abs(offset) && (offsetY > 150 || velocityY > 800)) {
       onClose();
       return;
     }
 
-    // Swipe left (next image)
-    if (offset < -threshold || velocity < -500) {
+    // Swipe left (next image) - only if horizontal swipe
+    if (Math.abs(offset) > Math.abs(offsetY) && (offset < -threshold || velocity < -500)) {
       if (currentIndex < images.length - 1) {
         onNext();
       }
     } 
-    // Swipe right (previous image)
-    else if (offset > threshold || velocity > 500) {
+    // Swipe right (previous image) - only if horizontal swipe
+    else if (Math.abs(offset) > Math.abs(offsetY) && (offset > threshold || velocity > 500)) {
       if (currentIndex > 0) {
         onPrevious();
       }
@@ -243,14 +244,19 @@ export default function LightboxModal({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               className="relative w-full h-full flex items-center justify-center px-3 xs:px-4 sm:px-12 md:px-20 py-16 sm:py-20 md:py-24"
               drag={zoom === 1}
               dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-              dragElastic={0.3}
+              dragElastic={0.2}
+              dragDirectionLock={false}
               onDragEnd={handleDragEnd}
               onDragStart={() => setIsDragging(true)}
-              style={{ x: zoom === 1 ? x : 0, opacity: zoom === 1 ? opacity : 1 }}
+              style={{ 
+                x: zoom === 1 ? x : 0, 
+                opacity: zoom === 1 ? opacity : 1,
+                touchAction: 'none'
+              }}
             >
               {/* Loading Spinner */}
               {!imageLoaded && (
