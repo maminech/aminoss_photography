@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FiMail, FiMapPin, FiInstagram, FiFacebook, FiYoutube, FiSend, FiPhone } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import EnhancedBookingForm from '@/modules/booking/EnhancedBookingForm';
 
 export default function ContactPage() {
   const { currentTheme } = useLayoutTheme();
   const isProfessional = currentTheme === 'professional';
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,6 +19,10 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // Get package info from URL params (from /packages page)
+  const packageName = searchParams.get('package');
+  const packagePrice = searchParams.get('price');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -479,6 +486,29 @@ export default function ContactPage() {
                 </p>
               </div>
             </motion.div>
+          </div>
+        </motion.div>
+        
+        {/* Enhanced Booking Form Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="pb-16 sm:pb-20 md:pb-24"
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
+                Demande de Devis
+              </h2>
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400">
+                Réservez votre séance photo ou demandez un devis personnalisé
+              </p>
+            </div>
+            <EnhancedBookingForm 
+              prefilledPackage={packageName || undefined}
+              prefilledPrice={packagePrice ? Number(packagePrice) : undefined}
+            />
           </div>
         </motion.div>
       </div>

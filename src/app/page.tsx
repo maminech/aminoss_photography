@@ -13,6 +13,8 @@ import { MediaItem } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import dynamic from 'next/dynamic';
+import AnimatedIntro from '@/modules/intro/AnimatedIntro';
+import RemerciementsSection from '@/modules/remerciements/RemerciementsSection';
 
 const ProfessionalHome = dynamic(() => import('./professional-home/page'), {
   ssr: false,
@@ -48,6 +50,20 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [initialHighlightIndex, setInitialHighlightIndex] = useState(0);
+  const [showIntro, setShowIntro] = useState(false);
+
+  useEffect(() => {
+    // Check if user has visited before
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      setShowIntro(true);
+    }
+  }, []);
+
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+    localStorage.setItem('hasVisited', 'true');
+  };
 
   // If Professional theme, show Novo-style homepage
   if (currentTheme === 'professional') {
@@ -189,7 +205,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-dark-900">
+    <>
+      {/* Animated Intro - First Visit Only */}
+      {showIntro && <AnimatedIntro onComplete={handleIntroComplete} />}
+      
+      <div className="min-h-screen bg-white dark:bg-dark-900">
       {/* Instagram Profile Header - Exact Layout */}
       <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-6 sm:pt-8 pb-3 sm:pb-4">
         {/* Profile Section */}
@@ -470,6 +490,12 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* Remerciements Section */}
+      <RemerciementsSection 
+        autoPlayInterval={5000}
+        showDots={true}
+      />
+
       {/* Lightbox Modal */}
       <LightboxModal
         images={images}
@@ -489,5 +515,6 @@ export default function HomePage() {
         />
       )}
     </div>
+    </>
   );
 }
