@@ -7,7 +7,8 @@ export const authOptions: NextAuthOptions = {
   // DO NOT use adapter with CredentialsProvider - it breaks session management
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      id: 'credentials',
+      name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
@@ -17,7 +18,7 @@ export const authOptions: NextAuthOptions = {
         
         if (!credentials?.email || !credentials?.password) {
           console.error('NextAuth: Missing credentials');
-          throw new Error('Invalid credentials');
+          return null;
         }
 
         try {
@@ -29,7 +30,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!user || !user.password) {
             console.error('NextAuth: User not found or no password');
-            throw new Error('Invalid credentials');
+            return null;
           }
 
           const isCorrectPassword = await bcrypt.compare(
@@ -41,7 +42,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!isCorrectPassword) {
             console.error('NextAuth: Invalid password');
-            throw new Error('Invalid credentials');
+            return null;
           }
 
           console.log('NextAuth: Authentication successful for user:', user.email);
@@ -54,7 +55,7 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error('NextAuth: authorize error:', error);
-          throw error;
+          return null;
         }
       },
     }),
@@ -62,50 +63,49 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours - refresh session every 24h
   },
   pages: {
     signIn: '/admin/login',
-    error: '/admin/login',
-  },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 30 * 24 * 60 * 60, // 30 days
-      },
-    },
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      console.log('NextAuth: jwt callback', { hasUser: !!user, hasToken: !!token, hasAccount: !!account });
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        console.log('NextAuth: JWT token created with user data:', { id: token.id, email: token.email, role: token.role });
       }
       return token;
     },
     async session({ session, token }) {
-      if (session?.user) {
-        (session.user as any).role = token.role;
+      console.log('NextAuth: session callback', { hasSession: !!session, hasToken: !!token });
+      if (token && session?.user) {
         (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        console.log('NextAuth: Session created with user:', { id: (session.user as any).id, email: session.user.email });
       }
       return session;
     },
   },
   events: {
-    async signIn({ user }) {
-      console.log('User signed in:', user.email);
+    async signIn({ user, account }) {
+      console.log('NextAuth Event: User signed in:', user.email, 'Account:', account?.provider);
     },
     async signOut({ token }) {
-      console.log('User signed out');
+      console.log('NextAuth Event: User signed out');
+    },
+    async session({ session }) {
+      console.log('NextAuth Event: Session checked:', session?.user?.email);
     },
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: true, // Enable debug for all environments temporarily
   secret: process.env.NEXTAUTH_SECRET,
+  useSecureCookies: process.env.NODE_ENV === 'production',
+  trustHost: true,
 };
 
 const handler = NextAuth(authOptions);

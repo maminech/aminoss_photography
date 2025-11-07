@@ -10,25 +10,34 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  console.log('Middleware: Processing', pathname);
+  console.log('=== MIDDLEWARE ===');
+  console.log('Path:', pathname);
+  console.log('Cookies:', request.cookies.getAll().map(c => c.name).join(', '));
 
   // Admin routes protection
   if (pathname.startsWith('/admin/dashboard')) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+    try {
+      const token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
 
-    console.log('Middleware: Token check for /admin/dashboard:', token ? 'Found' : 'Not found');
+      console.log('Token for /admin/dashboard:', token ? JSON.stringify({ email: token.email, role: (token as any).role }) : 'NOT FOUND');
 
-    if (!token) {
-      console.log('Middleware: No token, redirecting to login');
+      if (!token) {
+        console.log('No token - redirecting to login');
+        const url = new URL('/admin/login', request.url);
+        url.searchParams.set('callbackUrl', pathname);
+        return NextResponse.redirect(url);
+      }
+      
+      console.log('Token valid - allowing access');
+    } catch (error) {
+      console.error('Middleware error checking token:', error);
       const url = new URL('/admin/login', request.url);
       url.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(url);
     }
-    
-    console.log('Middleware: Token valid, allowing access to:', pathname);
   }
 
   // Client routes protection
@@ -58,16 +67,20 @@ export async function middleware(request: NextRequest) {
 
   // Redirect logged-in users away from login pages
   if (pathname === '/admin/login') {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+    try {
+      const token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
 
-    console.log('Middleware: Checking /admin/login, token:', token ? 'Found' : 'Not found');
+      console.log('Checking /admin/login - token:', token ? 'FOUND' : 'NOT FOUND');
 
-    if (token) {
-      console.log('Middleware: User already logged in, redirecting to dashboard');
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+      if (token) {
+        console.log('User already logged in - redirecting to dashboard');
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+      }
+    } catch (error) {
+      console.error('Error checking login page token:', error);
     }
   }
 

@@ -20,45 +20,27 @@ function AdminLoginForm() {
     setError('');
     setLoading(true);
 
-    console.log('Login attempt started...', { email, hasPassword: !!password, callbackUrl });
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Email:', email);
+    console.log('Has Password:', !!password);
+    console.log('Callback URL:', callbackUrl);
+    console.log('Current URL:', window.location.href);
 
     try {
-      const result = await signIn('credentials', {
+      console.log('Calling signIn...');
+      
+      // Use NextAuth's built-in redirect - this should handle everything
+      await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        callbackUrl,
       });
-
-      console.log('SignIn result:', JSON.stringify(result, null, 2));
-
-      if (result?.error) {
-        console.error('Login error:', result.error);
-        setError(`Login failed: ${result.error}`);
-        setLoading(false);
-      } else if (result?.ok) {
-        console.log('Login successful! Verifying session...');
-        
-        // Wait for session to be set, then verify it
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Verify session was created
-        const sessionResponse = await fetch('/api/auth/session');
-        const sessionData = await sessionResponse.json();
-        console.log('Session after login:', sessionData);
-        
-        if (sessionData?.user) {
-          console.log('Session verified! Redirecting to:', callbackUrl);
-          window.location.href = callbackUrl;
-        } else {
-          console.error('Session not created properly:', sessionData);
-          setError('Login succeeded but session not created. Please try again.');
-          setLoading(false);
-        }
-      } else {
-        console.error('Unexpected result:', result);
-        setError('Login failed - unexpected response. Check console for details.');
-        setLoading(false);
-      }
+      
+      // If we reach here, there was an error (redirect didn't happen)
+      console.error('SignIn did not redirect - this means login failed');
+      setError('Login failed. Please check your credentials.');
+      setLoading(false);
+      
     } catch (error) {
       console.error('Login exception:', error);
       setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
