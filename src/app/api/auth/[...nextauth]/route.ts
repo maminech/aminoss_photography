@@ -47,10 +47,11 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    updateAge: 24 * 60 * 60, // 24 hours - refresh session every 24h
   },
   pages: {
     signIn: '/admin/login',
+    error: '/admin/login',
   },
   cookies: {
     sessionToken: {
@@ -65,14 +66,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
-      }
-      // Keep token fresh - extend expiration on each request
-      if (trigger === 'update') {
-        return { ...token };
       }
       return token;
     },
@@ -84,6 +81,15 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  events: {
+    async signIn({ user }) {
+      console.log('User signed in:', user.email);
+    },
+    async signOut({ token }) {
+      console.log('User signed out');
+    },
+  },
+  debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
 };
 

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
-import NavigationModeToggle from '@/modules/navigation/NavigationModeToggle';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -120,9 +119,6 @@ export default function Navbar() {
               </Link>
             ))}
             
-            {/* Navigation Mode Toggle */}
-            <NavigationModeToggle />
-            
             {/* Theme Toggle */}
             <ThemeToggle />
             
@@ -210,9 +206,8 @@ export default function Navbar() {
                 </Link>
               ))}
               
-              {/* Mobile Theme & Navigation Toggles */}
-              <div className="pt-4 pb-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center gap-4">
-                <NavigationModeToggle />
+              {/* Mobile Theme Toggle */}
+              <div className="pt-4 pb-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center">
                 <ThemeToggle />
               </div>
               

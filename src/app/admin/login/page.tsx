@@ -25,19 +25,21 @@ function AdminLoginForm() {
         email,
         password,
         redirect: false,
+        callbackUrl,
       });
 
       if (result?.error) {
         setError('Invalid email or password');
         setLoading(false);
       } else if (result?.ok) {
-        // Successful login - wait a bit for session to be established, then redirect
-        setTimeout(() => {
-          router.push(callbackUrl);
-          router.refresh();
-        }, 100);
+        // Successful login - force a hard redirect to ensure session is loaded
+        window.location.href = callbackUrl;
+      } else {
+        setError('An unexpected error occurred');
+        setLoading(false);
       }
     } catch (error) {
+      console.error('Login error:', error);
       setError('An error occurred. Please try again.');
       setLoading(false);
     }

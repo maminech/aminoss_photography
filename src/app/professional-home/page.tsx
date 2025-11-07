@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiInstagram, FiFacebook, FiMail, FiPhone, FiMenu, FiX } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiInstagram, FiFacebook, FiMail, FiPhone, FiMenu, FiX, FiGrid, FiLayers } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 export default function ProfessionalHomePage() {
-  const { currentTheme } = useLayoutTheme();
+  const { currentTheme, setTheme } = useLayoutTheme();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -245,18 +245,20 @@ export default function ProfessionalHomePage() {
         </p>
 
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none px-4">
-          <Link
-            href="/gallery"
-            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-block text-center touch-manipulation"
+          <button
+            onClick={() => setTheme('professional')}
+            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
           >
-            View Gallery
-          </Link>
-          <Link
-            href="/contact"
-            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-block text-center touch-manipulation"
+            <FiLayers className="w-4 h-4" />
+            Professional Mode
+          </button>
+          <button
+            onClick={() => setTheme('simple')}
+            className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
           >
-            Get in Touch
-          </Link>
+            <FiGrid className="w-4 h-4" />
+            Simple Mode
+          </button>
         </div>
       </motion.div>
       {/* Social Links - Bottom Left (Desktop Only) */}
