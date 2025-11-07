@@ -158,8 +158,8 @@ export default function HomePage() {
 
   const displayMedia = activeTab === 'posts' ? images : videos;
 
-  // Instagram Stories highlights data
-  const highlights = [
+  // Instagram Stories highlights data - Fetch from database or use fallback
+  const [highlights, setHighlights] = useState([
     {
       id: 'gallery',
       name: 'Gallery',
@@ -201,7 +201,27 @@ export default function HomePage() {
         { id: 'contact-3', image: images[8]?.url || '/placeholder.jpg', title: '📍 Location' },
       ]
     }
-  ];
+  ]);
+
+  // Load Instagram highlights if available
+  useEffect(() => {
+    const loadInstagramHighlights = async () => {
+      try {
+        const response = await fetch('/api/instagram/highlights');
+        if (response.ok) {
+          const instagramHighlights = await response.json();
+          if (instagramHighlights && instagramHighlights.length > 0) {
+            setHighlights(instagramHighlights);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load Instagram highlights:', error);
+        // Keep fallback highlights
+      }
+    };
+
+    loadInstagramHighlights();
+  }, []);
 
   const openStories = (index: number) => {
     setInitialHighlightIndex(index);

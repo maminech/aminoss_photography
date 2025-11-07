@@ -118,6 +118,13 @@ model SiteSettings {
   twitterUrl        String?
   linkedinUrl       String?
   
+  // Instagram Integration
+  instagramAccessToken  String?
+  instagramUserId       String?
+  instagramUsername     String?
+  instagramAutoSync     Boolean  @default(false)
+  instagramLastSync     DateTime?
+  
   // Hero Section
   heroTitle         String   @default("Capturing Life's Beautiful Moments")
   heroSubtitle      String   @default("Professional Photography & Videography")
@@ -350,4 +357,31 @@ model Remerciement {
   order     Int      @default(0) // Display order in carousel
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Instagram Highlights (Stories)
+model InstagramHighlight {
+  id              String              @id @default(auto()) @map("_id") @db.ObjectId
+  instagramId     String              @unique // Instagram highlight ID
+  name            String              // Highlight name
+  coverImage      String              // Cover image URL
+  order           Int                 @default(0)
+  active          Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  stories         InstagramStory[]
+}
+
+// Instagram Stories within Highlights
+model InstagramStory {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  highlightId     String            @db.ObjectId
+  instagramId     String            @unique // Instagram story ID
+  mediaType       String            // IMAGE or VIDEO
+  mediaUrl        String            // Story image/video URL
+  thumbnailUrl    String?           // Thumbnail for videos
+  timestamp       DateTime          // When story was posted
+  order           Int               @default(0)
+  createdAt       DateTime          @default(now())
+  highlight       InstagramHighlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
 }
