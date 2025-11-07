@@ -8,6 +8,7 @@ import { FiGrid, FiVideo, FiBookmark, FiSettings, FiMail } from 'react-icons/fi'
 import { BsGrid3X3 } from 'react-icons/bs';
 import { MdVideoLibrary } from 'react-icons/md';
 import LightboxModal from '@/components/LightboxModal';
+import AlbumLightboxModal from '@/components/AlbumLightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
 import ThemeSwitcherModal from '@/components/ThemeSwitcherModal';
 import { MediaItem } from '@/types';
@@ -371,8 +372,13 @@ export default function HomePage() {
         </div>
 
         {/* Highlights - Instagram Stories Style */}
-        <div className="flex gap-4 xs:gap-5 sm:gap-6 md:gap-8 overflow-x-auto pb-4 mb-1 no-scrollbar px-4 -mx-4 snap-x snap-proximity scroll-smooth">
-          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
+        <div className="flex gap-3 xs:gap-4 overflow-x-scroll pb-4 mb-1 px-4 -mx-4" style={{ 
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}>
+          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -399,7 +405,7 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Gallery</span>
           </button>
           
-          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
+          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -426,7 +432,7 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Videos</span>
           </button>
           
-          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
+          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -453,7 +459,7 @@ export default function HomePage() {
             <span className="text-xs text-gray-900 dark:text-gray-100">Packages</span>
           </button>
           
-          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform snap-center">
+          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
             <div 
               className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
               style={{ borderColor: settings.primaryColor || '#c67548' }}
@@ -565,6 +571,15 @@ export default function HomePage() {
                   </div>
                 )}
 
+                {/* Album indicator (multiple images) - top right */}
+                {item.albumImages && item.albumImages.length > 1 && (
+                  <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
+                    <svg className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 48 48">
+                      <path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path>
+                    </svg>
+                  </div>
+                )}
+
                 {/* Instagram hover overlay with likes and comments */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
                   <div className="flex items-center gap-4 sm:gap-6 text-white font-semibold text-xs sm:text-base">
@@ -594,14 +609,12 @@ export default function HomePage() {
         showDots={true}
       />
 
-      {/* Lightbox Modal */}
-      <LightboxModal
-        images={images}
-        currentIndex={currentImageIndex}
+      {/* Album Lightbox Modal - For Posts (supports albums) */}
+      <AlbumLightboxModal
+        posts={images}
+        currentPostIndex={currentImageIndex}
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
-        onNext={nextImage}
-        onPrevious={previousImage}
       />
 
       {/* Instagram Stories Viewer */}

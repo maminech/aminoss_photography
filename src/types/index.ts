@@ -11,6 +11,7 @@ export interface MediaItem {
   format: string;
   createdAt: string;
   tags?: string[];
+  albumImages?: MediaItem[]; // For posts with multiple images (carousel/album)
   exif?: {
     camera?: string;
     lens?: string;
