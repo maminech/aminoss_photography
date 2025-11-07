@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCheck, FiClock, FiDollarSign, FiCalendar } from 'react-icons/fi';
+import { FiCheck, FiClock, FiDollarSign, FiCalendar, FiX } from 'react-icons/fi';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 interface Pack {
   id: string;
@@ -16,6 +17,8 @@ interface Pack {
 }
 
 export default function PacksPage() {
+  const { currentTheme } = useLayoutTheme();
+  const isProfessional = currentTheme === 'professional';
   const [packs, setPacks] = useState<Pack[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
@@ -128,6 +131,280 @@ export default function PacksPage() {
     );
   }
 
+  // Professional/Novo Theme Layout
+  if (isProfessional) {
+    return (
+      <div className="novo-packs-page bg-white min-h-screen">
+        <section className="py-24 md:py-32 bg-white">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                Photography Packages
+              </h1>
+              
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '60px' }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="h-[1px] bg-[#d4af37] mx-auto mb-12"
+              />
+
+              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+                Professional photography packages tailored to capture your special moments
+              </p>
+            </motion.div>
+
+            {/* Category Filters - Novo Style */}
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setFilter(category)}
+                  className={`px-6 py-2 text-sm font-lato uppercase tracking-[0.2em] transition-all duration-300 ${
+                    filter === category
+                      ? 'bg-[#d4af37] text-white'
+                      : 'bg-transparent text-[#1a1a1a] border border-gray-300 hover:border-[#d4af37]'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            {/* Packs Grid - Novo Style */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredPacks.map((pack, index) => (
+                <motion.div
+                  key={pack.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="group bg-white border border-gray-200 hover:border-[#d4af37] transition-all duration-300 overflow-hidden"
+                >
+                  {/* Pack Cover Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    {pack.coverImage ? (
+                      <img
+                        src={pack.coverImage}
+                        alt={pack.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />
+                    )}
+                    
+                    {/* Price Badge */}
+                    <div className="absolute top-4 right-4 bg-[#d4af37] text-white px-4 py-2">
+                      <span className="text-2xl font-playfair font-bold">${pack.price}</span>
+                    </div>
+                  </div>
+
+                  {/* Pack Details */}
+                  <div className="p-6">
+                    <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] mb-3 group-hover:text-[#d4af37] transition-colors">
+                      {pack.name}
+                    </h3>
+                    
+                    <p className="text-gray-600 font-lato mb-4 line-clamp-2">
+                      {pack.description}
+                    </p>
+
+                    {/* Duration */}
+                    <div className="flex items-center gap-2 mb-4 text-gray-600">
+                      <FiClock className="w-4 h-4" />
+                      <span className="font-lato text-sm">{pack.duration}</span>
+                    </div>
+
+                    {/* Features List */}
+                    <ul className="space-y-2 mb-6">
+                      {pack.features.slice(0, 4).map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-gray-700">
+                          <FiCheck className="w-4 h-4 text-[#d4af37] mt-1 flex-shrink-0" />
+                          <span className="font-lato text-sm">{feature}</span>
+                        </li>
+                      ))}
+                      {pack.features.length > 4 && (
+                        <li className="text-[#d4af37] font-lato text-sm">
+                          +{pack.features.length - 4} more features
+                        </li>
+                      )}
+                    </ul>
+
+                    {/* Book Button */}
+                    <button
+                      onClick={() => openBookingModal(pack)}
+                      className="w-full px-6 py-3 bg-[#1a1a1a] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300"
+                    >
+                      Book Now
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {filteredPacks.length === 0 && (
+              <div className="text-center py-16">
+                <p className="text-gray-500 font-lato text-lg">No packages available yet.</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Booking Modal - Novo Style */}
+        <AnimatePresence>
+          {bookingModalOpen && selectedPack && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+              onClick={closeBookingModal}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              >
+                {/* Modal Header */}
+                <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                  <div>
+                    <h2 className="text-3xl font-playfair font-bold text-[#1a1a1a]">
+                      Book {selectedPack.name}
+                    </h2>
+                    <p className="text-[#d4af37] font-lato text-lg mt-1">${selectedPack.price}</p>
+                  </div>
+                  <button
+                    onClick={closeBookingModal}
+                    className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                  >
+                    <FiX className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {/* Modal Content */}
+                <div className="p-6">
+                  {bookingStatus === 'success' ? (
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FiCheck className="w-8 h-8 text-green-600" />
+                      </div>
+                      <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] mb-2">
+                        Booking Request Sent!
+                      </h3>
+                      <p className="text-gray-600 font-lato">
+                        We'll contact you shortly to confirm your booking.
+                      </p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmitBooking} className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                          Your Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={bookingForm.clientName}
+                          onChange={(e) => setBookingForm({ ...bookingForm, clientName: e.target.value })}
+                          className="w-full px-6 py-4 border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/20 outline-none transition-colors font-lato"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                          Email *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={bookingForm.clientEmail}
+                          onChange={(e) => setBookingForm({ ...bookingForm, clientEmail: e.target.value })}
+                          className="w-full px-6 py-4 border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/20 outline-none transition-colors font-lato"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                          Phone
+                        </label>
+                        <input
+                          type="tel"
+                          value={bookingForm.clientPhone}
+                          onChange={(e) => setBookingForm({ ...bookingForm, clientPhone: e.target.value })}
+                          className="w-full px-6 py-4 border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/20 outline-none transition-colors font-lato"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                          Preferred Date *
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          value={bookingForm.requestedDate}
+                          onChange={(e) => setBookingForm({ ...bookingForm, requestedDate: e.target.value })}
+                          className="w-full px-6 py-4 border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/20 outline-none transition-colors font-lato"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                          Alternate Date
+                        </label>
+                        <input
+                          type="date"
+                          value={bookingForm.alternateDate}
+                          onChange={(e) => setBookingForm({ ...bookingForm, alternateDate: e.target.value })}
+                          className="w-full px-6 py-4 border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/20 outline-none transition-colors font-lato"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                          Additional Notes
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={bookingForm.message}
+                          onChange={(e) => setBookingForm({ ...bookingForm, message: e.target.value })}
+                          className="w-full px-6 py-4 border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/20 outline-none transition-colors font-lato resize-none"
+                        />
+                      </div>
+
+                      {bookingStatus === 'error' && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 font-lato text-sm">
+                          Failed to submit booking. Please try again.
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={bookingStatus === 'loading'}
+                        className="w-full px-6 py-4 bg-[#1a1a1a] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {bookingStatus === 'loading' ? 'Submitting...' : 'Submit Booking Request'}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-900 pt-20">
       {/* Hero Section */}
