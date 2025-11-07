@@ -9,6 +9,7 @@ import { BsGrid3X3 } from 'react-icons/bs';
 import { MdVideoLibrary } from 'react-icons/md';
 import LightboxModal from '@/components/LightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
+import ThemeSwitcherModal from '@/components/ThemeSwitcherModal';
 import { MediaItem } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
@@ -51,6 +52,7 @@ export default function HomePage() {
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [initialHighlightIndex, setInitialHighlightIndex] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
+  const [showThemeSwitcher, setShowThemeSwitcher] = useState(false);
 
   useEffect(() => {
     // Check if user has visited before
@@ -237,24 +239,32 @@ export default function HomePage() {
 
           {/* Profile Info - Right Side */}
           <div className="flex-1 min-w-0">
-            {/* Username and Buttons */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 md:gap-5 mb-3 sm:mb-4 md:mb-5">
+            {/* Username and Action Buttons (Instagram Style) */}
+            <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4 md:mb-5">
               <h1 className="text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate">
                 {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
               </h1>
-              <div className="flex gap-1.5 sm:gap-2 md:gap-3">
-                <Link href="/contact" className="flex-1 sm:flex-initial">
-                  <button className="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 min-h-[44px] bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
+              
+              {/* Instagram-style action buttons below username */}
+              <div className="flex gap-1.5 sm:gap-2">
+                <button className="flex-1 px-3 py-1.5 sm:py-2 bg-[#0095f6] text-white rounded-lg font-semibold hover:bg-[#1877f2] active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
+                  Following
+                </button>
+                <Link href="/contact" className="flex-1">
+                  <button className="w-full px-3 py-1.5 sm:py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
                     Message
                   </button>
                 </Link>
-                <Link href="/gallery" className="flex-1 sm:flex-initial">
-                  <button className="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 min-h-[44px] bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
-                    Gallery
+                <Link href="/packs" className="flex-1">
+                  <button className="w-full px-3 py-1.5 sm:py-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition text-xs sm:text-sm whitespace-nowrap">
+                    Demande un devis
                   </button>
                 </Link>
-                <button className="p-2.5 min-w-[44px] min-h-[44px] hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition active:scale-95 hidden sm:flex items-center justify-center">
-                  <FiSettings className="w-5 h-5 text-gray-900 dark:text-gray-100" />
+                <button 
+                  onClick={() => setShowThemeSwitcher(true)}
+                  className="p-1.5 sm:p-2 bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-dark-600 active:scale-95 transition"
+                >
+                  <FiSettings className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
@@ -514,6 +524,12 @@ export default function HomePage() {
           initialHighlightIndex={initialHighlightIndex}
         />
       )}
+
+      {/* Theme Switcher Modal */}
+      <ThemeSwitcherModal 
+        isOpen={showThemeSwitcher}
+        onClose={() => setShowThemeSwitcher(false)}
+      />
     </div>
     </>
   );

@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
 import { useSession, signOut } from 'next-auth/react';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -26,6 +27,7 @@ export default function Navbar() {
   const { data: session, status } = useSession(); // Check admin session
   const [isClient, setIsClient] = useState(false);
   const [clientName, setClientName] = useState('');
+  const { currentTheme } = useLayoutTheme();
 
   // Check if user is a logged-in client
   useEffect(() => {
@@ -77,6 +79,11 @@ export default function Navbar() {
 
   // Don't show navbar on admin/client dashboard pages
   if (pathname.startsWith('/admin/dashboard') || pathname.startsWith('/client/dashboard') || pathname.startsWith('/client/gallery')) {
+    return null;
+  }
+
+  // Don't show navbar on homepage when in simple mode
+  if (pathname === '/' && currentTheme === 'simple') {
     return null;
   }
 
