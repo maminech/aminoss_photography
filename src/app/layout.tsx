@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { Inter, Poppins, Playfair_Display, Lato } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AdminProviders from '@/components/AdminProviders';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { LayoutThemeProvider } from '@/contexts/ThemeContext';
+import ThemeWrapper from '@/components/ThemeWrapper';
 import DynamicStyles from '@/components/DynamicStyles';
 import '@/styles/globals.css';
 
@@ -17,6 +19,19 @@ const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-poppins',
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+const lato = Lato({
+  subsets: ['latin'],
+  weight: ['300', '400', '700', '900'],
+  variable: '--font-lato',
   display: 'swap',
 });
 
@@ -62,17 +77,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
+    <html 
+      lang="en" 
+      className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${lato.variable}`} 
+      suppressHydrationWarning
+    >
       <body className="bg-white dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         <ThemeProvider>
-          <AdminProviders>
-            <DynamicStyles />
-            <Navbar />
-            <main className="min-h-screen pt-16 md:pt-20">
-              {children}
-            </main>
-            <Footer />
-          </AdminProviders>
+          <LayoutThemeProvider>
+            <AdminProviders>
+              <DynamicStyles />
+              <ThemeWrapper>
+                <Navbar />
+                <main className="min-h-screen pt-16 md:pt-20">
+                  {children}
+                </main>
+                <Footer />
+              </ThemeWrapper>
+            </AdminProviders>
+          </LayoutThemeProvider>
         </ThemeProvider>
       </body>
     </html>

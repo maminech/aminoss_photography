@@ -18,7 +18,7 @@ import {
   FiDownloadCloud,
   FiBook
 } from 'react-icons/fi';
-import PhotobookEditor from '@/components/PhotobookEditor';
+import PhotobookEditorV2 from '@/components/PhotobookEditorV2';
 
 interface Photo {
   id: string;
@@ -325,7 +325,7 @@ export default function ClientGalleryPage() {
 
       {/* Photobook Editor */}
       {photobookEditorOpen && gallery && (
-        <PhotobookEditor
+        <PhotobookEditorV2
           galleryId={gallery.id}
           selectedPhotos={gallery.photos.filter(p => selectedPhotos.has(p.id))}
           onClose={() => setPhotobookEditorOpen(false)}

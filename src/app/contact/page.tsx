@@ -3,8 +3,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiMail, FiMapPin, FiInstagram, FiFacebook, FiYoutube, FiSend, FiPhone } from 'react-icons/fi';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 export default function ContactPage() {
+  const { currentTheme } = useLayoutTheme();
+  const isProfessional = currentTheme === 'professional';
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -50,6 +53,231 @@ export default function ContactPage() {
     }));
   };
 
+  // Professional/Novo Theme Layout
+  if (isProfessional) {
+    return (
+      <div className="novo-contact-page bg-white min-h-screen">
+        {/* Novo Hero Section */}
+        <section className="py-24 md:py-32 bg-white">
+          <div className="container mx-auto px-6 max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                Contact
+              </h1>
+              
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '60px' }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="h-[1px] bg-[#d4af37] mx-auto mb-12"
+              />
+
+              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+                Let's discuss your photography needs and create something amazing together
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+              {/* Contact Information - Novo Style */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="space-y-8"
+              >
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-playfair font-bold text-[#1a1a1a] mb-6">
+                    Get In Touch
+                  </h2>
+                  <p className="text-gray-700 font-lato leading-relaxed mb-8">
+                    Whether you're planning a wedding, need professional portraits, or have a creative project in mind, 
+                    I'd love to hear from you. Fill out the form and I'll get back to you within 24 hours.
+                  </p>
+                </div>
+
+                {/* Contact Details */}
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#d4af37] flex items-center justify-center flex-shrink-0">
+                      <FiPhone className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Phone</h3>
+                      <a href="tel:+1234567890" className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
+                        +1 (800) 456 37 11
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#d4af37] flex items-center justify-center flex-shrink-0">
+                      <FiMail className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Email</h3>
+                      <a href="mailto:contact@aminossphotography.com" className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
+                        contact@aminossphotography.com
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#d4af37] flex items-center justify-center flex-shrink-0">
+                      <FiMapPin className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Location</h3>
+                      <p className="text-gray-700 font-lato">
+                        New York, NY<br />
+                        Available Worldwide
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Social Links */}
+                <div>
+                  <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-4">Follow Me</h3>
+                  <div className="flex gap-4">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
+                    >
+                      <FiInstagram className="w-5 h-5" />
+                    </a>
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
+                    >
+                      <FiFacebook className="w-5 h-5" />
+                    </a>
+                    <a
+                      href="https://youtube.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
+                    >
+                      <FiYoutube className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Contact Form - Novo Style */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      placeholder="Your Name"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      placeholder="Your Phone Number"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      rows={6}
+                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all resize-none"
+                      placeholder="Tell me about your project..."
+                    />
+                  </div>
+
+                  {status === 'success' && (
+                    <div className="p-4 bg-green-50 border border-green-200 text-green-800 font-lato text-sm">
+                      Message sent successfully! I'll get back to you soon.
+                    </div>
+                  )}
+
+                  {status === 'error' && (
+                    <div className="p-4 bg-red-50 border border-red-200 text-red-800 font-lato text-sm">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="w-full px-10 py-4 bg-[#1a1a1a] text-white font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {status === 'loading' ? (
+                      <>Sending...</>
+                    ) : (
+                      <>
+                        <FiSend className="w-4 h-4" />
+                        Send Message
+                      </>
+                    )}
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 sm:py-20 md:py-24 px-3 sm:px-4 md:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">

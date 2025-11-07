@@ -1,0 +1,3076 @@
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100 >= 3 "
+"&& n%100<=10 ? 3 : n%100 >= 11 && n%100<=99 ? 4 : 5;\n"
+"Project-Id-Version: Novo\n"
+"POT-Creation-Date: 2020-07-23 09:31+0400\n"
+"PO-Revision-Date: 2020-12-03 05:33+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: ar\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.4.6; wp-5.5.3"
+
+#: 404.php:38
+msgid "GET BACK HOME"
+msgstr ""
+
+#: comments.php:29
+msgid "reply"
+msgstr ""
+
+#: comments.php:45
+msgid "Comments"
+msgstr ""
+
+#: comments.php:66
+msgid "Comments are closed."
+msgstr ""
+
+#: comments.php:97 woocommerce/single-product-reviews.php:75
+msgid "Enter your Name..."
+msgstr ""
+
+#: comments.php:98
+msgid " Enter your e-mail..."
+msgstr ""
+
+#: comments.php:101
+#, php-format
+msgid ""
+"<a href=\"%1$s\" aria-label=\"Logged in as %2$s. Edit your profile.\">Logged "
+"in as %2$s</a>. <a href=\"%3$s\">Log out?</a>"
+msgstr ""
+
+#: comments.php:103 woocommerce/single-product-reviews.php:103
+msgid "Enter your comment..."
+msgstr ""
+
+#: comments.php:104 inc/hooks.php:167 woocommerce/single-product-reviews.php:79
+msgid "Send"
+msgstr ""
+
+#: comments.php:110
+msgid "Leave a comment"
+msgstr ""
+
+#: functions.php:13
+msgid "Navigation"
+msgstr ""
+
+#: functions.php:30 inc/redux-settings.php:1487
+msgid "Sidebar"
+msgstr ""
+
+#: functions.php:32 functions.php:41 functions.php:50 functions.php:59
+#: functions.php:68 functions.php:77
+msgid "Add widgets here."
+msgstr ""
+
+#: functions.php:39
+msgid "Blog Sidebar"
+msgstr ""
+
+#: functions.php:48 inc/redux-settings.php:1088
+msgid "Footer col 1"
+msgstr ""
+
+#: functions.php:57 inc/redux-settings.php:1094
+msgid "Footer col 2"
+msgstr ""
+
+#: functions.php:66 inc/redux-settings.php:1100
+msgid "Footer col 3"
+msgstr ""
+
+#: functions.php:75 inc/redux-settings.php:1106
+msgid "Footer col 4"
+msgstr ""
+
+#: inc/acf.php:235
+msgid "Image position"
+msgstr ""
+
+#: inc/acf.php:239
+msgid "Top"
+msgstr ""
+
+#: inc/acf.php:240
+msgid "Left"
+msgstr ""
+
+#: inc/acf.php:241
+msgid "Right"
+msgstr ""
+
+#: inc/acf.php:242
+msgid "Center"
+msgstr ""
+
+#: inc/acf.php:243
+msgid "Bottom"
+msgstr ""
+
+#: inc/acf.php:391
+msgid "Product settings"
+msgstr ""
+
+#: inc/acf.php:395
+msgid "Video url"
+msgstr ""
+
+#: inc/acf.php:398
+msgid "Supported YouTube or Vimeo link"
+msgstr ""
+
+#: inc/acf.php:422
+msgid "Cat settings"
+msgstr ""
+
+#: inc/acf.php:426 inc/redux-settings.php:229
+msgid "Image"
+msgstr ""
+
+#: inc/admin-pages.php:9
+msgid "Theme Dashboard"
+msgstr ""
+
+#: inc/admin-pages.php:9
+msgid "Novo Theme"
+msgstr ""
+
+#: inc/admin-pages.php:21
+msgid "Novo Dashboard"
+msgstr ""
+
+#: inc/admin-pages.php:27
+msgid "Support status "
+msgstr ""
+
+#: inc/admin-pages.php:27
+msgid "<span>Expired</span>"
+msgstr ""
+
+#: inc/admin-pages.php:27
+msgid "<span>Active</span>"
+msgstr ""
+
+#: inc/admin-pages.php:29
+msgid "to "
+msgstr ""
+
+#: inc/admin-pages.php:39
+msgid "Documentation"
+msgstr ""
+
+#: inc/admin-pages.php:40
+msgid "Click to view"
+msgstr ""
+
+#: inc/admin-pages.php:49
+msgid "Technical Support"
+msgstr ""
+
+#: inc/admin-pages.php:50
+msgid "Click to contact"
+msgstr ""
+
+#: inc/admin-pages.php:71
+msgid "PHP Version"
+msgstr ""
+
+#: inc/admin-pages.php:77
+msgid "PHP Post_Max_Size"
+msgstr ""
+
+#: inc/admin-pages.php:83
+msgid "Max_Execution_Time"
+msgstr ""
+
+#: inc/admin-pages.php:89
+msgid "Max_Upload_Size"
+msgstr ""
+
+#: inc/admin-pages.php:98
+msgid "Server Info"
+msgstr ""
+
+#: inc/admin-pages.php:107
+msgid "(Recommend)"
+msgstr ""
+
+#: inc/admin-pages.php:119
+msgid "License Keys"
+msgstr ""
+
+#: inc/hooks.php:17 inc/redux-settings.php:152
+msgid ""
+"<p style=\"text-align: center\"><strong><span style=\"font-size: 18px\">"
+"Content is protected. Right-click function is disabled.</span></strong></p>"
+msgstr ""
+
+#: inc/hooks.php:18
+msgid ""
+"This Content Is Password Protected To View It Please Enter Your Password "
+"Below"
+msgstr ""
+
+#: inc/hooks.php:71 inc/redux-settings.php:1151
+msgid "<span>404</span><br>ERROR"
+msgstr ""
+
+#: inc/hooks.php:72 inc/redux-settings.php:1157
+msgid "The page you are looking for doesn`t exist anymore"
+msgstr ""
+
+#: inc/hooks.php:77 inc/redux-settings.php:1217
+msgid "Coming soon"
+msgstr ""
+
+#: inc/hooks.php:78 inc/redux-settings.php:1223
+msgid "Subscribe and get the latest updates"
+msgstr ""
+
+#: inc/hooks.php:79 inc/redux-settings.php:1228
+msgid "Subscribe form code"
+msgstr ""
+
+#: inc/hooks.php:145 inc/redux-settings.php:1804
+msgid ""
+"This website uses cookies to improve your experience. <a href=\"#\">Cookie "
+"Policy</a>"
+msgstr ""
+
+#: inc/hooks.php:149 inc/redux-settings.php:1743
+msgid "Load More"
+msgstr ""
+
+#: inc/hooks.php:150 inc/redux-settings.php:1748
+msgid "All"
+msgstr ""
+
+#: inc/hooks.php:151
+msgid "Share: "
+msgstr ""
+
+#: inc/hooks.php:152 inc/redux-settings.php:1758
+msgid "Close"
+msgstr ""
+
+#: inc/hooks.php:153 inc/redux-settings.php:1763
+msgid "Read More"
+msgstr ""
+
+#: inc/hooks.php:154 inc/redux-settings.php:1778
+msgid "View"
+msgstr ""
+
+#: inc/hooks.php:155
+msgid "Drag"
+msgstr ""
+
+#: inc/hooks.php:156
+msgid "Play"
+msgstr ""
+
+#: inc/hooks.php:157
+msgid "Pause"
+msgstr ""
+
+#: inc/hooks.php:158
+msgid "Scroll Down"
+msgstr ""
+
+#: inc/hooks.php:159 inc/redux-settings.php:1342
+msgid "Zoom"
+msgstr ""
+
+#: inc/hooks.php:160
+msgid "Director"
+msgstr ""
+
+#: inc/hooks.php:161
+msgid "Location"
+msgstr ""
+
+#: inc/hooks.php:162
+msgid "Duration"
+msgstr ""
+
+#: inc/hooks.php:163
+msgid "Year Created"
+msgstr ""
+
+#: inc/hooks.php:164
+msgid "View Full Project"
+msgstr ""
+
+#: inc/hooks.php:165
+msgid "Prev"
+msgstr ""
+
+#: inc/hooks.php:166
+msgid "Next"
+msgstr ""
+
+#: inc/hooks.php:168
+msgid "options"
+msgstr ""
+
+#: inc/hooks.php:169 inc/redux-settings.php:1773
+msgid "Back"
+msgstr ""
+
+#: inc/hooks.php:351
+msgid "Thin"
+msgstr ""
+
+#: inc/hooks.php:358
+msgid "Extra Light"
+msgstr ""
+
+#: inc/hooks.php:365 inc/redux-settings.php:116 inc/redux-settings.php:423
+msgid "Light"
+msgstr ""
+
+#: inc/hooks.php:372
+msgid "Regular"
+msgstr ""
+
+#: inc/hooks.php:379
+msgid "Medium"
+msgstr ""
+
+#: inc/hooks.php:386
+msgid "Semibold"
+msgstr ""
+
+#: inc/hooks.php:393
+msgid "Bold"
+msgstr ""
+
+#: inc/hooks.php:400
+msgid "Extra Bold"
+msgstr ""
+
+#: inc/hooks.php:407
+msgid "Black"
+msgstr ""
+
+#: inc/hooks.php:414
+msgid "Uppercase"
+msgstr ""
+
+#: inc/hooks.php:421
+msgid "Lowercase"
+msgstr ""
+
+#: inc/hooks.php:428
+msgid "Button Style 1"
+msgstr ""
+
+#: inc/hooks.php:434
+msgid "Button Style 2"
+msgstr ""
+
+#: inc/hooks.php:503
+msgid "Type the password"
+msgstr ""
+
+#: inc/hooks.php:730 inc/hooks.php:731 inc/redux-settings.php:55
+msgid "500px"
+msgstr ""
+
+#: inc/hooks.php:735 inc/redux-settings.php:56
+msgid "Amazon"
+msgstr ""
+
+#: inc/hooks.php:736
+msgid "az"
+msgstr ""
+
+#: inc/hooks.php:740 inc/redux-settings.php:57
+msgid "App Store"
+msgstr ""
+
+#: inc/hooks.php:741
+msgid "as"
+msgstr ""
+
+#: inc/hooks.php:745 inc/redux-settings.php:58
+msgid "Behance"
+msgstr ""
+
+#: inc/hooks.php:746
+msgid "bh"
+msgstr ""
+
+#: inc/hooks.php:750 inc/redux-settings.php:59
+msgid "Blogger"
+msgstr ""
+
+#: inc/hooks.php:751
+msgid "bg"
+msgstr ""
+
+#: inc/hooks.php:755 inc/redux-settings.php:60
+msgid "Codepen"
+msgstr ""
+
+#: inc/hooks.php:756
+msgid "cp"
+msgstr ""
+
+#: inc/hooks.php:760 inc/redux-settings.php:61
+msgid "Digg"
+msgstr ""
+
+#: inc/hooks.php:761
+msgid "dg"
+msgstr ""
+
+#: inc/hooks.php:765 inc/redux-settings.php:62
+msgid "Dribbble"
+msgstr ""
+
+#: inc/hooks.php:766 inc/hooks.php:771
+msgid "db"
+msgstr ""
+
+#: inc/hooks.php:770 inc/redux-settings.php:63
+msgid "Dropbox"
+msgstr ""
+
+#: inc/hooks.php:775 inc/redux-settings.php:64
+msgid "Ebay"
+msgstr ""
+
+#: inc/hooks.php:776
+msgid "eb"
+msgstr ""
+
+#: inc/hooks.php:780 inc/redux-settings.php:65 inc/redux-settings.php:1684
+msgid "Facebook"
+msgstr ""
+
+#: inc/hooks.php:781
+msgid "fb"
+msgstr ""
+
+#: inc/hooks.php:785 inc/redux-settings.php:66
+msgid "Flickr"
+msgstr ""
+
+#: inc/hooks.php:786
+msgid "fl"
+msgstr ""
+
+#: inc/hooks.php:790 inc/redux-settings.php:67
+msgid "Foursquare"
+msgstr ""
+
+#: inc/hooks.php:791
+msgid "fs"
+msgstr ""
+
+#: inc/hooks.php:795 inc/redux-settings.php:68
+msgid "GitHub"
+msgstr ""
+
+#: inc/hooks.php:796
+msgid "gh"
+msgstr ""
+
+#: inc/hooks.php:800 inc/redux-settings.php:69 inc/redux-settings.php:1704
+msgid "Google Plus"
+msgstr ""
+
+#: inc/hooks.php:801
+msgid "gp"
+msgstr ""
+
+#: inc/hooks.php:805 inc/redux-settings.php:70
+msgid "Instagram"
+msgstr ""
+
+#: inc/hooks.php:806
+msgid "in"
+msgstr ""
+
+#: inc/hooks.php:810 inc/redux-settings.php:71
+msgid "Itunes"
+msgstr ""
+
+#: inc/hooks.php:811
+msgid "it"
+msgstr ""
+
+#: inc/hooks.php:815 inc/redux-settings.php:72
+msgid "Kickstarter"
+msgstr ""
+
+#: inc/hooks.php:816
+msgid "ks"
+msgstr ""
+
+#: inc/hooks.php:820 inc/redux-settings.php:73
+msgid "LinkedIn"
+msgstr ""
+
+#: inc/hooks.php:821
+msgid "li"
+msgstr ""
+
+#: inc/hooks.php:825 inc/redux-settings.php:74
+msgid "Mailchimp"
+msgstr ""
+
+#: inc/hooks.php:826 inc/hooks.php:831
+msgid "mc"
+msgstr ""
+
+#: inc/hooks.php:830 inc/redux-settings.php:75
+msgid "MixCloud"
+msgstr ""
+
+#: inc/hooks.php:835 inc/redux-settings.php:76
+msgid "Windows"
+msgstr ""
+
+#: inc/hooks.php:836
+msgid "wd"
+msgstr ""
+
+#: inc/hooks.php:840 inc/redux-settings.php:77
+msgid "Odnoklassniki"
+msgstr ""
+
+#: inc/hooks.php:841
+msgid "od"
+msgstr ""
+
+#: inc/hooks.php:845 inc/redux-settings.php:78
+msgid "PayPal"
+msgstr ""
+
+#: inc/hooks.php:846
+msgid "pp"
+msgstr ""
+
+#: inc/hooks.php:850 inc/redux-settings.php:79
+msgid "Periscope"
+msgstr ""
+
+#: inc/hooks.php:851
+msgid "ps"
+msgstr ""
+
+#: inc/hooks.php:855 inc/redux-settings.php:80
+msgid "OpenID"
+msgstr ""
+
+#: inc/hooks.php:856
+msgid "oi"
+msgstr ""
+
+#: inc/hooks.php:860 inc/redux-settings.php:81 inc/redux-settings.php:1694
+msgid "Pinterest"
+msgstr ""
+
+#: inc/hooks.php:861
+msgid "pr"
+msgstr ""
+
+#: inc/hooks.php:865 inc/redux-settings.php:82
+msgid "Reddit"
+msgstr ""
+
+#: inc/hooks.php:866
+msgid "rd"
+msgstr ""
+
+#: inc/hooks.php:870 inc/redux-settings.php:83
+msgid "Skype"
+msgstr ""
+
+#: inc/hooks.php:871
+msgid "sk"
+msgstr ""
+
+#: inc/hooks.php:875 inc/redux-settings.php:84
+msgid "Snapchat"
+msgstr ""
+
+#: inc/hooks.php:876 inc/hooks.php:881
+msgid "sc"
+msgstr ""
+
+#: inc/hooks.php:880 inc/redux-settings.php:85
+msgid "SoundCloud"
+msgstr ""
+
+#: inc/hooks.php:885 inc/redux-settings.php:86 single-pt-music-album.php:80
+msgid "Spotify"
+msgstr ""
+
+#: inc/hooks.php:886
+msgid "sp"
+msgstr ""
+
+#: inc/hooks.php:890 inc/redux-settings.php:87
+msgid "Stack Overflow"
+msgstr ""
+
+#: inc/hooks.php:891
+msgid "so"
+msgstr ""
+
+#: inc/hooks.php:895 inc/redux-settings.php:88
+msgid "Steam"
+msgstr ""
+
+#: inc/hooks.php:896 inc/hooks.php:901
+msgid "st"
+msgstr ""
+
+#: inc/hooks.php:900 inc/redux-settings.php:89
+msgid "Stripe"
+msgstr ""
+
+#: inc/hooks.php:905 inc/redux-settings.php:90
+msgid "Telegram"
+msgstr ""
+
+#: inc/hooks.php:906
+msgid "tl"
+msgstr ""
+
+#: inc/hooks.php:910 inc/redux-settings.php:91 inc/redux-settings.php:1714
+msgid "Tumblr"
+msgstr ""
+
+#: inc/hooks.php:911
+msgid "tu"
+msgstr ""
+
+#: inc/hooks.php:915 inc/redux-settings.php:92 inc/redux-settings.php:1724
+msgid "Twitter"
+msgstr ""
+
+#: inc/hooks.php:916
+msgid "tw"
+msgstr ""
+
+#: inc/hooks.php:920 inc/redux-settings.php:93
+msgid "Viber"
+msgstr ""
+
+#: inc/hooks.php:921 inc/hooks.php:926
+msgid "vi"
+msgstr ""
+
+#: inc/hooks.php:925 inc/redux-settings.php:94
+msgid "Vimeo"
+msgstr ""
+
+#: inc/hooks.php:930 inc/redux-settings.php:95
+msgid "VK"
+msgstr ""
+
+#: inc/hooks.php:931
+msgid "vk"
+msgstr ""
+
+#: inc/hooks.php:935 inc/redux-settings.php:96
+msgid "Whatsapp"
+msgstr ""
+
+#: inc/hooks.php:936
+msgid "wa"
+msgstr ""
+
+#: inc/hooks.php:940 inc/redux-settings.php:97
+msgid "Yahoo"
+msgstr ""
+
+#: inc/hooks.php:941
+msgid "ya"
+msgstr ""
+
+#: inc/hooks.php:945 inc/redux-settings.php:98
+msgid "Yelp"
+msgstr ""
+
+#: inc/hooks.php:946
+msgid "ye"
+msgstr ""
+
+#: inc/hooks.php:950 inc/redux-settings.php:99
+msgid "Yoast"
+msgstr ""
+
+#: inc/hooks.php:951
+msgid "yo"
+msgstr ""
+
+#: inc/hooks.php:955 inc/redux-settings.php:100
+msgid "YouTube"
+msgstr ""
+
+#: inc/hooks.php:956
+msgid "yt"
+msgstr ""
+
+#: inc/hooks.php:1147
+msgid "Font Family:"
+msgstr ""
+
+#: inc/hooks.php:1148
+msgid "Font Weights:"
+msgstr ""
+
+#: inc/hooks.php:1149
+msgid "The quick brown fox jumps over the lazy dog"
+msgstr ""
+
+#: inc/hooks.php:1154 template-parts/content-none.php:15
+msgid "Nothing Found"
+msgstr ""
+
+#: inc/redux-settings.php:18 inc/redux-settings.php:19
+msgid "Theme Options"
+msgstr ""
+
+#: inc/redux-settings.php:54
+msgid "None"
+msgstr ""
+
+#: inc/redux-settings.php:106
+msgid "General"
+msgstr ""
+
+#: inc/redux-settings.php:114
+msgid "Site color mode"
+msgstr ""
+
+#: inc/redux-settings.php:117 inc/redux-settings.php:422
+msgid "Dark"
+msgstr ""
+
+#: inc/redux-settings.php:124
+msgid "Main Color"
+msgstr ""
+
+#: inc/redux-settings.php:141
+msgid "Right Click Disable"
+msgstr ""
+
+#: inc/redux-settings.php:143 inc/redux-settings.php:219
+#: inc/redux-settings.php:1173
+msgid "On"
+msgstr ""
+
+#: inc/redux-settings.php:144 inc/redux-settings.php:220
+#: inc/redux-settings.php:1174
+msgid "Off"
+msgstr ""
+
+#: inc/redux-settings.php:151 inc/redux-settings.php:1802
+msgid "Message"
+msgstr ""
+
+#: inc/redux-settings.php:162
+msgid "Protected Page Message"
+msgstr ""
+
+#: inc/redux-settings.php:163
+msgid ""
+"This content is password protected. To view it please enter your password "
+"below:"
+msgstr ""
+
+#: inc/redux-settings.php:172
+msgid "Mobile Adaptation"
+msgstr ""
+
+#: inc/redux-settings.php:174
+msgid "Original"
+msgstr ""
+
+#: inc/redux-settings.php:175
+msgid "Cropped"
+msgstr ""
+
+#: inc/redux-settings.php:182
+msgid "Category Prefix"
+msgstr ""
+
+#: inc/redux-settings.php:183
+msgid ""
+"Show/Hide Category prefix.<br><b>Example:</b><br><b>If Show -</b> Category: "
+"Lifestyle<br><b>If Hide -</b> Lifestyle"
+msgstr ""
+
+#: inc/redux-settings.php:185 inc/redux-settings.php:492
+#: inc/redux-settings.php:502 inc/redux-settings.php:720
+#: inc/redux-settings.php:921 inc/redux-settings.php:931
+#: inc/redux-settings.php:941 inc/redux-settings.php:951
+#: inc/redux-settings.php:1280 inc/redux-settings.php:1290
+#: inc/redux-settings.php:1300 inc/redux-settings.php:1310
+#: inc/redux-settings.php:1344 inc/redux-settings.php:1354
+#: inc/redux-settings.php:1364 inc/redux-settings.php:1374
+#: inc/redux-settings.php:1430 inc/redux-settings.php:1439
+#: inc/redux-settings.php:1449 inc/redux-settings.php:1459
+#: inc/redux-settings.php:1469 inc/redux-settings.php:1479
+#: inc/redux-settings.php:1489 inc/redux-settings.php:1499
+#: inc/redux-settings.php:1568 inc/redux-settings.php:1578
+#: inc/redux-settings.php:1588 inc/redux-settings.php:1598
+#: inc/redux-settings.php:1686 inc/redux-settings.php:1696
+#: inc/redux-settings.php:1706 inc/redux-settings.php:1716
+#: inc/redux-settings.php:1726
+msgid "Show"
+msgstr ""
+
+#: inc/redux-settings.php:186 inc/redux-settings.php:493
+#: inc/redux-settings.php:503 inc/redux-settings.php:721
+#: inc/redux-settings.php:922 inc/redux-settings.php:932
+#: inc/redux-settings.php:942 inc/redux-settings.php:952
+#: inc/redux-settings.php:1271 inc/redux-settings.php:1281
+#: inc/redux-settings.php:1291 inc/redux-settings.php:1301
+#: inc/redux-settings.php:1311 inc/redux-settings.php:1345
+#: inc/redux-settings.php:1355 inc/redux-settings.php:1365
+#: inc/redux-settings.php:1375 inc/redux-settings.php:1429
+#: inc/redux-settings.php:1440 inc/redux-settings.php:1450
+#: inc/redux-settings.php:1460 inc/redux-settings.php:1470
+#: inc/redux-settings.php:1480 inc/redux-settings.php:1490
+#: inc/redux-settings.php:1500 inc/redux-settings.php:1569
+#: inc/redux-settings.php:1579 inc/redux-settings.php:1589
+#: inc/redux-settings.php:1599 inc/redux-settings.php:1687
+#: inc/redux-settings.php:1697 inc/redux-settings.php:1707
+#: inc/redux-settings.php:1717 inc/redux-settings.php:1727
+msgid "Hide"
+msgstr ""
+
+#: inc/redux-settings.php:193
+msgid "Lazyload Images"
+msgstr ""
+
+#: inc/redux-settings.php:195 inc/redux-settings.php:402
+#: inc/redux-settings.php:1518 inc/redux-settings.php:1794
+msgid "Yes"
+msgstr ""
+
+#: inc/redux-settings.php:196 inc/redux-settings.php:403
+#: inc/redux-settings.php:1519 inc/redux-settings.php:1795
+msgid "No"
+msgstr ""
+
+#: inc/redux-settings.php:203
+msgid "Copyright text"
+msgstr ""
+
+#: inc/redux-settings.php:209 inc/redux-settings.php:217
+msgid "Preloader"
+msgstr ""
+
+#: inc/redux-settings.php:227
+msgid "Preloader type"
+msgstr ""
+
+#: inc/redux-settings.php:230
+msgid "Words"
+msgstr ""
+
+#: inc/redux-settings.php:238
+msgid "Prelaoder image"
+msgstr ""
+
+#: inc/redux-settings.php:239 inc/redux-settings.php:305
+#: inc/redux-settings.php:960
+msgid "Choose a default logo image to display"
+msgstr ""
+
+#: inc/redux-settings.php:254
+msgid "Static word"
+msgstr ""
+
+#: inc/redux-settings.php:260
+msgid "Dynamic word 1"
+msgstr ""
+
+#: inc/redux-settings.php:266
+msgid "Dynamic word 2"
+msgstr ""
+
+#: inc/redux-settings.php:272
+msgid "Dynamic word 3"
+msgstr ""
+
+#: inc/redux-settings.php:278
+msgid "Dynamic word 4"
+msgstr ""
+
+#: inc/redux-settings.php:284
+msgid "Dynamic word 5"
+msgstr ""
+
+#: inc/redux-settings.php:291 inc/setup-wizard/envato_setup.php:418
+#: inc/setup-wizard/envato_setup.php:2236
+msgid "Logo"
+msgstr ""
+
+#: inc/redux-settings.php:299
+msgid "Logo text"
+msgstr ""
+
+#: inc/redux-settings.php:304 inc/redux-settings.php:959
+msgid "Logo Image - normal"
+msgstr ""
+
+#: inc/redux-settings.php:319 inc/redux-settings.php:975
+msgid "Logo Image - light"
+msgstr ""
+
+#: inc/redux-settings.php:320 inc/redux-settings.php:976
+msgid "Choose a logo image to display for \"Light\" header skin"
+msgstr ""
+
+#: inc/redux-settings.php:334 inc/redux-settings.php:991
+msgid "Logo Image - Dark"
+msgstr ""
+
+#: inc/redux-settings.php:335 inc/redux-settings.php:992
+msgid "Choose a logo image to display for \"Dark\" header skin"
+msgstr ""
+
+#: inc/redux-settings.php:351 inc/redux-settings.php:1009
+msgid "Logo Size"
+msgstr ""
+
+#: inc/redux-settings.php:360 inc/redux-settings.php:1019
+msgid "Mobile Logo Size"
+msgstr ""
+
+#: inc/redux-settings.php:368
+msgid "Header"
+msgstr ""
+
+#: inc/redux-settings.php:376 inc/setup-wizard/envato_setup.php:407
+msgid "Style"
+msgstr ""
+
+#: inc/redux-settings.php:400
+msgid "Sticky Header"
+msgstr ""
+
+#: inc/redux-settings.php:410
+msgid "Container"
+msgstr ""
+
+#: inc/redux-settings.php:412
+msgid "Center container"
+msgstr ""
+
+#: inc/redux-settings.php:413
+msgid "Full witdh"
+msgstr ""
+
+#: inc/redux-settings.php:420
+msgid "Color mode"
+msgstr ""
+
+#: inc/redux-settings.php:430
+msgid "Header Light Scheme"
+msgstr ""
+
+#: inc/redux-settings.php:436 inc/redux-settings.php:463
+#: inc/redux-settings.php:862 inc/redux-settings.php:889
+#: inc/redux-settings.php:1033 inc/redux-settings.php:1060
+msgid "Background Color"
+msgstr ""
+
+#: inc/redux-settings.php:444 inc/redux-settings.php:471
+#: inc/redux-settings.php:870 inc/redux-settings.php:897
+#: inc/redux-settings.php:1041 inc/redux-settings.php:1068
+msgid "Text Color"
+msgstr ""
+
+#: inc/redux-settings.php:457
+msgid "Header Dark Scheme"
+msgstr ""
+
+#: inc/redux-settings.php:484
+msgid "Elements"
+msgstr ""
+
+#: inc/redux-settings.php:490
+msgid "Cart"
+msgstr ""
+
+#: inc/redux-settings.php:500
+msgid "Search"
+msgstr ""
+
+#: inc/redux-settings.php:510
+msgid "Side Bar Background Word"
+msgstr ""
+
+#: inc/redux-settings.php:520
+msgid "Navigation Options"
+msgstr ""
+
+#: inc/redux-settings.php:526
+msgid "Navigation type"
+msgstr ""
+
+#: inc/redux-settings.php:528
+msgid "Disabled"
+msgstr ""
+
+#: inc/redux-settings.php:529
+msgid "Hidden menu"
+msgstr ""
+
+#: inc/redux-settings.php:530
+msgid "Visible menu"
+msgstr ""
+
+#: inc/redux-settings.php:531
+msgid "Full screen menu"
+msgstr ""
+
+#: inc/redux-settings.php:538
+msgid "Navigation item hover style"
+msgstr ""
+
+#: inc/redux-settings.php:562
+msgid "Color on active"
+msgstr ""
+
+#: inc/redux-settings.php:576
+msgid "Color on hover"
+msgstr ""
+
+#: inc/redux-settings.php:590
+msgid "Theme Fonts"
+msgstr ""
+
+#: inc/redux-settings.php:596
+msgid "Fonts"
+msgstr ""
+
+#: inc/redux-settings.php:611
+msgid "Icon Fonts"
+msgstr ""
+
+#: inc/redux-settings.php:618
+msgid "Upload Custom Icon Fonts"
+msgstr ""
+
+#: inc/redux-settings.php:624
+msgid "Typography"
+msgstr ""
+
+#: inc/redux-settings.php:632
+msgid "Body"
+msgstr ""
+
+#: inc/redux-settings.php:643
+msgid "H1"
+msgstr ""
+
+#: inc/redux-settings.php:654
+msgid "H2"
+msgstr ""
+
+#: inc/redux-settings.php:665
+msgid "H3"
+msgstr ""
+
+#: inc/redux-settings.php:676
+msgid "H4"
+msgstr ""
+
+#: inc/redux-settings.php:687
+msgid "H5"
+msgstr ""
+
+#: inc/redux-settings.php:698
+msgid "H6"
+msgstr ""
+
+#: inc/redux-settings.php:710 inc/redux-settings.php:718
+msgid "Social buttons in footer"
+msgstr ""
+
+#: inc/redux-settings.php:728
+msgid "Open link in"
+msgstr ""
+
+#: inc/redux-settings.php:730
+msgid "Current Tab"
+msgstr ""
+
+#: inc/redux-settings.php:731
+msgid "New Tab"
+msgstr ""
+
+#: inc/redux-settings.php:737
+msgid "Social button 1"
+msgstr ""
+
+#: inc/redux-settings.php:742 inc/redux-settings.php:759
+#: inc/redux-settings.php:776 inc/redux-settings.php:793
+#: inc/redux-settings.php:810 inc/redux-settings.php:827
+#: inc/redux-settings.php:844
+msgid "Social icon"
+msgstr ""
+
+#: inc/redux-settings.php:749 inc/redux-settings.php:766
+#: inc/redux-settings.php:783 inc/redux-settings.php:800
+#: inc/redux-settings.php:817 inc/redux-settings.php:834
+#: inc/redux-settings.php:851
+msgid "Link"
+msgstr ""
+
+#: inc/redux-settings.php:754
+msgid "Social button 2"
+msgstr ""
+
+#: inc/redux-settings.php:771
+msgid "Social button 3"
+msgstr ""
+
+#: inc/redux-settings.php:788
+msgid "Social button 4"
+msgstr ""
+
+#: inc/redux-settings.php:805
+msgid "Social button 5"
+msgstr ""
+
+#: inc/redux-settings.php:822
+msgid "Social button 6"
+msgstr ""
+
+#: inc/redux-settings.php:839
+msgid "Social button 7"
+msgstr ""
+
+#: inc/redux-settings.php:856 inc/redux-settings.php:1027
+msgid "Footer Light Scheme"
+msgstr ""
+
+#: inc/redux-settings.php:883 inc/redux-settings.php:1054
+msgid "Footer Dark Scheme"
+msgstr ""
+
+#: inc/redux-settings.php:911 inc/redux-settings.php:919
+msgid "Footer"
+msgstr ""
+
+#: inc/redux-settings.php:929
+msgid "Footer Logo"
+msgstr ""
+
+#: inc/redux-settings.php:939
+msgid "Scroll Up Button"
+msgstr ""
+
+#: inc/redux-settings.php:949
+msgid "Decor Memphis"
+msgstr ""
+
+#: inc/redux-settings.php:1081
+msgid "Cols Size"
+msgstr ""
+
+#: inc/redux-settings.php:1082
+msgid ""
+"<b>Example:</b> col-12 col-sm-6 col-md-4 col-lg-3<br><a href=\"https: "
+"//getbootstrap.com/docs/4.3/layout/grid/?#grid-options\" target=\"_blank\">"
+"Bootstrap Grid Instructions</a><br>\n"
+"      If you want hide column enter <b>hide</b>"
+msgstr ""
+
+#: inc/redux-settings.php:1112
+msgid "404 Page"
+msgstr ""
+
+#: inc/redux-settings.php:1120 inc/redux-settings.php:1186
+msgid "Background image"
+msgstr ""
+
+#: inc/redux-settings.php:1134 inc/redux-settings.php:1200
+msgid "Text color"
+msgstr ""
+
+#: inc/redux-settings.php:1142 inc/redux-settings.php:1208
+msgid "Heading color"
+msgstr ""
+
+#: inc/redux-settings.php:1150 inc/redux-settings.php:1216
+msgid "Heading"
+msgstr ""
+
+#: inc/redux-settings.php:1156
+msgid "Desc"
+msgstr ""
+
+#: inc/redux-settings.php:1163
+msgid "Coming Soon Page"
+msgstr ""
+
+#: inc/redux-settings.php:1171
+msgid "Maintenance Mode"
+msgstr ""
+
+#: inc/redux-settings.php:1181
+msgid "Date"
+msgstr ""
+
+#: inc/redux-settings.php:1222
+msgid "Subscribe form desc"
+msgstr ""
+
+#: inc/redux-settings.php:1234
+msgid "Portfolio Project Page"
+msgstr ""
+
+#: inc/redux-settings.php:1242
+msgid "Style project page"
+msgstr ""
+
+#: inc/redux-settings.php:1244
+msgid "Slider"
+msgstr ""
+
+#: inc/redux-settings.php:1245 inc/redux-settings.php:1399
+#: inc/redux-settings.php:1528
+msgid "Masonry"
+msgstr ""
+
+#: inc/redux-settings.php:1246 inc/redux-settings.php:1398
+#: inc/redux-settings.php:1529
+msgid "Grid"
+msgstr ""
+
+#: inc/redux-settings.php:1247 inc/redux-settings.php:1400
+msgid "Horizontal"
+msgstr ""
+
+#: inc/redux-settings.php:1248
+msgid "Horizontal Type 2"
+msgstr ""
+
+#: inc/redux-settings.php:1255 inc/redux-settings.php:1407
+#: inc/redux-settings.php:1536
+msgid "Cols count"
+msgstr ""
+
+#: inc/redux-settings.php:1257 inc/redux-settings.php:1409
+#: inc/redux-settings.php:1538
+msgid "Col 2"
+msgstr ""
+
+#: inc/redux-settings.php:1258 inc/redux-settings.php:1410
+#: inc/redux-settings.php:1539
+msgid "Col 3"
+msgstr ""
+
+#: inc/redux-settings.php:1259 inc/redux-settings.php:1411
+#: inc/redux-settings.php:1540
+msgid "Col 4"
+msgstr ""
+
+#: inc/redux-settings.php:1267
+msgid "Portfolio image"
+msgstr ""
+
+#: inc/redux-settings.php:1269
+msgid "Full"
+msgstr ""
+
+#: inc/redux-settings.php:1270 inc/redux-settings.php:1558
+msgid "Adaptive"
+msgstr ""
+
+#: inc/redux-settings.php:1278 inc/redux-settings.php:1437
+msgid "Show share"
+msgstr ""
+
+#: inc/redux-settings.php:1288
+msgid "Show date"
+msgstr ""
+
+#: inc/redux-settings.php:1298
+msgid "Show like"
+msgstr ""
+
+#: inc/redux-settings.php:1308 inc/redux-settings.php:1497
+msgid "Show navigation"
+msgstr ""
+
+#: inc/redux-settings.php:1318
+msgid "Link Back to Main Gallery"
+msgstr ""
+
+#: inc/redux-settings.php:1323
+msgid "Footer Type"
+msgstr ""
+
+#: inc/redux-settings.php:1325
+msgid "Default"
+msgstr ""
+
+#: inc/redux-settings.php:1326
+msgid "Minifield"
+msgstr ""
+
+#: inc/redux-settings.php:1334
+msgid "Portfolio LightBox"
+msgstr ""
+
+#: inc/redux-settings.php:1352
+msgid "Toggle Full Screen"
+msgstr ""
+
+#: inc/redux-settings.php:1362 inc/redux-settings.php:1676
+msgid "Share Buttons"
+msgstr ""
+
+#: inc/redux-settings.php:1372
+msgid "Like Button"
+msgstr ""
+
+#: inc/redux-settings.php:1382
+msgid "Description Size"
+msgstr ""
+
+#: inc/redux-settings.php:1388
+msgid "Blog Categories Style"
+msgstr ""
+
+#: inc/redux-settings.php:1396 tgm/class-tgm-plugin-activation.php:2633
+msgid "Type"
+msgstr ""
+
+#: inc/redux-settings.php:1419
+msgid "Blog post"
+msgstr ""
+
+#: inc/redux-settings.php:1427
+msgid "Blog Feature Image"
+msgstr ""
+
+#: inc/redux-settings.php:1447
+msgid "Show Date"
+msgstr ""
+
+#: inc/redux-settings.php:1457
+msgid "Show Like"
+msgstr ""
+
+#: inc/redux-settings.php:1467 inc/redux-settings.php:1477
+msgid "Show Comments"
+msgstr ""
+
+#: inc/redux-settings.php:1508
+msgid "Portfolio Categories Style"
+msgstr ""
+
+#: inc/redux-settings.php:1516
+msgid "Open project in popup"
+msgstr ""
+
+#: inc/redux-settings.php:1526
+msgid "Portfolio style"
+msgstr ""
+
+#: inc/redux-settings.php:1548 woocommerce/cart/cart.php:36
+#: woocommerce/cart/cart.php:67 woocommerce/checkout/review-order.php:26
+#: woocommerce/order/order-details.php:42
+msgid "Product"
+msgstr ""
+
+#: inc/redux-settings.php:1556
+msgid "Featured Image"
+msgstr ""
+
+#: inc/redux-settings.php:1559
+msgid "Cover"
+msgstr ""
+
+#: inc/redux-settings.php:1566
+msgid "Share Links"
+msgstr ""
+
+#: inc/redux-settings.php:1576
+msgid "Categories"
+msgstr ""
+
+#: inc/redux-settings.php:1586
+msgid "Breadcrumbs"
+msgstr ""
+
+#: inc/redux-settings.php:1596
+msgid "Back Button"
+msgstr ""
+
+#: inc/redux-settings.php:1606
+msgid "Icon Box 1"
+msgstr ""
+
+#: inc/redux-settings.php:1612 inc/redux-settings.php:1635
+#: inc/redux-settings.php:1658
+msgid "Icon CSS Class"
+msgstr ""
+
+#: inc/redux-settings.php:1618 inc/redux-settings.php:1641
+#: inc/redux-settings.php:1664
+msgid "Label"
+msgstr ""
+
+#: inc/redux-settings.php:1619
+msgid ""
+"Free\n"
+"Delivery"
+msgstr ""
+
+#: inc/redux-settings.php:1629
+msgid "Icon Box 2"
+msgstr ""
+
+#: inc/redux-settings.php:1642
+msgid ""
+"30-Days\n"
+"Money back"
+msgstr ""
+
+#: inc/redux-settings.php:1652
+msgid "Icon Box 3"
+msgstr ""
+
+#: inc/redux-settings.php:1665
+msgid ""
+"Advanced\n"
+"Discount system"
+msgstr ""
+
+#: inc/redux-settings.php:1735
+msgid "Translation"
+msgstr ""
+
+#: inc/redux-settings.php:1753
+msgid "Options"
+msgstr ""
+
+#: inc/redux-settings.php:1768
+msgid "Share"
+msgstr ""
+
+#: inc/redux-settings.php:1784
+msgid "GDPR"
+msgstr ""
+
+#: inc/redux-settings.php:1792
+msgid "Use?"
+msgstr ""
+
+#: inc/redux-settings.php:1810
+msgid "Custom code & analytics & Map API"
+msgstr ""
+
+#: inc/redux-settings.php:1818
+msgid "Code in <head>"
+msgstr ""
+
+#: inc/redux-settings.php:1823
+msgid "Code before </body> tag"
+msgstr ""
+
+#: inc/redux-settings.php:1828
+msgid "Google Map API Key"
+msgstr ""
+
+#: inc/redux-settings.php:1829
+msgid ""
+"Create an application in <a href=\"https://console.developers.google."
+"com/flows/enableapi?apiid=places_backend,maps_backend,geocoding_backend,"
+"directions_backend,distance_matrix_backend,"
+"elevation_backend&keyType=CLIENT_SIDE&reusekey=true\" target=\"_blank\">"
+"Google Console</a> and add the Key here."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:231
+msgid "Style 1"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:232
+msgid "Style 2"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:366
+msgid "Setup Wizard"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:383
+msgid "Introduction"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:390
+msgid "Plugins"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:396
+msgid "Updates"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:401
+#: inc/setup-wizard/envato_setup_init.php:132
+msgid "Verification"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:413
+msgid "Content"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:423
+msgid "Customize"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:428
+msgid "Support"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:433
+msgid "Ready!"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:467
+msgid "...verifying"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:520
+msgid "Theme &rsaquo; Setup Wizard"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:552
+msgid "Return to the WordPress Dashboard"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:634 inc/setup-wizard/envato_setup.php:645
+#: inc/setup-wizard/envato_setup.php:668
+#, php-format
+msgid "Welcome to the setup wizard for %s."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:635
+msgid ""
+"It looks like you may have recently upgraded to this theme. Great! This "
+"setup wizard will help ensure all the default settings are correct. It will "
+"also show some information about your new website and support options."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:638 inc/setup-wizard/envato_setup.php:673
+msgid "Let's Go!"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:640 inc/setup-wizard/envato_setup.php:675
+msgid "Not right now"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:646
+msgid ""
+"It looks like you have already run the setup wizard. Below are some options: "
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:650
+msgid "Run Setup Wizard Again"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:656
+msgid "Reset font style and colors"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:663
+msgid "Cancel"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:669
+#, php-format
+msgid ""
+"Thank you for choosing the %s Wordpress Theme. This quick setup wizard will "
+"help you configure your new website. This wizard will install the required "
+"WordPress plugins, default content, logo and tell you a little about Help "
+"&amp; Support options. It should only take 5 minutes."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:670
+msgid ""
+"No time right now? If you don't want to go through the wizard, you can skip "
+"and return to the WordPress dashboard. Come back anytime if you change your "
+"mind!"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:719
+msgid ""
+"Options have been reset. Please go to Appearance > Customize in the "
+"WordPress backend."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:794
+msgid "Default Plugins"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:802
+msgid ""
+"Your website needs a few essential plugins. The following plugins will be "
+"installed or updated:"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:828
+msgid ""
+"Good news! All plugins are already installed and up to date. Please continue."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:831
+msgid "You can add and remove plugins later on from within WordPress."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:834 inc/setup-wizard/envato_setup.php:1000
+#: inc/setup-wizard/envato_setup.php:2207
+#: inc/setup-wizard/envato_setup.php:2275
+#: inc/setup-wizard/envato_setup.php:2359
+#: inc/setup-wizard/envato_setup.php:2413
+msgid "Continue"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:835 inc/setup-wizard/envato_setup.php:1002
+#: inc/setup-wizard/envato_setup.php:2208
+#: inc/setup-wizard/envato_setup.php:2277
+#: inc/setup-wizard/envato_setup.php:2371
+msgid "Skip this step"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:844
+msgid "No Slug Found"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:860
+msgid "Activating Plugin"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:875
+msgid "Updating Plugin"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:890
+msgid "Installing Plugin"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:900
+msgid "Success"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:921
+#, php-format
+msgid "This will create default %s as seen in the demo."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:922 inc/setup-wizard/envato_setup.php:935
+#: inc/setup-wizard/envato_setup.php:945
+#: inc/setup-wizard/envato_setup_init.php:71
+msgid "Pending."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:923
+msgid "Installing."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:924 inc/setup-wizard/envato_setup.php:937
+#: inc/setup-wizard/envato_setup.php:947
+#: inc/setup-wizard/envato_setup_init.php:73
+msgid "Success."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:933
+msgid "Widgets"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:934
+msgid "Insert default sidebar widgets as seen in the demo."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:936
+msgid "Installing Default Widgets."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:943
+msgid "Settings"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:944
+msgid "Configure default settings."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:946
+msgid "Installing Default Settings."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:964
+msgid "Default Content"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:967
+msgid ""
+"It looks like you already have content installed on this website. If you "
+"would like to install the default demo content as well you can select it "
+"below. Otherwise just choose the upgrade option to ensure everything is up "
+"to date."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:969
+msgid ""
+"It's time to insert some default content for your new WordPress website. "
+"Choose what you would like inserted below and click Continue. It is "
+"recommended to leave everything selected. Once inserted, this content can be "
+"managed from the WordPress admin dashboard. "
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:975
+msgid "Item"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:976
+msgid "Description"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:977
+#: tgm/class-tgm-plugin-activation.php:2638
+msgid "Status"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:1012
+msgid "No content Found"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:1080
+msgid "Error"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:1951
+msgid "Remote server did not respond"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:1959
+msgid "Remote file is incorrect size"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:1965
+msgid "Zero size file downloaded"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:1971
+#, php-format
+msgid "Remote file is too large, limit is %s"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2182
+msgid "Site Style"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2184
+msgid "Please choose your site style below."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2201
+msgid ""
+"Please Note: Advanced changes to website graphics/colors may require "
+"extensive PhotoShop and Web Development knowledge. We recommend hiring an "
+"expert from"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2201
+#: inc/setup-wizard/envato_setup.php:2266
+msgid "Envato Studio"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2201
+#: inc/setup-wizard/envato_setup.php:2266
+msgid "to assist with any advanced website changes."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2238
+#, php-format
+msgid ""
+"Please add your logo below. For best results, the logo should be a "
+"transparent PNG ( 466 by 277 pixels). The logo can be changed at any time "
+"from the Appearance > Customize area in your dashboard. Try %sEnvato "
+"Studio%s if you need a new logo designed."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2258
+msgid "Upload New Logo"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2263
+msgid ""
+"Please Note: Advanced changes to website graphics/colors may require "
+"extensive PhotoShop and Web\n"
+"\t\t\t\t\t\tDevelopment knowledge. We recommend hiring an expert from"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2331
+msgid "Theme Updates"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2348
+msgid "Thanks! Theme updates have been enabled for the following items:"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2354
+#: inc/setup-wizard/envato_setup.php:2365
+msgid ""
+"When an update becomes available it will show in the Dashboard with an "
+"option to install."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2355
+msgid ""
+"Change settings from the 'Envato Market' menu in the WordPress Dashboard."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2364
+msgid ""
+"Please login using your ThemeForest account to enable Theme Updates. We "
+"update themes when a new feature is added or a bug is fixed. It is highly "
+"recommended to enable Theme Updates."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2367
+msgid ""
+"On the next page you will be asked to Login with your ThemeForest account "
+"and grant permissions to enable Automatic Updates. If you have any questions "
+"please"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2367
+msgid "contact us"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2370
+msgid "Login with Envato"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2377
+msgid "Please ensure the Envato Market plugin has been installed correctly."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2377
+msgid "Return to Required Plugins installer"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2398
+msgid "Theme Customization"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2399
+msgid ""
+"Most changes to the website can be made through the Appearance > Customize "
+"menu from the WordPress dashboard. These include:"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2401
+msgid ""
+"Typography: Font Sizes, Style, Colors (over 200 fonts to choose from) for "
+"various page elements."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2402
+msgid "Logo: Upload a new logo and adjust its size."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2403
+msgid "Background: Upload a new background image."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2404
+msgid "Layout: Enable/Disable responsive layout, page and sidebar width."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2406
+msgid ""
+"To change the Sidebars go to Appearance > Widgets. Here widgets can be "
+"\"drag &amp; droped\" into sidebars.<br>To control which \"widget areas\" "
+"appear, go to an individual page and look for the \"Left/Right Column\" menu."
+" Here widgets can be chosen for display on the left or right of a page. More "
+"details in documentation."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2408
+msgid ""
+"Advanced Users: If you are going to make changes to the theme source code "
+"please use a <a href=\"https://codex.wordpress.org/Child_Themes\" "
+"target=\"_blank\">Child Theme</a> rather than modifying the main theme "
+"HTML/CSS/PHP code. This allows the parent theme to receive updates without "
+"overwriting your source code changes. <br/> See <code>child-theme.zip</code> "
+"in the main folder for a sample."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2421
+msgid "Help and Support"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2422
+msgid ""
+"This theme includes 6 months of support (from the purchase date). The "
+"standard license allows using one license on one Project (domain). If you "
+"need to use it on different sites - you need to purchase additional licenses."
+" ThemeForest <a href=\"https://themeforest.net/licenses/standard\" "
+"target=\"_blank\">license policy</a>"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2423
+msgid ""
+"If you have some problems, please contact our support team <a href=\"https:"
+"//themeforest.net/item/novo-photography-wordpress-theme/20701463/support\" "
+"target=\"_blank\">here</a>"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2426
+msgid "Item Support <span class=\"green\">INCLUDES</span>:"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2428
+msgid "- Availability of the author to answer questions"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2429
+msgid "- Answering technical questions about item features"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2430
+msgid "- Assistance with reported bugs and issues"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2431
+msgid "- Help with included 3rd party plugins"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2436
+msgid "Item Support <span class=\"red\">DOES NOT</span> Include:"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2438
+msgid "- Customization services (this is available by an additional price)"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2439
+msgid "- Installation services (this is available an additional price)"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2440
+msgid ""
+"- Help and Support for non-bundled 3rd party plugins (i.e. plugins you "
+"install yourself later on)"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2444
+msgid ""
+"ThemeForest item <a href=\"https://help.market.envato.com/hc/en-"
+"us/articles/208191263-What-is-Item-Support\" target=\"_blank\">support "
+"policy</a>"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2447
+msgid "Agree and Continue"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2462
+msgid "Your Website is Ready!"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2464
+msgid ""
+"Congratulations! The theme has been activated and ready to work. Login to "
+"your WordPress Dashboard to make changes and modify necessary page."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2465
+msgid "Please leave a 5-star rating if you are happy with our theme."
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2468
+msgid "Next Steps"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2470
+msgid "View your new website!"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2475
+msgid "More Resources"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2477
+msgid "Read the Theme Documentation"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2479
+msgid "Learn how to use WordPress"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2481
+msgid "Leave an Item Rating"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2482
+msgid "Get Help and Support"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2541
+#, php-format
+msgid "Something went wrong while trying to retrieve oauth token: %s"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2550
+msgid "Failed to get oAuth token. Please go back and try again"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2558
+#, php-format
+msgid "Login for %s updates"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2565
+msgid "oAuth Login"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2773
+msgid "If you have purchased items from "
+msgstr ""
+
+#: inc/setup-wizard/envato_setup.php:2782
+msgid "Login with Envato to activate updates"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup_init.php:69
+msgid "Upgrade"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup_init.php:70
+msgid "Upgrade Content and Settings"
+msgstr ""
+
+#: inc/setup-wizard/envato_setup_init.php:72
+msgid "Installing Updates."
+msgstr ""
+
+#: inc/v-hook.php:21
+msgid "Envato Purchase Code"
+msgstr ""
+
+#: inc/v-hook.php:22
+msgid "Enter Envato Purchase Code"
+msgstr ""
+
+#: inc/v-hook.php:27
+msgid "Register Code"
+msgstr ""
+
+#: inc/v-hook.php:30
+msgid "Deregister Code"
+msgstr ""
+
+#: inc/v-hook.php:34
+msgid "Next Step"
+msgstr ""
+
+#: inc/v-hook.php:39
+msgid "Your theme is activated."
+msgstr ""
+
+#: inc/v-hook.php:41
+msgid "You can register one license per one website."
+msgstr ""
+
+#: inc/woocommerce.php:31 woocommerce/content-product.php:56
+msgid "Add to cart"
+msgstr ""
+
+#: inc/woocommerce.php:50 woocommerce/loop/sale-flash.php:28
+#: woocommerce/single-product/product-image.php:51
+#: woocommerce/single-product/product-image.php:92
+msgid "Sale"
+msgstr ""
+
+#: inc/woocommerce.php:54 woocommerce/single-product/price.php:28
+msgid "Out of stock"
+msgstr ""
+
+#: inc/woocommerce.php:152
+msgid "View cart"
+msgstr ""
+
+#: inc/woocommerce.php:157 woocommerce/cart/mini-cart.php:86
+msgid "Checkout"
+msgstr ""
+
+#: search.php:19
+msgid "Search page"
+msgstr ""
+
+#: search.php:22
+#, php-format
+msgid "Search Results for: %s"
+msgstr ""
+
+#: searchform.php:3
+msgid "Type and hit enter"
+msgstr ""
+
+#: single-pt-music-album.php:58 single-pt-music-album.php:65
+msgid "Download From"
+msgstr ""
+
+#: single-pt-music-album.php:59
+msgid "Apple Music"
+msgstr ""
+
+#: single-pt-music-album.php:66
+msgid "Google Play"
+msgstr ""
+
+#: single-pt-music-album.php:72
+msgid "Listen On"
+msgstr ""
+
+#: single-pt-music-album.php:73
+msgid "Sound Cloud"
+msgstr ""
+
+#: single-pt-music-album.php:79
+msgid "Available On"
+msgstr ""
+
+#: single-pt-portfolio.php:159 single-pt-portfolio.php:255 single.php:85
+msgid "previous post"
+msgstr ""
+
+#: single-pt-portfolio.php:162 single-pt-portfolio.php:198
+#: single-pt-portfolio.php:258 single.php:88
+msgid "next post"
+msgstr ""
+
+#: template-parts/content-none.php:22
+#, php-format
+msgid ""
+"Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
+msgstr ""
+
+#: template-parts/content-none.php:26
+msgid ""
+"Sorry, but nothing matched your search terms. Please try again with some "
+"different keywords."
+msgstr ""
+
+#: template-parts/content-none.php:32
+msgid ""
+"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
+"searching can help."
+msgstr ""
+
+#: template-parts/content-search.php:33 template-parts/content.php:84
+msgid "Sticky "
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:334
+msgid "Install Required Plugins"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:335
+msgid "Install Plugins"
+msgstr ""
+
+#. translators: %s: plugin name.
+#: tgm/class-tgm-plugin-activation.php:337
+#, php-format
+msgid "Installing Plugin: %s"
+msgstr ""
+
+#. translators: %s: plugin name.
+#: tgm/class-tgm-plugin-activation.php:339
+#, php-format
+msgid "Updating Plugin: %s"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:340
+msgid "Something went wrong with the plugin API."
+msgstr ""
+
+#. translators: 1: plugin name(s).
+#: tgm/class-tgm-plugin-activation.php:343
+#, php-format
+msgid "This theme requires the following plugin: %1$s."
+msgid_plural "This theme requires the following plugins: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: plugin name(s).
+#: tgm/class-tgm-plugin-activation.php:349
+#, php-format
+msgid "This theme recommends the following plugin: %1$s."
+msgid_plural "This theme recommends the following plugins: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: plugin name(s).
+#: tgm/class-tgm-plugin-activation.php:355
+#, php-format
+msgid ""
+"The following plugin needs to be updated to its latest version to ensure "
+"maximum compatibility with this theme: %1$s."
+msgid_plural ""
+"The following plugins need to be updated to their latest version to ensure "
+"maximum compatibility with this theme: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: plugin name(s).
+#: tgm/class-tgm-plugin-activation.php:361
+#, php-format
+msgid "There is an update available for: %1$s."
+msgid_plural "There are updates available for the following plugins: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: plugin name(s).
+#: tgm/class-tgm-plugin-activation.php:367
+#, php-format
+msgid "The following required plugin is currently inactive: %1$s."
+msgid_plural "The following required plugins are currently inactive: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: plugin name(s).
+#: tgm/class-tgm-plugin-activation.php:373
+#, php-format
+msgid "The following recommended plugin is currently inactive: %1$s."
+msgid_plural "The following recommended plugins are currently inactive: %1$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: tgm/class-tgm-plugin-activation.php:378
+msgid "Begin installing plugin"
+msgid_plural "Begin installing plugins"
+msgstr[0] ""
+msgstr[1] ""
+
+#: tgm/class-tgm-plugin-activation.php:383
+msgid "Begin updating plugin"
+msgid_plural "Begin updating plugins"
+msgstr[0] ""
+msgstr[1] ""
+
+#: tgm/class-tgm-plugin-activation.php:388
+msgid "Begin activating plugin"
+msgid_plural "Begin activating plugins"
+msgstr[0] ""
+msgstr[1] ""
+
+#: tgm/class-tgm-plugin-activation.php:392
+msgid "Return to Required Plugins Installer"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:393
+#: tgm/class-tgm-plugin-activation.php:911
+#: tgm/class-tgm-plugin-activation.php:2617
+#: tgm/class-tgm-plugin-activation.php:3664
+msgid "Return to the Dashboard"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:394
+#: tgm/class-tgm-plugin-activation.php:3243
+msgid "Plugin activated successfully."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:395
+#: tgm/class-tgm-plugin-activation.php:3036
+msgid "The following plugin was activated successfully:"
+msgid_plural "The following plugins were activated successfully:"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: plugin name.
+#: tgm/class-tgm-plugin-activation.php:397
+#, php-format
+msgid "No action taken. Plugin %1$s was already active."
+msgstr ""
+
+#. translators: 1: plugin name.
+#: tgm/class-tgm-plugin-activation.php:399
+#, php-format
+msgid ""
+"Plugin not activated. A higher version of %s is needed for this theme. "
+"Please update the plugin."
+msgstr ""
+
+#. translators: 1: dashboard link.
+#: tgm/class-tgm-plugin-activation.php:401
+#, php-format
+msgid "All plugins installed and activated successfully. %1$s"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:402
+msgid "Dismiss this notice"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:403
+msgid ""
+"There are one or more required or recommended plugins to install, update or "
+"activate."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:404
+msgid "Please contact the administrator of this site for help."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:598
+msgid "This plugin needs to be updated to be compatible with your theme."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:599
+msgid "Update Required"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:716
+msgid "Set the parent_slug config variable instead."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:1018
+msgid ""
+"The remote plugin package does not contain a folder with the desired slug "
+"and renaming did not work."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:1018
+#: tgm/class-tgm-plugin-activation.php:1021
+msgid ""
+"Please contact the plugin provider and ask them to package their plugin "
+"according to the WordPress guidelines."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:1021
+msgid ""
+"The remote plugin package consists of more than one file, but the files are "
+"not packaged in a folder."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:1205
+#: tgm/class-tgm-plugin-activation.php:3032
+msgctxt "plugin A *and* plugin B"
+msgid "and"
+msgstr ""
+
+#. translators: %s: version number
+#: tgm/class-tgm-plugin-activation.php:2066
+#, php-format
+msgid "TGMPA v%s"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2357
+msgid "Required"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2360
+msgid "Recommended"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2376
+msgid "WordPress Repository"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2379
+msgid "External Source"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2382
+msgid "Pre-Packaged"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2399
+msgid "Not Installed"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2403
+msgid "Installed But Not Activated"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2405
+msgid "Active"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2411
+msgid "Required Update not Available"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2414
+msgid "Requires Update"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2417
+msgid "Update recommended"
+msgstr ""
+
+#. translators: 1: install status, 2: update status
+#: tgm/class-tgm-plugin-activation.php:2426
+#, php-format
+msgctxt "Install/Update Status"
+msgid "%1$s, %2$s"
+msgstr ""
+
+#. translators: 1: number of plugins.
+#: tgm/class-tgm-plugin-activation.php:2472
+#, php-format
+msgctxt "plugins"
+msgid "All <span class=\"count\">(%s)</span>"
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: number of plugins.
+#: tgm/class-tgm-plugin-activation.php:2476
+#, php-format
+msgid "To Install <span class=\"count\">(%s)</span>"
+msgid_plural "To Install <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: number of plugins.
+#: tgm/class-tgm-plugin-activation.php:2480
+#, php-format
+msgid "Update Available <span class=\"count\">(%s)</span>"
+msgid_plural "Update Available <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: number of plugins.
+#: tgm/class-tgm-plugin-activation.php:2484
+#, php-format
+msgid "To Activate <span class=\"count\">(%s)</span>"
+msgid_plural "To Activate <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: tgm/class-tgm-plugin-activation.php:2566
+msgctxt "as in: \"version nr unknown\""
+msgid "unknown"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2574
+msgid "Installed version:"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2582
+msgid "Minimum required version:"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2594
+msgid "Available version:"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2617
+msgid "No plugins to install, update or activate."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2631
+msgid "Plugin"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2632
+msgid "Source"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2637
+msgid "Version"
+msgstr ""
+
+#. translators: %2$s: plugin name in screen reader markup
+#: tgm/class-tgm-plugin-activation.php:2687
+#, php-format
+msgid "Install %2$s"
+msgstr ""
+
+#. translators: %2$s: plugin name in screen reader markup
+#: tgm/class-tgm-plugin-activation.php:2692
+#, php-format
+msgid "Update %2$s"
+msgstr ""
+
+#. translators: %2$s: plugin name in screen reader markup
+#: tgm/class-tgm-plugin-activation.php:2698
+#, php-format
+msgid "Activate %2$s"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2768
+msgid "Upgrade message from the plugin author:"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2801
+msgid "Install"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2807
+msgid "Update"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2810
+msgid "Activate"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2841
+msgid "No plugins were selected to be installed. No action taken."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2843
+msgid "No plugins were selected to be updated. No action taken."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2884
+msgid "No plugins are available to be installed at this time."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2886
+msgid "No plugins are available to be updated at this time."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:2992
+msgid "No plugins were selected to be activated. No action taken."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3018
+msgid "No plugins are available to be activated at this time."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3242
+msgid "Plugin activation failed."
+msgstr ""
+
+#. translators: 1: plugin name, 2: action number 3: total number of actions.
+#: tgm/class-tgm-plugin-activation.php:3582
+#, php-format
+msgid "Updating Plugin %1$s (%2$d/%3$d)"
+msgstr ""
+
+#. translators: 1: plugin name, 2: error message.
+#: tgm/class-tgm-plugin-activation.php:3585
+#, php-format
+msgid "An error occurred while installing %1$s: <strong>%2$s</strong>."
+msgstr ""
+
+#. translators: 1: plugin name.
+#: tgm/class-tgm-plugin-activation.php:3587
+#, php-format
+msgid "The installation of %1$s failed."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3591
+msgid ""
+"The installation and activation process is starting. This process may take a "
+"while on some hosts, so please be patient."
+msgstr ""
+
+#. translators: 1: plugin name.
+#: tgm/class-tgm-plugin-activation.php:3593
+#, php-format
+msgid "%1$s installed and activated successfully."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3593
+#: tgm/class-tgm-plugin-activation.php:3601
+msgid "Show Details"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3593
+#: tgm/class-tgm-plugin-activation.php:3601
+msgid "Hide Details"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3594
+msgid "All installations and activations have been completed."
+msgstr ""
+
+#. translators: 1: plugin name, 2: action number 3: total number of actions.
+#: tgm/class-tgm-plugin-activation.php:3596
+#, php-format
+msgid "Installing and Activating Plugin %1$s (%2$d/%3$d)"
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3599
+msgid ""
+"The installation process is starting. This process may take a while on some "
+"hosts, so please be patient."
+msgstr ""
+
+#. translators: 1: plugin name.
+#: tgm/class-tgm-plugin-activation.php:3601
+#, php-format
+msgid "%1$s installed successfully."
+msgstr ""
+
+#: tgm/class-tgm-plugin-activation.php:3602
+msgid "All installations have been completed."
+msgstr ""
+
+#. translators: 1: plugin name, 2: action number 3: total number of actions.
+#: tgm/class-tgm-plugin-activation.php:3604
+#, php-format
+msgid "Installing Plugin %1$s (%2$d/%3$d)"
+msgstr ""
+
+#: tgm/tgm.php:22
+msgid "TinyMCE Advanced"
+msgstr ""
+
+#: tgm/tgm.php:27
+msgid "Contact Form 7"
+msgstr ""
+
+#: tgm/tgm.php:32
+msgid "Advanced Custom Fields"
+msgstr ""
+
+#: tgm/tgm.php:37
+msgid "Black Studio TinyMCE Widget"
+msgstr ""
+
+#: tgm/tgm.php:42
+msgid "WooCommerce"
+msgstr ""
+
+#: tgm/tgm.php:46
+msgid "Redux Framework"
+msgstr ""
+
+#: tgm/tgm.php:51
+msgid "PixProof"
+msgstr ""
+
+#: tgm/tgm.php:55
+msgid "Unyson"
+msgstr ""
+
+#: woocommerce/cart/cart-empty.php:38
+msgid "Return To Shop"
+msgstr ""
+
+#: woocommerce/cart/cart-totals.php:28
+msgid "Cart Totals"
+msgstr ""
+
+#: woocommerce/cart/cart-totals.php:33 woocommerce/cart/cart-totals.php:34
+#: woocommerce/cart/mini-cart.php:80 woocommerce/checkout/review-order.php:59
+msgid "Subtotal"
+msgstr ""
+
+#: woocommerce/cart/cart-totals.php:55 woocommerce/cart/cart-totals.php:56
+msgid "Shipping"
+msgstr ""
+
+#: woocommerce/cart/cart-totals.php:71
+#, php-format
+msgid "estimated for %s"
+msgstr ""
+
+#: woocommerce/cart/cart-totals.php:92 woocommerce/cart/cart-totals.php:93
+#: woocommerce/cart/cart.php:39 woocommerce/cart/cart.php:117
+#: woocommerce/checkout/review-order.php:27
+#: woocommerce/checkout/review-order.php:106
+#: woocommerce/order/order-details.php:43
+msgid "Total"
+msgstr ""
+
+#: woocommerce/cart/cart.php:37 woocommerce/cart/cart.php:94
+msgid "Price"
+msgstr ""
+
+#: woocommerce/cart/cart.php:38 woocommerce/cart/cart.php:100
+#: woocommerce/single-product/add-to-cart/simple.php:32
+#: woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php:16
+msgid "Quantity"
+msgstr ""
+
+#: woocommerce/cart/cart.php:60 woocommerce/cart/mini-cart.php:49
+msgid "Remove this item"
+msgstr ""
+
+#: woocommerce/cart/cart.php:89
+msgid "Available on backorder"
+msgstr ""
+
+#: woocommerce/cart/cart.php:134
+msgid "Update Cart"
+msgstr ""
+
+#: woocommerce/cart/cart.php:149
+msgid "Coupon code"
+msgstr ""
+
+#: woocommerce/cart/cart.php:149
+msgid "Apply Coupon"
+msgstr ""
+
+#: woocommerce/cart/cross-sells.php:47
+msgid "You may be interested in&hellip;"
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:72
+msgid "No products in the cart."
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:85
+msgid "View Cart"
+msgstr ""
+
+#: woocommerce/cart/proceed-to-checkout-button.php:27
+msgid "Proceed to Checkout"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:33
+msgid "Calculate Shipping"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:39
+msgid "Select a country&hellip;"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:56
+#: woocommerce/cart/shipping-calculator.php:62
+#: woocommerce/cart/shipping-calculator.php:74
+msgid "State / county"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:63
+msgid "Select a state&hellip;"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:83
+msgid "City"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:91
+msgid "Postcode / ZIP"
+msgstr ""
+
+#: woocommerce/cart/shipping-calculator.php:96
+msgid "Update Totals"
+msgstr ""
+
+#: woocommerce/checkout/form-billing.php:29
+msgid "Billing &amp; Shipping"
+msgstr ""
+
+#: woocommerce/checkout/form-billing.php:33
+msgid "Billing Details"
+msgstr ""
+
+#: woocommerce/checkout/form-billing.php:52
+msgid "Create an account?"
+msgstr ""
+
+#: woocommerce/checkout/form-billing.php:63
+msgid ""
+"Create an account by entering the information below. If you are a returning "
+"customer please login at the top of the page."
+msgstr ""
+
+#: woocommerce/checkout/form-checkout.php:29
+msgid "You must be logged in to checkout."
+msgstr ""
+
+#: woocommerce/checkout/form-checkout.php:50
+msgid "Your order"
+msgstr ""
+
+#: woocommerce/checkout/form-shipping.php:27
+msgid "Ship to a different address?"
+msgstr ""
+
+#: woocommerce/checkout/form-shipping.php:52
+msgid "Additional Information"
+msgstr ""
+
+#: woocommerce/checkout/payment.php:29
+msgid "Select payment method"
+msgstr ""
+
+#: woocommerce/checkout/payment.php:39
+msgid ""
+"Sorry, it seems that there are no available payment methods for your state. "
+"Please contact us if you require assistance or wish to make alternate "
+"arrangements."
+msgstr ""
+
+#: woocommerce/checkout/payment.php:39
+msgid "Please fill in your details above to see available payment methods."
+msgstr ""
+
+#: woocommerce/checkout/payment.php:46
+msgid ""
+"Since your browser does not support JavaScript, or it is disabled, please "
+"ensure you click the <em>Update Totals</em> button before placing your order."
+" You may be charged more than the amount stated above if you fail to do so."
+msgstr ""
+
+#: woocommerce/checkout/payment.php:47
+msgid "Update totals"
+msgstr ""
+
+#: woocommerce/content-single-product.php:47
+msgid "Share:"
+msgstr ""
+
+#: woocommerce/global/quantity-input.php:27
+#, php-format
+msgid "%s quantity"
+msgstr ""
+
+#: woocommerce/global/quantity-input.php:40
+msgctxt "Product quantity input tooltip"
+msgid "Qty"
+msgstr ""
+
+#: woocommerce/loop/no-products-found.php:24
+msgid "No products were found matching your selection."
+msgstr ""
+
+#: woocommerce/loop/result-count.php:39
+#, php-format
+msgid "Showing the single result"
+msgid_plural "Showing all %d results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce/loop/result-count.php:41
+#, php-format
+msgctxt "%1$d = first, %2$d = last, %3$d = total"
+msgid "Showing the single result"
+msgid_plural "Showing %1$d&ndash;%2$d of %3$d results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce/order/order-details-customer.php:27
+msgid "Customer details"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:34
+#: woocommerce/order/order-details.php:78
+msgid "Note:"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:41
+msgid "Email:"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:48
+msgid "Phone:"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:65
+msgid "Billing address"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:69
+#: woocommerce/order/order-details-customer.php:83
+#: woocommerce/single-product/meta.php:29
+msgid "N/A"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:79
+msgid "Shipping address"
+msgstr ""
+
+#: woocommerce/order/order-details.php:36
+msgid "Order details"
+msgstr ""
+
+#: woocommerce/order/tracking.php:26
+#, php-format
+msgid "Order #%1$s was placed on %2$s and is currently %3$s."
+msgstr ""
+
+#: woocommerce/order/tracking.php:34
+msgid "Order Updates"
+msgstr ""
+
+#: woocommerce/order/tracking.php:40
+msgid "l jS \\o\\f F Y, h:ia"
+msgstr ""
+
+#: woocommerce/product-searchform.php:27
+msgid "Search for:"
+msgstr ""
+
+#: woocommerce/product-searchform.php:28
+msgctxt "placeholder"
+msgid "Search Products&hellip;"
+msgstr ""
+
+#: woocommerce/product-searchform.php:28
+msgctxt "label"
+msgid "Search for:"
+msgstr ""
+
+#: woocommerce/product-searchform.php:29
+msgctxt "submit button"
+msgid "Search"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:34
+#, php-format
+msgid "%s review for %s%s%s"
+msgid_plural "%s reviews for %s%s%s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce/single-product-reviews.php:36
+msgid "Reviews"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:58
+msgid "There are no reviews yet."
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:71
+msgid "Add a review"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:71
+#, php-format
+msgid "Be the first to review &ldquo;%s&rdquo;"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:72
+#, php-format
+msgid "Leave a Reply to %s"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:76
+msgid "Enter your e-mail..."
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:89
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a review."
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:93
+msgid "Your Rating"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:94
+msgid "Rate&hellip;"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:95
+msgid "Perfect"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:96
+msgid "Good"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:97
+msgid "Average"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:98
+msgid "Not that bad"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:99
+msgid "Very Poor"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:112
+msgid ""
+"Only logged in customers who have purchased this product may leave a review."
+msgstr ""
+
+#: woocommerce/single-product/add-to-cart/variable.php:32
+msgid "This product is currently out of stock and unavailable."
+msgstr ""
+
+#: woocommerce/single-product/add-to-cart/variable.php:47
+msgid "Clear"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:29
+msgid "Sku:"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:32
+msgid "Tag:"
+msgid_plural "Tags:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce/single-product/price.php:30
+msgid "In stock"
+msgstr ""
+
+#: woocommerce/single-product/related.php:28
+msgid "Related Products"
+msgstr ""
+
+#: woocommerce/single-product/tabs/additional-information.php:22
+msgid "Additional information"
+msgstr ""
+
+#: woocommerce/single-product/up-sells.php:28
+msgid "You May Also Like"
+msgstr ""
+
+#. Theme Name of the plugin/theme
+msgid "Novo"
+msgstr ""
+
+#. Theme URI of the plugin/theme
+msgid "http://promo-theme.com/novo/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"We present you an Awesome Photography WordPress Theme. You can build a "
+"beautiful site, using 13 demo homepages (all are included in the demo "
+"content). Also, this theme consists of all professional photography features "
+"like, photo proofing, password protected galleries, before/after gallery, "
+"booking, right click protection. Different gallery, blog styles make your "
+"site individual and creative."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Promo Theme"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://themeforest.net/user/ypromo"
+msgstr ""
+
+#. Template Name of the plugin/theme
+msgid "Coming soon page"
+msgstr ""
+
+#. Template Name of the plugin/theme
+msgid "Landing page"
+msgstr ""
+
+#. Template Name of the plugin/theme
+msgid "Page with sidebar"
+msgstr ""

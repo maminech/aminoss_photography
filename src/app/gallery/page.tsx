@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
 import CategoryFilter from '@/components/CategoryFilter';
 import GalleryGrid from '@/components/GalleryGrid';
 import LightboxModal from '@/components/LightboxModal';
@@ -9,6 +11,7 @@ import { MediaItem, Category } from '@/types';
 import { getSampleImages, filterImagesByCategory } from '@/lib/sample-data';
 
 export default function GalleryPage() {
+  const { currentTheme } = useLayoutTheme();
   const [allImages, setAllImages] = useState<MediaItem[]>([]);
   const [filteredImages, setFilteredImages] = useState<MediaItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
@@ -17,6 +20,7 @@ export default function GalleryPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const isProfessional = currentTheme === 'professional';
 
   useEffect(() => {
     const loadImages = async () => {
@@ -109,6 +113,142 @@ export default function GalleryPage() {
     setCurrentImageIndex((prev) => (prev - 1 + filteredImages.length) % filteredImages.length);
   };
 
+  // Professional/Novo Theme Layout
+  if (isProfessional) {
+    return (
+      <div className="novo-gallery-page bg-white min-h-screen">
+        {/* Novo Header Section */}
+        <section className="py-24 md:py-32 bg-white">
+          <div className="container mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                Gallery
+              </h1>
+              
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '60px' }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="h-[1px] bg-[#d4af37] mx-auto mb-12"
+              />
+
+              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto mb-12">
+                Explore my curated collection of photography across different styles and moments
+              </p>
+
+              {/* Novo Category Filter */}
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
+                {['all', 'portraits', 'weddings', 'events', 'nature', 'fashion'].map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => handleCategoryChange(category as Category)}
+                    className={`px-6 py-2 font-lato font-medium text-sm uppercase tracking-[0.2em] transition-all duration-300 ${
+                      activeCategory === category
+                        ? 'text-[#d4af37] border-b-2 border-[#d4af37]'
+                        : 'text-gray-600 hover:text-[#1a1a1a]'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+
+              {/* Sort Controls - Novo Style */}
+              <div className="flex items-center justify-center gap-4 text-sm">
+                <span className="text-gray-600 font-lato">Sort by:</span>
+                <button
+                  onClick={() => handleSortChange('date')}
+                  className={`px-4 py-2 font-lato font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 ${
+                    sortBy === 'date'
+                      ? 'text-[#d4af37]'
+                      : 'text-gray-600 hover:text-[#1a1a1a]'
+                  }`}
+                >
+                  Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+                <button
+                  onClick={() => handleSortChange('title')}
+                  className={`px-4 py-2 font-lato font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 ${
+                    sortBy === 'title'
+                      ? 'text-[#d4af37]'
+                      : 'text-gray-600 hover:text-[#1a1a1a]'
+                  }`}
+                >
+                  Title {sortBy === 'title' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+                <span className="text-gray-500 font-lato">
+                  ({filteredImages.length} {filteredImages.length === 1 ? 'photo' : 'photos'})
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Novo Gallery Grid */}
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {[...Array(9)].map((_, i) => (
+                  <div key={i} className="aspect-square bg-gray-200 animate-pulse" />
+                ))}
+              </div>
+            ) : filteredImages.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {filteredImages.map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: index * 0.05 }}
+                    onClick={() => openLightbox(index)}
+                    className="group relative aspect-square overflow-hidden bg-gray-200 cursor-pointer"
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.title || `Photo ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    
+                    {/* Hover Overlay - Novo Style */}
+                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="text-center text-white p-6">
+                        <h3 className="text-lg font-playfair font-bold mb-2">
+                          {image.title || 'Untitled'}
+                        </h3>
+                        <div className="w-12 h-[1px] bg-[#d4af37] mx-auto mb-3" />
+                        <p className="text-xs font-lato uppercase tracking-[0.2em] text-gray-300">
+                          {image.category || 'Photography'}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-gray-500 font-lato text-lg">No images found in this category.</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <LightboxModal
+          images={filteredImages}
+          currentIndex={currentImageIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          onNext={nextImage}
+          onPrevious={previousImage}
+        />
+      </div>
+    );
+  }
+
+  // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 sm:py-20 md:py-24 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">

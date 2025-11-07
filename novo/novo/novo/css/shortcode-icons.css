@@ -1,0 +1,280 @@
+i[class*="shortcode-icon"].vc_element-icon,
+i[class^="shortcode-icon"].vc_element-icon {
+    background-image: url(../images/shortcode-icons.png);
+    background-repeat: no-repeat;
+    display: block;
+    background-size: auto;
+}
+
+div.vc_el-container i.shortcode-icon-accordion,
+.wpb_element_title i.shortcode-icon-accordion {
+    width: 35px;
+    height: 35px;
+    background-position: -5px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-banner,
+.wpb_element_title i.shortcode-icon-banner {
+    width: 35px;
+    height: 35px;
+    background-position: -50px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-benefits,
+.wpb_element_title i.shortcode-icon-benefits {
+    width: 35px;
+    height: 35px;
+    background-position: -95px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-blog,
+.wpb_element_title i.shortcode-icon-blog {
+    width: 35px;
+    height: 35px;
+    background-position: -140px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-brand,
+.wpb_element_title i.shortcode-icon-brand {
+    width: 35px;
+    height: 35px;
+    background-position: -185px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-categories,
+.wpb_element_title i.shortcode-icon-categories {
+    width: 35px;
+    height: 35px;
+    background-position: -5px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-contact-row,
+.wpb_element_title i.shortcode-icon-contact-row {
+    width: 35px;
+    height: 35px;
+    background-position: -50px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-full-screen-page,
+.wpb_element_title i.shortcode-icon-full-screen-page {
+    width: 35px;
+    height: 35px;
+    background-position: -95px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-icon-box,
+.wpb_element_title i.shortcode-icon-icon-box {
+    width: 35px;
+    height: 35px;
+    background-position: -140px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-icon-box-in-row,
+.wpb_element_title i.shortcode-icon-icon-box-in-row {
+    width: 35px;
+    height: 35px;
+    background-position: -185px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-map,
+.wpb_element_title i.shortcode-icon-map {
+    width: 35px;
+    height: 35px;
+    background-position: -5px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-one-screen,
+.wpb_element_title i.shortcode-icon-one-screen {
+    width: 35px;
+    height: 35px;
+    background-position: -50px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-portfolio,
+.wpb_element_title i.shortcode-icon-portfolio {
+    width: 35px;
+    height: 35px;
+    background-position: -95px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-portfolio-slider,
+.wpb_element_title i.shortcode-icon-portfolio-slider {
+    width: 35px;
+    height: 34px;
+    background-position: -140px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-portfolio-slider-w-filter,
+.wpb_element_title i.shortcode-icon-portfolio-slider-w-filter {
+    width: 35px;
+    height: 35px;
+    background-position: -185px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-price-list,
+.wpb_element_title i.shortcode-icon-price-list {
+    width: 35px;
+    height: 35px;
+    background-position: -5px -140px;
+}
+
+div.vc_el-container i.shortcode-icon-product,
+.wpb_element_title i.shortcode-icon-product {
+    width: 35px;
+    height: 35px;
+    background-position: -50px -140px;
+}
+
+div.vc_el-container i.shortcode-icon-product-banner,
+.wpb_element_title i.shortcode-icon-product-banner {
+    width: 35px;
+    height: 35px;
+    background-position: -95px -140px;
+}
+
+div.vc_el-container i.shortcode-icon-skills,
+.wpb_element_title i.shortcode-icon-skills {
+    width: 35px;
+    height: 35px;
+    background-position: -140px -140px;
+}
+
+div.vc_el-container i.shortcode-icon-special-heading,
+.wpb_element_title i.shortcode-icon-special-heading {
+    width: 35px;
+    height: 35px;
+    background-position: -185px -140px;
+}
+
+div.vc_el-container i.shortcode-icon-subscribe,
+.wpb_element_title i.shortcode-icon-subscribe {
+    width: 35px;
+    height: 35px;
+    background-position: -5px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-tabs,
+.wpb_element_title i.shortcode-icon-tabs {
+    width: 35px;
+    height: 35px;
+    background-position: -50px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-team,
+.wpb_element_title i.shortcode-icon-team {
+    width: 35px;
+    height: 35px;
+    background-position: -95px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-testimonials,
+.wpb_element_title i.shortcode-icon-testimonials {
+    width: 35px;
+    height: 35px;
+    background-position: -140px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-testimonials-type2,
+.wpb_element_title i.shortcode-icon-testimonials-type2 {
+    width: 35px;
+    height: 35px;
+    background-position: -185px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-video,
+.wpb_element_title i.shortcode-icon-video {
+    width: 35px;
+    height: 35px;
+    background-position: -230px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-music-album-items,
+.wpb_element_title i.shortcode-icon-music-album-items {
+    width: 35px;
+    height: 35px;
+    background-position: -230px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-photo-carousel,
+.wpb_element_title i.shortcode-icon-photo-carousel {
+    width: 35px;
+    height: 35px;
+    background-position: -230px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-music-banner,
+.wpb_element_title i.shortcode-icon-music-banner {
+    width: 35px;
+    height: 35px;
+    background-position: -230px -140px;
+}
+
+div.vc_el-container i.shortcode-icon-music-album,
+.wpb_element_title i.shortcode-icon-music-album {
+    width: 35px;
+    height: 35px;
+    background-position: -230px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-split-screen,
+.wpb_element_title i.shortcode-icon-split-screen {
+    width: 35px;
+    height: 35px;
+    background-position: -278px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-gallery,
+.wpb_element_title i.shortcode-icon-gallery {
+    width: 35px;
+    height: 35px;
+    background-position: -278px -50px;
+}
+
+div.vc_el-container i.shortcode-icon-podcast,
+.wpb_element_title i.shortcode-icon-podcast {
+    width: 35px;
+    height: 35px;
+    background-position: -278px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-coming-soon,
+.wpb_element_title i.shortcode-icon-coming-soon {
+    width: 35px;
+    height: 35px;
+    background-position: -278px -185px;
+}
+
+div.vc_el-container i.shortcode-icon-price-list-2,
+.wpb_element_title i.shortcode-icon-price-list-2 {
+    width: 35px;
+    height: 35px;
+    background-position: -323px -5px;
+}
+
+div.vc_el-container i.shortcode-icon-split-screen-type2,
+.wpb_element_title i.shortcode-icon-split-screen-type2 {
+    width: 36px;
+    height: 36px;
+    background-position: -323px -49px;
+}
+
+div.vc_el-container i.shortcode-icon-vertical-parallax,
+.wpb_element_title i.shortcode-icon-vertical-parallax {
+    width: 36px;
+    height: 36px;
+    background-position: -325px -95px;
+}
+
+div.vc_el-container i.shortcode-icon-image-comparison-slider,
+.wpb_element_title i.shortcode-icon-image-comparison-slider {
+    width: 35px;
+    height: 35px;
+    background-position: -326px -141px;
+}
+
+div.vc_el-container i.shortcode-icon-video-banner,
+.wpb_element_title i.shortcode-icon-video-banner {
+    width: 35px;
+    height: 35px;
+    background-position: -325px -185px;
+}

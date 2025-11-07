@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiDownload, FiAward, FiCamera } from 'react-icons/fi';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 interface TeamMember {
   id: string;
@@ -17,6 +18,8 @@ interface TeamMember {
 }
 
 export default function AboutPage() {
+  const { currentTheme } = useLayoutTheme();
+  const isProfessional = currentTheme === 'professional';
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
   useEffect(() => {
@@ -29,6 +32,217 @@ export default function AboutPage() {
       })
       .catch(err => console.error('Error fetching team:', err));
   }, []);
+
+  // Professional/Novo Theme Layout
+  if (isProfessional) {
+    return (
+      <div className="novo-about-page bg-white min-h-screen">
+        <section className="py-24 md:py-32 bg-white">
+          <div className="container mx-auto px-6 max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                About Me
+              </h1>
+              
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '60px' }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="h-[1px] bg-[#d4af37] mx-auto mb-12"
+              />
+
+              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+                Passionate photographer capturing life's beautiful moments
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-24">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="relative aspect-[3/4] overflow-hidden"
+              >
+                <Image
+                  src="https://res.cloudinary.com/dc67gl8fu/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg"
+                  alt="Aminoss"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="flex flex-col justify-center"
+              >
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold mb-6 text-[#1a1a1a]">
+                  Hello, I'm Aminoss
+                </h2>
+                <div className="space-y-6 text-gray-700 font-lato text-lg leading-relaxed">
+                  <p>
+                    I'm a professional photographer based in Sousse, Tunisia, with a passion for 
+                    capturing authentic moments and creating timeless memories.
+                  </p>
+                  <p>
+                    With over 10 years of experience in photography and videography, I specialize 
+                    in weddings, portraits, fashion, and travel photography. My work is characterized 
+                    by its natural, artistic approach and attention to detail.
+                  </p>
+                  <p>
+                    Every photograph tells a story, and my goal is to help you tell yours in the 
+                    most beautiful and meaningful way possible.
+                  </p>
+                </div>
+
+                <div className="mt-8">
+                  <Link
+                    href="/contact"
+                    className="inline-block px-10 py-4 bg-[#1a1a1a] text-white font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300"
+                  >
+                    Work With Me
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 py-16 border-t border-b border-gray-200"
+            >
+              <div className="text-center">
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">500+</div>
+                <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
+                  Happy Clients
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">1000+</div>
+                <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
+                  Projects Done
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">15+</div>
+                <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
+                  Awards Won
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">10+</div>
+                <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
+                  Years Experience
+                </div>
+              </div>
+            </motion.div>
+
+            <div className="mb-24">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="text-center mb-12"
+              >
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                  What I Do
+                </h2>
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: '60px' }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="h-[1px] bg-[#d4af37] mx-auto"
+                />
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { icon: FiCamera, title: 'Wedding Photography', desc: 'Capturing your special day with elegance and emotion' },
+                  { icon: FiAward, title: 'Portrait Sessions', desc: 'Professional portraits that showcase your unique personality' },
+                  { icon: FiCamera, title: 'Fashion & Editorial', desc: 'Creative and artistic fashion photography' }
+                ].map((service, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="text-center p-8 border border-gray-200 hover:border-[#d4af37] transition-colors duration-300"
+                  >
+                    <service.icon className="w-12 h-12 text-[#d4af37] mx-auto mb-4" />
+                    <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-3">{service.title}</h3>
+                    <p className="text-gray-600 font-lato">{service.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {teamMembers.length > 0 && (
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8 }}
+                  className="text-center mb-12"
+                >
+                  <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                    Meet The Team
+                  </h2>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: '60px' }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="h-[1px] bg-[#d4af37] mx-auto"
+                  />
+                </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {teamMembers.map((member, index) => (
+                    <motion.div
+                      key={member.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="text-center group"
+                    >
+                      <div className="relative aspect-square mb-4 overflow-hidden">
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      </div>
+                      <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-1">{member.name}</h3>
+                      <p className="text-sm font-lato uppercase tracking-wider text-[#d4af37] mb-2">{member.role}</p>
+                      {member.bio && <p className="text-gray-600 font-lato text-sm">{member.bio}</p>}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 md:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">

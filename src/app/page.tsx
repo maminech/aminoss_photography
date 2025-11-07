@@ -11,6 +11,12 @@ import LightboxModal from '@/components/LightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
 import { MediaItem } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
+import dynamic from 'next/dynamic';
+
+const ProfessionalHome = dynamic(() => import('./professional-home/page'), {
+  ssr: false,
+});
 
 interface VideoItem {
   id: string;
@@ -32,6 +38,7 @@ interface SiteSettings {
 }
 
 export default function HomePage() {
+  const { currentTheme } = useLayoutTheme();
   const [images, setImages] = useState<MediaItem[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({});
@@ -41,6 +48,11 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [initialHighlightIndex, setInitialHighlightIndex] = useState(0);
+
+  // If Professional theme, show Novo-style homepage
+  if (currentTheme === 'professional') {
+    return <ProfessionalHome />;
+  }
 
   useEffect(() => {
     const loadData = async () => {
