@@ -20,7 +20,7 @@ function AdminLoginForm() {
     setError('');
     setLoading(true);
 
-    console.log('Login attempt started...', { email, hasPassword: !!password });
+    console.log('Login attempt started...', { email, hasPassword: !!password, callbackUrl });
 
     try {
       const result = await signIn('credentials', {
@@ -36,9 +36,17 @@ function AdminLoginForm() {
         setError(`Login failed: ${result.error}`);
         setLoading(false);
       } else if (result?.ok) {
-        console.log('Login successful! Session created.');
-        // Force reload to get the session
-        window.location.href = callbackUrl;
+        console.log('Login successful! Redirecting...');
+        // Use multiple redirect strategies for reliability
+        
+        // Strategy 1: Next.js router
+        router.push(callbackUrl);
+        
+        // Strategy 2: Hard reload after a short delay (fallback)
+        setTimeout(() => {
+          console.log('Fallback redirect to:', callbackUrl);
+          window.location.replace(callbackUrl);
+        }, 1000);
       } else {
         console.error('Unexpected result:', result);
         setError('Login failed - unexpected response. Check console for details.');

@@ -10,6 +10,8 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  console.log('Middleware: Processing', pathname);
+
   // Admin routes protection
   if (pathname.startsWith('/admin/dashboard')) {
     const token = await getToken({
@@ -17,11 +19,16 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
+    console.log('Middleware: Token check for /admin/dashboard:', token ? 'Found' : 'Not found');
+
     if (!token) {
+      console.log('Middleware: No token, redirecting to login');
       const url = new URL('/admin/login', request.url);
       url.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(url);
     }
+    
+    console.log('Middleware: Token valid, allowing access to:', pathname);
   }
 
   // Client routes protection
