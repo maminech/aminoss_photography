@@ -249,18 +249,20 @@ export default function HomePage() {
       {showIntro && <AnimatedIntro onComplete={handleIntroComplete} />}
       
       <div className="min-h-screen bg-white dark:bg-dark-900">
-      {/* Top Navigation Bar */}
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-4 flex justify-between items-center">
-        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+      {/* Top Navigation Bar - Instagram Style */}
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-4 pb-2 flex justify-between items-center">
+        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
           {settings.siteName || 'Aminoss Photography'}
         </h1>
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-          aria-label="Open menu"
-        >
-          <FiMenu className="w-6 h-6 text-gray-900 dark:text-white" />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowThemeSwitcher(true)}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95"
+            aria-label="Theme Settings"
+          >
+            <FiSettings className="w-5 h-5 text-gray-900 dark:text-white" />
+          </button>
+        </div>
       </div>
 
       {/* Instagram Profile Header - Exact Layout */}
@@ -269,21 +271,24 @@ export default function HomePage() {
         <div className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-20 mb-8 sm:mb-11">
           {/* Profile Picture - Left Side */}
           <div className="flex-shrink-0">
-            <div className="w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-full overflow-hidden bg-white dark:bg-dark-800">
-              <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-                {settings.heroImage ? (
-                  <Image
-                    src={settings.heroImage}
-                    alt="Profile"
-                    width={150}
-                    height={150}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-3xl md:text-5xl font-bold text-white">
-                    {settings.siteName?.charAt(0) || 'A'}
-                  </span>
-                )}
+            <div className="relative">
+              <div className="w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 shadow-lg">
+                <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                  {settings.heroImage ? (
+                    <Image
+                      src={settings.heroImage}
+                      alt="Profile"
+                      width={150}
+                      height={150}
+                      className="w-full h-full object-cover"
+                      priority
+                    />
+                  ) : (
+                    <span className="text-3xl md:text-5xl font-bold text-white">
+                      {settings.siteName?.charAt(0) || 'A'}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -346,172 +351,176 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Action Buttons - Below Bio, Above Highlights */}
+        {/* Action Buttons - Instagram Style */}
         <div className="flex gap-2 mb-6 sm:mb-8">
-          <Link href="/booking" className="flex-1">
-            <button 
-              className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm text-white"
-              style={{ 
-                backgroundColor: settings.primaryColor || '#c67548',
-                opacity: 0.95
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.95'}
-            >
-              Demande un devis
-            </button>
-          </Link>
           <Link href="/contact" className="flex-1">
             <button 
-              className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm"
+              className="w-full px-4 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm text-white shadow-sm hover:shadow-md"
               style={{ 
-                backgroundColor: settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb',
-                color: settings.secondaryColor || '#111827',
-                border: `2px solid ${settings.secondaryColor || '#d1d5db'}`
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}30` : '#d1d5db';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb';
+                backgroundColor: settings.primaryColor || '#c67548'
               }}
             >
-              Message
+              Contact
             </button>
           </Link>
-          <Link href="/about" className="flex-1">
+          <Link href="/packs" className="flex-1">
             <button 
-              className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm"
-              style={{ 
-                backgroundColor: settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb',
-                color: settings.secondaryColor || '#111827',
-                border: `2px solid ${settings.secondaryColor || '#d1d5db'}`
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}30` : '#d1d5db';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = settings.secondaryColor ? `${settings.secondaryColor}20` : '#e5e7eb';
-              }}
+              className="w-full px-4 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
             >
-              About us
+              View Packages
             </button>
           </Link>
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="px-4 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            <FiMenu className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Highlights - Instagram Stories Style */}
-        <div className="flex gap-3 xs:gap-4 overflow-x-scroll pb-4 mb-1 px-4 -mx-4" style={{ 
+        <div className="flex gap-3 xs:gap-4 sm:gap-5 overflow-x-auto pb-4 mb-1 px-1" style={{ 
           scrollSnapType: 'x mandatory',
           WebkitOverflowScrolling: 'touch',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'
         }}>
-          <button onClick={() => openStories(0)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
-            <div 
-              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
-              style={{ borderColor: settings.primaryColor || '#c67548' }}
-            >
-              <div className="w-full h-full rounded-full overflow-hidden">
-                {highlights[0].coverImage ? (
-                  <Image
-                    src={highlights[0].coverImage}
-                    alt="Gallery"
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div 
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
-                  >
-                    <BsGrid3X3 className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          <button 
+            onClick={() => openStories(0)} 
+            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
+            style={{ scrollSnapAlign: 'start' }}
+          >
+            <div className="relative">
+              <div 
+                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
+                style={{ 
+                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
+                }}
+              >
+                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    {highlights[0]?.coverImage ? (
+                      <Image
+                        src={highlights[0].coverImage}
+                        alt="About"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div 
+                        className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary-600"
+                      >
+                        <BsGrid3X3 className="w-6 h-6 text-white" />
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">About</span>
+            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">About</span>
           </button>
           
-          <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
-            <div 
-              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
-              style={{ borderColor: settings.primaryColor || '#c67548' }}
-            >
-              <div className="w-full h-full rounded-full overflow-hidden">
-                {highlights[1].coverImage ? (
-                  <Image
-                    src={highlights[1].coverImage}
-                    alt="Videos"
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div 
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
-                  >
-                    <MdVideoLibrary className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          <button 
+            onClick={() => openStories(1)} 
+            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
+            style={{ scrollSnapAlign: 'start' }}
+          >
+            <div className="relative">
+              <div 
+                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
+                style={{ 
+                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
+                }}
+              >
+                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    {highlights[1]?.coverImage ? (
+                      <Image
+                        src={highlights[1].coverImage}
+                        alt="Videos"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-purple-600">
+                        <MdVideoLibrary className="w-6 h-6 text-white" />
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Videos</span>
+            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Videos</span>
           </button>
           
-          <button onClick={() => openStories(2)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
-            <div 
-              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
-              style={{ borderColor: settings.primaryColor || '#c67548' }}
-            >
-              <div className="w-full h-full rounded-full overflow-hidden">
-                {highlights[2].coverImage ? (
-                  <Image
-                    src={highlights[2].coverImage}
-                    alt="Packages"
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div 
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
-                  >
-                    <FiBookmark className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          <button 
+            onClick={() => openStories(2)} 
+            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
+            style={{ scrollSnapAlign: 'start' }}
+          >
+            <div className="relative">
+              <div 
+                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
+                style={{ 
+                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
+                }}
+              >
+                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    {highlights[2]?.coverImage ? (
+                      <Image
+                        src={highlights[2].coverImage}
+                        alt="Packages"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600">
+                        <FiPackage className="w-6 h-6 text-white" />
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Packages</span>
+            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Packages</span>
           </button>
           
-          <button onClick={() => openStories(3)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
-            <div 
-              className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full ring-2 p-0.5 bg-white dark:bg-dark-900"
-              style={{ borderColor: settings.primaryColor || '#c67548' }}
-            >
-              <div className="w-full h-full rounded-full overflow-hidden">
-                {highlights[3].coverImage ? (
-                  <Image
-                    src={highlights[3].coverImage}
-                    alt="Contact"
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div 
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: settings.primaryColor || '#c67548' }}
-                  >
-                    <FiMail className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          <button 
+            onClick={() => openStories(3)} 
+            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
+            style={{ scrollSnapAlign: 'start' }}
+          >
+            <div className="relative">
+              <div 
+                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
+                style={{ 
+                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
+                }}
+              >
+                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    {highlights[3]?.coverImage ? (
+                      <Image
+                        src={highlights[3].coverImage}
+                        alt="Contact"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500 to-pink-600">
+                        <FiMail className="w-6 h-6 text-white" />
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Contact</span>
+            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Contact</span>
           </button>
         </div>
       </div>
@@ -660,69 +669,148 @@ export default function HomePage() {
         onClose={() => setShowThemeSwitcher(false)}
       />
 
-      {/* Navigation Menu */}
+      {/* Navigation Menu - Instagram Style Slide-up */}
       {menuOpen && (
         <>
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/50 z-50 animate-fadeIn"
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={() => setMenuOpen(false)}
           />
           
-          {/* Menu Panel */}
+          {/* Menu Panel - Slide from bottom */}
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-gray-900 z-50 shadow-2xl"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 z-50 rounded-t-3xl shadow-2xl max-h-[85vh] overflow-hidden"
           >
-            {/* Menu Header */}
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Menu</h2>
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <FiX className="w-6 h-6" />
-              </button>
+            {/* Handle Bar */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
             </div>
 
-            {/* Menu Items */}
-            <nav className="p-4">
-              <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
-                <FiHome className="w-5 h-5" />
-                <span className="text-lg font-medium">Home</span>
+            {/* Menu Header */}
+            <div className="px-6 pt-2 pb-4 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center">Navigation</h2>
+            </div>
+
+            {/* Menu Items - Instagram Style */}
+            <nav className="p-3 overflow-y-auto max-h-[calc(85vh-120px)]">
+              <Link 
+                href="/" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                  <FiHome className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Home</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Explore our work</span>
+                </div>
               </Link>
               
-              <Link href="/about" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
-                <FiUser className="w-5 h-5" />
-                <span className="text-lg font-medium">About</span>
+              <Link 
+                href="/gallery" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <BsGrid3X3 className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Full Gallery</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Browse all categories</span>
+                </div>
               </Link>
               
-              <Link href="/booking" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
-                <FiBookmark className="w-5 h-5" />
-                <span className="text-lg font-medium">Demande un Devis</span>
+              <Link 
+                href="/videos" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                  <MdVideoLibrary className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Videos</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Watch our cinematics</span>
+                </div>
               </Link>
               
-              <Link href="/packs" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
-                <FiPackage className="w-5 h-5" />
-                <span className="text-lg font-medium">Packages</span>
+              <Link 
+                href="/packs" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                  <FiPackage className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Packages</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">View pricing & services</span>
+                </div>
+              </Link>
+
+              <Link 
+                href="/about" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                  <FiUser className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">About Us</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Our story & mission</span>
+                </div>
               </Link>
               
-              <Link href="/contact" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
-                <FiMail className="w-5 h-5" />
-                <span className="text-lg font-medium">Contact</span>
+              <Link 
+                href="/contact" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+                  <FiMail className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Contact</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Get in touch</span>
+                </div>
               </Link>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 dark:border-gray-800 my-3"></div>
 
               <button 
                 onClick={() => { setMenuOpen(false); setShowThemeSwitcher(true); }}
-                className="w-full flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2"
+                className="w-full flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors"
               >
-                <FiSettings className="w-5 h-5" />
-                <span className="text-lg font-medium">Change Theme</span>
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
+                  <FiSettings className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Theme Settings</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Customize appearance</span>
+                </div>
               </button>
             </nav>
+
+            {/* Close Button */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="w-full py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold text-base active:scale-95 transition-transform"
+              >
+                Close
+              </button>
+            </div>
           </motion.div>
         </>
       )}
