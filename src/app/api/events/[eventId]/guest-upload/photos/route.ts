@@ -48,7 +48,7 @@ export async function GET(
       success: true,
       uploaderName: photos[0].uploaderName,
       message: photos[0].message,
-      photos: photos.map(p => ({
+      photos: photos.map((p: any) => ({
         id: p.id,
         fileUrl: p.fileUrl,
         thumbnailUrl: p.thumbnailUrl,

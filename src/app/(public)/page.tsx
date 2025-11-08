@@ -41,6 +41,8 @@ interface SiteSettings {
   heroImage?: string;
   primaryColor?: string;
   secondaryColor?: string;
+  fontHeading?: string;
+  fontBody?: string;
 }
 
 export default function HomePage() {
@@ -583,7 +585,7 @@ export default function HomePage() {
                 )}
 
                 {/* Album indicator (multiple images) - top right */}
-                {item.albumImages && item.albumImages.length > 1 && (
+                {'albumImages' in item && item.albumImages && item.albumImages.length > 1 && (
                   <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
                     <svg className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 48 48">
                       <path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path>

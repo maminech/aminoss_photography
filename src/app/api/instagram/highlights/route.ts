@@ -14,11 +14,11 @@ export async function GET(req: Request) {
     });
 
     // Transform to match the current highlights structure
-    const formattedHighlights = highlights.map((highlight) => ({
+    const formattedHighlights = highlights.map((highlight: any) => ({
       id: highlight.id,
       name: highlight.name,
       coverImage: highlight.coverImage,
-      stories: highlight.stories.map((story) => ({
+      stories: highlight.stories.map((story: any) => ({
         id: story.id,
         image: story.mediaUrl,
         title: story.mediaType === 'VIDEO' ? 'Video' : undefined,

@@ -35,7 +35,7 @@ export async function GET(
     // Create CSV content
     const csvHeader = 'Guest Name,Message,Photo URL,Thumbnail URL,Is Print Selected,Uploaded At,File Size,Format\n';
     const csvRows = uploads
-      .map((upload) => {
+      .map((upload: any) => {
         const name = upload.uploaderName.replace(/"/g, '""');
         const message = upload.message.replace(/"/g, '""');
         const url = upload.fileUrl;

@@ -25,7 +25,7 @@ export async function GET(
     });
     
     // Group by uploadGroupId
-    const groupedUploads = uploads.reduce((acc: any, upload) => {
+    const groupedUploads = uploads.reduce((acc: any, upload: any) => {
       if (!acc[upload.uploadGroupId]) {
         acc[upload.uploadGroupId] = {
           uploadGroupId: upload.uploadGroupId,
@@ -67,9 +67,9 @@ export async function GET(
     const stats = {
       totalGuests: uploadsArray.length,
       totalPhotos: uploads.length,
-      printSelected: uploads.filter(u => u.isSelectedForPrint).length,
-      pending: uploads.filter(u => u.status === 'pending').length,
-      approved: uploads.filter(u => u.status === 'approved').length,
+      printSelected: uploads.filter((u: any) => u.isSelectedForPrint).length,
+      pending: uploads.filter((u: any) => u.status === 'pending').length,
+      approved: uploads.filter((u: any) => u.status === 'approved').length,
     };
     
     return NextResponse.json({

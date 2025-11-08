@@ -105,7 +105,6 @@ export const authOptions: NextAuthOptions = {
   debug: true, // Enable debug for all environments temporarily
   secret: process.env.NEXTAUTH_SECRET,
   useSecureCookies: process.env.NODE_ENV === 'production',
-  trustHost: true,
 };
 
 const handler = NextAuth(authOptions);

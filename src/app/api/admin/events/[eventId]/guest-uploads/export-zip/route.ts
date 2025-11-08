@@ -45,7 +45,7 @@ export async function GET(
     // Create CSV content
     const csvHeader = 'Guest Name,Message,Photo URL,Uploaded At\n';
     const csvRows = gallery.guestUploads
-      .map((upload) => {
+      .map((upload: any) => {
         const name = upload.uploaderName.replace(/"/g, '""');
         const message = upload.message.replace(/"/g, '""');
         const url = upload.fileUrl;
@@ -57,7 +57,7 @@ export async function GET(
 
     // Add photo URLs to a text file (for batch download reference)
     const photoUrlsContent = gallery.guestUploads
-      .map((upload, idx) => `${idx + 1}. ${upload.uploaderName} - ${upload.fileUrl}`)
+      .map((upload: any, idx: number) => `${idx + 1}. ${upload.uploaderName} - ${upload.fileUrl}`)
       .join('\n');
 
     // Create ZIP archive
