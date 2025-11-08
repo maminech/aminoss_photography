@@ -56,18 +56,24 @@ export default function HomePage() {
   const [initialHighlightIndex, setInitialHighlightIndex] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
   const [showThemeSwitcher, setShowThemeSwitcher] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Check if user has visited before
-    const hasVisited = localStorage.getItem('hasVisited');
-    if (!hasVisited) {
-      setShowIntro(true);
+    if (typeof window !== 'undefined') {
+      const hasVisited = localStorage.getItem('hasVisited');
+      if (!hasVisited) {
+        setShowIntro(true);
+      }
     }
   }, []);
 
   const handleIntroComplete = () => {
     setShowIntro(false);
-    localStorage.setItem('hasVisited', 'true');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hasVisited', 'true');
+    }
   };
 
   // If Professional theme, show Novo-style homepage
@@ -228,6 +234,11 @@ export default function HomePage() {
     setInitialHighlightIndex(index);
     setStoriesOpen(true);
   };
+
+  // Prevent hydration errors
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
