@@ -250,17 +250,17 @@ export default function HomePage() {
       
       <div className="min-h-screen bg-white dark:bg-dark-900">
       {/* Top Navigation Bar - Instagram Style */}
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-4 pb-2 flex justify-between items-center">
-        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white tracking-tight">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 pb-2 flex justify-between items-center">
+        <h1 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white tracking-tight truncate pr-2">
           {settings.siteName || 'Aminoss Photography'}
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button
             onClick={() => setShowThemeSwitcher(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation"
             aria-label="Theme Settings"
           >
-            <FiSettings className="w-5 h-5 text-gray-900 dark:text-white" />
+            <FiSettings className="w-5 h-5 sm:w-5 sm:h-5 text-gray-900 dark:text-white" />
           </button>
         </div>
       </div>
@@ -268,11 +268,11 @@ export default function HomePage() {
       {/* Instagram Profile Header - Exact Layout */}
       <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-2 sm:pt-4 pb-3 sm:pb-4">
         {/* Profile Section */}
-        <div className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-20 mb-8 sm:mb-11">
+        <div className="flex gap-3 xs:gap-4 sm:gap-6 md:gap-8 lg:gap-20 mb-6 xs:mb-8 sm:mb-11">
           {/* Profile Picture - Left Side */}
           <div className="flex-shrink-0">
             <div className="relative">
-              <div className="w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 shadow-lg">
+              <div className="w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 shadow-lg">
                 <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
                   {settings.heroImage ? (
                     <Image
@@ -284,7 +284,7 @@ export default function HomePage() {
                       priority
                     />
                   ) : (
-                    <span className="text-3xl md:text-5xl font-bold text-white">
+                    <span className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-white">
                       {settings.siteName?.charAt(0) || 'A'}
                     </span>
                   )}
@@ -296,55 +296,49 @@ export default function HomePage() {
           {/* Profile Info - Right Side */}
           <div className="flex-1 min-w-0">
             {/* Username */}
-            <div className="flex items-center gap-3 mb-3 sm:mb-4 md:mb-5">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 xs:mb-3 sm:mb-4 md:mb-5">
               <h1 
-                className="text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate"
+                className="text-sm xs:text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate"
                 style={{ fontFamily: settings.fontHeading || 'Poppins, sans-serif' }}
               >
                 {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
               </h1>
-              <button 
-                onClick={() => setShowThemeSwitcher(true)}
-                className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition active:scale-95"
-              >
-                <FiSettings className="w-5 h-5 text-gray-900 dark:text-gray-100" />
-              </button>
             </div>
 
             {/* Stats */}
-            <div className="flex gap-4 xs:gap-5 sm:gap-6 md:gap-10 mb-3 sm:mb-4 md:mb-5 text-xs xs:text-sm sm:text-base">
+            <div className="flex gap-3 xs:gap-4 sm:gap-6 md:gap-10 mb-2 xs:mb-3 sm:mb-4 md:mb-5 text-xs xs:text-sm sm:text-base">
               <div className="flex-shrink-0">
-                <span className="font-semibold text-gray-900 dark:text-gray-100 block sm:inline">
+                <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
                   {images.length + videos.length}
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-0 sm:ml-1 block sm:inline text-xs sm:text-sm">posts</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> posts</span>
               </div>
               <div className="flex-shrink-0">
-                <span className="font-semibold text-gray-900 dark:text-gray-100 block sm:inline">
-                  2,847
+                <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
+                  2.8k
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-0 sm:ml-1 block sm:inline text-xs sm:text-sm">followers</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> followers</span>
               </div>
               <div className="flex-shrink-0">
-                <span className="font-semibold text-gray-900 dark:text-gray-100 block sm:inline">
+                <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
                   312
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-0 sm:ml-1 block sm:inline text-xs sm:text-sm">following</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> following</span>
               </div>
             </div>
 
             {/* Bio */}
-            <div className="text-xs sm:text-sm" style={{ fontFamily: settings.fontBody || 'Inter, sans-serif' }}>
+            <div className="text-[11px] xs:text-xs sm:text-sm leading-snug" style={{ fontFamily: settings.fontBody || 'Inter, sans-serif' }}>
               <div 
-                className="font-semibold text-gray-900 dark:text-gray-100 mb-1"
+                className="font-semibold text-gray-900 dark:text-gray-100 mb-0.5 xs:mb-1"
                 style={{ fontFamily: settings.fontHeading || 'Poppins, sans-serif' }}
               >
                 {settings.tagline || 'Professional Photographer'}
               </div>
-              <div className="text-gray-900 dark:text-gray-100 whitespace-pre-line break-words">
+              <div className="text-gray-900 dark:text-gray-100 whitespace-pre-line break-words line-clamp-4 xs:line-clamp-none">
                 {settings.description || '📸 Capturing life\'s precious moments\n✨ Weddings | Portraits | Events\n📍 Available worldwide\n👇 Book your session'}
               </div>
-              <Link href="/contact" className="font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mt-1 inline-block break-all">
+              <Link href="/contact" className="font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mt-0.5 xs:mt-1 inline-block break-all text-[11px] xs:text-xs sm:text-sm">
                 aminossphotography.com
               </Link>
             </div>
@@ -352,10 +346,10 @@ export default function HomePage() {
         </div>
 
         {/* Action Buttons - Instagram Style */}
-        <div className="flex gap-2 mb-6 sm:mb-8">
+        <div className="flex gap-1.5 xs:gap-2 mb-4 xs:mb-6 sm:mb-8">
           <Link href="/booking" className="flex-1">
             <button 
-              className="w-full px-2 sm:px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm text-white shadow-sm hover:shadow-md"
+              className="w-full px-1.5 xs:px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold active:scale-95 transition-all text-[10px] xs:text-xs sm:text-sm text-white shadow-sm hover:shadow-md touch-manipulation"
               style={{ 
                 backgroundColor: settings.primaryColor || '#c67548'
               }}
@@ -365,14 +359,14 @@ export default function HomePage() {
           </Link>
           <Link href="/contact" className="flex-1">
             <button 
-              className="w-full px-2 sm:px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+              className="w-full px-1.5 xs:px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold active:scale-95 transition-all text-[10px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 touch-manipulation"
             >
               Contact
             </button>
           </Link>
           <Link href="/about" className="flex-1">
             <button 
-              className="w-full px-2 sm:px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+              className="w-full px-1.5 xs:px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold active:scale-95 transition-all text-[10px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 touch-manipulation"
             >
               About Us
             </button>
