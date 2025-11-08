@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { createStore } from 'polotno/model/store';
-import { PolotnoContainer, SidePanelWrap, WorkspaceWrap } from 'polotno';
-import { Toolbar } from 'polotno/toolbar/toolbar';
-import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
-import { SidePanel, DEFAULT_SECTIONS } from 'polotno/side-panel';
-import { Workspace } from 'polotno/canvas/workspace';
-import { PagesTimeline } from 'polotno/pages-timeline';
-import { GalleryPhotosSection } from './polotno/GalleryPhotosSection';
-import { PhotobookTemplatesSection } from './polotno/PhotobookTemplatesSection';
-import '@blueprintjs/core/lib/css/blueprint.css';
+import dynamic from 'next/dynamic';
 
 interface PhotobookEditorV3Props {
   galleryId: string;
@@ -19,51 +10,114 @@ interface PhotobookEditorV3Props {
     url: string;
     width?: number;
     height?: number;
+    title?: string;
   }>;
   onSave?: (design: any) => void;
   onExport?: (blob: Blob) => void;
   initialDesign?: any;
 }
 
-export default function PhotobookEditorV3({
+export default function PhotobookEditorV3(props: PhotobookEditorV3Props) {
+  const [isClient, setIsClient] = useState(false);
+  const [PolotnoEditor, setPolotnoEditor] = useState<any>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+    
+    // Dynamically import Polotno and all dependencies only on client
+    const loadPolotno = async () => {
+      try {
+        const [
+          { createStore },
+          { PolotnoContainer, SidePanelWrap, WorkspaceWrap },
+          { Toolbar },
+          { ZoomButtons },
+          { SidePanel, DEFAULT_SECTIONS },
+          { Workspace },
+          { PagesTimeline },
+          { GalleryPhotosSection },
+          { PhotobookTemplatesSection },
+        ] = await Promise.all([
+          import('polotno/model/store'),
+          import('polotno'),
+          import('polotno/toolbar/toolbar'),
+          import('polotno/toolbar/zoom-buttons'),
+          import('polotno/side-panel'),
+          import('polotno/canvas/workspace'),
+          import('polotno/pages-timeline'),
+          import('./polotno/GalleryPhotosSection'),
+          import('./polotno/PhotobookTemplatesSection'),
+        ]);
+
+        setPolotnoEditor({
+          createStore,
+          PolotnoContainer,
+          SidePanelWrap,
+          WorkspaceWrap,
+          Toolbar,
+          ZoomButtons,
+          SidePanel,
+          DEFAULT_SECTIONS,
+          Workspace,
+          PagesTimeline,
+          GalleryPhotosSection,
+          PhotobookTemplatesSection,
+        });
+      } catch (error) {
+        console.error('Error loading Polotno:', error);
+      }
+    };
+
+    loadPolotno();
+  }, []);
+
+  if (!isClient || !PolotnoEditor) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading photobook editor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <PhotobookEditorInner {...props} polotno={PolotnoEditor} />;
+}
+
+// Separate component that uses Polotno after it's loaded
+function PhotobookEditorInner({
   galleryId,
   photos,
   onSave,
   onExport,
   initialDesign,
-}: PhotobookEditorV3Props) {
+  polotno,
+}: PhotobookEditorV3Props & { polotno: any }) {
   const [store] = useState(() => {
-    const newStore = createStore({
+    const newStore = polotno.createStore({
       key: process.env.NEXT_PUBLIC_POLOTNO_KEY || 'free-key',
-      showCredit: !process.env.NEXT_PUBLIC_POLOTNO_KEY, // Show credit if using free key
+      showCredit: !process.env.NEXT_PUBLIC_POLOTNO_KEY,
     });
     
-    // Set default page size for photobook (8.5" x 11" at 300 DPI)
     newStore.setSize(2550, 3300);
-    
     return newStore;
   });
 
-  const [isClient, setIsClient] = useState(false);
-
   // Create custom sections with gallery photos
   const sections = [
-    PhotobookTemplatesSection,
+    polotno.PhotobookTemplatesSection,
     {
-      ...GalleryPhotosSection,
-      Panel: (props: any) => <GalleryPhotosSection.Panel {...props} photos={photos} />,
+      ...polotno.GalleryPhotosSection,
+      Panel: (props: any) => <polotno.GalleryPhotosSection.Panel {...props} photos={photos} />,
     },
-    ...DEFAULT_SECTIONS.filter(
-      (section) =>
+    ...polotno.DEFAULT_SECTIONS.filter(
+      (section: any) =>
         section.name === 'text' ||
         section.name === 'elements' ||
         section.name === 'background'
     ),
   ];
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     if (initialDesign && store) {
@@ -123,16 +177,16 @@ export default function PhotobookEditorV3({
     }
   };
 
-  if (!isClient) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading photobook editor...</p>
-        </div>
-      </div>
-    );
-  }
+  const {
+    PolotnoContainer,
+    SidePanelWrap,
+    WorkspaceWrap,
+    Toolbar,
+    ZoomButtons,
+    SidePanel,
+    Workspace,
+    PagesTimeline,
+  } = polotno;
 
   return (
     <div className="w-full h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
