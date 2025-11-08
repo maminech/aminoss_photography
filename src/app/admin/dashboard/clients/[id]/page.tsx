@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FiArrowLeft, FiUpload, FiPlus, FiImage, FiCalendar, FiTrash2, FiEye, FiDownload, FiX, FiUsers, FiQrCode } from 'react-icons/fi';
+import { FiArrowLeft, FiUpload, FiPlus, FiImage, FiCalendar, FiTrash2, FiEye, FiDownload, FiX, FiUsers } from 'react-icons/fi';
+import { QrCode } from 'lucide-react';
 import { CldUploadWidget } from 'next-cloudinary';
 import Image from 'next/image';
 
@@ -359,7 +360,7 @@ export default function ClientDetailPage() {
                         className="flex items-center justify-center space-x-1 px-3 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded hover:bg-pink-200 dark:hover:bg-pink-900/50 transition text-sm"
                         title="Guest Upload QR Code"
                       >
-                        <FiQrCode className="w-4 h-4" />
+                        <QrCode className="w-4 h-4" />
                         <span>QR</span>
                       </button>
                     </div>
@@ -551,7 +552,7 @@ export default function ClientDetailPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <FiQrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600 dark:text-gray-400">No QR code yet</p>
                 </div>
               )}
