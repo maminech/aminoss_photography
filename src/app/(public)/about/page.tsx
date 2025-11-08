@@ -37,9 +37,9 @@ export default function AboutPage() {
   // Professional/Novo Theme Layout
   if (isProfessional) {
     return (
-      <div className="novo-about-page bg-white min-h-screen">
+      <div className="novo-about-page bg-white dark:bg-gray-900 min-h-screen">
         <NavigationButton variant="both" />
-        <section className="py-24 md:py-32 bg-white">
+        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-6 max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -47,7 +47,7 @@ export default function AboutPage() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                 About Me
               </h1>
               
@@ -58,7 +58,7 @@ export default function AboutPage() {
                 className="h-[1px] bg-[#d4af37] mx-auto mb-12"
               />
 
-              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto">
                 Passionate photographer capturing life's beautiful moments
               </p>
             </motion.div>
@@ -86,10 +86,10 @@ export default function AboutPage() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="flex flex-col justify-center"
               >
-                <h2 className="text-3xl md:text-4xl font-playfair font-bold mb-6 text-[#1a1a1a]">
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold mb-6 text-[#1a1a1a] dark:text-gray-100">
                   Hello, I'm Aminoss
                 </h2>
-                <div className="space-y-6 text-gray-700 font-lato text-lg leading-relaxed">
+                <div className="space-y-6 text-gray-700 dark:text-gray-300 font-lato text-lg leading-relaxed">
                   <p>
                     I'm a professional photographer based in Sousse, Tunisia, with a passion for 
                     capturing authentic moments and creating timeless memories.
@@ -121,7 +121,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 py-16 border-t border-b border-gray-200"
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 py-16 border-t border-b border-gray-200 dark:border-gray-700"
             >
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">500+</div>
@@ -157,7 +157,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.8 }}
                 className="text-center mb-12"
               >
-                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                   What I Do
                 </h2>
                 <motion.div
@@ -181,10 +181,10 @@ export default function AboutPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="text-center p-8 border border-gray-200 hover:border-[#d4af37] transition-colors duration-300"
+                    className="text-center p-8 border border-gray-200 dark:border-gray-700 hover:border-[#d4af37] transition-colors duration-300"
                   >
                     <service.icon className="w-12 h-12 text-[#d4af37] mx-auto mb-4" />
-                    <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-3">{service.title}</h3>
+                    <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-3">{service.title}</h3>
                     <p className="text-gray-600 font-lato">{service.desc}</p>
                   </motion.div>
                 ))}
@@ -200,7 +200,7 @@ export default function AboutPage() {
                   transition={{ duration: 0.8 }}
                   className="text-center mb-12"
                 >
-                  <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] mb-8">
+                  <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                     Meet The Team
                   </h2>
                   <motion.div
@@ -230,7 +230,7 @@ export default function AboutPage() {
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                       </div>
-                      <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-1">{member.name}</h3>
+                      <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-1">{member.name}</h3>
                       <p className="text-sm font-lato uppercase tracking-wider text-[#d4af37] mb-2">{member.role}</p>
                       {member.bio && <p className="text-gray-600 font-lato text-sm">{member.bio}</p>}
                     </motion.div>

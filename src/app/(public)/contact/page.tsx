@@ -57,10 +57,10 @@ export default function ContactPage() {
   // Professional/Novo Theme Layout
   if (isProfessional) {
     return (
-      <div className="novo-contact-page bg-white min-h-screen">
+      <div className="novo-contact-page bg-white dark:bg-gray-900 min-h-screen">
         <NavigationButton variant="both" />
         {/* Novo Hero Section */}
-        <section className="py-24 md:py-32 bg-white">
+        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-6 max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -68,7 +68,7 @@ export default function ContactPage() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                 Contact
               </h1>
               
@@ -79,7 +79,7 @@ export default function ContactPage() {
                 className="h-[1px] bg-[#d4af37] mx-auto mb-12"
               />
 
-              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto">
                 Let's discuss your photography needs and create something amazing together
               </p>
             </motion.div>
@@ -93,10 +93,10 @@ export default function ContactPage() {
                 className="space-y-8"
               >
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-playfair font-bold text-[#1a1a1a] mb-6">
+                  <h2 className="text-2xl md:text-3xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-6">
                     Get In Touch
                   </h2>
-                  <p className="text-gray-700 font-lato leading-relaxed mb-8">
+                  <p className="text-gray-700 dark:text-gray-300 font-lato leading-relaxed mb-8">
                     Whether you're planning a wedding, need professional portraits, or have a creative project in mind, 
                     I'd love to hear from you. Fill out the form and I'll get back to you within 24 hours.
                   </p>
@@ -182,7 +182,7 @@ export default function ContactPage() {
               >
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                    <label htmlFor="name" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
                       Name *
                     </label>
                     <input
@@ -192,13 +192,13 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
                       placeholder="Your Name"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                    <label htmlFor="email" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
                       Email *
                     </label>
                     <input
@@ -208,13 +208,13 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
                       placeholder="your@email.com"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                    <label htmlFor="phone" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
                       Phone
                     </label>
                     <input
@@ -223,13 +223,13 @@ export default function ContactPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
                       placeholder="Your Phone Number"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-lato font-medium text-gray-700 mb-2 uppercase tracking-wider">
+                    <label htmlFor="message" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
                       Message *
                     </label>
                     <textarea
@@ -239,7 +239,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       rows={6}
-                      className="w-full px-6 py-4 border border-gray-300 bg-white text-gray-900 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all resize-none"
+                      className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all resize-none"
                       placeholder="Tell me about your project..."
                     />
                   </div>

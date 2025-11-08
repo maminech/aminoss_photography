@@ -12,9 +12,9 @@ export default function BookingPage() {
 
   if (isProfessional) {
     return (
-      <div className="novo-booking-page bg-white min-h-screen">
+      <div className="novo-booking-page bg-white dark:bg-gray-900 min-h-screen">
         <NavigationButton variant="both" />
-        <section className="py-24 md:py-32 bg-white">
+        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-6 max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -22,7 +22,7 @@ export default function BookingPage() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                 Demande de Devis
               </h1>
               

@@ -117,10 +117,10 @@ export default function GalleryPage() {
   // Professional/Novo Theme Layout
   if (isProfessional) {
     return (
-      <div className="novo-gallery-page bg-white min-h-screen">
+      <div className="novo-gallery-page bg-white dark:bg-gray-900 min-h-screen">
         <NavigationButton variant="both" />
         {/* Novo Header Section */}
-        <section className="py-24 md:py-32 bg-white">
+        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -128,7 +128,7 @@ export default function GalleryPage() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                 Gallery
               </h1>
               
@@ -139,7 +139,7 @@ export default function GalleryPage() {
                 className="h-[1px] bg-[#d4af37] mx-auto mb-12"
               />
 
-              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto mb-12">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto mb-12">
                 Explore my curated collection of photography across different styles and moments
               </p>
 
@@ -152,7 +152,7 @@ export default function GalleryPage() {
                     className={`px-6 py-2 font-lato font-medium text-sm uppercase tracking-[0.2em] transition-all duration-300 ${
                       activeCategory === category
                         ? 'text-[#d4af37] border-b-2 border-[#d4af37]'
-                        : 'text-gray-600 hover:text-[#1a1a1a]'
+                        : 'text-gray-600 hover:text-[#1a1a1a] dark:text-gray-100'
                     }`}
                   >
                     {category}
@@ -168,7 +168,7 @@ export default function GalleryPage() {
                   className={`px-4 py-2 font-lato font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 ${
                     sortBy === 'date'
                       ? 'text-[#d4af37]'
-                      : 'text-gray-600 hover:text-[#1a1a1a]'
+                      : 'text-gray-600 hover:text-[#1a1a1a] dark:text-gray-100'
                   }`}
                 >
                   Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
@@ -178,7 +178,7 @@ export default function GalleryPage() {
                   className={`px-4 py-2 font-lato font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 ${
                     sortBy === 'title'
                       ? 'text-[#d4af37]'
-                      : 'text-gray-600 hover:text-[#1a1a1a]'
+                      : 'text-gray-600 hover:text-[#1a1a1a] dark:text-gray-100'
                   }`}
                 >
                   Title {sortBy === 'title' && (sortOrder === 'desc' ? '↓' : '↑')}

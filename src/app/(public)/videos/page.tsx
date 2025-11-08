@@ -55,9 +55,9 @@ export default function VideosPage() {
   // Professional/Novo Theme Layout
   if (isProfessional) {
     return (
-      <div className="novo-videos-page bg-white min-h-screen">
+      <div className="novo-videos-page bg-white dark:bg-gray-900 min-h-screen">
         <NavigationButton variant="both" />
-        <section className="py-24 md:py-32 bg-white">
+        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-6 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -65,7 +65,7 @@ export default function VideosPage() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                 Videos & Cinematography
               </h1>
               
@@ -76,7 +76,7 @@ export default function VideosPage() {
                 className="h-[1px] bg-[#d4af37] mx-auto mb-12"
               />
 
-              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto">
                 Cinematic stories brought to life through videography
               </p>
             </motion.div>
@@ -90,7 +90,7 @@ export default function VideosPage() {
                   className={`px-6 py-2 text-sm font-lato uppercase tracking-[0.2em] transition-all duration-300 ${
                     selectedCategory === category
                       ? 'bg-[#d4af37] text-white'
-                      : 'bg-transparent text-[#1a1a1a] border border-gray-300 hover:border-[#d4af37]'
+                      : 'bg-transparent text-[#1a1a1a] dark:text-gray-100 border border-gray-300 hover:border-[#d4af37]'
                   }`}
                 >
                   {category}
@@ -138,7 +138,7 @@ export default function VideosPage() {
                       </div>
                       
                       <div className="mt-4">
-                        <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] mb-2 group-hover:text-[#d4af37] transition-colors">
+                        <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-2 group-hover:text-[#d4af37] transition-colors">
                           {video.title}
                         </h3>
                         {video.description && (

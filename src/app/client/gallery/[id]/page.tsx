@@ -55,6 +55,7 @@ export default function ClientGalleryPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showPhotobookConfirmation, setShowPhotobookConfirmation] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [photobookEditorOpen, setPhotobookEditorOpen] = useState(false);
   const [showPhotobookPrompt, setShowPhotobookPrompt] = useState(false);
@@ -278,6 +279,24 @@ export default function ClientGalleryPage() {
         )}
       </AnimatePresence>
 
+      {/* Photobook Confirmation */}
+      <AnimatePresence>
+        {showPhotobookConfirmation && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-purple-600 text-white px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 max-w-md"
+          >
+            <FiBook className="w-6 h-6 flex-shrink-0" />
+            <div>
+              <p className="font-semibold">Photobook saved successfully! 📖</p>
+              <p className="text-sm text-purple-100">The admin will review your design.</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Photobook Prompt */}
       <AnimatePresence>
         {showPhotobookPrompt && (
@@ -343,6 +362,7 @@ export default function ClientGalleryPage() {
             }))}
             onSave={async (design) => {
               try {
+                setSaving(true);
                 const response = await fetch('/api/photobooks', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -353,14 +373,18 @@ export default function ClientGalleryPage() {
                   }),
                 });
                 if (response.ok) {
-                  alert('Photobook saved successfully! The admin will review it.');
                   setPhotobookEditorOpen(false);
+                  setShowPhotobookConfirmation(true);
+                  setTimeout(() => setShowPhotobookConfirmation(false), 5000);
                 } else {
-                  alert('Failed to save photobook. Please try again.');
+                  const data = await response.json();
+                  alert(data.error || 'Failed to save photobook. Please try again.');
                 }
               } catch (error) {
                 console.error('Error saving photobook:', error);
-                alert('Failed to save photobook. Please try again.');
+                alert('Failed to save photobook. Please check your connection and try again.');
+              } finally {
+                setSaving(false);
               }
             }}
           />

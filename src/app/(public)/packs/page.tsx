@@ -135,9 +135,9 @@ export default function PacksPage() {
   // Professional/Novo Theme Layout
   if (isProfessional) {
     return (
-      <div className="novo-packs-page bg-white min-h-screen">
+      <div className="novo-packs-page bg-white dark:bg-gray-900 min-h-screen">
         <NavigationButton variant="both" />
-        <section className="py-24 md:py-32 bg-white">
+        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-6 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -145,7 +145,7 @@ export default function PacksPage() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
                 Photography Packages
               </h1>
               
@@ -156,7 +156,7 @@ export default function PacksPage() {
                 className="h-[1px] bg-[#d4af37] mx-auto mb-12"
               />
 
-              <p className="text-lg md:text-xl text-gray-700 font-lato leading-relaxed max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto">
                 Professional photography packages tailored to capture your special moments
               </p>
             </motion.div>
@@ -170,7 +170,7 @@ export default function PacksPage() {
                   className={`px-6 py-2 text-sm font-lato uppercase tracking-[0.2em] transition-all duration-300 ${
                     filter === category
                       ? 'bg-[#d4af37] text-white'
-                      : 'bg-transparent text-[#1a1a1a] border border-gray-300 hover:border-[#d4af37]'
+                      : 'bg-transparent text-[#1a1a1a] dark:text-gray-100 border border-gray-300 hover:border-[#d4af37]'
                   }`}
                 >
                   {category}
@@ -187,7 +187,7 @@ export default function PacksPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="group bg-white border border-gray-200 hover:border-[#d4af37] transition-all duration-300 overflow-hidden"
+                  className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#d4af37] transition-all duration-300 overflow-hidden"
                 >
                   {/* Pack Cover Image */}
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -209,7 +209,7 @@ export default function PacksPage() {
 
                   {/* Pack Details */}
                   <div className="p-6">
-                    <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] mb-3 group-hover:text-[#d4af37] transition-colors">
+                    <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-3 group-hover:text-[#d4af37] transition-colors">
                       {pack.name}
                     </h3>
                     
@@ -226,7 +226,7 @@ export default function PacksPage() {
                     {/* Features List */}
                     <ul className="space-y-2 mb-6">
                       {pack.features.slice(0, 4).map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-gray-700">
+                        <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
                           <FiCheck className="w-4 h-4 text-[#d4af37] mt-1 flex-shrink-0" />
                           <span className="font-lato text-sm">{feature}</span>
                         </li>
@@ -276,9 +276,9 @@ export default function PacksPage() {
                 className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               >
                 {/* Modal Header */}
-                <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center">
                   <div>
-                    <h2 className="text-3xl font-playfair font-bold text-[#1a1a1a]">
+                    <h2 className="text-3xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100">
                       Book {selectedPack.name}
                     </h2>
                     <p className="text-[#d4af37] font-lato text-lg mt-1">${selectedPack.price}</p>
@@ -298,7 +298,7 @@ export default function PacksPage() {
                       <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FiCheck className="w-8 h-8 text-green-600" />
                       </div>
-                      <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] mb-2">
+                      <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-2">
                         Booking Request Sent!
                       </h3>
                       <p className="text-gray-600 font-lato">
@@ -308,7 +308,7 @@ export default function PacksPage() {
                   ) : (
                     <form onSubmit={handleSubmitBooking} className="space-y-6">
                       <div>
-                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                           Your Name *
                         </label>
                         <input
@@ -321,7 +321,7 @@ export default function PacksPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                           Email *
                         </label>
                         <input
@@ -334,7 +334,7 @@ export default function PacksPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                           Phone
                         </label>
                         <input
@@ -346,7 +346,7 @@ export default function PacksPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                           Preferred Date *
                         </label>
                         <input
@@ -359,7 +359,7 @@ export default function PacksPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                           Alternate Date
                         </label>
                         <input
@@ -371,7 +371,7 @@ export default function PacksPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 mb-2">
+                        <label className="block text-sm font-lato uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                           Additional Notes
                         </label>
                         <textarea
