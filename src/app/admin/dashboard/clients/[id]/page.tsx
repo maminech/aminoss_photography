@@ -56,6 +56,7 @@ export default function ClientDetailPage() {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [selectedGalleryForQr, setSelectedGalleryForQr] = useState<Gallery | null>(null);
   const [generatingQr, setGeneratingQr] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const [galleryForm, setGalleryForm] = useState({
     name: '',
@@ -66,6 +67,7 @@ export default function ClientDetailPage() {
   });
 
   useEffect(() => {
+    setMounted(true);
     fetchClientData();
   }, [clientId]);
 
@@ -223,6 +225,11 @@ export default function ClientDetailPage() {
     link.download = `qr-code-${selectedGalleryForQr.name.replace(/\s+/g, '-')}.png`;
     link.click();
   };
+
+  // Prevent hydration errors
+  if (!mounted) {
+    return null;
+  }
 
   if (loading) {
     return (
