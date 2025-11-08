@@ -353,29 +353,30 @@ export default function HomePage() {
 
         {/* Action Buttons - Instagram Style */}
         <div className="flex gap-2 mb-6 sm:mb-8">
-          <Link href="/contact" className="flex-1">
+          <Link href="/booking" className="flex-1">
             <button 
-              className="w-full px-4 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm text-white shadow-sm hover:shadow-md"
+              className="w-full px-2 sm:px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm text-white shadow-sm hover:shadow-md"
               style={{ 
                 backgroundColor: settings.primaryColor || '#c67548'
               }}
             >
+              Demande un Devis
+            </button>
+          </Link>
+          <Link href="/contact" className="flex-1">
+            <button 
+              className="w-full px-2 sm:px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
               Contact
             </button>
           </Link>
-          <Link href="/packs" className="flex-1">
+          <Link href="/about" className="flex-1">
             <button 
-              className="w-full px-4 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+              className="w-full px-2 sm:px-3 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
             >
-              View Packages
+              About Us
             </button>
           </Link>
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="px-4 py-1.5 rounded-lg font-semibold active:scale-95 transition-all text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
-          >
-            <FiMenu className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Highlights - Instagram Stories Style */}
