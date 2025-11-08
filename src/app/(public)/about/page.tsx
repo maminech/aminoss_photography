@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiDownload, FiAward, FiCamera } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import NavigationButton from '@/components/NavigationButton';
 
 interface TeamMember {
   id: string;
@@ -37,6 +38,7 @@ export default function AboutPage() {
   if (isProfessional) {
     return (
       <div className="novo-about-page bg-white min-h-screen">
+        <NavigationButton variant="both" />
         <section className="py-24 md:py-32 bg-white">
           <div className="container mx-auto px-6 max-w-6xl">
             <motion.div
@@ -245,6 +247,7 @@ export default function AboutPage() {
   // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+      <NavigationButton variant="both" />
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -7,6 +7,7 @@ import { useLayoutTheme } from '@/contexts/ThemeContext';
 import CategoryFilter from '@/components/CategoryFilter';
 import GalleryGrid from '@/components/GalleryGrid';
 import LightboxModal from '@/components/LightboxModal';
+import NavigationButton from '@/components/NavigationButton';
 import { MediaItem, Category } from '@/types';
 import { getSampleImages, filterImagesByCategory } from '@/lib/sample-data';
 
@@ -117,6 +118,7 @@ export default function GalleryPage() {
   if (isProfessional) {
     return (
       <div className="novo-gallery-page bg-white min-h-screen">
+        <NavigationButton variant="both" />
         {/* Novo Header Section */}
         <section className="py-24 md:py-32 bg-white">
           <div className="container mx-auto px-6">
@@ -251,6 +253,7 @@ export default function GalleryPage() {
   // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 sm:py-20 md:py-24 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8">
+      <NavigationButton variant="both" />
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -82,8 +82,8 @@ export default function Navbar() {
     return null;
   }
 
-  // Don't show navbar on homepage when in simple mode
-  if (pathname === '/' && currentTheme === 'simple') {
+  // Don't show navbar when in simple mode (Instagram-like experience)
+  if (currentTheme === 'simple') {
     return null;
   }
 

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FiUpload, FiHeart, FiX } from 'react-icons/fi';
 import Image from 'next/image';
+import NavigationButton from '@/components/NavigationButton';
 
 export default function GuestUploadPage() {
   const params = useParams();
@@ -110,6 +111,7 @@ export default function GuestUploadPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 p-4">
+      <NavigationButton variant="home" />
       <div className="max-w-2xl mx-auto pt-8 sm:pt-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,6 +149,8 @@ export default function GuestUploadPage() {
                 placeholder="Enter your name"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all"
                 required
+                minLength={2}
+                maxLength={100}
                 disabled={uploading}
               />
             </div>
@@ -161,6 +165,7 @@ export default function GuestUploadPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Write your heartfelt message here..."
                 maxLength={200}
+                minLength={5}
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none transition-all"
                 required

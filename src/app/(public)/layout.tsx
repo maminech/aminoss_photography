@@ -14,16 +14,16 @@ export default function PublicLayout({
   const pathname = usePathname();
   const { currentTheme } = useLayoutTheme();
   
-  // Check if we're on homepage in simple mode
-  const isSimpleHomepage = pathname === '/' && currentTheme === 'simple';
+  // Check if we're in simple mode (Instagram-like experience)
+  const isSimpleMode = currentTheme === 'simple';
 
   return (
     <ThemeWrapper>
       <Navbar />
-      <main className={isSimpleHomepage ? '' : 'min-h-screen pt-16 md:pt-20'}>
+      <main className={isSimpleMode ? '' : 'min-h-screen pt-16 md:pt-20'}>
         {children}
       </main>
-      {!isSimpleHomepage && <Footer />}
+      {!isSimpleMode && <Footer />}
     </ThemeWrapper>
   );
 }

@@ -239,10 +239,11 @@ model Photobook {
   clientId      String         @db.ObjectId
   galleryId     String         @db.ObjectId
   title         String         @default("My Photobook")
-  format        String         // "20x30" or "30x30"
+  format        String         @default("A4") // "A4", "20x30", "30x30", custom
   status        String         @default("draft") // draft, submitted, approved, printing, completed
   coverPhotoUrl String?
   totalPages    Int            @default(0)
+  design        Json?          // Polotno design JSON - full editor state
   approvedAt    DateTime?
   submittedAt   DateTime?
   createdAt     DateTime       @default(now())

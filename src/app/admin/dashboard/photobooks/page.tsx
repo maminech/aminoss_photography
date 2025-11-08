@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import {
   FiBook,
   FiCheck,
@@ -17,7 +18,14 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiDownload,
+  FiStar,
 } from 'react-icons/fi';
+
+// Dynamically import PhotobookEditorV3 for viewing Polotno designs
+const PhotobookEditorV3 = dynamic(
+  () => import('@/components/PhotobookEditorV3'),
+  { ssr: false }
+);
 
 interface PhotobookPhoto {
   photoId: string;
@@ -59,8 +67,31 @@ interface Photobook {
 
 type StatusFilter = 'all' | 'submitted' | 'approved' | 'printing' | 'completed' | 'draft';
 
+// New interface for Polotno-designed photobooks
+interface PolotnoPhotobook {
+  id: string;
+  title: string;
+  status: string;
+  totalPages: number;
+  design: any;
+  createdAt: string;
+  client?: {
+    name: string;
+    email: string;
+  };
+  gallery?: {
+    name: string;
+    photos: Array<{
+      id: string;
+      url: string;
+    }>;
+  };
+}
+
 export default function AdminPhotobooksPage() {
   const [photobooks, setPhotobooks] = useState<Photobook[]>([]);
+  const [polotnoPhotobooks, setPolotnoPhotobooks] = useState<PolotnoPhotobook[]>([]);
+  const [viewingPolotnoDesign, setViewingPolotnoDesign] = useState<PolotnoPhotobook | null>(null);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,6 +102,7 @@ export default function AdminPhotobooksPage() {
 
   useEffect(() => {
     fetchPhotobooks();
+    fetchPolotnoPhotobooks();
   }, []);
 
   const fetchPhotobooks = async () => {
@@ -78,12 +110,44 @@ export default function AdminPhotobooksPage() {
       const res = await fetch('/api/admin/photobooks');
       if (res.ok) {
         const data = await res.json();
-        setPhotobooks(data);
+        // Filter for old-style photobooks (without design field)
+        setPhotobooks(data.photobooks?.filter((pb: any) => !pb.design) || []);
       }
     } catch (error) {
       console.error('Error fetching photobooks:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPolotnoPhotobooks = async () => {
+    try {
+      const res = await fetch('/api/admin/photobooks');
+      if (res.ok) {
+        const data = await res.json();
+        // Filter for new Polotno photobooks (with design field)
+        setPolotnoPhotobooks(data.photobooks?.filter((pb: any) => pb.design) || []);
+      }
+    } catch (error) {
+      console.error('Error fetching Polotno photobooks:', error);
+    }
+  };
+
+  const updatePolotnoPhotobookStatus = async (photobookId: string, status: string) => {
+    try {
+      const res = await fetch(`/api/admin/photobooks/${photobookId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+
+      if (res.ok) {
+        await fetchPolotnoPhotobooks();
+        alert(`Photobook status updated to: ${status}`);
+      }
+    } catch (error) {
+      console.error('Error updating photobook:', error);
+      alert('Failed to update status');
     }
   };
 
@@ -174,6 +238,56 @@ export default function AdminPhotobooksPage() {
           Review, approve, and manage client photobook orders
         </p>
       </div>
+
+      {/* NEW: Polotno Photobook Designs Section */}
+      {polotnoPhotobooks.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <FiStar className="w-6 h-6 text-purple-600" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              New Photobook Designs ({polotnoPhotobooks.length})
+            </h2>
+          </div>
+          
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {polotnoPhotobooks.map((pb) => (
+              <div key={pb.id} className="bg-white dark:bg-dark-800 rounded-lg border-2 border-purple-500 shadow-lg overflow-hidden">
+                <div className="h-40 bg-gradient-to-br from-purple-500 to-primary flex items-center justify-center">
+                  <FiBook className="w-16 h-16 text-white opacity-50" />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">{pb.title}</h3>
+                  {pb.client && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      By: {pb.client.name}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500 mb-3">
+                    <span>{pb.totalPages} pages</span>
+                    <span>{new Date(pb.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setViewingPolotnoDesign(pb)}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-medium transition"
+                    >
+                      <FiEye className="w-4 h-4" />
+                      View Design
+                    </button>
+                    <button
+                      onClick={() => updatePolotnoPhotobookStatus(pb.id, pb.status === 'draft' ? 'approved' : 'completed')}
+                      className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition"
+                      title="Approve"
+                    >
+                      <FiCheck className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-6">
@@ -501,6 +615,52 @@ export default function AdminPhotobooksPage() {
                 </div>
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Polotno Design Viewer Modal */}
+      <AnimatePresence>
+        {viewingPolotnoDesign && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-white dark:bg-dark-900"
+          >
+            <div className="h-full flex flex-col">
+              {/* Header */}
+              <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                      {viewingPolotnoDesign.title}
+                    </h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {viewingPolotnoDesign.client?.name} • {viewingPolotnoDesign.totalPages} pages
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setViewingPolotnoDesign(null)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition"
+                  >
+                    <FiX className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Editor (Read-Only View) */}
+              <div className="flex-1 overflow-hidden">
+                {viewingPolotnoDesign.gallery && (
+                  <PhotobookEditorV3
+                    galleryId={viewingPolotnoDesign.id}
+                    photos={viewingPolotnoDesign.gallery.photos}
+                    initialDesign={viewingPolotnoDesign.design}
+                    onSave={() => {}} // Admin view is read-only
+                  />
+                )}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheck, FiClock, FiDollarSign, FiCalendar, FiX } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import NavigationButton from '@/components/NavigationButton';
 
 interface Pack {
   id: string;
@@ -135,6 +136,7 @@ export default function PacksPage() {
   if (isProfessional) {
     return (
       <div className="novo-packs-page bg-white min-h-screen">
+        <NavigationButton variant="both" />
         <section className="py-24 md:py-32 bg-white">
           <div className="container mx-auto px-6 max-w-7xl">
             <motion.div
@@ -407,6 +409,7 @@ export default function PacksPage() {
   // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-900 pt-20">
+      <NavigationButton variant="both" />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary/10 via-white dark:via-dark-800 to-primary/5 py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">

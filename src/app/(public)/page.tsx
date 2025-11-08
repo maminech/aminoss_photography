@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { FiGrid, FiVideo, FiBookmark, FiSettings, FiMail } from 'react-icons/fi';
+import { FiGrid, FiVideo, FiBookmark, FiSettings, FiMail, FiMenu, FiX, FiHome, FiPackage, FiUser } from 'react-icons/fi';
 import { BsGrid3X3 } from 'react-icons/bs';
 import { MdVideoLibrary } from 'react-icons/md';
 import LightboxModal from '@/components/LightboxModal';
@@ -59,6 +59,7 @@ export default function HomePage() {
   const [showIntro, setShowIntro] = useState(false);
   const [showThemeSwitcher, setShowThemeSwitcher] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -170,14 +171,14 @@ export default function HomePage() {
   // Instagram Stories highlights data - Fetch from database or use fallback
   const [highlights, setHighlights] = useState([
     {
-      id: 'gallery',
-      name: 'Gallery',
+      id: 'about',
+      name: 'About',
       coverImage: images[0]?.thumbnailUrl || '/placeholder.jpg',
-      stories: images.slice(0, 6).map((img) => ({
-        id: img.id,
-        image: img.url,
-        title: img.title
-      }))
+      stories: [
+        { id: 'about-1', image: images[0]?.url || '/placeholder.jpg', title: '👋 Meet the Photographer' },
+        { id: 'about-2', image: images[1]?.url || '/placeholder.jpg', title: '📸 My Story' },
+        { id: 'about-3', image: images[2]?.url || '/placeholder.jpg', title: '🎨 My Style' },
+      ]
     },
     {
       id: 'videos',
@@ -192,22 +193,22 @@ export default function HomePage() {
     {
       id: 'packages',
       name: 'Packages',
-      coverImage: images[1]?.thumbnailUrl || '/placeholder.jpg',
+      coverImage: images[3]?.thumbnailUrl || '/placeholder.jpg',
       stories: [
-        { id: 'pack-1', image: images[2]?.url || '/placeholder.jpg', title: '📦 Wedding Package' },
-        { id: 'pack-2', image: images[3]?.url || '/placeholder.jpg', title: '👨‍👩‍👧 Family Sessions' },
-        { id: 'pack-3', image: images[4]?.url || '/placeholder.jpg', title: '🎉 Event Coverage' },
-        { id: 'pack-4', image: images[5]?.url || '/placeholder.jpg', title: '📸 Portrait Sessions' },
+        { id: 'pack-1', image: images[3]?.url || '/placeholder.jpg', title: '� Wedding Package' },
+        { id: 'pack-2', image: images[4]?.url || '/placeholder.jpg', title: '👨‍👩‍👧 Family Sessions' },
+        { id: 'pack-3', image: images[5]?.url || '/placeholder.jpg', title: '🎉 Event Coverage' },
+        { id: 'pack-4', image: images[6]?.url || '/placeholder.jpg', title: '📸 Portrait Sessions' },
       ]
     },
     {
       id: 'contact',
       name: 'Contact',
-      coverImage: images[2]?.thumbnailUrl || '/placeholder.jpg',
+      coverImage: images[7]?.thumbnailUrl || '/placeholder.jpg',
       stories: [
-        { id: 'contact-1', image: images[6]?.url || '/placeholder.jpg', title: '📱 Book Your Session' },
-        { id: 'contact-2', image: images[7]?.url || '/placeholder.jpg', title: '✉️ Get in Touch' },
-        { id: 'contact-3', image: images[8]?.url || '/placeholder.jpg', title: '📍 Location' },
+        { id: 'contact-1', image: images[7]?.url || '/placeholder.jpg', title: '📱 Book Your Session' },
+        { id: 'contact-2', image: images[8]?.url || '/placeholder.jpg', title: '✉️ Get in Touch' },
+        { id: 'contact-3', image: images[9]?.url || '/placeholder.jpg', title: '📍 Location' },
       ]
     }
   ]);
@@ -248,8 +249,22 @@ export default function HomePage() {
       {showIntro && <AnimatedIntro onComplete={handleIntroComplete} />}
       
       <div className="min-h-screen bg-white dark:bg-dark-900">
+      {/* Top Navigation Bar */}
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-4 flex justify-between items-center">
+        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+          {settings.siteName || 'Aminoss Photography'}
+        </h1>
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          aria-label="Open menu"
+        >
+          <FiMenu className="w-6 h-6 text-gray-900 dark:text-white" />
+        </button>
+      </div>
+
       {/* Instagram Profile Header - Exact Layout */}
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-6 sm:pt-8 pb-3 sm:pb-4">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-2 sm:pt-4 pb-3 sm:pb-4">
         {/* Profile Section */}
         <div className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-20 mb-8 sm:mb-11">
           {/* Profile Picture - Left Side */}
@@ -333,7 +348,7 @@ export default function HomePage() {
 
         {/* Action Buttons - Below Bio, Above Highlights */}
         <div className="flex gap-2 mb-6 sm:mb-8">
-          <Link href="/packs" className="flex-1">
+          <Link href="/booking" className="flex-1">
             <button 
               className="w-full px-4 py-2 rounded-lg font-semibold active:scale-95 transition text-xs sm:text-sm text-white"
               style={{ 
@@ -415,7 +430,7 @@ export default function HomePage() {
                 )}
               </div>
             </div>
-            <span className="text-xs text-gray-900 dark:text-gray-100">Gallery</span>
+            <span className="text-xs text-gray-900 dark:text-gray-100">About</span>
           </button>
           
           <button onClick={() => openStories(1)} className="flex flex-col items-center gap-1 xs:gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
@@ -644,6 +659,73 @@ export default function HomePage() {
         isOpen={showThemeSwitcher}
         onClose={() => setShowThemeSwitcher(false)}
       />
+
+      {/* Navigation Menu */}
+      {menuOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-50 animate-fadeIn"
+            onClick={() => setMenuOpen(false)}
+          />
+          
+          {/* Menu Panel */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-gray-900 z-50 shadow-2xl"
+          >
+            {/* Menu Header */}
+            <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Menu</h2>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Menu Items */}
+            <nav className="p-4">
+              <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
+                <FiHome className="w-5 h-5" />
+                <span className="text-lg font-medium">Home</span>
+              </Link>
+              
+              <Link href="/about" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
+                <FiUser className="w-5 h-5" />
+                <span className="text-lg font-medium">About</span>
+              </Link>
+              
+              <Link href="/booking" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
+                <FiBookmark className="w-5 h-5" />
+                <span className="text-lg font-medium">Demande un Devis</span>
+              </Link>
+              
+              <Link href="/packs" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
+                <FiPackage className="w-5 h-5" />
+                <span className="text-lg font-medium">Packages</span>
+              </Link>
+              
+              <Link href="/contact" onClick={() => setMenuOpen(false)} className="flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2">
+                <FiMail className="w-5 h-5" />
+                <span className="text-lg font-medium">Contact</span>
+              </Link>
+
+              <button 
+                onClick={() => { setMenuOpen(false); setShowThemeSwitcher(true); }}
+                className="w-full flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors mb-2"
+              >
+                <FiSettings className="w-5 h-5" />
+                <span className="text-lg font-medium">Change Theme</span>
+              </button>
+            </nav>
+          </motion.div>
+        </>
+      )}
     </div>
     </>
   );

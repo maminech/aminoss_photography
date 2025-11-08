@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import VideoPlayer from '@/components/VideoPlayer';
+import NavigationButton from '@/components/NavigationButton';
 import { VideoItem } from '@/types';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import { FiPlay } from 'react-icons/fi';
@@ -55,6 +56,7 @@ export default function VideosPage() {
   if (isProfessional) {
     return (
       <div className="novo-videos-page bg-white min-h-screen">
+        <NavigationButton variant="both" />
         <section className="py-24 md:py-32 bg-white">
           <div className="container mx-auto px-6 max-w-7xl">
             <motion.div
@@ -173,6 +175,7 @@ export default function VideosPage() {
   // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+      <NavigationButton variant="both" />
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

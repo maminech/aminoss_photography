@@ -18,7 +18,13 @@ import {
   FiDownloadCloud,
   FiBook
 } from 'react-icons/fi';
-import PhotobookEditorV2 from '@/components/PhotobookEditorV2';
+import dynamic from 'next/dynamic';
+
+// Dynamically import PhotobookEditorV3 (client-side only)
+const PhotobookEditorV3 = dynamic(
+  () => import('@/components/PhotobookEditorV3'),
+  { ssr: false }
+);
 
 interface Photo {
   id: string;
@@ -325,15 +331,48 @@ export default function ClientGalleryPage() {
 
       {/* Photobook Editor */}
       {photobookEditorOpen && gallery && (
-        <PhotobookEditorV2
-          galleryId={gallery.id}
-          selectedPhotos={gallery.photos.filter(p => selectedPhotos.has(p.id))}
-          onClose={() => setPhotobookEditorOpen(false)}
-          onComplete={() => {
-            setPhotobookEditorOpen(false);
-            router.push('/client/dashboard');
-          }}
-        />
+        <div className="fixed inset-0 z-[200] bg-white dark:bg-dark-900">
+          <PhotobookEditorV3
+            galleryId={gallery.id}
+            photos={gallery.photos.filter(p => selectedPhotos.has(p.id)).map(p => ({
+              id: p.id,
+              url: p.url,
+              width: p.width,
+              height: p.height,
+              title: p.title,
+            }))}
+            onSave={async (design) => {
+              try {
+                const response = await fetch('/api/photobooks', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    galleryId: gallery.id,
+                    design,
+                    name: `${gallery.name} - Photobook`,
+                  }),
+                });
+                if (response.ok) {
+                  alert('Photobook saved successfully! The admin will review it.');
+                  setPhotobookEditorOpen(false);
+                } else {
+                  alert('Failed to save photobook. Please try again.');
+                }
+              } catch (error) {
+                console.error('Error saving photobook:', error);
+                alert('Failed to save photobook. Please try again.');
+              }
+            }}
+          />
+          {/* Close button */}
+          <button
+            onClick={() => setPhotobookEditorOpen(false)}
+            className="fixed top-4 right-4 z-[250] p-3 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition"
+            title="Close Photobook Editor"
+          >
+            <FiX className="w-6 h-6" />
+          </button>
+        </div>
       )}
 
       {/* Main Content */}
