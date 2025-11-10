@@ -21,6 +21,7 @@ interface GuestUpload {
   photos: Photo[];
   photoCount: number;
   printPhoto: Photo | null;
+  photoboothPrintUrl: string | null;
   status: string;
 }
 
@@ -215,6 +216,7 @@ export default function AdminGuestUploadsPage() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Message</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Photos</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Print Photo</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Photobooth</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Status</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Actions</th>
                   </tr>
@@ -250,6 +252,31 @@ export default function AdminGuestUploadsPage() {
                           </div>
                         ) : (
                           <span className="text-xs text-gray-400 dark:text-gray-500">None selected</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {upload.photoboothPrintUrl ? (
+                          <div className="flex flex-col gap-1">
+                            <a
+                              href={upload.photoboothPrintUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                            >
+                              <FiPrinter className="w-3 h-3" />
+                              View
+                            </a>
+                            <a
+                              href={upload.photoboothPrintUrl}
+                              download
+                              className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 hover:underline"
+                            >
+                              <FiDownload className="w-3 h-3" />
+                              Download
+                            </a>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-400 dark:text-gray-500">Not generated</span>
                         )}
                       </td>
                       <td className="px-4 py-3">

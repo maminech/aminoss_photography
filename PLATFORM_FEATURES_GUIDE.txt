@@ -1,0 +1,592 @@
+================================================================================
+                    AMINOSS PHOTOGRAPHY PLATFORM
+                      Complete Features Guide
+                          November 2025
+================================================================================
+
+📸 WHAT IS THIS PLATFORM?
+--------------------------------------------------------------------------------
+A complete photography business management system for Aminoss Photography.
+It handles everything from showcasing work to managing clients, bookings,
+invoices, and delivering photos to clients.
+
+
+🎯 WHO USES THIS PLATFORM?
+--------------------------------------------------------------------------------
+
+1. PUBLIC VISITORS
+   - Anyone visiting the website to view photography work
+   - Can browse galleries, see packages, contact photographer
+
+2. ADMIN (Photographer/Business Owner)
+   - Full control of website, content, and business operations
+   - Access: aminossphotography.vercel.app/admin
+
+3. CLIENTS
+   - People who booked photography services
+   - Can view and download their event photos
+   - Access: aminossphotography.vercel.app/client/login
+
+
+================================================================================
+                        PUBLIC FEATURES (Website)
+================================================================================
+
+🏠 HOME PAGE
+   - Beautiful hero section with photographer's best work
+   - Services overview
+   - Featured galleries
+   - Client testimonials
+   - Contact information
+
+📷 GALLERIES
+   - Category-based photo organization (Wedding, Portrait, Event, etc.)
+   - High-quality image display
+   - Lightbox viewer for full-screen photos
+   - Professional and Simple theme options
+
+📦 PACKAGES & PRICING
+   - Wedding packages
+   - Portrait packages
+   - Event photography packages
+   - Clear pricing in TND (Tunisian Dinars)
+   - Online booking functionality
+
+👥 ABOUT PAGE
+   - Photographer biography
+   - Team members showcase
+   - Experience and expertise
+   - Contact information
+
+📞 CONTACT
+   - Contact form
+   - Email and phone information
+   - Social media links
+   - Business hours
+
+📱 INSTAGRAM FEED
+   - Live Instagram posts integration
+   - Auto-sync with Instagram account
+
+
+================================================================================
+                    ADMIN FEATURES (Business Management)
+================================================================================
+
+LOGIN: /admin
+Default credentials set during setup
+
+🎨 QUICK ACTIONS DASHBOARD (8 Buttons)
+   1. Create Invoice - Generate new invoice for client
+   2. Add Expense - Record business expense
+   3. View Bookings - Manage client reservations
+   4. Manage Photobooks - Review client photobook orders
+   5. Sync Photos - Import from Cloudinary
+   6. Customize Design - Change colors and theme
+   7. Edit Content - Update about/services pages
+   8. Team Management - Add/edit team members
+
+📊 DASHBOARD & ANALYTICS
+   ✓ Total photos and videos count
+   ✓ Client count
+   ✓ Booking statistics
+   ✓ Financial overview (Revenue, Expenses, Profit in TND)
+   ✓ Unpaid invoices tracking
+   ✓ Team member count
+   ✓ Unread messages count
+
+📸 PHOTO MANAGEMENT
+   ✓ Sync photos from Cloudinary automatically
+   ✓ Create galleries and categories
+   ✓ Set featured photos
+   ✓ Add photo titles and descriptions
+   ✓ Delete/hide photos
+   ✓ Drag-and-drop organization
+
+📝 CLIENT GALLERIES
+   ✓ Create private galleries for clients
+   ✓ Upload event photos
+   ✓ Set gallery expiration dates
+   ✓ Password protection option
+   ✓ Track client views and downloads
+   ✓ Send gallery links to clients
+
+👥 CLIENT MANAGEMENT
+   ✓ Add new clients
+   ✓ View client list with all details
+   ✓ Track client bookings and galleries
+   ✓ Manage client access
+
+📅 BOOKING MANAGEMENT
+   ✓ View all booking requests
+   ✓ Approve or reject bookings
+   ✓ Track booking status
+   ✓ Calendar integration
+   ✓ Booking details and requirements
+
+💰 INVOICE SYSTEM
+   ✓ Create custom invoices
+   ✓ Add multiple items/services
+   ✓ Calculate subtotal, tax, discount automatically
+   ✓ Link invoices to bookings
+   ✓ Track payment status (Paid/Unpaid/Partial)
+   ✓ ONE-CLICK "Mark as Paid" button (NEW!)
+   ✓ Record payment method (Cash, Card, Check, Bank Transfer)
+   ✓ Generate invoice PDFs
+   ✓ Send invoices to clients
+   ✓ All prices in TND (Tunisian Dinars)
+
+💳 EXPENSE TRACKING
+   ✓ Record business expenses
+   ✓ Categorize expenses (Equipment, Software, Travel, etc.)
+   ✓ Track monthly/yearly expenses
+   ✓ Expense analytics and reports
+   ✓ All amounts in TND
+
+💼 SALARY MANAGEMENT
+   ✓ Add team members
+   ✓ Record salary payments
+   ✓ Track payment history
+   ✓ Monthly salary reports
+   ✓ All amounts in TND
+
+📖 PHOTOBOOK MANAGEMENT
+   ✓ View all client photobook requests
+   ✓ See client-approved photobooks (FIXED!)
+   ✓ Preview photobook designs
+   ✓ Approve or reject photobooks
+   ✓ Track status: Draft → Submitted → Approved → Printing → Completed
+   ✓ Add admin notes
+   ✓ Support for Polotno-designed photobooks
+
+👥 GUEST UPLOADS MONITORING
+   ✓ View all guest-uploaded photos
+   ✓ Approve or reject guest photos
+   ✓ See photobooth-generated prints
+   ✓ Track uploads by event/gallery
+
+🎨 DESIGN CUSTOMIZATION
+   ✓ Change website colors (Primary, Secondary, Accent)
+   ✓ Choose fonts
+   ✓ Upload logo
+   ✓ Customize hero images
+   ✓ Switch between Professional and Simple themes
+
+✏️ CONTENT MANAGEMENT
+   ✓ Edit About page content
+   ✓ Update services descriptions
+   ✓ Manage contact information
+   ✓ Add/edit social media links
+
+📧 MESSAGES
+   ✓ View contact form submissions
+   ✓ Reply to inquiries
+   ✓ Track message status
+   ✓ Archive old messages
+
+⚙️ SETTINGS
+   ✓ Site name and tagline
+   ✓ Business information
+   ✓ Email settings
+   ✓ Instagram integration
+   ✓ Cloudinary configuration
+   ✓ Google Calendar sync
+
+
+================================================================================
+                    CLIENT FEATURES (Client Portal)
+================================================================================
+
+LOGIN: /client/login
+Clients receive login credentials from admin
+
+🎯 QUICK ACTIONS DASHBOARD (4 Cards)
+   1. My Galleries - View all your photo galleries
+   2. Guest Uploads - See photos guests uploaded for you (NEW!)
+   3. My Photobooks - Create and manage photobooks (NEW!)
+   4. Photobooth Prints - View all photobooth-style photos (NEW!)
+
+🖼️ VIEW GALLERIES
+   ✓ Access all galleries created for you
+   ✓ View photos in high quality
+   ✓ Lightbox viewer for full-screen
+   ✓ See gallery details and expiration dates
+   ✓ Track number of photos per gallery
+
+⬇️ DOWNLOAD PHOTOS
+   ✓ Download individual photos
+   ✓ Download entire galleries as ZIP
+   ✓ High-resolution downloads
+   ✓ No watermarks on final photos
+
+👥 GUEST UPLOADS VIEW (NEW!)
+   ✓ Easy access from dashboard
+   ✓ See all photos guests uploaded for your event
+   ✓ View guest messages and names
+   ✓ Download guest photos
+   ✓ See selected photos for photobooth printing
+
+📸 PHOTOBOOTH PRINTS (NEW!)
+   ✓ Dedicated page for all photobooth-generated images
+   ✓ Special photobooth badge styling
+   ✓ Filter by gallery (if multiple events)
+   ✓ Download individual prints
+   ✓ Download all prints at once
+   ✓ See who uploaded each photo
+   ✓ Organized by date
+
+📚 PHOTOBOOK CREATION (NEW!)
+   ✓ View all your photobooks
+   ✓ Track photobook status
+      - Draft: Still editing
+      - Submitted: Under review
+      - Approved: Ready for printing
+      - Printing: Being printed
+      - Completed: Ready for pickup/delivery
+   ✓ Continue editing drafts
+   ✓ View approved photobooks
+   ✓ See page counts and formats
+
+🎨 PHOTOBOOK EDITOR
+   ✓ Polotno-based professional editor
+   ✓ Drag-and-drop photos
+   ✓ Multiple page layouts
+   ✓ Add text and decorations
+   ✓ Choose book format (A4, 20x30, 30x30)
+   ✓ Save and continue later
+   ✓ Submit for approval
+
+🔐 SECURE ACCESS
+   ✓ Password-protected login
+   ✓ Personal gallery access only
+   ✓ Session management
+   ✓ Secure logout
+
+
+================================================================================
+                    GUEST FEATURES (Event Guests)
+================================================================================
+
+ACCESS: /client/gallery/[id]/guest-uploads
+(Link provided by client or photographer)
+
+📤 PHOTO UPLOAD
+   ✓ Upload photos from your phone/camera
+   ✓ Multiple photos at once
+   ✓ Add personal message (up to 200 characters)
+   ✓ Enter your name
+   ✓ No account needed
+
+🎭 PHOTOBOOTH GENERATION
+   ✓ Select ONE photo per upload session for photobooth
+   ✓ System automatically generates photobooth-style print
+   ✓ Professional photobooth templates
+   ✓ Client can download these special prints
+
+✅ UPLOAD CONFIRMATION
+   ✓ See uploaded photos
+   ✓ Confirmation message
+   ✓ Know photos are being reviewed
+
+
+================================================================================
+                        TECHNICAL FEATURES
+================================================================================
+
+☁️ CLOUDINARY INTEGRATION
+   - Automatic photo storage and optimization
+   - Image transformations and resizing
+   - Fast CDN delivery
+   - Folder-based organization
+
+📱 INSTAGRAM SYNC
+   - Auto-fetch latest Instagram posts
+   - Display on website
+   - Sync on-demand or scheduled
+
+🎨 THEME SYSTEM
+   - Professional Theme: Modern, clean, business-focused
+   - Simple Theme: Minimalist, gallery-focused
+   - Dark Mode support throughout
+   - Responsive design (mobile, tablet, desktop)
+
+🔐 SECURITY
+   - Admin authentication
+   - Client authentication
+   - Session management
+   - Secure password handling
+   - Role-based access control
+
+📊 DATABASE
+   - MongoDB with Prisma ORM
+   - Real-time updates
+   - Data relationships
+   - Backup and restore capability
+
+🚀 PERFORMANCE
+   - Fast page loads
+   - Image optimization
+   - Lazy loading
+   - CDN delivery
+   - Caching strategies
+
+📱 MOBILE RESPONSIVE
+   - Works perfectly on phones
+   - Tablet optimized
+   - Desktop full features
+   - Touch-friendly interfaces
+
+
+================================================================================
+                        TESTING GUIDE
+================================================================================
+
+🔍 HOW TO TEST AS ADMIN:
+------------------------
+1. Go to: aminossphotography.vercel.app/admin
+2. Login with admin credentials
+3. TEST QUICK ACTIONS:
+   - Click "Create Invoice" button
+   - Click "Add Expense" button
+   - Click "View Bookings" button
+   - Click "Manage Photobooks" button
+4. TEST INVOICE PAYMENT:
+   - Go to Invoices section
+   - Find an unpaid invoice
+   - Click green checkmark "Mark as Paid" button
+   - Confirm the action
+   - Verify invoice shows as "Paid"
+5. TEST CURRENCY:
+   - Check Dashboard - should show "TND" not "MAD"
+   - Check Packages page - should show "TND" not "$"
+6. TEST PHOTOBOOK MANAGEMENT:
+   - Go to Photobooks section
+   - Verify you can see all photobooks (including approved ones)
+   - Try approving a submitted photobook
+
+
+🔍 HOW TO TEST AS CLIENT:
+-------------------------
+1. Go to: aminossphotography.vercel.app/client/login
+2. Login with client credentials
+3. TEST QUICK ACTIONS:
+   - Click "My Galleries" card
+   - Click "Guest Uploads" card
+   - Click "My Photobooks" card
+   - Click "Photobooth Prints" card
+4. TEST PHOTOBOOTH PRINTS:
+   - Click "Photobooth Prints"
+   - Verify you see photobooth-generated images
+   - Try downloading individual print
+   - Try "Download All" button
+   - Test gallery filter (if you have multiple events)
+5. TEST PHOTOBOOKS:
+   - Click "My Photobooks"
+   - Verify you see all your photobooks
+   - Check status indicators
+   - Try continuing a draft (if available)
+6. TEST GUEST UPLOADS:
+   - Click "Guest Uploads"
+   - Verify you can see photos guests uploaded
+   - Try downloading guest photos
+
+
+🔍 HOW TO TEST AS GUEST:
+------------------------
+1. Get guest upload link from client or photographer
+2. Upload a photo from your phone
+3. Add a heartfelt message
+4. Enter your name
+5. Select photo for photobooth printing
+6. Submit
+7. Verify confirmation message
+
+
+🔍 HOW TO TEST PUBLIC SITE:
+---------------------------
+1. Go to: aminossphotography.vercel.app
+2. Browse galleries
+3. View packages (check TND currency)
+4. Test contact form
+5. Check Instagram feed
+6. Test mobile view on phone
+
+
+================================================================================
+                        RECENT IMPROVEMENTS (November 2025)
+================================================================================
+
+✨ NEW FEATURES:
+
+1. ✅ INVOICE PAYMENT - One-Click "Mark as Paid"
+   - Green checkmark button in invoice list
+   - Confirmation dialog
+   - Automatic payment date recording
+   - Toast notifications
+
+2. ✅ CURRENCY CHANGED TO TND
+   - All MAD changed to TND
+   - All $ changed to TND
+   - Consistent currency throughout platform
+   - Reflects Tunisia location
+
+3. ✅ QUICK ACTION BUTTONS
+   - Admin: 8 quick action buttons on dashboard
+   - Client: 4 quick action cards on dashboard
+   - Faster navigation
+   - Better user experience
+
+4. ✅ PHOTOBOOK MANAGEMENT FIXED
+   - Admin can now see all photobooks
+   - Client-approved photobooks now visible
+   - Proper API response format
+   - No more empty photobook page
+
+5. ✅ GUEST UPLOADS ACCESSIBILITY
+   - Prominent button on client dashboard
+   - Easy to find and access
+   - No more hidden feature
+
+6. ✅ PHOTOBOOTH PRINTS VIEW
+   - Dedicated page: /client/photobooths
+   - Special styling with badges
+   - Download all functionality
+   - Gallery filtering
+   - Beautiful grid layout
+
+
+================================================================================
+                        CURRENCY INFORMATION
+================================================================================
+
+💰 ALL PRICES IN TND (TUNISIAN DINARS)
+
+Where you'll see TND:
+- Admin Dashboard (Revenue, Expenses, Profit)
+- Invoices
+- Packages & Pricing page
+- Expenses tracking
+- Salary management
+- Booking forms
+
+Previous currency (MAD - Moroccan Dirham) has been replaced.
+
+
+================================================================================
+                        SUPPORT & TROUBLESHOOTING
+================================================================================
+
+🆘 COMMON ISSUES:
+
+"I can't login as admin"
+→ Check credentials with photographer
+→ Clear browser cache and try again
+
+"Gallery link expired"
+→ Contact photographer to extend expiration
+→ Photos are still saved, just access expired
+
+"Can't upload photos as guest"
+→ Check file size (max 10MB per photo)
+→ Try different browser
+→ Ensure stable internet connection
+
+"Photos not showing"
+→ Refresh page
+→ Check internet connection
+→ Try different browser
+
+"Can't download photos"
+→ Check popup blocker
+→ Allow downloads in browser
+→ Try right-click > Save Image As
+
+
+================================================================================
+                        PLATFORM URLS
+================================================================================
+
+🌐 MAIN WEBSITE
+   https://aminossphotography.vercel.app
+
+🔐 ADMIN LOGIN
+   https://aminossphotography.vercel.app/admin
+
+👤 CLIENT LOGIN
+   https://aminossphotography.vercel.app/client/login
+
+📸 INSTAGRAM
+   [Your Instagram handle]
+
+📧 CONTACT
+   [Your business email]
+
+
+================================================================================
+                        TECHNOLOGY STACK
+================================================================================
+
+Frontend: Next.js 14, React, TypeScript, Tailwind CSS
+Backend: Next.js API Routes, Prisma ORM
+Database: MongoDB
+Cloud Storage: Cloudinary
+Hosting: Vercel
+Authentication: Custom session-based auth
+Editor: Polotno (Photobook design)
+
+
+================================================================================
+                        FOR DEVELOPERS
+================================================================================
+
+📂 Key Files:
+- /src/app/admin/* - Admin dashboard pages
+- /src/app/client/* - Client portal pages
+- /src/app/api/* - API endpoints
+- /src/components/* - Reusable components
+- /prisma/schema.prisma - Database schema
+
+🔧 Setup Commands:
+- npm install - Install dependencies
+- npx prisma generate - Generate Prisma client
+- npx prisma db push - Push schema to database
+- npm run dev - Start development server
+- vercel --prod - Deploy to production
+
+📚 Documentation:
+- PLATFORM_FIXES_COMPLETE.md - Recent improvements
+- QUICKSTART.md - Setup guide
+- ADMIN_SETUP.md - Admin configuration
+- CLOUDINARY_SETUP.md - Photo storage setup
+
+
+================================================================================
+                        CONCLUSION
+================================================================================
+
+This platform is a COMPLETE photography business solution that handles:
+
+✓ Public website showcase
+✓ Client booking and management
+✓ Photo delivery to clients
+✓ Guest photo uploads with photobooth
+✓ Photobook creation and approval
+✓ Invoice and payment tracking
+✓ Expense management
+✓ Team coordination
+✓ Analytics and reporting
+
+Everything is designed to:
+- Make photographer's work easier
+- Provide excellent client experience
+- Organize business operations
+- Generate professional deliverables
+- Track finances accurately
+
+ALL FEATURES ARE LIVE AND WORKING! 🎉
+
+
+================================================================================
+                    Questions? Need Help?
+                    Contact the photographer
+================================================================================

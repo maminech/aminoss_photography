@@ -5,15 +5,24 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// GET - Get all packs (admin)
-export async function GET() {
+// GET - Get all packs (admin or public if active=true)
+export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { searchParams } = new URL(request.url);
+    const activeOnly = searchParams.get('active') === 'true';
+
+    // If requesting active packages only, allow public access (for booking form)
+    if (!activeOnly) {
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
     }
 
+    const where = activeOnly ? { active: true } : {};
+
     const packs = await prisma.pack.findMany({
+      where,
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
       include: {
         _count: {

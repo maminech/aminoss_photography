@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    return NextResponse.json(photobooksWithDetails);
+    return NextResponse.json({ photobooks: photobooksWithDetails });
   } catch (error) {
     console.error('Error fetching photobooks:', error);
     return NextResponse.json({ error: 'Failed to fetch photobooks' }, { status: 500 });

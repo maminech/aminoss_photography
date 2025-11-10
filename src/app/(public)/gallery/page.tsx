@@ -8,6 +8,7 @@ import CategoryFilter from '@/components/CategoryFilter';
 import GalleryGrid from '@/components/GalleryGrid';
 import LightboxModal from '@/components/LightboxModal';
 import NavigationButton from '@/components/NavigationButton';
+import PublicPWAInstallPrompt from '@/components/PublicPWAInstallPrompt';
 import { MediaItem, Category } from '@/types';
 import { getSampleImages, filterImagesByCategory } from '@/lib/sample-data';
 
@@ -327,6 +328,9 @@ export default function GalleryPage() {
         onNext={nextImage}
         onPrevious={previousImage}
       />
+
+      {/* PWA Install Prompt */}
+      <PublicPWAInstallPrompt />
     </div>
   );
 }

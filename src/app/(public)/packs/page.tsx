@@ -203,7 +203,7 @@ export default function PacksPage() {
                     
                     {/* Price Badge */}
                     <div className="absolute top-4 right-4 bg-[#d4af37] text-white px-4 py-2">
-                      <span className="text-2xl font-playfair font-bold">${pack.price}</span>
+                      <span className="text-2xl font-playfair font-bold">{pack.price} TND</span>
                     </div>
                   </div>
 
@@ -281,7 +281,7 @@ export default function PacksPage() {
                     <h2 className="text-3xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100">
                       Book {selectedPack.name}
                     </h2>
-                    <p className="text-[#d4af37] font-lato text-lg mt-1">${selectedPack.price}</p>
+                    <p className="text-[#d4af37] font-lato text-lg mt-1">{selectedPack.price} TND</p>
                   </div>
                   <button
                     onClick={closeBookingModal}
@@ -408,7 +408,7 @@ export default function PacksPage() {
 
   // Simple Theme Layout (existing)
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-900 pt-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       <NavigationButton variant="both" />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary/10 via-white dark:via-dark-800 to-primary/5 py-16 px-4">

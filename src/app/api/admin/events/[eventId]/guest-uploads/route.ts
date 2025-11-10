@@ -35,6 +35,7 @@ export async function GET(
           photos: [],
           photoCount: 0,
           printPhoto: null,
+          photoboothPrintUrl: null,
           status: upload.status,
         };
       }
@@ -56,6 +57,10 @@ export async function GET(
           thumbnailUrl: upload.thumbnailUrl,
           fileUrl: upload.fileUrl,
         };
+        // Add photobooth print URL if available
+        if (upload.photoboothPrintUrl) {
+          acc[upload.uploadGroupId].photoboothPrintUrl = upload.photoboothPrintUrl;
+        }
       }
       
       return acc;

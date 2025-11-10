@@ -1,0 +1,153 @@
+# 🚀 QUICK START - Aminoss Admin Mobile App
+
+## Run the App (3 Simple Steps)
+
+### 1️⃣ Start Development Server
+```powershell
+cd "e:\aminoss photography\mobile-admin-app"
+npm start
+```
+
+### 2️⃣ Choose Your Device
+
+**OPTION A: Android Emulator** (Recommended)
+```powershell
+npm run android
+```
+
+**OPTION B: Physical Android Device**
+1. Install "Expo Go" from Google Play Store
+2. Scan the QR code shown in terminal
+3. App will load on your phone
+
+### 3️⃣ Login
+- **Email**: admin@aminoss.com
+- **Password**: Your admin password
+
+---
+
+## ✅ What Works NOW
+
+### Core Features Ready to Use:
+1. **Login/Logout** - Secure authentication
+2. **Dashboard** - View stats (revenue, expenses, profit, bookings)
+3. **Invoices** - View list, filter, **MARK AS PAID** ⭐
+4. **Bookings** - View list, filter, **APPROVE/REJECT** ⭐
+
+### Actions You Can Do:
+- ✅ View financial overview in TND
+- ✅ See photo/video/client/booking counts
+- ✅ Mark unpaid invoices as paid
+- ✅ Approve pending bookings
+- ✅ Reject bookings
+- ✅ Filter by status (Paid/Unpaid, Pending/Approved/Rejected)
+- ✅ Pull down to refresh data
+
+---
+
+## 📱 App Structure
+
+```
+Bottom Tabs:
+├── 🏠 Dashboard (Stats + Quick Actions)
+├── 📄 Invoices (Mark as Paid feature)
+├── 📅 Bookings (Approve/Reject feature)
+└── ☰ More (Placeholder)
+```
+
+---
+
+## 🎯 Key Admin Actions
+
+### Mark Invoice as Paid
+1. Go to **Invoices** tab
+2. Find unpaid invoice
+3. Tap green **"Mark Paid"** button
+4. Confirm → Done! ✅
+
+### Approve Booking
+1. Go to **Bookings** tab
+2. Filter for **Pending**
+3. Tap green **"Approve"** button
+4. Confirm → Done! ✅
+
+### Reject Booking
+1. Go to **Bookings** tab
+2. Filter for **Pending**
+3. Tap red **"Reject"** button
+4. Confirm → Done! ✅
+
+---
+
+## 🎨 Design
+
+- **Purple Theme** (#8B5CF6) matching web platform
+- **Status Colors**:
+  - 🟢 Green = Paid / Approved / Success
+  - 🔴 Red = Unpaid / Rejected / Error
+  - 🟡 Amber = Partial / Pending / Warning
+- **Currency**: TND (Tunisian Dinar)
+- **Pull-to-Refresh**: Available on all lists
+
+---
+
+## 📊 Progress
+
+**✅ COMPLETE (30%)**
+- Login screen
+- Dashboard with stats
+- Invoices screen
+- Bookings screen
+- Navigation
+- API integration
+
+**⏳ PENDING (70%)**
+- Photobooks screen
+- Photos screen
+- Clients screen
+- Expenses screen
+- Messages screen
+- Settings screen
+
+---
+
+## 🐛 Troubleshooting
+
+### App Won't Start
+```powershell
+# Clear cache and restart
+npm start -- --clear
+```
+
+### Can't Connect to API
+- Check internet connection
+- Verify production API is running
+- Try logout and login again
+
+### Expo Go Not Scanning QR
+- Make sure phone and computer on same WiFi
+- Use camera app to scan (not Expo Go scanner)
+- Or run `npm run android` for emulator
+
+---
+
+## 📝 Test Checklist
+
+- [ ] Login works
+- [ ] Dashboard loads stats
+- [ ] Invoices list loads
+- [ ] Mark as Paid works
+- [ ] Bookings list loads
+- [ ] Approve works
+- [ ] Reject works
+- [ ] Pull-to-refresh works
+- [ ] TND currency displays
+- [ ] Status badges show colors
+
+---
+
+## 🎉 Ready to Test!
+
+The core admin features are functional. Start the app and test invoice/booking management!
+
+**Any issues? Check the SETUP_GUIDE.md for detailed instructions.**

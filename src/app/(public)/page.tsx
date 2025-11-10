@@ -11,12 +11,15 @@ import LightboxModal from '@/components/LightboxModal';
 import AlbumLightboxModal from '@/components/AlbumLightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
 import ThemeSwitcherModal from '@/components/ThemeSwitcherModal';
+import PublicPWAInstallPrompt from '@/components/PublicPWAInstallPrompt';
 import { MediaItem } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import dynamic from 'next/dynamic';
 import AnimatedIntro from '@/modules/intro/AnimatedIntro';
 import RemerciementsSection from '@/modules/remerciements/RemerciementsSection';
+import { useTheme } from 'next-themes';
+import { FiMoon, FiSun } from 'react-icons/fi';
 
 const ProfessionalHome = dynamic(() => import('./professional-home/page'), {
   ssr: false,
@@ -47,6 +50,7 @@ interface SiteSettings {
 
 export default function HomePage() {
   const { currentTheme } = useLayoutTheme();
+  const { theme, setTheme } = useTheme();
   const [images, setImages] = useState<MediaItem[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({});
@@ -254,13 +258,29 @@ export default function HomePage() {
         <h1 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white tracking-tight truncate pr-2">
           {settings.siteName || 'Aminoss Photography'}
         </h1>
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          {/* Dark Mode Toggle */}
           <button
-            onClick={() => setShowThemeSwitcher(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation"
-            aria-label="Theme Settings"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
+            aria-label="Toggle Dark Mode"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            <FiSettings className="w-5 h-5 sm:w-5 sm:h-5 text-gray-900 dark:text-white" />
+            {mounted && theme === 'dark' ? (
+              <FiSun className="w-5 h-5 text-yellow-500 group-hover:text-yellow-400 transition-colors" />
+            ) : (
+              <FiMoon className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors" />
+            )}
+          </button>
+          
+          {/* Menu Button */}
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
+            aria-label="Open Menu"
+            title="Open Navigation Menu"
+          >
+            <FiMenu className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors" />
           </button>
         </div>
       </div>
@@ -346,35 +366,42 @@ export default function HomePage() {
         </div>
 
         {/* Action Buttons - Instagram Style */}
-        <div className="flex gap-1.5 xs:gap-2 mb-4 xs:mb-6 sm:mb-8">
+        <div className="flex gap-2 xs:gap-2.5 sm:gap-3 mb-4 xs:mb-6 sm:mb-8">
           <Link href="/booking" className="flex-1">
-            <button 
-              className="w-full px-1.5 xs:px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold active:scale-95 transition-all text-[10px] xs:text-xs sm:text-sm text-white shadow-sm hover:shadow-md touch-manipulation"
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm text-white shadow-md hover:shadow-lg touch-manipulation relative overflow-hidden group"
               style={{ 
                 backgroundColor: settings.primaryColor || '#c67548'
               }}
             >
-              Demande un Devis
-            </button>
+              <span className="relative z-10">Demande un Devis</span>
+              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
+            </motion.button>
           </Link>
           <Link href="/contact" className="flex-1">
-            <button 
-              className="w-full px-1.5 xs:px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold active:scale-95 transition-all text-[10px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 touch-manipulation"
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm hover:shadow-md touch-manipulation"
             >
               Contact
-            </button>
+            </motion.button>
           </Link>
           <Link href="/about" className="flex-1">
-            <button 
-              className="w-full px-1.5 xs:px-2 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg font-semibold active:scale-95 transition-all text-[10px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 touch-manipulation"
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm hover:shadow-md touch-manipulation"
             >
               About Us
-            </button>
+            </motion.button>
           </Link>
         </div>
 
         {/* Highlights - Instagram Stories Style */}
-        <div className="flex gap-3 xs:gap-4 sm:gap-5 overflow-x-auto pb-4 mb-1 px-1" style={{ 
+        <div className="flex gap-4 xs:gap-5 sm:gap-6 overflow-x-auto pb-4 mb-1 px-1" style={{ 
           scrollSnapType: 'x mandatory',
           WebkitOverflowScrolling: 'touch',
           scrollbarWidth: 'none',
@@ -711,48 +738,6 @@ export default function HomePage() {
               </Link>
               
               <Link 
-                href="/gallery" 
-                onClick={() => setMenuOpen(false)} 
-                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                  <BsGrid3X3 className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Full Gallery</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Browse all categories</span>
-                </div>
-              </Link>
-              
-              <Link 
-                href="/videos" 
-                onClick={() => setMenuOpen(false)} 
-                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                  <MdVideoLibrary className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Videos</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Watch our cinematics</span>
-                </div>
-              </Link>
-              
-              <Link 
-                href="/packs" 
-                onClick={() => setMenuOpen(false)} 
-                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                  <FiPackage className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Packages</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">View pricing & services</span>
-                </div>
-              </Link>
-
-              <Link 
                 href="/about" 
                 onClick={() => setMenuOpen(false)} 
                 className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
@@ -763,6 +748,20 @@ export default function HomePage() {
                 <div className="flex-1">
                   <span className="text-lg font-semibold text-gray-900 dark:text-white block">About Us</span>
                   <span className="text-sm text-gray-500 dark:text-gray-400">Our story & mission</span>
+                </div>
+              </Link>
+
+              <Link 
+                href="/booking" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center">
+                  <FiBookmark className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Book a Session</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Reserve your date</span>
                 </div>
               </Link>
               
@@ -783,16 +782,46 @@ export default function HomePage() {
               {/* Divider */}
               <div className="border-t border-gray-200 dark:border-gray-800 my-3"></div>
 
+              {/* Admin & Client Links */}
+              <Link 
+                href="/admin/dashboard" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
+                  <FiSettings className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Admin Dashboard</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Manage content & settings</span>
+                </div>
+              </Link>
+
+              <Link 
+                href="/client/login" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center">
+                  <FiUser className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Client Portal</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Access your gallery</span>
+                </div>
+              </Link>
+
+              {/* Theme Settings */}
               <button 
                 onClick={() => { setMenuOpen(false); setShowThemeSwitcher(true); }}
                 className="w-full flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors"
               >
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
-                  <FiSettings className="w-5 h-5 text-white" />
+                  <FiGrid className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 text-left">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Theme Settings</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Customize appearance</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Switch Theme</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Simple ⇄ Professional</span>
                 </div>
               </button>
             </nav>
@@ -810,6 +839,9 @@ export default function HomePage() {
         </>
       )}
     </div>
+
+    {/* PWA Install Prompt */}
+    <PublicPWAInstallPrompt />
     </>
   );
 }

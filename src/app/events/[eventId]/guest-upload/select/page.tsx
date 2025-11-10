@@ -92,6 +92,13 @@ export default function SelectPhotoPage() {
         throw new Error(data.error || 'Failed to select photo');
       }
 
+      const data = await res.json();
+      
+      // Store photobooth print URL if available
+      if (data.photoboothPrintUrl) {
+        sessionStorage.setItem('photoboothPrintUrl', data.photoboothPrintUrl);
+      }
+
       router.push(`/events/${params.eventId}/guest-upload/success`);
     } catch (err: any) {
       setError(err.message);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { prisma } from '@/lib/prisma';
+import { notifyNewMessage } from '@/lib/notifications';
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,6 +44,14 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('✅ Contact message saved to database:', contactMessage.id);
+
+    // Send push notification to admin
+    try {
+      await notifyNewMessage(contactMessage);
+    } catch (err) {
+      console.error('Failed to send push notification:', err);
+      // Don't fail the request if notification fails
+    }
 
     // Create transporter (only if email is configured)
     const emailConfigured = process.env.EMAIL_USER && process.env.EMAIL_PASS;

@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Aminoss Admin",
+    "slug": "aminoss-admin-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#8B5CF6"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aminoss.admin"
+    },
+    "android": {
+      "package": "com.aminoss.admin",
+      "adaptiveIcon": {
+        "backgroundColor": "#8B5CF6"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9809efb9-5209-4aea-bbde-40ce3ee239cc"
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "name": "Aminoss Admin Dashboard - Photography Business Manager",
+  "short_name": "Admin",
+  "description": "Professional admin dashboard for Aminoss Photography. Manage invoices, bookings, clients, messages, and business operations with real-time push notifications.",
+  "start_url": "/admin/dashboard?source=pwa",
+  "display": "standalone",
+  "background_color": "#8B5CF6",
+  "theme_color": "#8B5CF6",
+  "orientation": "any",
+  "prefer_related_applications": false,
+  "scope": "/admin",
+  "dir": "ltr",
+  "lang": "en",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/admin-apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "related_applications": [],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View admin dashboard",
+      "url": "/admin/dashboard?source=shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Invoices",
+      "short_name": "Invoices",
+      "description": "Manage invoices and payments",
+      "url": "/admin/invoices?source=shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Bookings",
+      "short_name": "Bookings",
+      "description": "View and manage bookings",
+      "url": "/admin/bookings?source=shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "description": "Check client messages",
+      "url": "/admin/messages?source=shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Clients",
+      "short_name": "Clients",
+      "description": "Manage client accounts",
+      "url": "/admin/clients?source=shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    }
+  ]
+}

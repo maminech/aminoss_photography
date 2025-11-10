@@ -14,8 +14,13 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Generate QR code
-    const uploadUrl = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/events/${params.eventId}/guest-upload`;
+    // Get the base URL from request headers (works in production and local)
+    const host = req.headers.get('host') || '';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const baseUrl = process.env.NEXT_PUBLIC_URL || `${protocol}://${host}`;
+    
+    // Generate QR code with correct URL
+    const uploadUrl = `${baseUrl}/events/${params.eventId}/guest-upload`;
     
     const qrCodeDataURL = await QRCode.toDataURL(uploadUrl, {
       width: 600,

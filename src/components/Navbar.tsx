@@ -17,6 +17,7 @@ const navLinks = [
   { href: '/packs', label: 'Packages' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
+  { href: '/download', label: 'Download App', highlight: true },
 ];
 
 export default function Navbar() {
@@ -109,13 +110,15 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition-all duration-200 relative group px-3 py-2 rounded-xl ${
-                  pathname === link.href
+                  link.highlight
+                    ? 'bg-gradient-to-r from-[#c67548] to-[#8B5CF6] text-white shadow-lg hover:shadow-xl'
+                    : pathname === link.href
                     ? 'text-primary-600 dark:text-primary-400 glass'
                     : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:glass'
                 }`}
               >
                 {link.label}
-                {pathname === link.href && (
+                {pathname === link.href && !link.highlight && (
                   <motion.div
                     layoutId="activeNav"
                     className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"

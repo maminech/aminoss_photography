@@ -1,12 +1,31 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FiCheck, FiHeart } from 'react-icons/fi';
+import { FiCheck, FiHeart, FiDownload } from 'react-icons/fi';
 import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function SuccessPage() {
   const params = useParams();
   const router = useRouter();
+  const [photoboothPrintUrl, setPhotoboothPrintUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Get photobooth print URL from session storage
+    const url = sessionStorage.getItem('photoboothPrintUrl');
+    if (url) {
+      setPhotoboothPrintUrl(url);
+      // Clear from session storage
+      sessionStorage.removeItem('photoboothPrintUrl');
+    }
+  }, []);
+
+  const handleDownloadPrint = () => {
+    if (photoboothPrintUrl) {
+      window.open(photoboothPrintUrl, '_blank');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex items-center justify-center p-4">
@@ -77,11 +96,40 @@ export default function SuccessPage() {
           </motion.div>
         </motion.div>
 
+        {/* Photobooth Print Preview */}
+        {photoboothPrintUrl && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="mb-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4"
+          >
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+              Your Photobooth Print is Ready! 📸
+            </p>
+            <div className="relative w-48 h-72 mx-auto mb-3 rounded-lg overflow-hidden shadow-lg">
+              <Image
+                src={photoboothPrintUrl}
+                alt="Photobooth Print"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <button
+              onClick={handleDownloadPrint}
+              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+            >
+              <FiDownload className="w-4 h-4" />
+              Download Print
+            </button>
+          </motion.div>
+        )}
+
         {/* Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
+          transition={{ delay: photoboothPrintUrl ? 0.9 : 0.7 }}
           className="space-y-3"
         >
           <button

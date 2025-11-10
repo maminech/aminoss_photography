@@ -1,28 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { jwtVerify } from 'jose';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || 'your-secret-key'
+);
+
+async function getClientFromToken(request: NextRequest) {
+  const token = request.cookies.get('client-token')?.value;
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload.clientId as string;
+  } catch {
+    return null;
+  }
+}
 
 // GET - Fetch all photobooks for a user/client
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    const clientId = await getClientFromToken(request);
+    
+    if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Find client by email
-    const client = await prisma.client.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!client) {
-      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
     const photobooks = await prisma.photobook.findMany({
       where: {
-        clientId: client.id,
+        clientId: clientId,
       },
       orderBy: {
         createdAt: 'desc',
@@ -42,8 +49,9 @@ export async function GET(request: NextRequest) {
 // POST - Create new photobook
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    const clientId = await getClientFromToken(request);
+    
+    if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -57,20 +65,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find client by email
-    const client = await prisma.client.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!client) {
-      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
-    }
-
     // Verify gallery belongs to client
     const gallery = await prisma.clientGallery.findFirst({
       where: {
         id: galleryId,
-        clientId: client.id,
+        clientId: clientId,
       },
     });
 
@@ -87,8 +86,8 @@ export async function POST(request: NextRequest) {
     const photobook = await (prisma.photobook as any).create({
       data: {
         title: name || `Photobook ${new Date().toLocaleDateString()}`,
-        design: design, // Polotno design JSON
-        clientId: client.id,
+        design: design, // Design JSON
+        clientId: clientId,
         galleryId: galleryId,
         totalPages: totalPages,
       },

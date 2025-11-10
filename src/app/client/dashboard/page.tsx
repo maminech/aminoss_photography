@@ -138,7 +138,80 @@ export default function ClientDashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Link
+            href="#galleries"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('galleries-section')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="bg-blue-100 text-blue-600 p-3 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition">
+                <FiImage className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">My Galleries</h3>
+                <p className="text-sm text-gray-500">{galleries.length} galleries</p>
+              </div>
+            </div>
+          </Link>
+
+          {galleries.length > 0 && (
+            <Link
+              href={`/client/gallery/${galleries[0].id}/guest-uploads`}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="bg-green-100 text-green-600 p-3 rounded-lg group-hover:bg-green-600 group-hover:text-white transition">
+                  <FiDownload className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Guest Uploads</h3>
+                  <p className="text-sm text-gray-500">Photos from guests</p>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {galleries.length > 0 && (
+            <Link
+              href="/client/photobooks"
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="bg-purple-100 text-purple-600 p-3 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition">
+                  <FiCalendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">My Photobooks</h3>
+                  <p className="text-sm text-gray-500">Create & manage</p>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {galleries.length > 0 && (
+            <Link
+              href="/client/photobooths"
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="bg-orange-100 text-orange-600 p-3 rounded-lg group-hover:bg-orange-600 group-hover:text-white transition">
+                  <FiImage className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Photobooth Prints</h3>
+                  <p className="text-sm text-gray-500">View edited photos</p>
+                </div>
+              </div>
+            </Link>
+          )}
+        </div>
+
+        <div className="mb-8" id="galleries-section">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Galleries</h2>
           <p className="text-gray-600">
             View and download your professional photos

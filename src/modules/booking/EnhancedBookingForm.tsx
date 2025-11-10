@@ -4,11 +4,12 @@
  * Enhanced Booking Form Component
  * "Demande de devis" section for contact page
  * Includes WhatsApp integration and event type selection
+ * TWO-STEP PROCESS: 1) Name + Phone → 2) Show Packages + Full Form
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, MapPin, MessageSquare, Send, Check, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, MessageSquare, Send, Check, AlertCircle, Package, ChevronRight } from 'lucide-react';
 
 interface BookingFormData {
   name: string;
@@ -28,7 +29,97 @@ interface EnhancedBookingFormProps {
   prefilledPrice?: number;
 }
 
+interface PackageType {
+  id?: string;
+  name: string;
+  price: number;
+  features: string[];
+  icon: string;
+  active?: boolean;
+  order?: number;
+}
+
+// Default fallback packages (if DB is empty)
+const defaultPackages: PackageType[] = [
+  { 
+    name: 'Essentiel', 
+    price: 299, 
+    features: ['2h de couverture', '100 photos retouchées', '1 photographe'],
+    icon: '📸'
+  },
+  { 
+    name: 'Premium', 
+    price: 499, 
+    features: ['4h de couverture', '200 photos retouchées', '1 photographe', 'Album digital'],
+    icon: '⭐'
+  },
+  { 
+    name: 'Luxe', 
+    price: 799, 
+    features: ['Journée complète', '400+ photos', '2 photographes', 'Album premium', 'Vidéo highlights'],
+    icon: '👑'
+  },
+  { 
+    name: 'Sur mesure', 
+    price: 0, 
+    features: ['Package personnalisé selon vos besoins'],
+    icon: '✨'
+  },
+];
+
 export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }: EnhancedBookingFormProps) {
+  // Two-step state
+  const [packages, setPackages] = useState<PackageType[]>(defaultPackages);
+  const [loadingPackages, setLoadingPackages] = useState(true);
+
+  // Load packages from database
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await fetch('/api/admin/packs?active=true');
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.length > 0) {
+            // Transform database packs to package format
+            const transformedPackages = data.map((pack: any) => ({
+              id: pack.id,
+              name: pack.name,
+              price: pack.price,
+              features: pack.features || [],
+              icon: getPackageIcon(pack.name),
+              active: pack.active,
+              order: pack.order,
+            }));
+            setPackages(transformedPackages);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading packages:', error);
+        // Keep default packages on error
+      } finally {
+        setLoadingPackages(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
+
+  // Helper function to get icon based on package name
+  const getPackageIcon = (name: string): string => {
+    const nameLower = name.toLowerCase();
+    if (nameLower.includes('essentiel') || nameLower.includes('basic')) return '📸';
+    if (nameLower.includes('premium')) return '⭐';
+    if (nameLower.includes('luxe') || nameLower.includes('luxury')) return '👑';
+    if (nameLower.includes('mesure') || nameLower.includes('custom')) return '✨';
+    return '📦';
+  };
+
+  // Two-step state
+  const [step, setStep] = useState<1 | 2>(1);
+  const [selectedPackage, setSelectedPackage] = useState<typeof packages[0] | null>(
+    prefilledPackage ? packages.find(p => p.name === prefilledPackage) || null : null
+  );
+
   const [formData, setFormData] = useState<BookingFormData>({
     name: '',
     email: '',
@@ -95,9 +186,10 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
       
       setStatus('success');
 
-      // Open WhatsApp after short delay
+      // Redirect to WhatsApp (works better on mobile than window.open)
       setTimeout(() => {
-        window.open(whatsappMessage, '_blank');
+        // Use window.location.href for better mobile compatibility
+        window.location.href = whatsappMessage;
       }, 1500);
 
       // Reset form after successful submission
@@ -148,12 +240,74 @@ Envoyé depuis aminossphotography.com
     `.trim();
 
     // Replace with your WhatsApp number
-    const phoneNumber = '21612345678'; // Update with actual number
+    const phoneNumber = '21694124796'; // Your WhatsApp number
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
   };
 
   const handleInputChange = (field: keyof BookingFormData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle Step 1 confirmation (name + phone)
+  const handleStepOneConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate name and phone
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      setStatus('error');
+      setErrorMessage('Veuillez remplir votre nom et téléphone');
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 3000);
+      return;
+    }
+
+    // Track that user is viewing packages (Step 2)
+    try {
+      await fetch('/api/bookings/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          action: 'view-packages',
+        }),
+      });
+    } catch (error) {
+      console.error('Tracking error:', error);
+      // Don't block user experience if tracking fails
+    }
+
+    // Move to step 2
+    setStep(2);
+  };
+
+  // Handle package selection
+  const handlePackageSelect = async (pkg: typeof packages[0]) => {
+    setSelectedPackage(pkg);
+    setFormData(prev => ({
+      ...prev,
+      packageName: pkg.name,
+      packagePrice: pkg.price > 0 ? pkg.price : undefined,
+    }));
+
+    // Track package selection
+    try {
+      await fetch('/api/bookings/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          action: 'select-package',
+          packageName: pkg.name,
+          packagePrice: pkg.price,
+        }),
+      });
+    } catch (error) {
+      console.error('Tracking error:', error);
+    }
   };
 
   return (
@@ -163,53 +317,177 @@ Envoyé depuis aminossphotography.com
           Demande de Devis
         </h2>
         <p className="text-gray-600 dark:text-gray-300">
-          Remplissez le formulaire ci-dessous et nous vous contacterons rapidement
+          {step === 1 
+            ? 'Commencez par nous laisser vos coordonnées'
+            : 'Choisissez votre package et complétez votre demande'
+          }
         </p>
-      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Personal Information */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Nom complet / Full Name *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              className="input-field"
-              placeholder="Jean Dupont"
-            />
+        {/* Step Indicator */}
+        <div className="flex items-center gap-4 mt-6">
+          <div className={`flex items-center gap-2 ${step === 1 ? 'text-primary' : 'text-green-500'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+              step === 1 ? 'bg-primary text-white' : 'bg-green-500 text-white'
+            }`}>
+              {step === 1 ? '1' : <Check className="w-5 h-5" />}
+            </div>
+            <span className="text-sm font-medium">Contact</span>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Email *
-            </label>
-            <input
-              type="email"
-              required
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              className="input-field"
-              placeholder="jean@example.com"
-            />
+          
+          <div className="flex-1 h-0.5 bg-gray-300 dark:bg-gray-600" />
+          
+          <div className={`flex items-center gap-2 ${step === 2 ? 'text-primary' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+              step === 2 ? 'bg-primary text-white' : 'bg-gray-300 dark:bg-gray-600'
+            }`}>
+              2
+            </div>
+            <span className="text-sm font-medium">Détails</span>
           </div>
         </div>
+      </div>
 
+      <AnimatePresence mode="wait">
+        {step === 1 ? (
+          // STEP 1: Name + Phone only
+          <motion.form
+            key="step1"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            onSubmit={handleStepOneConfirm}
+            className="space-y-6"
+          >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Nom complet / Full Name *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="input-field text-lg py-4"
+                placeholder="Jean Dupont"
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Téléphone / Phone *
+              </label>
+              <input
+                type="tel"
+                required
+                value={formData.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                className="input-field text-lg py-4"
+                placeholder="+216 XX XXX XXX"
+              />
+            </div>
+
+            {/* Status Messages */}
+            <AnimatePresence>
+              {status === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="glass-card bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 p-4"
+                >
+                  <div className="flex items-center gap-3 text-red-800 dark:text-red-200">
+                    <AlertCircle className="w-6 h-6" />
+                    <div>
+                      <p className="font-medium">Erreur</p>
+                      <p className="text-sm">{errorMessage}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button
+              type="submit"
+              className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4"
+            >
+              <span>Confirmer</span>
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              Vos informations restent confidentielles
+            </p>
+          </motion.form>
+        ) : (
+          // STEP 2: Packages + Full Form
+          <motion.div
+            key="step2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-8"
+          >
+            {/* Package Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                <Package className="w-4 h-4 inline mr-2" />
+                Choisissez votre package *
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {packages.map((pkg) => (
+                  <motion.button
+                    key={pkg.name}
+                    type="button"
+                    onClick={() => handlePackageSelect(pkg)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`p-6 rounded-xl border-2 transition-all duration-300 text-left ${
+                      selectedPackage?.name === pkg.name
+                        ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20 ring-2 ring-primary ring-offset-2 dark:ring-offset-gray-900'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="text-3xl mb-2">{pkg.icon}</div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                          {pkg.name}
+                        </h3>
+                      </div>
+                      {pkg.price > 0 && (
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">
+                            {pkg.price} DT
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <ul className="space-y-2">
+                      {pkg.features.map((feature, idx) => (
+                        <li key={idx} className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                          <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Téléphone / Phone *
+            Email <span className="text-gray-400">(optionnel)</span>
           </label>
           <input
-            type="tel"
-            required
-            value={formData.phone}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
+            type="email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
             className="input-field"
-            placeholder="+216 XX XXX XXX"
+            placeholder="jean@example.com"
           />
         </div>
 
@@ -386,6 +664,9 @@ Envoyé depuis aminossphotography.com
           En soumettant ce formulaire, vous acceptez d'être contacté par WhatsApp et email
         </p>
       </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
     </div>
   );
 }

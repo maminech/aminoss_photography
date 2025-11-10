@@ -113,8 +113,10 @@ model SiteSettings {
   location          String   @default("Sousse, Tunisia")
   email             String?
   phone             String?
+  whatsappNumber    String?  // WhatsApp number for contact
   instagramUrl      String?
   facebookUrl       String?
+  youtubeUrl        String?  // YouTube channel URL
   twitterUrl        String?
   linkedinUrl       String?
   
@@ -124,6 +126,12 @@ model SiteSettings {
   instagramUsername     String?
   instagramAutoSync     Boolean  @default(false)
   instagramLastSync     DateTime?
+  
+  // Google Calendar Integration
+  googleCalendarAccessToken   String?
+  googleCalendarRefreshToken  String?
+  googleCalendarEmail         String?
+  googleCalendarLastSync      DateTime?
   
   // Hero Section
   heroTitle         String   @default("Capturing Life's Beautiful Moments")
@@ -162,18 +170,20 @@ model Category {
 
 // Team Members
 model TeamMember {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  role        String
-  bio         String?
-  image       String
-  instagram   String?
-  facebook    String?
-  email       String?
-  order       Int      @default(0)
-  visible     Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  role           String
+  bio            String?
+  image          String
+  instagram      String?
+  facebook       String?
+  email          String?
+  monthlySalary  Float?          // Expected monthly salary
+  order          Int             @default(0)
+  visible        Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  salaryPayments SalaryPayment[] // Salary payment history
 }
 
 // Client Portal - Clients who can log in to view their photos
@@ -206,6 +216,10 @@ model ClientGallery {
   guestUploadEnabled  Boolean       @default(false) // Enable guest photo uploads
   qrCodeUrl           String?       // Generated QR code for guest uploads
   eventDate           DateTime?     // Event date for wedding/events
+  // Photobooth Print Settings
+  brideName           String?       // Bride's name for print template
+  groomName           String?       // Groom's name for print template
+  photoboothMessage   String?       // Custom message for print (e.g., "Thank you for celebrating with us!")
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
   client              Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
@@ -289,7 +303,7 @@ model Pack {
 model Booking {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   name              String   // Client name
-  email             String   // Client email
+  email             String?  // Client email (optional)
   phone             String   // Client phone
   packId            String?  @db.ObjectId
   packageName       String?  // Store pack name for reference
@@ -303,9 +317,61 @@ model Booking {
   contractGenerated Boolean  @default(false) // Whether contract PDF was generated
   calendarEventId   String?  // Google Calendar event ID
   adminNotes        String?  @db.String // Internal notes
+  
+  // Tracking fields for admin visibility
+  viewedPackages    Boolean  @default(false) // Whether user reached step 2 and viewed packages
+  packageViewedAt   DateTime? // When packages were viewed
+  selectedPackages  String[] @default([]) // Array of package names user viewed/selected
+  completedForm     Boolean  @default(false) // Whether user completed full form
+  ipAddress         String?  // User's IP for tracking
+  userAgent         String?  // Browser info
+  
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   pack              Pack?    @relation(fields: [packId], references: [id], onDelete: SetNull)
+  invoices          Invoice[] // Relation to invoices
+}
+
+// Invoice for approved bookings
+model Invoice {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceNumber   String   @unique // e.g., INV-2025-001
+  bookingId       String   @db.ObjectId
+  
+  // Client info
+  clientName      String
+  clientEmail     String?
+  clientPhone     String
+  clientAddress   String?
+  
+  // Invoice details
+  eventType       String
+  eventDate       DateTime
+  eventLocation   String
+  
+  // Financial details
+  items           Json[]   // Array of {description, quantity, unitPrice, total}
+  subtotal        Float
+  taxRate         Float    @default(0) // Tax percentage (e.g., 19 for 19%)
+  taxAmount       Float    @default(0)
+  discount        Float    @default(0) // Discount amount
+  totalAmount     Float
+  
+  // Payment tracking
+  paidAmount      Float    @default(0)
+  paymentStatus   String   @default("unpaid") // unpaid, partial, paid
+  paymentMethod   String?  // cash, bank_transfer, check, credit_card
+  paymentDate     DateTime?
+  
+  // Invoice metadata
+  issueDate       DateTime @default(now())
+  dueDate         DateTime?
+  notes           String?  @db.String
+  termsConditions String?  @db.String
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  booking         Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 // Blocked Dates (for calendar)
@@ -407,6 +473,7 @@ model GuestUpload {
   format              String?
   fileSize            Int?          // in bytes
   isSelectedForPrint  Boolean       @default(false) // Only ONE per uploadGroupId can be true
+  photoboothPrintUrl  String?       // Generated photobooth-style print URL
   status              String        @default("pending") // pending, approved, rejected
   uploadedAt          DateTime      @default(now())
   gallery             ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
@@ -414,4 +481,64 @@ model GuestUpload {
   @@index([galleryId])
   @@index([uploadGroupId])
   @@index([isSelectedForPrint])
+}
+
+// Push Notification Subscriptions - For admin web push notifications
+model PushSubscription {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId // Admin user who subscribed
+  endpoint    String   @unique
+  keys        Json     // { p256dh, auth }
+  userAgent   String?  // Browser info
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+// ==================== FINANCIAL MANAGEMENT ====================
+
+// Expenses - Track business expenses
+model Expense {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  title           String   // Short description
+  category        String   // equipment, software, travel, marketing, maintenance, utilities, supplies, other
+  amount          Float
+  paymentMethod   String?  // cash, bank_transfer, credit_card, check
+  receiptUrl      String?  // Upload receipt/invoice
+  vendor          String?  // Who was paid
+  description     String?  @db.String
+  date            DateTime // Date of expense
+  isPaid          Boolean  @default(true)
+  notes           String?  @db.String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([category])
+  @@index([date])
+}
+
+// Salary Payments - Track team member salaries
+model SalaryPayment {
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  teamMemberId    String     @db.ObjectId
+  teamMemberName  String     // Store name for history
+  teamMemberRole  String     // Store role for context
+  amount          Float
+  month           String     // e.g., "2025-01" for January 2025
+  paymentDate     DateTime
+  paymentMethod   String?    // cash, bank_transfer, check
+  bonus           Float      @default(0) // Additional bonus
+  deductions      Float      @default(0) // Any deductions
+  netAmount       Float      // amount + bonus - deductions
+  status          String     @default("pending") // pending, paid, cancelled
+  notes           String?    @db.String
+  receiptUrl      String?    // Payment receipt/proof
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  teamMember      TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  
+  @@index([teamMemberId])
+  @@index([month])
+  @@index([status])
 }

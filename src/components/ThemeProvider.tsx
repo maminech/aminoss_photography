@@ -14,10 +14,18 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system');
-  const [actualTheme, setActualTheme] = useState<'light' | 'dark'>('dark');
+  const [actualTheme, setActualTheme] = useState<'light' | 'dark'>(() => {
+    // Initialize from system preference or default to light to prevent flash
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+  const [mounted, setMounted] = useState(false);
 
   // Initialize theme from localStorage on mount
   useEffect(() => {
+    setMounted(true);
     const stored = localStorage.getItem('theme') as Theme;
     if (stored) {
       setThemeState(stored);
@@ -65,6 +73,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(newTheme);
     localStorage.setItem('theme', newTheme);
   };
+
+  // Prevent flash of unstyled content
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <ThemeContext.Provider value={{ theme, actualTheme, setTheme }}>

@@ -52,10 +52,32 @@ export async function POST(
         },
       }),
     ]);
+
+    // Generate photobooth-style print
+    let photoboothPrintUrl = null;
+    try {
+      const photoboothResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/events/${params.eventId}/guest-upload/generate-photobooth`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ photoId }),
+        }
+      );
+
+      if (photoboothResponse.ok) {
+        const photoboothData = await photoboothResponse.json();
+        photoboothPrintUrl = photoboothData.photoboothPrintUrl;
+      }
+    } catch (photoboothError) {
+      console.error('Photobooth generation failed (non-critical):', photoboothError);
+      // Continue even if photobooth generation fails
+    }
     
     return NextResponse.json({
       success: true,
       message: 'Print photo selected successfully',
+      photoboothPrintUrl,
     });
     
   } catch (error: any) {

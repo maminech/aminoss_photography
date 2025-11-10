@@ -5,9 +5,12 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { 
   FiImage, FiSettings, FiLogOut, FiMenu, FiX, 
-  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo, FiMail, FiBook, FiInstagram
+  FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo, FiMail, FiBook, FiInstagram,
+  FiDollarSign, FiShoppingBag, FiTrendingUp
 } from 'react-icons/fi';
 import { MdPalette } from 'react-icons/md';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import NotificationManager from '@/components/NotificationManager';
 
 interface DashboardStats {
   totalPhotos: number;
@@ -17,6 +20,12 @@ interface DashboardStats {
   totalBookings: number;
   totalTeamMembers: number;
   unreadMessages: number;
+  tracking: number;
+  // Financial stats
+  totalRevenue?: number;
+  unpaidInvoices?: number;
+  monthlyExpenses?: number;
+  profit?: number;
 }
 
 export default function AdminDashboard() {
@@ -30,6 +39,7 @@ export default function AdminDashboard() {
     totalBookings: 0,
     totalTeamMembers: 0,
     unreadMessages: 0,
+    tracking: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -60,15 +70,27 @@ export default function AdminDashboard() {
     { name: 'Team', icon: FiUsers, href: '/admin/dashboard/team' },
     { name: 'Instagram', icon: FiInstagram, href: '/admin/dashboard/instagram' },
     { name: 'Clients', icon: FiUser, href: '/admin/dashboard/clients' },
-    { name: 'Packages', icon: FiPackage, href: '/admin/dashboard/packs' },
-    { name: 'Packages Manager', icon: FiPackage, href: '/admin/dashboard/packages-manager' },
+    { name: 'Packages (Devis)', icon: FiPackage, href: '/admin/dashboard/packs' },
     { name: 'Calendar & Bookings', icon: FiCalendar, href: '/admin/dashboard/calendar' },
+    { name: 'Bookings Tracking', icon: FiCheck, href: '/admin/bookings-tracking', badge: stats.tracking > 0 ? stats.tracking : undefined },
     { name: 'Client Requests', icon: FiCheck, href: '/admin/dashboard/client-requests' },
     { name: 'Calendar Integration', icon: FiCalendar, href: '/admin/dashboard/calendar-integration' },
     { name: 'Photobooks', icon: FiBook, href: '/admin/dashboard/photobooks' },
     { name: 'Remerciements', icon: FiMail, href: '/admin/dashboard/remerciements' },
     { name: 'Messages', icon: FiMail, href: '/admin/dashboard/messages', badge: stats.unreadMessages > 0 ? stats.unreadMessages : undefined },
     { name: 'Selected for Print', icon: FiCheck, href: '/admin/dashboard/selected-photos' },
+    { 
+      name: 'Finances', 
+      icon: FiDollarSign, 
+      href: '/admin/finances',
+      badge: stats.unpaidInvoices && stats.unpaidInvoices > 0 ? stats.unpaidInvoices : undefined,
+      subItems: [
+        { name: 'Dashboard', href: '/admin/finances' },
+        { name: 'Invoices', href: '/admin/invoices' },
+        { name: 'Expenses', href: '/admin/expenses' },
+        { name: 'Salaries', href: '/admin/salaries' },
+      ]
+    },
     { name: 'Settings', icon: FiSettings, href: '/admin/dashboard/settings' },
   ];
 
@@ -121,24 +143,40 @@ export default function AdminDashboard() {
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {menuItems.map((item) => {
               const Icon = item.icon;
+              const hasSubItems = 'subItems' in item && item.subItems && item.subItems.length > 0;
+              
               return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                    item.active
-                      ? 'bg-primary text-white'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium flex-1">{item.name}</span>
-                  {item.badge && item.badge > 0 && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white">
-                      {item.badge}
-                    </span>
+                <div key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                      item.active
+                        ? 'bg-primary text-white'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium flex-1">{item.name}</span>
+                    {item.badge && item.badge > 0 && (
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                  {hasSubItems && (
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+                      {item.subItems!.map((subItem: any) => (
+                        <Link
+                          key={subItem.name}
+                          href={subItem.href}
+                          className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700/50 transition"
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
                   )}
-                </Link>
+                </div>
               );
             })}
           </nav>
@@ -220,15 +258,105 @@ export default function AdminDashboard() {
             />
           </div>
 
+          {/* Notification Manager */}
+          <div className="mb-8">
+            <NotificationManager />
+          </div>
+
+          {/* Financial Stats (if available) */}
+          {(stats.totalRevenue !== undefined || stats.unpaidInvoices !== undefined || stats.monthlyExpenses !== undefined || stats.profit !== undefined) && (
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  Financial Overview
+                </h2>
+                <Link
+                  href="/admin/finances"
+                  className="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
+                >
+                  View Details →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.totalRevenue !== undefined && (
+                  <StatCard
+                    title="Monthly Revenue"
+                    value={`${stats.totalRevenue.toLocaleString()} TND`}
+                    icon={FiTrendingUp}
+                    color="blue"
+                    subtitle="This month"
+                  />
+                )}
+                {stats.unpaidInvoices !== undefined && (
+                  <StatCard
+                    title="Unpaid Invoices"
+                    value={stats.unpaidInvoices.toString()}
+                    icon={FiShoppingBag}
+                    color="red"
+                    subtitle="Awaiting payment"
+                    link="/admin/invoices"
+                  />
+                )}
+                {stats.monthlyExpenses !== undefined && (
+                  <StatCard
+                    title="Monthly Expenses"
+                    value={`${stats.monthlyExpenses.toLocaleString()} TND`}
+                    icon={FiDollarSign}
+                    color="orange"
+                    subtitle="This month"
+                    link="/admin/expenses"
+                  />
+                )}
+                {stats.profit !== undefined && (
+                  <StatCard
+                    title="Net Profit"
+                    value={`${stats.profit.toLocaleString()} TND`}
+                    icon={FiDollarSign}
+                    color="green"
+                    subtitle="Revenue - Expenses"
+                  />
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Quick Actions */}
           <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Quick Actions
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <ActionButton
-                title="Sync Photos from Cloudinary"
-                description="Import all photos from your Cloudinary folder"
+                title="Create Invoice"
+                description="Generate a new invoice for a client"
+                href="/admin/invoices?action=create"
+                icon={FiFileText}
+                color="blue"
+              />
+              <ActionButton
+                title="Add Expense"
+                description="Record a new business expense"
+                href="/admin/expenses?action=create"
+                icon={FiDollarSign}
+                color="red"
+              />
+              <ActionButton
+                title="View Bookings"
+                description="Manage client bookings and reservations"
+                href="/admin/bookings"
+                icon={FiCalendar}
+                color="green"
+              />
+              <ActionButton
+                title="Manage Photobooks"
+                description="Review and process photobook orders"
+                href="/admin/dashboard/photobooks"
+                icon={FiBook}
+                color="purple"
+              />
+              <ActionButton
+                title="Sync Photos"
+                description="Import photos from Cloudinary"
                 href="/admin/dashboard/photos"
                 icon={FiImage}
                 color="blue"
@@ -242,10 +370,24 @@ export default function AdminDashboard() {
               />
               <ActionButton
                 title="Edit Content"
-                description="Update about page, services, and contact info"
+                description="Update about, services, and contact"
                 href="/admin/dashboard/content"
                 icon={FiFileText}
                 color="green"
+              />
+              <ActionButton
+                title="Team Management"
+                description="Manage team members and roles"
+                href="/admin/team"
+                icon={FiUsers}
+                color="orange"
+              />
+              <ActionButton
+                title="📱 Mobile App"
+                description="Download admin app for Android"
+                href="/admin/mobile-app"
+                icon={FiHome}
+                color="indigo"
               />
             </div>
           </div>
@@ -280,6 +422,9 @@ export default function AdminDashboard() {
           </div>
         </main>
       </div>
+
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   );
 }

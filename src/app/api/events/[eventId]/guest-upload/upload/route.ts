@@ -12,6 +12,9 @@ cloudinary.config({
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+// Allow up to 60 seconds for upload
+export const maxDuration = 60;
+
 export async function POST(
   req: Request,
   { params }: { params: { eventId: string } }
@@ -22,6 +25,13 @@ export async function POST(
     const uploaderName = formData.get('uploaderName') as string;
     const message = formData.get('message') as string;
     const files = formData.getAll('files') as File[];
+    
+    console.log('Upload request:', {
+      uploadGroupId,
+      uploaderName,
+      fileCount: files.length,
+      eventId: params.eventId
+    });
     
     // Validation
     if (!uploadGroupId || !uploaderName || !message) {

@@ -16,13 +16,14 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiDownloadCloud,
-  FiBook
+  FiBook,
+  FiUsers
 } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
 
-// Dynamically import PhotobookEditorV3 (client-side only)
-const PhotobookEditorV3 = dynamic(
-  () => import('@/components/PhotobookEditorV3'),
+// Dynamically import SimplePhotobookEditor (client-side only)
+const SimplePhotobookEditor = dynamic(
+  () => import('@/components/SimplePhotobookEditor'),
   { ssr: false }
 );
 
@@ -230,6 +231,14 @@ export default function ClientGalleryPage() {
                 <span className="font-semibold text-primary">{selectedPhotos.size}</span> of{' '}
                 <span className="font-semibold text-gray-900 dark:text-gray-100">{gallery.photos.length}</span> selected
               </div>
+              <button
+                onClick={() => router.push(`/client/gallery/${params.id}/guest-uploads`)}
+                className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition touch-manipulation text-sm md:text-base font-semibold"
+              >
+                <FiUsers className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Guest Uploads</span>
+                <span className="sm:hidden">Guests</span>
+              </button>
               {gallery.allowDownload && selectedPhotos.size > 0 && (
                 <button
                   onClick={downloadAllSelected}
@@ -350,53 +359,45 @@ export default function ClientGalleryPage() {
 
       {/* Photobook Editor */}
       {photobookEditorOpen && gallery && (
-        <div className="fixed inset-0 z-[200] bg-white dark:bg-dark-900">
-          <PhotobookEditorV3
-            galleryId={gallery.id}
-            photos={gallery.photos.filter(p => selectedPhotos.has(p.id)).map(p => ({
-              id: p.id,
-              url: p.url,
-              width: p.width,
-              height: p.height,
-              title: p.title,
-            }))}
-            onSave={async (design) => {
-              try {
-                setSaving(true);
-                const response = await fetch('/api/photobooks', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    galleryId: gallery.id,
-                    design,
-                    name: `${gallery.name} - Photobook`,
-                  }),
-                });
-                if (response.ok) {
-                  setPhotobookEditorOpen(false);
-                  setShowPhotobookConfirmation(true);
-                  setTimeout(() => setShowPhotobookConfirmation(false), 5000);
-                } else {
-                  const data = await response.json();
-                  alert(data.error || 'Failed to save photobook. Please try again.');
-                }
-              } catch (error) {
-                console.error('Error saving photobook:', error);
-                alert('Failed to save photobook. Please check your connection and try again.');
-              } finally {
-                setSaving(false);
+        <SimplePhotobookEditor
+          galleryId={gallery.id}
+          photos={gallery.photos.filter(p => selectedPhotos.has(p.id)).map(p => ({
+            id: p.id,
+            url: p.url,
+            width: p.width,
+            height: p.height,
+            title: p.title,
+          }))}
+          onClose={() => setPhotobookEditorOpen(false)}
+          onSave={async (design: any) => {
+            try {
+              setSaving(true);
+              const response = await fetch('/api/photobooks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Include cookies for authentication
+                body: JSON.stringify({
+                  galleryId: gallery.id,
+                  design,
+                  name: `${gallery.name} - Photobook`,
+                }),
+              });
+              if (response.ok) {
+                setPhotobookEditorOpen(false);
+                setShowPhotobookConfirmation(true);
+                setTimeout(() => setShowPhotobookConfirmation(false), 5000);
+              } else {
+                const data = await response.json();
+                alert(data.error || 'Failed to save photobook. Please try again.');
               }
-            }}
-          />
-          {/* Close button */}
-          <button
-            onClick={() => setPhotobookEditorOpen(false)}
-            className="fixed top-4 right-4 z-[250] p-3 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition"
-            title="Close Photobook Editor"
-          >
-            <FiX className="w-6 h-6" />
-          </button>
-        </div>
+            } catch (error) {
+              console.error('Error saving photobook:', error);
+              alert('Failed to save photobook. Please check your connection and try again.');
+            } finally {
+              setSaving(false);
+            }
+          }}
+        />
       )}
 
       {/* Main Content */}
@@ -438,7 +439,7 @@ export default function ClientGalleryPage() {
                     transition={{ delay: index * 0.02 }}
                     className={`relative aspect-square bg-gray-200 dark:bg-dark-700 rounded-lg overflow-hidden group transition-all ${
                       isSelected
-                        ? 'ring-4 ring-primary shadow-xl'
+                        ? 'ring-4 ring-green-500 shadow-xl shadow-green-500/20'
                         : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
                     }`}
                   >

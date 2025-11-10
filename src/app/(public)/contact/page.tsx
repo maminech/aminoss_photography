@@ -1,10 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiMail, FiMapPin, FiInstagram, FiFacebook, FiYoutube, FiSend, FiPhone } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import NavigationButton from '@/components/NavigationButton';
+
+interface ContactSettings {
+  email?: string;
+  phone?: string;
+  whatsappNumber?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  youtubeUrl?: string;
+  location?: string;
+}
 
 export default function ContactPage() {
   const { currentTheme } = useLayoutTheme();
@@ -17,6 +27,23 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [contactSettings, setContactSettings] = useState<ContactSettings>({
+    email: 'aminoss.photography@gmail.com',
+    phone: '+216 94 124 796',
+    whatsappNumber: '21694124796',
+    instagramUrl: 'https://www.instagram.com/ami_noss.photography',
+    facebookUrl: 'https://www.facebook.com/mohamed.chalghoum.266885',
+    youtubeUrl: 'https://youtube.com/@aminoss',
+    location: 'Sousse, Tunisia',
+  });
+
+  // Load contact settings on mount
+  useEffect(() => {
+    fetch('/api/settings/contact')
+      .then(res => res.json())
+      .then(data => setContactSettings(prev => ({ ...prev, ...data })))
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +63,16 @@ export default function ContactPage() {
 
       if (response.ok) {
         setStatus('success');
+        
+        // Prepare WhatsApp message
+        const whatsappNumber = contactSettings.whatsappNumber || '21694124796';
+        const whatsappMessage = `Salut Aminoss, ${formData.name} vous a contacté.\n\nEmail: ${formData.email}${formData.phone ? `\nTéléphone: ${formData.phone}` : ''}\n\nMessage:\n${formData.message}`;
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        
+        // Open WhatsApp in new tab/window
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        
+        // Reset form
         setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
         setStatus('error');
@@ -110,8 +147,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Phone</h3>
-                      <a href="tel:+1234567890" className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
-                        +1 (800) 456 37 11
+                      <a href={`tel:${contactSettings.phone}`} className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
+                        {contactSettings.phone || '+216 94 124 796'}
                       </a>
                     </div>
                   </div>
@@ -122,8 +159,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Email</h3>
-                      <a href="mailto:contact@aminossphotography.com" className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
-                        contact@aminossphotography.com
+                      <a href={`mailto:${contactSettings.email}`} className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
+                        {contactSettings.email || 'aminoss.photography@gmail.com'}
                       </a>
                     </div>
                   </div>
@@ -135,7 +172,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Location</h3>
                       <p className="text-gray-700 font-lato">
-                        New York, NY<br />
+                        {contactSettings.location || 'Sousse, Tunisia'}<br />
                         Available Worldwide
                       </p>
                     </div>
@@ -146,30 +183,36 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-4">Follow Me</h3>
                   <div className="flex gap-4">
-                    <a
-                      href="https://instagram.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
-                    >
-                      <FiInstagram className="w-5 h-5" />
-                    </a>
-                    <a
-                      href="https://facebook.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
-                    >
-                      <FiFacebook className="w-5 h-5" />
-                    </a>
-                    <a
-                      href="https://youtube.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
-                    >
-                      <FiYoutube className="w-5 h-5" />
-                    </a>
+                    {contactSettings.instagramUrl && (
+                      <a
+                        href={contactSettings.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
+                      >
+                        <FiInstagram className="w-5 h-5" />
+                      </a>
+                    )}
+                    {contactSettings.facebookUrl && (
+                      <a
+                        href={contactSettings.facebookUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
+                      >
+                        <FiFacebook className="w-5 h-5" />
+                      </a>
+                    )}
+                    {contactSettings.youtubeUrl && (
+                      <a
+                        href={contactSettings.youtubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:bg-[#d4af37] hover:border-[#d4af37] hover:text-white transition-all duration-300"
+                      >
+                        <FiYoutube className="w-5 h-5" />
+                      </a>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -425,10 +468,10 @@ export default function ContactPage() {
                   <div className="min-w-0 flex-1">
                     <h3 className="font-semibold text-base sm:text-lg mb-1 text-gray-900 dark:text-gray-100">Email</h3>
                     <a
-                      href="mailto:aminoss.photography@gmail.com"
+                      href={`mailto:${contactSettings.email}`}
                       className="text-sm sm:text-base text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors break-all"
                     >
-                      aminoss.photography@gmail.com
+                      {contactSettings.email || 'aminoss.photography@gmail.com'}
                     </a>
                   </div>
                 </div>
@@ -440,7 +483,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-base sm:text-lg mb-1 text-gray-900 dark:text-gray-100">Location</h3>
                     <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                      Sousse, Tunisia
+                      {contactSettings.location || 'Sousse, Tunisia'}
                     </p>
                   </div>
                 </div>
@@ -450,22 +493,39 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Follow Me</h3>
                 <div className="flex gap-3 sm:gap-4">
-                  {[
-                    { icon: FiInstagram, href: 'https://www.instagram.com/ami_noss.photography', label: 'Instagram' },
-                    { icon: FiFacebook, href: 'https://www.facebook.com/mohamed.chalghoum.266885', label: 'Facebook' },
-                    { icon: FiYoutube, href: 'https://youtube.com/@aminoss', label: 'YouTube' },
-                  ].map((social) => (
+                  {contactSettings.instagramUrl && (
                     <a
-                      key={social.label}
-                      href={social.href}
+                      href={contactSettings.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-3.5 sm:p-4 min-w-[48px] min-h-[48px] bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-colors group flex items-center justify-center"
-                      aria-label={social.label}
+                      aria-label="Instagram"
                     >
-                      <social.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <FiInstagram className="w-5 h-5 sm:w-6 sm:h-6" />
                     </a>
-                  ))}
+                  )}
+                  {contactSettings.facebookUrl && (
+                    <a
+                      href={contactSettings.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3.5 sm:p-4 min-w-[48px] min-h-[48px] bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-colors group flex items-center justify-center"
+                      aria-label="Facebook"
+                    >
+                      <FiFacebook className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </a>
+                  )}
+                  {contactSettings.youtubeUrl && (
+                    <a
+                      href={contactSettings.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3.5 sm:p-4 min-w-[48px] min-h-[48px] bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-colors group flex items-center justify-center"
+                      aria-label="YouTube"
+                    >
+                      <FiYoutube className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </a>
+                  )}
                 </div>
               </div>
 
