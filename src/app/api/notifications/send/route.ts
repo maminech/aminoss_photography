@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get all push subscriptions
-    const subscriptions = await prisma.pushSubscription.findMany();
+    const subscriptions = await (prisma as any).pushSubscription?.findMany() || [];
 
     if (subscriptions.length === 0) {
       return NextResponse.json({ message: 'No subscriptions found', sentCount: 0 });
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         
         // If subscription is invalid (410 Gone), delete it
         if (error.statusCode === 410) {
-          await prisma.pushSubscription.delete({
+          await (prisma as any).pushSubscription?.delete({
             where: { endpoint: subscription.endpoint }
           }).catch(() => {});
         }

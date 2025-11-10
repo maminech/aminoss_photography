@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Delete subscription
-    await prisma.pushSubscription.delete({
+    await (prisma as any).pushSubscription?.delete({
       where: { endpoint }
     });
 

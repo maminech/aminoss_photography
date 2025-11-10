@@ -24,7 +24,7 @@ interface NotificationData {
 export async function sendPushNotification(data: NotificationData) {
   try {
     // Get all push subscriptions
-    const subscriptions = await prisma.pushSubscription.findMany();
+    const subscriptions = await (prisma as any).pushSubscription?.findMany() || [];
 
     if (subscriptions.length === 0) {
       console.log('No push subscriptions found');
@@ -55,7 +55,7 @@ export async function sendPushNotification(data: NotificationData) {
         
         // If subscription is invalid (410 Gone), delete it
         if (error.statusCode === 410) {
-          await prisma.pushSubscription.delete({
+          await (prisma as any).pushSubscription?.delete({
             where: { endpoint: subscription.endpoint }
           }).catch(() => {});
         }

@@ -22,15 +22,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Clear Google Calendar credentials
-    await prisma.siteSettings.update({
+    await (prisma.siteSettings.update({
       where: { id: settings.id },
       data: {
         googleCalendarAccessToken: null,
         googleCalendarRefreshToken: null,
         googleCalendarEmail: null,
         googleCalendarLastSync: null,
-      },
-    });
+      } as any,
+    }) as any);
 
     return NextResponse.json({ message: 'Google Calendar disconnected successfully' });
   } catch (error: any) {

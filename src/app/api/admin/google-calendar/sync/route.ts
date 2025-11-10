@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const settings = await prisma.siteSettings.findFirst();
+    const settings = await prisma.siteSettings.findFirst() as any;
     
     if (!settings?.googleCalendarAccessToken) {
       return NextResponse.json(
@@ -24,12 +24,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Update last sync timestamp
-    await prisma.siteSettings.update({
+    await (prisma.siteSettings.update({
       where: { id: settings.id },
       data: {
         googleCalendarLastSync: new Date(),
-      },
-    });
+      } as any,
+    }) as any);
 
     return NextResponse.json({ 
       message: 'Calendar synced successfully',

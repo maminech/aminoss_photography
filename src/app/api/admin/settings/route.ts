@@ -10,7 +10,7 @@ export async function GET() {
     
     if (!settings) {
       // Create default settings if none exist
-      settings = await prisma.siteSettings.create({
+      settings = await (prisma.siteSettings.create({
         data: {
           siteName: 'Aminoss Photography',
           tagline: 'Capturing Moments, Creating Memories',
@@ -26,8 +26,8 @@ export async function GET() {
           aboutTitle: 'About Me',
           aboutContent: 'Your story here...',
           services: [],
-        },
-      });
+        } as any,
+      }) as any);
     }
 
     return NextResponse.json(settings);

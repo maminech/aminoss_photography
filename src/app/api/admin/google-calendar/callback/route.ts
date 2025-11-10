@@ -70,25 +70,25 @@ export async function GET(req: NextRequest) {
     const settings = await prisma.siteSettings.findFirst();
     
     if (settings) {
-      await prisma.siteSettings.update({
+      await (prisma.siteSettings.update({
         where: { id: settings.id },
         data: {
           googleCalendarAccessToken: tokens.access_token,
           googleCalendarRefreshToken: tokens.refresh_token,
           googleCalendarEmail: userInfo.email,
           googleCalendarLastSync: new Date(),
-        },
-      });
+        } as any,
+      }) as any);
     } else {
-      await prisma.siteSettings.create({
+      await (prisma.siteSettings.create({
         data: {
           googleCalendarAccessToken: tokens.access_token,
           googleCalendarRefreshToken: tokens.refresh_token,
           googleCalendarEmail: userInfo.email,
           googleCalendarLastSync: new Date(),
           aboutContent: '',
-        },
-      });
+        } as any,
+      }) as any);
     }
 
     // Redirect to calendar integration page with success

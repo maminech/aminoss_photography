@@ -15,7 +15,7 @@ export async function GET() {
     }
 
     // Check if Google Calendar credentials exist in database
-    const settings = await prisma.siteSettings.findFirst();
+    const settings = await prisma.siteSettings.findFirst() as any;
     
     const isConnected = !!(
       settings?.googleCalendarAccessToken && 

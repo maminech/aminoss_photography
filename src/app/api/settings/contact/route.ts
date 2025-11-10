@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 // GET: Fetch public contact and social settings
 export async function GET() {
   try {
-    const settings = await prisma.siteSettings.findFirst({
+    const settings = await (prisma.siteSettings.findFirst({
       select: {
         email: true,
         phone: true,
@@ -16,7 +16,7 @@ export async function GET() {
         linkedinUrl: true,
         location: true,
       },
-    });
+    }) as any);
 
     // Return defaults if no settings exist
     if (!settings) {

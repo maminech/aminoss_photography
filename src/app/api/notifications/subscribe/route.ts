@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if subscription already exists
-    const existing = await prisma.pushSubscription.findUnique({
+    const existing = await (prisma as any).pushSubscription?.findUnique({
       where: { endpoint }
     });
 
     if (existing) {
       // Update existing subscription
-      await prisma.pushSubscription.update({
+      await (prisma as any).pushSubscription?.update({
         where: { endpoint },
         data: {
           keys,
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create new subscription
-    await prisma.pushSubscription.create({
+    await (prisma as any).pushSubscription?.create({
       data: {
         userId: session.user.id,
         endpoint,
