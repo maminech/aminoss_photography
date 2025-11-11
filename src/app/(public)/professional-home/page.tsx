@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -107,7 +107,7 @@ export default function ProfessionalHomePage() {
   }
 
   return (
-    <div className="novo-professional-home min-h-screen bg-white overflow-y-auto">
+    <div className="novo-professional-home fixed inset-0 bg-white overflow-hidden">
       {/* Fixed Navigation Overlay */}
       <motion.nav 
         initial={{ opacity: 0 }} 
@@ -239,8 +239,8 @@ export default function ProfessionalHomePage() {
         )}
       </motion.nav>
 
-      {/* Hero Section with Slider */}
-      <section className="relative w-full h-screen min-h-[600px]">
+      {/* Hero Section with Slider - Full Screen */}
+      <section className="fixed inset-0 w-full h-full">
         {/* Image Slider Background */}
         <div className="absolute inset-0">
           <AnimatePresence mode="wait">
@@ -406,250 +406,9 @@ export default function ProfessionalHomePage() {
         transition={{ duration: 0.8, delay: 2.8 }}
         className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-40 text-white/70 font-lato text-xs sm:text-sm hidden lg:block"
       >
-        © 2025 Innov8 Production
+        &copy; 2025 Innov8 Production
       </motion.div>
 
-      {/* Scroll Indicator - Hidden on mobile to avoid overlap */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 3, repeat: Infinity, repeatType: 'reverse', repeatDelay: 1 }}
-        className="hidden sm:flex fixed bottom-32 sm:bottom-28 left-1/2 -translate-x-1/2 z-20 flex-col items-center text-white/70"
-      >
-        <span className="text-xs uppercase tracking-widest mb-2 font-lato">Scroll Down</span>
-        <FiChevronRight className="w-5 h-5 rotate-90" />
-      </motion.div>
-
-      {/* Gallery Preview Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-        className="relative bg-white py-20 lg:py-32"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="text-center mb-12 lg:mb-16">
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-bold text-[#1a1a1a] mb-4"
-            >
-              Featured Portfolio
-            </motion.h2>
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '60px' }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="h-[2px] bg-[#d4af37] mx-auto mb-6"
-            />
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="text-gray-600 font-lato text-lg max-w-2xl mx-auto"
-            >
-              Explore our most captivating work, where every frame tells a unique story
-            </motion.p>
-          </div>
-
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6 mb-12">
-            {images.length > 0 ? (
-              images.slice(0, 8).map((image, index) => (
-                <motion.div
-                  key={image?.id || `img-${index}`}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="relative aspect-[3/4] group cursor-pointer overflow-hidden"
-                >
-                  <Image
-                    src={image?.url || '/placeholder.jpg'}
-                    alt={image?.title || 'Gallery image'}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    onError={(e) => {
-                      e.currentTarget.src = '/placeholder.jpg';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                    <div>
-                      <h3 className="text-white font-playfair text-lg font-semibold mb-1">{image?.title || 'Untitled'}</h3>
-                      <p className="text-white/80 font-lato text-sm">{image?.category || 'Photography'}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              // Show placeholder gallery when no images
-              <div className="col-span-full text-center py-12 text-gray-500">
-                <p className="text-lg font-playfair">No gallery images available yet</p>
-                <p className="text-sm font-lato mt-2">Check back soon for stunning portfolio work!</p>
-              </div>
-            )}
-          </div>
-
-          {/* View All Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <Link
-              href="/gallery"
-              className="inline-block px-10 py-4 bg-[#d4af37] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#1a1a1a] transition-all duration-300"
-            >
-              View Full Gallery
-            </Link>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* About Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-        className="relative bg-[#f8f8f8] py-20 lg:py-32"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-bold text-[#1a1a1a] mb-6">
-                About Our Studio
-              </h2>
-              <div className="w-16 h-[2px] bg-[#d4af37] mb-8" />
-              <p className="text-gray-600 font-lato text-lg leading-relaxed mb-6">
-                With over a decade of experience, we specialize in capturing authentic moments that become timeless memories. Our passion for photography drives us to create stunning visual narratives.
-              </p>
-              <p className="text-gray-600 font-lato text-lg leading-relaxed mb-8">
-                From intimate weddings to corporate events, we bring creativity, professionalism, and an artistic eye to every project.
-              </p>
-              <Link
-                href="/about"
-                className="inline-block px-10 py-4 border-2 border-[#1a1a1a] text-[#1a1a1a] font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#1a1a1a] hover:text-white transition-all duration-300"
-              >
-                Learn More
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="relative aspect-[4/5] overflow-hidden bg-gray-200"
-            >
-              {images.length > 0 && images[0] ? (
-                <Image
-                  src={images[0].url}
-                  alt="About us"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  onError={(e) => {
-                    e.currentTarget.src = '/placeholder.jpg';
-                  }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
-                  <svg className="w-20 h-20 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                  </svg>
-                </div>
-              )}
-            </motion.div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Footer */}
-      <footer className="bg-[#1a1a1a] text-white py-12 lg:py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
-            <div>
-              <h3 className="text-2xl font-playfair font-bold mb-4">INNOV8 PRODUCTION</h3>
-              <p className="text-white/70 font-lato text-sm leading-relaxed">
-                Creative wedding and event photography studio based in Moknine, Sousse, Tunisia. Led by Aymen Ben Ammar.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-lg font-playfair font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 font-lato text-sm">
-                <li><Link href="/gallery" className="text-white/70 hover:text-[#d4af37] transition-colors">Gallery</Link></li>
-                <li><Link href="/videos" className="text-white/70 hover:text-[#d4af37] transition-colors">Videos</Link></li>
-                <li><Link href="/about" className="text-white/70 hover:text-[#d4af37] transition-colors">About</Link></li>
-                <li><Link href="/contact" className="text-white/70 hover:text-[#d4af37] transition-colors">Contact</Link></li>
-                <li><Link href="/admin/dashboard" className="text-white/70 hover:text-[#d4af37] transition-colors">Admin</Link></li>
-                <li><Link href="/client/login" className="text-white/70 hover:text-[#d4af37] transition-colors">Client Portal</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-playfair font-semibold mb-4">Connect</h4>
-              <div className="flex space-x-4 mb-6">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all">
-                  <FiInstagram className="w-5 h-5" />
-                </a>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all">
-                  <FiFacebook className="w-5 h-5" />
-                </a>
-                <a href="mailto:innov8production@gmail.com" className="w-10 h-10 flex items-center justify-center border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all">
-                  <FiMail className="w-5 h-5" />
-                </a>
-              </div>
-              <p className="text-white/70 font-lato text-sm">
-                Email: innov8production@gmail.com<br />
-                WhatsApp: +216 55985565
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-white/50 font-lato text-sm">© 2025 Innov8 Production. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-
-      <style jsx global>{`
-        .novo-professional-home {
-          scroll-behavior: smooth;
-        }
-
-        /* Touch-friendly targets */
-        .touch-manipulation {
-          touch-action: manipulation;
-          -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Mobile menu animation */
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            max-height: 0;
-          }
-          to {
-            opacity: 1;
-            max-height: 1000px;
-          }
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-in-out;
-        }
-      `}</style>
     </div>
   );
 }

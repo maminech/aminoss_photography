@@ -18,7 +18,7 @@ export default function ModeSelectionPage() {
     switchTheme('professional');
     // Small delay to ensure theme is set
     setTimeout(() => {
-      router.push('/gallery');
+      router.push('/professional-home');
     }, 100);
   };
 
