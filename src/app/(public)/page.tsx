@@ -79,7 +79,10 @@ export default function HomePage() {
     // Check if user has selected a mode before
     if (typeof window !== 'undefined') {
       const modeSelected = localStorage.getItem('modeSelected');
-      if (!modeSelected) {
+      const currentPath = window.location.pathname;
+      
+      // Only redirect to mode selection if not already there and mode not selected
+      if (!modeSelected && currentPath !== '/mode-selection') {
         // First-time visitor - redirect to mode selection
         router.push('/mode-selection');
         return;
@@ -87,7 +90,7 @@ export default function HomePage() {
       
       // Check if user has visited before (for intro animation)
       const hasVisited = localStorage.getItem('hasVisited');
-      if (!hasVisited) {
+      if (!hasVisited && modeSelected) {
         setShowIntro(true);
       }
     }
