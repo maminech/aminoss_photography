@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -57,6 +58,7 @@ interface SiteSettings {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const { currentTheme } = useLayoutTheme();
   const [images, setImages] = useState<MediaItem[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
@@ -74,14 +76,22 @@ export default function HomePage() {
 
   useEffect(() => {
     setMounted(true);
-    // Check if user has visited before
+    // Check if user has selected a mode before
     if (typeof window !== 'undefined') {
+      const modeSelected = localStorage.getItem('modeSelected');
+      if (!modeSelected) {
+        // First-time visitor - redirect to mode selection
+        router.push('/mode-selection');
+        return;
+      }
+      
+      // Check if user has visited before (for intro animation)
       const hasVisited = localStorage.getItem('hasVisited');
       if (!hasVisited) {
         setShowIntro(true);
       }
     }
-  }, []);
+  }, [router]);
 
   const handleIntroComplete = () => {
     setShowIntro(false);
