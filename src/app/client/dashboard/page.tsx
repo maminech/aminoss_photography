@@ -106,28 +106,28 @@ export default function ClientDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Logo size="sm" variant="light" />
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Client Portal</h1>
-                <p className="text-xs text-gray-500">Welcome, {client?.name}</p>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Client Portal</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Welcome, {client?.name}</p>
               </div>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 transition"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
             >
               <FiLogOut className="w-4 h-4" />
               <span>Sign Out</span>
@@ -146,15 +146,15 @@ export default function ClientDashboardPage() {
               e.preventDefault();
               document.getElementById('galleries-section')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+            className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition group"
           >
             <div className="flex items-center space-x-3">
-              <div className="bg-blue-100 text-blue-600 p-3 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition">
+              <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-3 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition">
                 <FiImage className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">My Galleries</h3>
-                <p className="text-sm text-gray-500">{galleries.length} galleries</p>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">My Galleries</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{galleries.length} galleries</p>
               </div>
             </div>
           </Link>
@@ -162,15 +162,15 @@ export default function ClientDashboardPage() {
           {galleries.length > 0 && (
             <Link
               href={`/client/gallery/${galleries[0].id}/guest-uploads`}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+              className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition group"
             >
               <div className="flex items-center space-x-3">
-                <div className="bg-green-100 text-green-600 p-3 rounded-lg group-hover:bg-green-600 group-hover:text-white transition">
+                <div className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-lg group-hover:bg-green-600 group-hover:text-white transition">
                   <FiDownload className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Guest Uploads</h3>
-                  <p className="text-sm text-gray-500">Photos from guests</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Guest Uploads</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Photos from guests</p>
                 </div>
               </div>
             </Link>
@@ -179,15 +179,15 @@ export default function ClientDashboardPage() {
           {galleries.length > 0 && (
             <Link
               href="/client/photobooks"
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+              className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition group"
             >
               <div className="flex items-center space-x-3">
-                <div className="bg-purple-100 text-purple-600 p-3 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition">
+                <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 p-3 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition">
                   <FiCalendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">My Photobooks</h3>
-                  <p className="text-sm text-gray-500">Create & manage</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">My Photobooks</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Create & manage</p>
                 </div>
               </div>
             </Link>
@@ -196,15 +196,15 @@ export default function ClientDashboardPage() {
           {galleries.length > 0 && (
             <Link
               href="/client/photobooths"
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary-300 transition group"
+              className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition group"
             >
               <div className="flex items-center space-x-3">
-                <div className="bg-orange-100 text-orange-600 p-3 rounded-lg group-hover:bg-orange-600 group-hover:text-white transition">
+                <div className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 p-3 rounded-lg group-hover:bg-orange-600 group-hover:text-white transition">
                   <FiImage className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Photobooth Prints</h3>
-                  <p className="text-sm text-gray-500">View edited photos</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Photobooth Prints</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">View edited photos</p>
                 </div>
               </div>
             </Link>
@@ -212,22 +212,22 @@ export default function ClientDashboardPage() {
         </div>
 
         <div className="mb-8" id="galleries-section">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Galleries</h2>
-          <p className="text-gray-600">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Your Galleries</h2>
+          <p className="text-gray-600 dark:text-gray-400">
             View and download your professional photos
           </p>
         </div>
 
         {galleries.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <FiImage className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <FiImage className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               No Galleries Yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               Your photographer hasn't shared any galleries with you yet.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-500">
               Check back soon or contact your photographer for more information.
             </p>
           </div>
@@ -237,10 +237,10 @@ export default function ClientDashboardPage() {
               <Link
                 key={gallery.id}
                 href={`/client/gallery/${gallery.id}`}
-                className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition"
+                className="group bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition"
               >
                 {/* Cover Image */}
-                <div className="relative aspect-video bg-gray-100">
+                <div className="relative aspect-video bg-gray-100 dark:bg-gray-800">
                   {gallery.coverImage ? (
                     <Image
                       src={gallery.coverImage}
@@ -250,7 +250,7 @@ export default function ClientDashboardPage() {
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <FiImage className="w-16 h-16 text-gray-300" />
+                      <FiImage className="w-16 h-16 text-gray-300 dark:text-gray-600" />
                     </div>
                   )}
                   
@@ -264,16 +264,16 @@ export default function ClientDashboardPage() {
 
                 {/* Info */}
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition">
                     {gallery.name}
                   </h3>
                   {gallery.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
                       {gallery.description}
                     </p>
                   )}
 
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-1">
                       <FiImage className="w-4 h-4" />
                       <span>{gallery._count.photos} photos</span>
@@ -288,7 +288,7 @@ export default function ClientDashboardPage() {
                     )}
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 flex items-center space-x-1">
+                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 flex items-center space-x-1">
                     <FiCalendar className="w-3 h-3" />
                     <span>Added {formatDate(gallery.createdAt)}</span>
                   </div>

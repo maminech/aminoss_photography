@@ -16,6 +16,12 @@ export default function ProfessionalHomePage() {
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration errors and ensure component is mounted
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -23,10 +29,22 @@ export default function ProfessionalHomePage() {
         const res = await fetch('/api/admin/images?featured=true&limit=10');
         if (res.ok) {
           const data = await res.json();
-          setImages(data);
+          // Ensure we have valid data
+          if (Array.isArray(data) && data.length > 0) {
+            setImages(data);
+          } else {
+            // Fallback: load any images if no featured ones
+            const fallbackRes = await fetch('/api/admin/images?limit=10');
+            if (fallbackRes.ok) {
+              const fallbackData = await fallbackRes.json();
+              setImages(Array.isArray(fallbackData) ? fallbackData : []);
+            }
+          }
         }
       } catch (error) {
         console.error('Error loading images:', error);
+        // Continue with empty array - won't crash
+        setImages([]);
       } finally {
         setLoading(false);
       }
@@ -42,9 +60,35 @@ export default function ProfessionalHomePage() {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
-  const goToSlide = (index: number) => setCurrentSlide(index);
+  const nextSlide = () => {
+    if (images.length > 0) {
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+    }
+  };
+  
+  const prevSlide = () => {
+    if (images.length > 0) {
+      setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+    }
+  };
+  
+  const goToSlide = (index: number) => {
+    if (images.length > 0 && index >= 0 && index < images.length) {
+      setCurrentSlide(index);
+    }
+  };
+
+  // Don't render if not mounted (prevent hydration errors)
+  if (!mounted) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-lato">Initializing...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Don't render if not in professional mode
   if (currentTheme !== 'professional') {
@@ -208,7 +252,7 @@ export default function ProfessionalHomePage() {
         {/* Image Slider Background */}
         <div className="absolute inset-0">
           <AnimatePresence mode="wait">
-            {images.length > 0 && (
+            {images.length > 0 && images[currentSlide] ? (
               <motion.div 
                 key={currentSlide} 
                 initial={{ opacity: 0, scale: 1.1 }} 
@@ -223,10 +267,27 @@ export default function ProfessionalHomePage() {
                   fill 
                   className="object-cover" 
                   priority={currentSlide === 0} 
-                  quality={90} 
+                  quality={90}
+                  onError={(e) => {
+                    // Fallback on image load error
+                    e.currentTarget.src = '/placeholder.jpg';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               </motion.div>
+            ) : (
+              // Fallback when no images available
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white/20">
+                    <svg className="w-32 h-32 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                    <p className="text-lg font-playfair">No images available</p>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              </div>
             )}
           </AnimatePresence>
 
@@ -288,10 +349,15 @@ export default function ProfessionalHomePage() {
           <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none px-4">
             <motion.button
               onClick={async () => {
-                setIsTransitioning(true);
-                await new Promise(resolve => setTimeout(resolve, 300));
-                switchTheme('simple');
-                router.push('/');
+                try {
+                  setIsTransitioning(true);
+                  await new Promise(resolve => setTimeout(resolve, 300));
+                  switchTheme('simple');
+                  router.push('/');
+                } catch (error) {
+                  console.error('Error switching theme:', error);
+                  setIsTransitioning(false);
+                }
               }}
               disabled={isTransitioning}
               whileHover={{ scale: 1.05 }}
@@ -302,7 +368,13 @@ export default function ProfessionalHomePage() {
               {isTransitioning ? 'Switching...' : 'Simple Mode'}
             </motion.button>
             <button
-              onClick={() => switchTheme('professional')}
+              onClick={() => {
+                try {
+                  switchTheme('professional');
+                } catch (error) {
+                  console.error('Error switching theme:', error);
+                }
+              }}
               className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
             >
               <FiLayers className="w-4 h-4" />
@@ -408,30 +480,41 @@ export default function ProfessionalHomePage() {
 
           {/* Gallery Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6 mb-12">
-            {images.slice(0, 8).map((image, index) => (
-              <motion.div
-                key={image.id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative aspect-[3/4] group cursor-pointer overflow-hidden"
-              >
-                <Image
-                  src={image.url}
-                  alt={image.title || 'Gallery image'}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                  <div>
-                    <h3 className="text-white font-playfair text-lg font-semibold mb-1">{image.title || 'Untitled'}</h3>
-                    <p className="text-white/80 font-lato text-sm">{image.category || 'Photography'}</p>
+            {images.length > 0 ? (
+              images.slice(0, 8).map((image, index) => (
+                <motion.div
+                  key={image?.id || `img-${index}`}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="relative aspect-[3/4] group cursor-pointer overflow-hidden"
+                >
+                  <Image
+                    src={image?.url || '/placeholder.jpg'}
+                    alt={image?.title || 'Gallery image'}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    onError={(e) => {
+                      e.currentTarget.src = '/placeholder.jpg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                    <div>
+                      <h3 className="text-white font-playfair text-lg font-semibold mb-1">{image?.title || 'Untitled'}</h3>
+                      <p className="text-white/80 font-lato text-sm">{image?.category || 'Photography'}</p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))
+            ) : (
+              // Show placeholder gallery when no images
+              <div className="col-span-full text-center py-12 text-gray-500">
+                <p className="text-lg font-playfair">No gallery images available yet</p>
+                <p className="text-sm font-lato mt-2">Check back soon for stunning portfolio work!</p>
+              </div>
+            )}
           </div>
 
           {/* View All Button */}
@@ -490,16 +573,25 @@ export default function ProfessionalHomePage() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="relative aspect-[4/5] overflow-hidden"
+              className="relative aspect-[4/5] overflow-hidden bg-gray-200"
             >
-              {images[0] && (
+              {images.length > 0 && images[0] ? (
                 <Image
                   src={images[0].url}
                   alt="About us"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder.jpg';
+                  }}
                 />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                  <svg className="w-20 h-20 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                  </svg>
+                </div>
               )}
             </motion.div>
           </div>

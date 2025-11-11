@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Logo from './Logo';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
 import { useSession, signOut } from 'next-auth/react';
@@ -28,6 +28,8 @@ export default function Navbar() {
   const [isClient, setIsClient] = useState(false);
   const [clientName, setClientName] = useState('');
   const { currentTheme } = useLayoutTheme();
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const touchStartRef = useRef({ x: 0, y: 0 });
 
   // Check if user is a logged-in client
   useEffect(() => {
@@ -59,6 +61,52 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Touch gesture handlers for mobile menu
+  useEffect(() => {
+    if (!isOpen || !mobileMenuRef.current) return;
+
+    const menuElement = mobileMenuRef.current;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      };
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartRef.current.x;
+      const deltaY = touchEndY - touchStartRef.current.y;
+
+      // Swipe down to close (delta Y > 50 and not scrolling up)
+      if (deltaY > 50 && Math.abs(deltaX) < Math.abs(deltaY)) {
+        setIsOpen(false);
+      }
+      // Swipe up to close (delta Y < -50)
+      else if (deltaY < -50 && Math.abs(deltaX) < Math.abs(deltaY)) {
+        setIsOpen(false);
+      }
+      // Swipe left to close (delta X < -50)
+      else if (deltaX < -50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        setIsOpen(false);
+      }
+      // Swipe right to close (delta X > 50)
+      else if (deltaX > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        setIsOpen(false);
+      }
+    };
+
+    menuElement.addEventListener('touchstart', handleTouchStart, { passive: true });
+    menuElement.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      menuElement.removeEventListener('touchstart', handleTouchStart);
+      menuElement.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isOpen]);
 
   const handleClientLogout = async () => {
     try {
@@ -187,14 +235,29 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Navigation Backdrop */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            style={{ top: '4rem' }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Mobile Navigation */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={mobileMenuRef}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-gray-700"
+            className="md:hidden bg-white dark:bg-dark-800 border-t border-gray-200 dark:border-gray-700 touch-pan-y relative z-50"
           >
             <div className="px-4 py-6 space-y-1">
               {navLinks.map((link) => (

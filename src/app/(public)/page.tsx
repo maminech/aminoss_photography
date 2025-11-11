@@ -19,9 +19,18 @@ import dynamic from 'next/dynamic';
 import AnimatedIntro from '@/modules/intro/AnimatedIntro';
 import RemerciementsSection from '@/modules/remerciements/RemerciementsSection';
 import { useTheme } from 'next-themes';
+import ProfessionalModeErrorBoundary from '@/components/ProfessionalModeErrorBoundary';
 
 const ProfessionalHome = dynamic(() => import('./professional-home/page'), {
   ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-gray-600 font-lato">Loading Professional Mode...</p>
+      </div>
+    </div>
+  ),
 });
 
 interface VideoItem {
@@ -81,9 +90,13 @@ export default function HomePage() {
     }
   };
 
-  // If Professional theme, show Novo-style homepage
+  // If Professional theme, show Novo-style homepage with error boundary
   if (currentTheme === 'professional') {
-    return <ProfessionalHome />;
+    return (
+      <ProfessionalModeErrorBoundary>
+        <ProfessionalHome />
+      </ProfessionalModeErrorBoundary>
+    );
   }
 
   useEffect(() => {

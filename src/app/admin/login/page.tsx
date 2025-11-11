@@ -22,28 +22,33 @@ function AdminLoginForm() {
 
     console.log('=== LOGIN ATTEMPT ===');
     console.log('Email:', email);
-    console.log('Has Password:', !!password);
     console.log('Callback URL:', callbackUrl);
-    console.log('Current URL:', window.location.href);
 
     try {
-      console.log('Calling signIn...');
-      
-      // Use NextAuth's built-in redirect - this should handle everything
-      await signIn('credentials', {
+      // Sign in with redirect: false to get the result
+      const result = await signIn('credentials', {
         email,
         password,
-        callbackUrl,
+        redirect: false,
       });
-      
-      // If we reach here, there was an error (redirect didn't happen)
-      console.error('SignIn did not redirect - this means login failed');
-      setError('Login failed. Please check your credentials.');
-      setLoading(false);
-      
+
+      console.log('SignIn result:', result);
+
+      if (result?.error) {
+        console.error('Login failed:', result.error);
+        setError('Invalid email or password. Please try again.');
+        setLoading(false);
+      } else if (result?.ok) {
+        console.log('Login successful! Redirecting to:', callbackUrl);
+        // Successful login - manually redirect
+        window.location.href = callbackUrl;
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Login exception:', error);
-      setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setError('An error occurred during login. Please try again.');
       setLoading(false);
     }
   };
