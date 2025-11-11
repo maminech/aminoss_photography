@@ -7,41 +7,33 @@ import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 export default function ModeSelectionPage() {
   const router = useRouter();
-  const { setCurrentTheme } = useLayoutTheme();
+  const { switchTheme } = useLayoutTheme();
 
-  const handleProfessionalMode = async () => {
-    try {
-      // Save mode selection
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('modeSelected', 'true');
-      }
-      // Set theme
-      await setCurrentTheme('professional');
-      // Small delay to ensure theme is set
-      setTimeout(() => {
-        router.push('/gallery');
-      }, 100);
-    } catch (error) {
-      console.error('Error setting professional mode:', error);
+  const handleProfessionalMode = () => {
+    // Save mode selection
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('modeSelected', 'true');
     }
+    // Set theme
+    switchTheme('professional');
+    // Small delay to ensure theme is set
+    setTimeout(() => {
+      router.push('/gallery');
+    }, 100);
   };
 
-  const handleSimpleMode = async () => {
-    try {
-      // Save mode selection
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('modeSelected', 'true');
-      }
-      // Set theme
-      await setCurrentTheme('simple');
-      // Small delay to ensure theme is set
-      setTimeout(() => {
-        // Reload to simple home instead of pushing
-        window.location.href = '/';
-      }, 100);
-    } catch (error) {
-      console.error('Error setting simple mode:', error);
+  const handleSimpleMode = () => {
+    // Save mode selection
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('modeSelected', 'true');
     }
+    // Set theme
+    switchTheme('simple');
+    // Small delay to ensure theme is set
+    setTimeout(() => {
+      // Reload to simple home instead of pushing
+      window.location.href = '/';
+    }, 100);
   };
 
   return (
