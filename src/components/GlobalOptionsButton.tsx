@@ -4,9 +4,20 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSettings } from 'react-icons/fi';
 import ThemeSwitcherModal from './ThemeSwitcherModal';
+import { usePathname } from 'next/navigation';
+import { useLayoutTheme } from '@/contexts/ThemeContext';
 
 export default function GlobalOptionsButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const pathname = usePathname();
+  const { currentTheme } = useLayoutTheme();
+
+  // Hide on homepage when in simple mode (has its own menu with theme switcher)
+  const isSimpleHomepage = pathname === '/' && currentTheme === 'simple';
+
+  if (isSimpleHomepage) {
+    return null;
+  }
 
   return (
     <>

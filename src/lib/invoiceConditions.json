@@ -1,0 +1,24 @@
+{
+  "french": {
+    "title": "Conditions Générales",
+    "content": [
+      "• L'acompte versé est non remboursable en cas d'annulation.",
+      "• Le solde doit être réglé avant ou le jour de l'événement.",
+      "• Les fichiers numériques seront livrés sous 15-30 jours après l'événement.",
+      "• Les droits d'auteur des photographies appartiennent à Innov8 Production.",
+      "• Toute utilisation commerciale nécessite une autorisation écrite préalable.",
+      "• En cas de litige, seuls les tribunaux de Sousse seront compétents."
+    ]
+  },
+  "arabic": {
+    "title": "الشروط العامة",
+    "content": [
+      "• العربون المدفوع غير قابل للاسترجاع في حالة الإلغاء.",
+      "• يجب دفع الباقي قبل أو يوم الحدث.",
+      "• سيتم تسليم الملفات الرقمية خلال 15-30 يوما بعد الحدث.",
+      "• حقوق النشر للصور تعود لـ Innov8 Production.",
+      "• أي استخدام تجاري يتطلب إذنا كتابيا مسبقا.",
+      "• في حالة النزاع، تكون محاكم سوسة وحدها المختصة."
+    ]
+  }
+}

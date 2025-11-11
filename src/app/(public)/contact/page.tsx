@@ -28,13 +28,13 @@ export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [contactSettings, setContactSettings] = useState<ContactSettings>({
-    email: 'aminoss.photography@gmail.com',
-    phone: '+216 94 124 796',
-    whatsappNumber: '21694124796',
-    instagramUrl: 'https://www.instagram.com/ami_noss.photography',
-    facebookUrl: 'https://www.facebook.com/mohamed.chalghoum.266885',
-    youtubeUrl: 'https://youtube.com/@aminoss',
-    location: 'Sousse, Tunisia',
+    email: 'innov8production@gmail.com',
+    phone: '+216 55985565',
+    whatsappNumber: '21655985565',
+    instagramUrl: 'https://www.instagram.com/innov8_production',
+    facebookUrl: 'https://www.facebook.com/innovproduction',
+    youtubeUrl: 'https://youtube.com/@innov8production',
+    location: 'Moknine, Sousse Governorate, Tunisia',
   });
 
   // Load contact settings on mount
@@ -65,8 +65,8 @@ export default function ContactPage() {
         setStatus('success');
         
         // Prepare WhatsApp message
-        const whatsappNumber = contactSettings.whatsappNumber || '21694124796';
-        const whatsappMessage = `Salut Aminoss, ${formData.name} vous a contacté.\n\nEmail: ${formData.email}${formData.phone ? `\nTéléphone: ${formData.phone}` : ''}\n\nMessage:\n${formData.message}`;
+        const whatsappNumber = contactSettings.whatsappNumber || '21655985565';
+        const whatsappMessage = `Salut Innov8, ${formData.name} vous a contacté.\n\nEmail: ${formData.email}${formData.phone ? `\nTéléphone: ${formData.phone}` : ''}\n\nMessage:\n${formData.message}`;
         const encodedMessage = encodeURIComponent(whatsappMessage);
         
         // Open WhatsApp in new tab/window

@@ -19,7 +19,6 @@ import dynamic from 'next/dynamic';
 import AnimatedIntro from '@/modules/intro/AnimatedIntro';
 import RemerciementsSection from '@/modules/remerciements/RemerciementsSection';
 import { useTheme } from 'next-themes';
-import { FiMoon, FiSun } from 'react-icons/fi';
 
 const ProfessionalHome = dynamic(() => import('./professional-home/page'), {
   ssr: false,
@@ -50,7 +49,6 @@ interface SiteSettings {
 
 export default function HomePage() {
   const { currentTheme } = useLayoutTheme();
-  const { theme, setTheme } = useTheme();
   const [images, setImages] = useState<MediaItem[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({});
@@ -255,32 +253,18 @@ export default function HomePage() {
       <div className="min-h-screen bg-white dark:bg-dark-900">
       {/* Top Navigation Bar - Instagram Style */}
       <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 pb-2 flex justify-between items-center">
-        <h1 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white tracking-tight truncate pr-2">
-          {settings.siteName || 'Aminoss Photography'}
+        <h1 className="text-base sm:text-lg md:text-xl font-semibold text-white tracking-tight truncate pr-2">
+          {settings.siteName || 'Innov8 Production'}
         </h1>
         <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
-            aria-label="Toggle Dark Mode"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {mounted && theme === 'dark' ? (
-              <FiSun className="w-5 h-5 text-yellow-500 group-hover:text-yellow-400 transition-colors" />
-            ) : (
-              <FiMoon className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors" />
-            )}
-          </button>
-          
           {/* Menu Button */}
           <button
             onClick={() => setMenuOpen(true)}
-            className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
+            className="p-2.5 hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
             aria-label="Open Menu"
             title="Open Navigation Menu"
           >
-            <FiMenu className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors" />
+            <FiMenu className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
           </button>
         </div>
       </div>
@@ -321,7 +305,7 @@ export default function HomePage() {
                 className="text-sm xs:text-base sm:text-lg md:text-xl font-light text-gray-900 dark:text-gray-100 truncate"
                 style={{ fontFamily: settings.fontHeading || 'Poppins, sans-serif' }}
               >
-                {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'aminoss_photography'}
+                {settings.siteName?.toLowerCase().replace(/\s+/g, '_') || 'innov8.production'}
               </h1>
             </div>
 
@@ -356,10 +340,10 @@ export default function HomePage() {
                 {settings.tagline || 'Professional Photographer'}
               </div>
               <div className="text-gray-900 dark:text-gray-100 whitespace-pre-line break-words line-clamp-4 xs:line-clamp-none">
-                {settings.description || '📸 Capturing life\'s precious moments\n✨ Weddings | Portraits | Events\n📍 Available worldwide\n👇 Book your session'}
+                {settings.description || '📸 Creative Wedding & Event Photography\n✨ Weddings · Engagements · Events · Lifestyle\n📍 Moknine, Sousse, Tunisia\n👇 Book your session'}
               </div>
               <Link href="/contact" className="font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mt-0.5 xs:mt-1 inline-block break-all text-[11px] xs:text-xs sm:text-sm">
-                aminossphotography.com
+                innov8production.com
               </Link>
             </div>
           </div>

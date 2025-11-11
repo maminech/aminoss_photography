@@ -21,6 +21,11 @@ interface ContentData {
   aboutTitle: string;
   aboutContent: string;
   aboutImage: string;
+  aboutBio: string;
+  aboutStatProjects: string;
+  aboutStatFollowers: string;
+  aboutStatSatisfaction: string;
+  aboutStatExperience: string;
   services: Array<{
     title: string;
     icon: string;
@@ -177,7 +182,25 @@ export default function AdminContentPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                About Content
+                Short Bio (Summary)
+              </label>
+              <textarea
+                value={content.aboutBio || ''}
+                onChange={(e) =>
+                  setContent({ ...content, aboutBio: e.target.value })
+                }
+                rows={3}
+                className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="A brief introduction about yourself..."
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                This appears at the top of the About page
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                About Content (Full Story)
               </label>
               <textarea
                 value={content.aboutContent}
@@ -244,6 +267,75 @@ export default function AdminContentPage() {
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Upload to: /content/about/ folder (organized automatically)
+              </p>
+            </div>
+
+            {/* Statistics Section */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Statistics & Achievements</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Projects Completed
+                  </label>
+                  <input
+                    type="text"
+                    value={content.aboutStatProjects || '+270'}
+                    onChange={(e) =>
+                      setContent({ ...content, aboutStatProjects: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="+270"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Followers / Reach
+                  </label>
+                  <input
+                    type="text"
+                    value={content.aboutStatFollowers || '+47.6K'}
+                    onChange={(e) =>
+                      setContent({ ...content, aboutStatFollowers: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="+47.6K"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Client Satisfaction
+                  </label>
+                  <input
+                    type="text"
+                    value={content.aboutStatSatisfaction || '100%'}
+                    onChange={(e) =>
+                      setContent({ ...content, aboutStatSatisfaction: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="100%"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Years Experience
+                  </label>
+                  <input
+                    type="text"
+                    value={content.aboutStatExperience || '10+'}
+                    onChange={(e) =>
+                      setContent({ ...content, aboutStatExperience: e.target.value })
+                    }
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="10+"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                These stats appear in both Simple and Professional themes on the About page
               </p>
             </div>
 

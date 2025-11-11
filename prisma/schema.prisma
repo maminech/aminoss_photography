@@ -107,7 +107,7 @@ model Video {
 // Site Settings
 model SiteSettings {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  siteName          String   @default("Aminoss Photography")
+  siteName          String   @default("Innov8 Production")
   tagline           String   @default("Capturing Moments, Creating Memories")
   description       String?
   location          String   @default("Sousse, Tunisia")
@@ -142,6 +142,13 @@ model SiteSettings {
   aboutTitle        String   @default("About Me")
   aboutContent      String   @db.String
   aboutImage        String?
+  aboutBio          String   @default("Professional photographer capturing life's beautiful moments") @db.String
+  
+  // About Page Stats (for both themes)
+  aboutStatProjects     String   @default("+270")
+  aboutStatFollowers    String   @default("+47.6K")
+  aboutStatSatisfaction String   @default("100%")
+  aboutStatExperience   String   @default("10+")
   
   // Services
   services          Json[]   @default([])
@@ -308,10 +315,16 @@ model Booking {
   packId            String?  @db.ObjectId
   packageName       String?  // Store pack name for reference
   packagePrice      Float?   // Store pack price for reference
+  
+  // Multi-event support: New field for multiple events
+  events            Json[]   @default([]) // Array of {eventType, eventDate, timeSlot, location}
+  
+  // Legacy fields (kept for backward compatibility, uses first event from events array)
   eventType         String   // wedding, engagement, studio, portrait, fashion, event, commercial, other
   eventDate         DateTime // Requested date
   timeSlot          String   // morning, afternoon, evening, all-day
   location          String   // Event location
+  
   message           String?  @db.String
   status            String   @default("pending") // pending, approved, rejected, cancelled
   contractGenerated Boolean  @default(false) // Whether contract PDF was generated

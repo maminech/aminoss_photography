@@ -1,15 +1,15 @@
 'use client';
 
 /**
- * Enhanced Booking Form Component with Multi-Event Support
+ * Enhanced Booking Form Component
  * "Demande de devis" section for contact page
- * Includes WhatsApp integration and multiple events/dates support
+ * Includes WhatsApp integration and event type selection
  * TWO-STEP PROCESS: 1) Name + Phone → 2) Show Packages + Full Form
  */
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, MapPin, MessageSquare, Send, Check, AlertCircle, Package, ChevronRight, X, Edit } from 'lucide-react';
+import { Calendar, Clock, MapPin, MessageSquare, Send, Check, AlertCircle, Package, ChevronRight } from 'lucide-react';
 
 interface EventDetails {
   eventType: string;
@@ -22,6 +22,10 @@ interface BookingFormData {
   name: string;
   email: string;
   phone: string;
+  eventType: string;
+  eventDate: string;
+  timeSlot: string;
+  location: string;
   message: string;
   packageName?: string;
   packagePrice?: number;
@@ -84,6 +88,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
         if (response.ok) {
           const data = await response.json();
           if (data && data.length > 0) {
+            // Transform database packs to package format
             const transformedPackages = data.map((pack: any) => ({
               id: pack.id,
               name: pack.name,
@@ -98,6 +103,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
         }
       } catch (error) {
         console.error('Error loading packages:', error);
+        // Keep default packages on error
       } finally {
         setLoadingPackages(false);
       }
@@ -106,6 +112,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     fetchPackages();
   }, []);
 
+  // Helper function to get icon based on package name
   const getPackageIcon = (name: string): string => {
     const nameLower = name.toLowerCase();
     if (nameLower.includes('essentiel') || nameLower.includes('basic')) return '📸';
@@ -115,6 +122,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     return '📦';
   };
 
+  // Two-step state
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedPackage, setSelectedPackage] = useState<typeof packages[0] | null>(
     prefilledPackage ? packages.find(p => p.name === prefilledPackage) || null : null
@@ -124,15 +132,19 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     name: '',
     email: '',
     phone: '',
+    eventType: '',
+    eventDate: '',
+    timeSlot: '',
+    location: '',
     message: '',
     packageName: prefilledPackage,
     packagePrice: prefilledPrice,
-    events: [],
+    events: [], // Initialize empty events array
   });
 
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isAddingEvent, setIsAddingEvent] = useState(false);
+  const [isAddingEvent, setIsAddingEvent] = useState(false); // Toggle for event form
   const [currentEvent, setCurrentEvent] = useState<EventDetails>({
     eventType: '',
     eventDate: '',
@@ -160,9 +172,10 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
 
   // Add event to the list
   const handleAddEvent = () => {
+    // Validate current event
     if (!currentEvent.eventType || !currentEvent.eventDate || !currentEvent.timeSlot) {
       setStatus('error');
-      setErrorMessage('Veuillez remplir tous les champs requis de l\'événement');
+      setErrorMessage('Veuillez remplir tous les champs de l\'événement');
       setTimeout(() => {
         setStatus('idle');
         setErrorMessage('');
@@ -170,11 +183,13 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
       return;
     }
 
+    // Add to events array
     setFormData(prev => ({
       ...prev,
       events: [...prev.events, currentEvent],
     }));
 
+    // Reset current event form
     setCurrentEvent({
       eventType: '',
       eventDate: '',
@@ -184,6 +199,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     setIsAddingEvent(false);
   };
 
+  // Remove event from the list
   const handleRemoveEvent = (index: number) => {
     setFormData(prev => ({
       ...prev,
@@ -191,6 +207,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     }));
   };
 
+  // Edit existing event
   const handleEditEvent = (index: number) => {
     const eventToEdit = formData.events[index];
     setCurrentEvent(eventToEdit);
@@ -203,6 +220,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     setStatus('loading');
     setErrorMessage('');
 
+    // Validate: must have at least one event
     if (formData.events.length === 0) {
       setStatus('error');
       setErrorMessage('Veuillez ajouter au moins un événement');
@@ -214,8 +232,10 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     }
 
     try {
+      // Use first event for legacy fields
       const firstEvent = formData.events[0];
 
+      // Submit to API
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -223,11 +243,12 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
           clientName: formData.name,
           clientEmail: formData.email,
           clientPhone: formData.phone,
-          events: formData.events,
+          events: formData.events, // Send all events
+          // Legacy fields (for backward compatibility)
           eventType: firstEvent.eventType,
           requestedDate: firstEvent.eventDate,
           timeSlot: firstEvent.timeSlot,
-          location: firstEvent.location,
+          location: firstEvent.location || formData.location,
           message: formData.message,
           packName: formData.packageName || `Custom ${firstEvent.eventType}`,
         }),
@@ -237,18 +258,27 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
         throw new Error('Failed to submit booking');
       }
 
+      // Generate WhatsApp message
       const whatsappMessage = generateWhatsAppMessage();
+      
       setStatus('success');
 
+      // Redirect to WhatsApp (works better on mobile than window.open)
       setTimeout(() => {
+        // Use window.location.href for better mobile compatibility
         window.location.href = whatsappMessage;
       }, 1500);
 
+      // Reset form after successful submission
       setTimeout(() => {
         setFormData({
           name: '',
           email: '',
           phone: '',
+          eventType: '',
+          eventDate: '',
+          timeSlot: '',
+          location: '',
           message: '',
           events: [],
         });
@@ -263,6 +293,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
   };
 
   const generateWhatsAppMessage = () => {
+    // Build events list
     const eventsText = formData.events.map((event, index) => {
       const eventTypeLabel = eventTypes.find(t => t.value === event.eventType)?.label || event.eventType;
       const timeSlotLabel = timeSlots.find(t => t.value === event.timeSlot)?.label || event.timeSlot;
@@ -270,7 +301,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
       return `
 *Événement ${index + 1}:*
    📅 Type: ${eventTypeLabel}
-   📆 Date: ${new Date(event.eventDate).toLocaleDateString('fr-FR')}
+   � Date: ${new Date(event.eventDate).toLocaleDateString('fr-FR')}
    🕐 Horaire: ${timeSlotLabel}
    ${event.location ? `📍 Lieu: ${event.location}` : ''}`;
     }).join('\n');
@@ -291,10 +322,11 @@ ${eventsText}
 ${formData.message || 'Pas de message additionnel'}
 
 ---
-Envoyé depuis innov8production.com
+Envoyé depuis aminossphotography.com
     `.trim();
 
-    const phoneNumber = '21694124796';
+    // Replace with your WhatsApp number
+    const phoneNumber = '21694124796'; // Your WhatsApp number
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
   };
 
@@ -302,9 +334,11 @@ Envoyé depuis innov8production.com
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Handle Step 1 confirmation (name + phone)
   const handleStepOneConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate name and phone
     if (!formData.name.trim() || !formData.phone.trim()) {
       setStatus('error');
       setErrorMessage('Veuillez remplir votre nom et téléphone');
@@ -315,6 +349,7 @@ Envoyé depuis innov8production.com
       return;
     }
 
+    // Track that user is viewing packages (Step 2)
     try {
       await fetch('/api/bookings/track', {
         method: 'POST',
@@ -327,11 +362,14 @@ Envoyé depuis innov8production.com
       });
     } catch (error) {
       console.error('Tracking error:', error);
+      // Don't block user experience if tracking fails
     }
 
+    // Move to step 2
     setStep(2);
   };
 
+  // Handle package selection
   const handlePackageSelect = async (pkg: typeof packages[0]) => {
     setSelectedPackage(pkg);
     setFormData(prev => ({
@@ -340,6 +378,7 @@ Envoyé depuis innov8production.com
       packagePrice: pkg.price > 0 ? pkg.price : undefined,
     }));
 
+    // Track package selection
     try {
       await fetch('/api/bookings/track', {
         method: 'POST',
@@ -366,7 +405,7 @@ Envoyé depuis innov8production.com
         <p className="text-gray-600 dark:text-gray-300">
           {step === 1 
             ? 'Commencez par nous laisser vos coordonnées'
-            : 'Choisissez votre package et ajoutez vos événements'
+            : 'Choisissez votre package et complétez votre demande'
           }
         </p>
 
@@ -467,7 +506,7 @@ Envoyé depuis innov8production.com
             </p>
           </motion.form>
         ) : (
-          // STEP 2: Packages + Multi-Event Form
+          // STEP 2: Packages + Full Form
           <motion.div
             key="step2"
             initial={{ opacity: 0, x: 20 }}
@@ -524,296 +563,295 @@ Envoyé depuis innov8production.com
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email <span className="text-gray-400">(optionnel)</span>
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="input-field"
-                  placeholder="jean@example.com"
-                />
-              </div>
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Email <span className="text-gray-400">(optionnel)</span>
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            className="input-field"
+            placeholder="jean@example.com"
+          />
+        </div>
 
-              {/* Multi-Event Section */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <Calendar className="w-4 h-4 inline mr-2" />
-                    Événements / Events * {formData.events.length > 0 && `(${formData.events.length})`}
-                  </label>
-                  {!isAddingEvent && (
-                    <button
-                      type="button"
-                      onClick={() => setIsAddingEvent(true)}
-                      className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
-                    >
-                      <span>+ Ajouter un événement</span>
-                    </button>
-                  )}
-                </div>
+        {/* Multi-Event Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <Calendar className="w-4 h-4 inline mr-2" />
+              Événements / Events *
+            </label>
+            {!isAddingEvent && (
+              <button
+                type="button"
+                onClick={() => setIsAddingEvent(true)}
+                className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+              >
+                <span>+ Ajouter un événement</span>
+              </button>
+            )}
+          </div>
 
-                {/* Display added events */}
-                {formData.events.length > 0 && (
-                  <div className="space-y-3">
-                    {formData.events.map((event, index) => {
-                      const eventTypeLabel = eventTypes.find(t => t.value === event.eventType)?.label || event.eventType;
-                      const timeSlotLabel = timeSlots.find(t => t.value === event.timeSlot)?.label || event.timeSlot;
-                      const eventIcon = eventTypes.find(t => t.value === event.eventType)?.icon || '📅';
+          {/* Display added events */}
+          {formData.events.length > 0 && (
+            <div className="space-y-3">
+              {formData.events.map((event, index) => {
+                const eventTypeLabel = eventTypes.find(t => t.value === event.eventType)?.label || event.eventType;
+                const timeSlotLabel = timeSlots.find(t => t.value === event.timeSlot)?.label || event.timeSlot;
+                const eventIcon = eventTypes.find(t => t.value === event.eventType)?.icon || '📅';
 
-                      return (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="glass-card p-4 border border-primary/20 bg-primary/5"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">{eventIcon}</span>
-                                <h4 className="font-semibold text-gray-900 dark:text-white">
-                                  {eventTypeLabel.split(' / ')[0]}
-                                </h4>
-                                <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded-full">
-                                  #{index + 1}
-                                </span>
-                              </div>
-                              <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                                <p>📅 {new Date(event.eventDate).toLocaleDateString('fr-FR', { 
-                                  weekday: 'long', 
-                                  year: 'numeric', 
-                                  month: 'long', 
-                                  day: 'numeric' 
-                                })}</p>
-                                <p>🕐 {timeSlotLabel.split(' / ')[0]}</p>
-                                {event.location && <p>📍 {event.location}</p>}
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              <button
-                                type="button"
-                                onClick={() => handleEditEvent(index)}
-                                className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                                title="Modifier"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveEvent(index)}
-                                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                title="Supprimer"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Event Form (collapsible) */}
-                <AnimatePresence>
-                  {isAddingEvent && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="glass-card p-4 border-2 border-dashed border-primary/30 space-y-4"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                          <span className="text-primary">+</span>
-                          Nouvel événement
-                        </h4>
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="glass-card p-4 border border-primary/20 bg-primary/5"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-2xl">{eventIcon}</span>
+                          <h4 className="font-semibold text-gray-900 dark:text-white">
+                            {eventTypeLabel.split(' / ')[0]}
+                          </h4>
+                          <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded-full">
+                            #{index + 1}
+                          </span>
+                        </div>
+                        <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                          <p>📅 {new Date(event.eventDate).toLocaleDateString('fr-FR', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}</p>
+                          <p>🕐 {timeSlotLabel.split(' / ')[0]}</p>
+                          {event.location && <p>📍 {event.location}</p>}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
                         <button
                           type="button"
-                          onClick={() => setIsAddingEvent(false)}
-                          className="text-gray-400 hover:text-gray-600"
+                          onClick={() => handleEditEvent(index)}
+                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="Modifier"
                         >
-                          <X className="w-5 h-5" />
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveEvent(index)}
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          title="Supprimer"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </div>
-
-                      {/* Event Type */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                          Type d'événement *
-                        </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                          {eventTypes.map((type) => (
-                            <button
-                              key={type.value}
-                              type="button"
-                              onClick={() => setCurrentEvent(prev => ({ ...prev, eventType: type.value }))}
-                              className={`p-3 rounded-lg border-2 transition-all text-center ${
-                                currentEvent.eventType === type.value
-                                  ? 'border-primary bg-primary/10'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
-                              }`}
-                            >
-                              <div className="text-2xl mb-1">{type.icon}</div>
-                              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                                {type.label.split(' / ')[0]}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Date and Time */}
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Date *
-                          </label>
-                          <input
-                            type="date"
-                            value={currentEvent.eventDate}
-                            onChange={(e) => setCurrentEvent(prev => ({ ...prev, eventDate: e.target.value }))}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="input-field"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Horaire *
-                          </label>
-                          <select
-                            value={currentEvent.timeSlot}
-                            onChange={(e) => setCurrentEvent(prev => ({ ...prev, timeSlot: e.target.value }))}
-                            className="select-field"
-                          >
-                            <option value="">Sélectionner...</option>
-                            {timeSlots.map((slot) => (
-                              <option key={slot.value} value={slot.value}>
-                                {slot.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Location */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          <MapPin className="w-4 h-4 inline mr-2" />
-                          Lieu (optionnel)
-                        </label>
-                        <input
-                          type="text"
-                          value={currentEvent.location}
-                          onChange={(e) => setCurrentEvent(prev => ({ ...prev, location: e.target.value }))}
-                          className="input-field"
-                          placeholder="Sousse, Tunisie"
-                        />
-                      </div>
-
-                      {/* Add Event Button */}
-                      <button
-                        type="button"
-                        onClick={handleAddEvent}
-                        className="btn-primary w-full flex items-center justify-center gap-2"
-                      >
-                        <Check className="w-4 h-4" />
-                        <span>Ajouter cet événement</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  <MessageSquare className="w-4 h-4 inline mr-2" />
-                  Message (optionnel)
-                </label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => handleInputChange('message', e.target.value)}
-                  rows={4}
-                  className="textarea-field"
-                  placeholder="Détails supplémentaires sur vos événements, nombre d'invités, besoins spécifiques..."
-                />
-              </div>
-
-              {/* Status Messages */}
-              <AnimatePresence>
-                {status === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="glass-card bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 p-4"
-                  >
-                    <div className="flex items-center gap-3 text-green-800 dark:text-green-200">
-                      <Check className="w-6 h-6" />
-                      <div>
-                        <p className="font-medium">Demande envoyée avec succès!</p>
-                        <p className="text-sm">Redirection vers WhatsApp...</p>
-                      </div>
                     </div>
                   </motion.div>
-                )}
+                );
+              })}
+            </div>
+          )}
 
-                {status === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="glass-card bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 p-4"
-                  >
-                    <div className="flex items-center gap-3 text-red-800 dark:text-red-200">
-                      <AlertCircle className="w-6 h-6" />
-                      <div>
-                        <p className="font-medium">Erreur</p>
-                        <p className="text-sm">{errorMessage}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={status === 'loading' || status === 'success' || formData.events.length === 0}
-                className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          {/* Event Form (collapsible) */}
+          <AnimatePresence>
+            {isAddingEvent && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="glass-card p-4 border-2 border-dashed border-primary/30 space-y-4"
               >
-                {status === 'loading' ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-                    <span>Envoi en cours...</span>
-                  </>
-                ) : status === 'success' ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    <span>Envoyé!</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    <span>Envoyer la demande {formData.events.length > 0 && `(${formData.events.length} événement${formData.events.length > 1 ? 's' : ''})`}</span>
-                  </>
-                )}
-              </button>
+                <h4 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <span className="text-primary">+</span>
+                  Nouvel événement
+                </h4>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                En soumettant ce formulaire, vous acceptez d'être contacté par WhatsApp et email
-              </p>
-            </form>
-          </motion.div>
+                {/* Event Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Type d'événement / Event Type *
+                  </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {eventTypes.map((type) => (
+              <button
+                key={type.value}
+                type="button"
+                onClick={() => handleInputChange('eventType', type.value)}
+                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
+                  formData.eventType === type.value
+                    ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                }`}
+              >
+                <div className="text-3xl mb-2">{type.icon}</div>
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {type.label.split(' / ')[0]}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Date and Time */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Calendar className="w-4 h-4 inline mr-2" />
+              Date *
+            </label>
+            <input
+              type="date"
+              required
+              value={formData.eventDate}
+              onChange={(e) => handleInputChange('eventDate', e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              className="input-field"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Clock className="w-4 h-4 inline mr-2" />
+              Horaire / Time Slot *
+            </label>
+            <select
+              required
+              value={formData.timeSlot}
+              onChange={(e) => handleInputChange('timeSlot', e.target.value)}
+              className="select-field"
+            >
+              <option value="">Sélectionner...</option>
+              {timeSlots.map((slot) => (
+                <option key={slot.value} value={slot.value}>
+                  {slot.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <MapPin className="w-4 h-4 inline mr-2" />
+            Lieu / Location *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.location}
+            onChange={(e) => handleInputChange('location', e.target.value)}
+            className="input-field"
+            placeholder="Sousse, Tunisie"
+          />
+        </div>
+
+        {/* Message */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <MessageSquare className="w-4 h-4 inline mr-2" />
+            Message (optionnel)
+          </label>
+          <textarea
+            value={formData.message}
+            onChange={(e) => handleInputChange('message', e.target.value)}
+            rows={4}
+            className="textarea-field"
+            placeholder="Détails supplémentaires sur votre événement, nombre d'invités, besoins spécifiques..."
+          />
+        </div>
+
+        {/* Prefilled Package Info */}
+        {formData.packageName && (
+          <div className="glass-card p-4 border border-primary/30">
+            <div className="flex items-center gap-2 text-primary">
+              <Check className="w-5 h-5" />
+              <span className="font-medium">
+                Package sélectionné: {formData.packageName}
+                {formData.packagePrice && ` - ${formData.packagePrice} DT`}
+              </span>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
+
+        {/* Status Messages */}
+        <AnimatePresence>
+          {status === 'success' && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="glass-card bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 p-4"
+            >
+              <div className="flex items-center gap-3 text-green-800 dark:text-green-200">
+                <Check className="w-6 h-6" />
+                <div>
+                  <p className="font-medium">Demande envoyée avec succès!</p>
+                  <p className="text-sm">Redirection vers WhatsApp...</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {status === 'error' && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="glass-card bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 p-4"
+            >
+              <div className="flex items-center gap-3 text-red-800 dark:text-red-200">
+                <AlertCircle className="w-6 h-6" />
+                <div>
+                  <p className="font-medium">Erreur</p>
+                  <p className="text-sm">{errorMessage}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={status === 'loading' || status === 'success'}
+          className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {status === 'loading' ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+              <span>Envoi en cours...</span>
+            </>
+          ) : status === 'success' ? (
+            <>
+              <Check className="w-5 h-5" />
+              <span>Envoyé!</span>
+            </>
+          ) : (
+            <>
+              <Send className="w-5 h-5" />
+              <span>Envoyer la demande</span>
+            </>
+          )}
+        </button>
+
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          En soumettant ce formulaire, vous acceptez d'être contacté par WhatsApp et email
+        </p>
+      </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
     </div>
   );
 }

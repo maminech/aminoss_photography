@@ -148,7 +148,7 @@ export default function AnimatedIntro({ onComplete }: AnimatedIntroProps) {
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              Photography & Videography
+              Creative Wedding & Event Photography
             </motion.p>
           </div>
         </motion.div>

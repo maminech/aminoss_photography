@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -129,9 +128,6 @@ export default function Navbar() {
               </Link>
             ))}
             
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
             {/* Admin Session - Show Dashboard & Logout */}
             {session ? (
               <div className="flex items-center space-x-3">
@@ -216,13 +212,8 @@ export default function Navbar() {
                 </Link>
               ))}
               
-              {/* Mobile Theme Toggle */}
-              <div className="pt-4 pb-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center">
-                <ThemeToggle />
-              </div>
-              
               {/* Mobile Auth Buttons */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4 space-y-3">
                 {session ? (
                   <>
                     <Link

@@ -32,7 +32,7 @@ export default function Logo({ variant = 'light', size = 'md', className = '' }:
     <div className={`relative ${className}`} style={{ width, height }}>
       <Image
         src="/logo.svg"
-        alt="Aminoss Photography"
+        alt="Innov8 Production"
         fill
         className={`object-contain transition-opacity hover:opacity-80 ${
           variant === 'dark' ? 'brightness-0 invert' : ''

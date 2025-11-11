@@ -17,10 +17,6 @@ export default function ProfessionalHomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  if (currentTheme !== 'professional') {
-    return null;
-  }
-
   useEffect(() => {
     const loadImages = async () => {
       try {
@@ -50,6 +46,11 @@ export default function ProfessionalHomePage() {
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
   const goToSlide = (index: number) => setCurrentSlide(index);
 
+  // Don't render if not in professional mode
+  if (currentTheme !== 'professional') {
+    return null;
+  }
+
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
@@ -74,7 +75,7 @@ export default function ProfessionalHomePage() {
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
             <Link href="/gallery" className="text-xl sm:text-2xl font-playfair font-bold tracking-tight text-white hover:text-[#d4af37] transition-colors z-50">
-              AMINOSS
+              INNOV8
             </Link>
 
             {/* Desktop Navigation */}
@@ -189,10 +190,10 @@ export default function ProfessionalHomePage() {
                   <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
                     <FiFacebook className="w-5 h-5" />
                   </a>
-                  <a href="mailto:contact@aminossphotography.com" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
+                  <a href="mailto:innov8production@gmail.com" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
                     <FiMail className="w-5 h-5" />
                   </a>
-                  <a href="tel:+1234567890" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
+                  <a href="tel:+21655985565" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
                     <FiPhone className="w-5 h-5" />
                   </a>
                 </div>
@@ -334,13 +335,13 @@ export default function ProfessionalHomePage() {
           <FiFacebook className="w-5 h-5" />
         </a>
         <a
-          href="mailto:contact@aminossphotography.com"
+          href="mailto:innov8production@gmail.com"
           className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300"
         >
           <FiMail className="w-5 h-5" />
         </a>
         <a
-          href="tel:+1234567890"
+          href="tel:+21655985565"
           className="w-10 h-10 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300"
         >
           <FiPhone className="w-5 h-5" />
@@ -354,7 +355,7 @@ export default function ProfessionalHomePage() {
         transition={{ duration: 0.8, delay: 2.8 }}
         className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-40 text-white/70 font-lato text-xs sm:text-sm hidden lg:block"
       >
-        © 2025 Aminoss Photography
+        © 2025 Innov8 Production
       </motion.div>
 
       {/* Scroll Indicator */}
@@ -510,9 +511,9 @@ export default function ProfessionalHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
             <div>
-              <h3 className="text-2xl font-playfair font-bold mb-4">AMINOSS</h3>
+              <h3 className="text-2xl font-playfair font-bold mb-4">INNOV8 PRODUCTION</h3>
               <p className="text-white/70 font-lato text-sm leading-relaxed">
-                Professional photography studio capturing life's beautiful moments with artistry and passion.
+                Creative wedding and event photography studio based in Moknine, Sousse, Tunisia. Led by Aymen Ben Ammar.
               </p>
             </div>
             <div>
@@ -535,18 +536,18 @@ export default function ProfessionalHomePage() {
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all">
                   <FiFacebook className="w-5 h-5" />
                 </a>
-                <a href="mailto:contact@aminossphotography.com" className="w-10 h-10 flex items-center justify-center border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all">
+                <a href="mailto:innov8production@gmail.com" className="w-10 h-10 flex items-center justify-center border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all">
                   <FiMail className="w-5 h-5" />
                 </a>
               </div>
               <p className="text-white/70 font-lato text-sm">
-                Email: contact@aminossphotography.com<br />
-                Phone: +1 (234) 567-890
+                Email: innov8production@gmail.com<br />
+                WhatsApp: +216 55985565
               </p>
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-white/50 font-lato text-sm">© 2025 Aminoss Photography. All rights reserved.</p>
+            <p className="text-white/50 font-lato text-sm">© 2025 Innov8 Production. All rights reserved.</p>
           </div>
         </div>
       </footer>

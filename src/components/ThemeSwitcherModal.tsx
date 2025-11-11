@@ -1,9 +1,8 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiX, FiGrid, FiLayers, FiMoon, FiSun } from 'react-icons/fi';
+import { FiX, FiGrid, FiLayers } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
-import { useTheme } from 'next-themes';
 
 interface ThemeSwitcherModalProps {
   isOpen: boolean;
@@ -12,7 +11,6 @@ interface ThemeSwitcherModalProps {
 
 export default function ThemeSwitcherModal({ isOpen, onClose }: ThemeSwitcherModalProps) {
   const { currentTheme, switchTheme } = useLayoutTheme();
-  const { theme, setTheme } = useTheme();
 
   const handleLayoutThemeSwitch = (newTheme: 'simple' | 'professional') => {
     switchTheme(newTheme);
@@ -42,7 +40,7 @@ export default function ThemeSwitcherModal({ isOpen, onClose }: ThemeSwitcherMod
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Customize Your Experience
+                Choose Layout Style
               </h2>
               <button
                 onClick={onClose}
@@ -114,37 +112,6 @@ export default function ThemeSwitcherModal({ isOpen, onClose }: ThemeSwitcherMod
                     {currentTheme === 'professional' && (
                       <div className="w-2 h-2 rounded-full bg-[#d4af37]" />
                     )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Color Theme Section */}
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
-                  Color Theme
-                </h3>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setTheme('light')}
-                    className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition ${
-                      theme === 'light'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <FiSun className="w-5 h-5" />
-                    <span className="font-medium text-sm">Light</span>
-                  </button>
-                  <button
-                    onClick={() => setTheme('dark')}
-                    className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition ${
-                      theme === 'dark'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <FiMoon className="w-5 h-5" />
-                    <span className="font-medium text-sm">Dark</span>
                   </button>
                 </div>
               </div>

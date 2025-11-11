@@ -130,7 +130,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { photobookId, title, notes, pages } = await request.json();
+    const { photobookId, title, notes, pages, design, coverPhotoUrl } = await request.json();
 
     if (!photobookId) {
       return NextResponse.json({ error: 'Photobook ID required' }, { status: 400 });
@@ -152,6 +152,8 @@ export async function PUT(request: NextRequest) {
         title: title || photobook.title,
         notes: notes || photobook.notes,
         totalPages: pages?.length || photobook.totalPages,
+        design: design !== undefined ? design : photobook.design, // Save Polotno design state
+        coverPhotoUrl: coverPhotoUrl !== undefined ? coverPhotoUrl : photobook.coverPhotoUrl,
         updatedAt: new Date(),
       },
     });

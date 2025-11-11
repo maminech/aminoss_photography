@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 // GET: Fetch public contact and social settings
 export async function GET() {
   try {
-    const settings = await (prisma.siteSettings.findFirst({
+    const settings = await prisma.siteSettings.findFirst({
       select: {
         email: true,
         phone: true,
@@ -16,18 +16,18 @@ export async function GET() {
         linkedinUrl: true,
         location: true,
       },
-    }) as any);
+    });
 
     // Return defaults if no settings exist
     if (!settings) {
       return NextResponse.json({
-        email: 'aminoss.photography@gmail.com',
-        phone: '+216 94 124 796',
-        whatsappNumber: '21694124796',
-        instagramUrl: 'https://www.instagram.com/ami_noss.photography',
-        facebookUrl: 'https://www.facebook.com/mohamed.chalghoum.266885',
-        youtubeUrl: 'https://youtube.com/@aminoss',
-        location: 'Sousse, Tunisia',
+        email: 'innov8production@gmail.com',
+        phone: '+216 55985565',
+        whatsappNumber: '21655985565',
+        instagramUrl: 'https://www.instagram.com/innov8_production',
+        facebookUrl: 'https://www.facebook.com/innovproduction',
+        youtubeUrl: 'https://youtube.com/@innov8production',
+        location: 'Moknine, Sousse Governorate, Tunisia',
       });
     }
 

@@ -18,12 +18,50 @@ interface TeamMember {
   visible: boolean;
 }
 
+interface AboutSettings {
+  aboutTitle: string;
+  aboutBio: string;
+  aboutContent: string;
+  aboutImage: string;
+  aboutStatProjects: string;
+  aboutStatFollowers: string;
+  aboutStatSatisfaction: string;
+  aboutStatExperience: string;
+}
+
 export default function AboutPage() {
   const { currentTheme } = useLayoutTheme();
   const isProfessional = currentTheme === 'professional';
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [settings, setSettings] = useState<AboutSettings>({
+    aboutTitle: 'About Innov8 Production',
+    aboutBio: "I'm the founder of Innov8 Production, a creative wedding and event photography studio based in Moknine, Sousse Governorate, Tunisia. We specialize in capturing timeless moments with passion and precision.",
+    aboutContent: 'Innov8 Production is a creative wedding and event photography studio based in Sousse, Tunisia, led by Aymen Ben Ammar. We specialize in capturing timeless moments with passion and precision.',
+    aboutImage: 'https://res.cloudinary.com/dc67gl8fu/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg',
+    aboutStatProjects: '+270',
+    aboutStatFollowers: '+47.6K',
+    aboutStatSatisfaction: '100%',
+    aboutStatExperience: '10+',
+  });
 
   useEffect(() => {
+    // Fetch site settings
+    fetch('/api/admin/settings')
+      .then(res => res.json())
+      .then((data) => {
+        setSettings({
+          aboutTitle: data.aboutTitle || settings.aboutTitle,
+          aboutBio: data.aboutBio || settings.aboutBio,
+          aboutContent: data.aboutContent || settings.aboutContent,
+          aboutImage: data.aboutImage || settings.aboutImage,
+          aboutStatProjects: data.aboutStatProjects || settings.aboutStatProjects,
+          aboutStatFollowers: data.aboutStatFollowers || settings.aboutStatFollowers,
+          aboutStatSatisfaction: data.aboutStatSatisfaction || settings.aboutStatSatisfaction,
+          aboutStatExperience: data.aboutStatExperience || settings.aboutStatExperience,
+        });
+      })
+      .catch(err => console.error('Error fetching settings:', err));
+
     // Fetch team members from API
     fetch('/api/admin/team')
       .then(res => res.json())
@@ -48,7 +86,7 @@ export default function AboutPage() {
               className="text-center mb-16"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
-                About Me
+                {settings.aboutTitle}
               </h1>
               
               <motion.div
@@ -59,7 +97,7 @@ export default function AboutPage() {
               />
 
               <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto">
-                Passionate photographer capturing life's beautiful moments
+                {settings.aboutBio}
               </p>
             </motion.div>
 
@@ -72,8 +110,8 @@ export default function AboutPage() {
                 className="relative aspect-[3/4] overflow-hidden"
               >
                 <Image
-                  src="https://res.cloudinary.com/dc67gl8fu/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg"
-                  alt="Aminoss"
+                  src={settings.aboutImage}
+                  alt="Aymen Ben Ammar - Innov8 Production"
                   fill
                   className="object-cover"
                 />
@@ -87,22 +125,12 @@ export default function AboutPage() {
                 className="flex flex-col justify-center"
               >
                 <h2 className="text-3xl md:text-4xl font-playfair font-bold mb-6 text-[#1a1a1a] dark:text-gray-100">
-                  Hello, I'm Aminoss
+                  Hello, I'm Aymen Ben Ammar
                 </h2>
                 <div className="space-y-6 text-gray-700 dark:text-gray-300 font-lato text-lg leading-relaxed">
-                  <p>
-                    I'm a professional photographer based in Sousse, Tunisia, with a passion for 
-                    capturing authentic moments and creating timeless memories.
-                  </p>
-                  <p>
-                    With over 10 years of experience in photography and videography, I specialize 
-                    in weddings, portraits, fashion, and travel photography. My work is characterized 
-                    by its natural, artistic approach and attention to detail.
-                  </p>
-                  <p>
-                    Every photograph tells a story, and my goal is to help you tell yours in the 
-                    most beautiful and meaningful way possible.
-                  </p>
+                  {settings.aboutContent.split('\n').map((paragraph, index) => (
+                    paragraph.trim() && <p key={index}>{paragraph}</p>
+                  ))}
                 </div>
 
                 <div className="mt-8">
@@ -124,25 +152,25 @@ export default function AboutPage() {
               className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 py-16 border-t border-b border-gray-200 dark:border-gray-700"
             >
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">500+</div>
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatProjects}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Happy Clients
+                  Projects
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">1000+</div>
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatFollowers}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Projects Done
+                  Followers
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">15+</div>
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatSatisfaction}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Awards Won
+                  Satisfaction
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">10+</div>
+                <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatExperience}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
                   Years Experience
                 </div>
@@ -257,10 +285,10 @@ export default function AboutPage() {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">
-              About Me
+              {settings.aboutTitle}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
-              Passionate photographer capturing life's beautiful moments
+              {settings.aboutBio}
             </p>
           </div>
 
@@ -273,8 +301,8 @@ export default function AboutPage() {
               className="relative aspect-[3/4] rounded-lg overflow-hidden shadow-2xl"
             >
               <Image
-                src="https://res.cloudinary.com/dc67gl8fu/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg"
-                alt="Aminoss"
+                src={settings.aboutImage}
+                alt="Aymen Ben Ammar"
                 fill
                 className="object-cover"
               />
@@ -286,21 +314,11 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col justify-center"
             >
-              <h2 className="text-3xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">Hello, I'm Aminoss</h2>
+              <h2 className="text-3xl font-display font-bold mb-4 text-gray-900 dark:text-gray-100">Hello, I'm Aymen Ben Ammar</h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-                <p>
-                  I'm a professional photographer based in Sousse, Tunisia, with a passion for 
-                  capturing authentic moments and creating timeless memories.
-                </p>
-                <p>
-                  With over 10 years of experience in photography and videography, I specialize 
-                  in weddings, portraits, fashion, and travel photography. My work is characterized 
-                  by its natural, artistic approach and attention to detail.
-                </p>
-                <p>
-                  Every photograph tells a story, and I'm here to help tell yours in the most 
-                  beautiful way possible.
-                </p>
+                {settings.aboutContent.split('\n').map((paragraph, index) => (
+                  paragraph.trim() && <p key={index}>{paragraph}</p>
+                ))}
               </div>
 
               <div className="mt-8">

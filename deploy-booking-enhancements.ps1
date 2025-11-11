@@ -8,7 +8,7 @@ Write-Host ""
 # Step 1: Regenerate Prisma Client
 Write-Host "Step 1: Regenerating Prisma Client..." -ForegroundColor Yellow
 Write-Host "⚠️  Make sure your dev server is stopped!" -ForegroundColor Red
-Read-Host "Press Enter to continue or Ctrl+C to cancel" | Out-Null
+Read-Host "Press Enter to continue or Ctrl+C to cancel"
 
 try {
     npx prisma generate

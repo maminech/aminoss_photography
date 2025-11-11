@@ -2,9 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Trash2, Save, Printer, Download, Edit2, Check } from 'lucide-react';
+import { X, Plus, Trash2, Save, Printer, Download, Edit2, Check, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import dynamic from 'next/dynamic';
+
+// Dynamically import InvoicePreviewButton to avoid SSR issues with @react-pdf/renderer
+const InvoicePreviewButton = dynamic(
+  () => import('./invoice/InvoicePreviewButton').then((mod) => ({ default: mod.InvoicePreviewButton })),
+  { ssr: false }
+);
 
 interface InvoiceItem {
   description: string;
@@ -247,6 +254,15 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                   <Edit2 className="w-4 h-4" />
                   Modifier
                 </button>
+                
+                {/* New Professional PDF Generation */}
+                {invoice.id && (
+                  <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 rounded-lg border border-[#d4af37]/20">
+                    <FileText className="w-4 h-4 text-[#d4af37]" />
+                    <InvoicePreviewButton invoice={invoice as any} />
+                  </div>
+                )}
+                
                 <button
                   onClick={printInvoice}
                   className="btn-secondary flex items-center gap-2"
@@ -296,11 +312,11 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
           <div id="invoice-preview" className="bg-white dark:bg-gray-900 rounded-lg p-8 space-y-8">
             {/* Company Header */}
             <div className="border-b-2 border-primary pb-6">
-              <h1 className="text-4xl font-bold text-primary">AMINOSS PHOTOGRAPHY</h1>
+              <h1 className="text-4xl font-bold text-primary">INNOV8 PRODUCTION</h1>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
-                Photographe Professionnel<br />
-                Tel: +216 94 124 796<br />
-                Email: contact@aminossphotography.com
+                Creative Wedding & Event Photography<br />
+                Tel: +216 55 985 565<br />
+                Email: innov8production@gmail.com
               </p>
             </div>
 
@@ -624,7 +640,7 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
             {/* Footer */}
             <div className="border-t border-gray-200 dark:border-gray-800 pt-6 text-center text-sm text-gray-500 dark:text-gray-400">
               <p>Merci pour votre confiance!</p>
-              <p className="mt-2">AMINOSS PHOTOGRAPHY - Photographe Professionnel</p>
+              <p className="mt-2">INNOV8 PRODUCTION - Creative Wedding & Event Photography</p>
             </div>
           </div>
         </div>

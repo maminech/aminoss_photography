@@ -7,11 +7,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const grouped = searchParams.get('grouped') === 'true';
+    const includeTracking = searchParams.get('includeTracking') === 'true';
 
     const bookings = await prisma.booking.findMany({
-      where: {
+      where: includeTracking ? {} : {
         status: {
-          not: 'tracking', // Exclude incomplete tracking records
+          not: 'tracking', // Exclude incomplete tracking records unless requested
         },
       },
       orderBy: {
@@ -57,29 +58,61 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create booking request
+// POST - Create booking request (supports multi-event)
 export async function POST(request: NextRequest) {
   try {
     const {
       clientName,
       clientEmail,
       clientPhone,
-      eventType,
-      requestedDate,
-      timeSlot,
-      location,
+      events, // NEW: Array of events
+      eventType, // Legacy field (fallback to first event)
+      requestedDate, // Legacy field (fallback to first event)
+      timeSlot, // Legacy field (fallback to first event)
+      location, // Legacy field (fallback to first event)
       message,
       packName,
     } = await request.json();
 
-    // Email is now optional, only name, phone, eventType, and date are required
-    if (!clientName || !clientPhone || !eventType || !requestedDate) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Email is now optional, only name and phone are required
+    // Either events array OR legacy fields must be provided
+    if (!clientName || !clientPhone) {
+      return NextResponse.json({ error: 'Missing required fields (name, phone)' }, { status: 400 });
+    }
+
+    // Validate events data (must have at least one event with required fields)
+    if (events && Array.isArray(events) && events.length > 0) {
+      // Validate each event has required fields
+      const hasInvalidEvent = events.some((evt: any) => 
+        !evt.eventType || !evt.eventDate || !evt.timeSlot
+      );
+      
+      if (hasInvalidEvent) {
+        return NextResponse.json({ 
+          error: 'Each event must have eventType, eventDate, and timeSlot' 
+        }, { status: 400 });
+      }
+    } else if (!eventType || !requestedDate) {
+      // If no events array, require legacy fields
+      return NextResponse.json({ 
+        error: 'Missing required fields (events or eventType/requestedDate)' 
+      }, { status: 400 });
     }
 
     // Get IP and user agent for tracking
     const ipAddress = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
+
+    // Prepare event data (use events array if provided, otherwise create from legacy fields)
+    const eventData = events && events.length > 0 ? events : [{
+      eventType,
+      eventDate: requestedDate,
+      timeSlot,
+      location,
+    }];
+
+    // Use first event for legacy fields
+    const firstEvent = eventData[0];
 
     // Check if there's an existing tracking record to update
     const existingTracking = await prisma.booking.findFirst({
@@ -104,10 +137,11 @@ export async function POST(request: NextRequest) {
         where: { id: existingTracking.id },
         data: {
           email: clientEmail,
-          eventType,
-          eventDate: new Date(requestedDate),
-          timeSlot: timeSlot || 'pending',
-          location: location || 'pending',
+          events: eventData, // Store all events
+          eventType: firstEvent.eventType, // Legacy field
+          eventDate: new Date(firstEvent.eventDate), // Legacy field
+          timeSlot: firstEvent.timeSlot, // Legacy field
+          location: firstEvent.location || location || 'pending', // Legacy field
           message: message || null,
           packageName: packName || existingTracking.packageName,
           status: 'pending', // Change from 'tracking' to 'pending'
@@ -122,10 +156,11 @@ export async function POST(request: NextRequest) {
           name: clientName,
           email: clientEmail,
           phone: clientPhone,
-          eventType,
-          eventDate: new Date(requestedDate),
-          timeSlot: timeSlot || 'pending',
-          location: location || 'pending',
+          events: eventData, // Store all events
+          eventType: firstEvent.eventType, // Legacy field
+          eventDate: new Date(firstEvent.eventDate), // Legacy field
+          timeSlot: firstEvent.timeSlot, // Legacy field
+          location: firstEvent.location || location || 'pending', // Legacy field
           message: message || null,
           packageName: packName || null,
           status: 'pending',

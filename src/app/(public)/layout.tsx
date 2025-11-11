@@ -23,17 +23,20 @@ export default function PublicLayout({
   
   // Professional home page has its own custom navigation
   const isProfessionalHome = pathname === '/professional-home';
+  
+  // Check if we're on root page with professional theme (has its own nav)
+  const isProfessionalRoot = pathname === '/' && currentTheme === 'professional';
 
   return (
     <ThemeWrapper>
       <PWALoadingScreen isPublic={true} />
       <PWAUpdatePrompt />
       <OfflineIndicator />
-      {!isProfessionalHome && <Navbar />}
-      <main className={isSimpleMode || isProfessionalHome ? '' : currentTheme === 'professional' ? 'min-h-screen' : 'min-h-screen pt-16 md:pt-20'}>
+      {!isProfessionalHome && !isProfessionalRoot && <Navbar />}
+      <main className={isSimpleMode || isProfessionalHome || isProfessionalRoot ? '' : currentTheme === 'professional' ? 'min-h-screen' : 'min-h-screen pt-16 md:pt-20'}>
         {children}
       </main>
-      {!isSimpleMode && !isProfessionalHome && <Footer />}
+      {!isSimpleMode && !isProfessionalHome && !isProfessionalRoot && <Footer />}
       {/* Global Options Button - available on all pages */}
       <GlobalOptionsButton />
     </ThemeWrapper>

@@ -1,7 +1,7 @@
 {
-  "name": "aminoss-photography",
+  "name": "innov8-production",
   "version": "1.0.0",
-  "description": "Professional photography portfolio for Aminoss - Tunisian Photographer",
+  "description": "Creative wedding and event photography studio - Innov8 Production",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -16,6 +16,7 @@
     "@blueprintjs/icons": "^6.3.1",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.18.0",
+    "@react-pdf/renderer": "^4.3.1",
     "archiver": "^7.0.1",
     "axios": "^1.13.1",
     "bcryptjs": "^3.0.3",

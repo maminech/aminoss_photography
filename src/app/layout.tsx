@@ -36,10 +36,10 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: 'Aminoss Photography - Professional Photographer in Sousse, Tunisia',
-  description: 'Aminoss Photography offers professional photography and videography services in Sousse, Tunisia. Specializing in weddings, portraits, fashion, and travel photography.',
-  keywords: 'photography, Tunisia, Sousse photographer, wedding photographer, portrait photographer, fashion photography, travel photography, videography, Sousse photographer',
-  authors: [{ name: 'Aminoss' }],
+  title: 'Innov8 Production - Creative Wedding & Event Photography in Tunisia',
+  description: 'Innov8 Production is a creative wedding and event photography studio based in Moknine, Sousse, Tunisia, led by Aymen Ben Ammar. We specialize in capturing timeless moments with passion and precision.',
+  keywords: 'innov8 production, wedding photography Tunisia, event photography Sousse, Aymen Ben Ammar, Moknine photographer, engagement photography, lifestyle photography, boutique photography, portrait photography Tunisia',
+  authors: [{ name: 'Aymen Ben Ammar' }],
   viewport: {
     width: 'device-width',
     initialScale: 1,
@@ -49,13 +49,13 @@ export const metadata: Metadata = {
   },
   manifest: '/client-manifest.json',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#c67548' },
-    { media: '(prefers-color-scheme: dark)', color: '#a85a35' }
+    { media: '(prefers-color-scheme: light)', color: '#D4AF37' },
+    { media: '(prefers-color-scheme: dark)', color: '#D4AF37' }
   ],
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Aminoss Photography',
+    title: 'Innov8 Production',
     startupImage: [
       {
         url: '/apple-touch-icon.svg',
@@ -78,24 +78,24 @@ export const metadata: Metadata = {
     address: true,
   },
   openGraph: {
-    title: 'Aminoss Photography',
-    description: 'Professional photography and videography services in Tunisia',
+    title: 'Innov8 Production - Creative Wedding & Event Photography',
+    description: 'Creative wedding and event photography studio in Moknine, Sousse, Tunisia. Specializing in weddings, engagements, events, lifestyle, boutiques, and portraits.',
     type: 'website',
     locale: 'en_US',
-    siteName: 'Aminoss Photography',
+    siteName: 'Innov8 Production',
     images: [
       {
         url: '/logo.svg',
         width: 400,
         height: 120,
-        alt: 'Aminoss Photography Logo',
+        alt: 'Innov8 Production Logo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aminoss Photography',
-    description: 'Professional photography and videography services in Tunisia',
+    title: 'Innov8 Production - Creative Wedding & Event Photography',
+    description: 'Creative wedding and event photography studio in Moknine, Sousse, Tunisia',
     images: ['/logo.svg'],
   },
   robots: {
@@ -112,7 +112,7 @@ export default function RootLayout({
   return (
     <html 
       lang="en" 
-      className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${lato.variable}`} 
+      className={`dark ${inter.variable} ${poppins.variable} ${playfair.variable} ${lato.variable}`} 
       suppressHydrationWarning
     >
       <head>
@@ -120,16 +120,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                try {
-                  const theme = localStorage.getItem('theme') || 'system';
-                  const root = document.documentElement;
-                  
-                  if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    root.classList.add('dark');
-                  } else {
-                    root.classList.remove('dark');
-                  }
-                } catch (e) {}
+                // Force dark mode always
+                document.documentElement.classList.add('dark');
               })();
             `,
           }}
