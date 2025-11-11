@@ -216,18 +216,8 @@ export default function GalleryPage() {
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     
-                    {/* Hover Overlay - Novo Style */}
-                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className="text-center text-white p-6">
-                        <h3 className="text-lg font-playfair font-bold mb-2">
-                          {image.title || 'Untitled'}
-                        </h3>
-                        <div className="w-12 h-[1px] bg-[#d4af37] mx-auto mb-3" />
-                        <p className="text-xs font-lato uppercase tracking-[0.2em] text-gray-300">
-                          {image.category || 'Photography'}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Hover Overlay - Clean without text */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.div>
                 ))}
               </div>

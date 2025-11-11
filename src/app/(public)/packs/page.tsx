@@ -437,7 +437,7 @@ export default function PacksPage() {
                 setBookingModalOpen(true);
               }
             }}
-            className="md:hidden fixed bottom-6 right-6 z-40 bg-primary text-white px-6 py-4 rounded-full shadow-2xl hover:bg-primary/90 transition-all flex items-center gap-2 touch-manipulation"
+            className="md:hidden fixed bottom-20 right-4 sm:right-6 z-40 bg-primary text-white px-5 sm:px-6 py-3 sm:py-4 rounded-full shadow-2xl hover:bg-primary/90 transition-all flex items-center gap-2 touch-manipulation"
           >
             <FiCalendar className="w-5 h-5" />
             <span className="font-semibold">Book Now</span>

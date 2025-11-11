@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FiArrowLeft, FiHome } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
@@ -23,6 +23,12 @@ export default function NavigationButton({
   showLabels = false,
 }: NavigationButtonProps) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Hide on professional-home since it has its own navigation
+  if (pathname === '/professional-home') {
+    return null;
+  }
 
   const handleBack = () => {
     if (backHref) {
@@ -33,7 +39,7 @@ export default function NavigationButton({
   };
 
   const baseClasses = position === 'fixed' 
-    ? 'fixed top-4 left-4 z-50' 
+    ? 'fixed top-4 left-4 z-[60]' 
     : 'relative';
 
   const buttonClasses = `

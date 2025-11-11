@@ -60,19 +60,8 @@ export default function GalleryGrid({ images, onImageClick }: GalleryGridProps) 
                   onLoad={() => handleImageLoad(image.id)}
                 />
                 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                    <h3 className="text-white font-semibold text-base sm:text-lg mb-1 line-clamp-2">
-                      {image.title}
-                    </h3>
-                    {image.category && (
-                      <p className="text-gray-300 text-xs sm:text-sm capitalize">
-                        {image.category}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                {/* Overlay - Clean without text */}
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Loading Skeleton */}
                 {!loadedImages.has(image.id) && (

@@ -174,15 +174,8 @@ export default function ProfessionalHomePage() {
         </div>
 
         {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden bg-black/95 backdrop-blur-lg"
-            >
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-black/95 backdrop-blur-lg animate-fade-in">
               <div className="container mx-auto px-4 py-6 flex flex-col space-y-4">
                 <Link 
                   href="/gallery" 
@@ -242,9 +235,8 @@ export default function ProfessionalHomePage() {
                   </a>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </motion.nav>
 
       {/* Hero Section with Slider */}
@@ -365,21 +357,8 @@ export default function ProfessionalHomePage() {
               className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation disabled:opacity-50"
             >
               <FiGrid className="w-4 h-4" />
-              {isTransitioning ? 'Switching...' : 'Simple Mode'}
+              {isTransitioning ? 'Switching...' : 'Switch to Simple Mode'}
             </motion.button>
-            <button
-              onClick={() => {
-                try {
-                  switchTheme('professional');
-                } catch (error) {
-                  console.error('Error switching theme:', error);
-                }
-              }}
-              className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation"
-            >
-              <FiLayers className="w-4 h-4" />
-              Professional Mode
-            </button>
           </div>
         </motion.div>
       </section>
@@ -430,12 +409,12 @@ export default function ProfessionalHomePage() {
         © 2025 Innov8 Production
       </motion.div>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Hidden on mobile to avoid overlap */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 3, repeat: Infinity, repeatType: 'reverse', repeatDelay: 1 }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-white/70"
+        className="hidden sm:flex fixed bottom-32 sm:bottom-28 left-1/2 -translate-x-1/2 z-20 flex-col items-center text-white/70"
       >
         <span className="text-xs uppercase tracking-widest mb-2 font-lato">Scroll Down</span>
         <FiChevronRight className="w-5 h-5 rotate-90" />
@@ -653,6 +632,22 @@ export default function ProfessionalHomePage() {
         .touch-manipulation {
           touch-action: manipulation;
           -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Mobile menu animation */
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            max-height: 0;
+          }
+          to {
+            opacity: 1;
+            max-height: 1000px;
+          }
+        }
+
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-in-out;
         }
       `}</style>
     </div>
