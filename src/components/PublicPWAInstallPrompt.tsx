@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { FiDownload, FiX, FiCamera, FiImage, FiStar, FiZap, FiSmartphone } from 'react-icons/fi';
 
 export default function PublicPWAInstallPrompt() {
+  // Disabled - PWA install prompt
+  return null;
+  
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
