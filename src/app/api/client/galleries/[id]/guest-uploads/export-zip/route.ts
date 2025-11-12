@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import archiver from 'archiver';
 import https from 'https';
+import { Readable } from 'stream';
 
 // Helper function to fetch image from URL
 async function fetchImage(url: string): Promise<Buffer> {
@@ -19,22 +18,28 @@ async function fetchImage(url: string): Promise<Buffer> {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const galleryId = params.id;
+
+    // Verify the client is accessing their own gallery
+    const cookies = req.cookies;
+    const clientEmail = cookies.get('client-email')?.value;
+
+    if (!clientEmail) {
+      return NextResponse.json({ error: 'Unauthorized - Please login' }, { status: 401 });
     }
 
-    const eventId = params.eventId;
-
-    // Fetch gallery with ALL guest uploads (not just print-selected)
+    // Fetch gallery with guest uploads
     const gallery = await prisma.clientGallery.findUnique({
-      where: { id: eventId },
+      where: { id: galleryId },
       include: {
+        client: true,
         guestUploads: {
+          where: {
+            status: 'approved', // Only approved photos
+          },
           orderBy: { uploadedAt: 'asc' },
         },
       },
@@ -44,39 +49,23 @@ export async function GET(
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
     }
 
+    // Verify client owns this gallery
+    if (gallery.client.email !== clientEmail) {
+      return NextResponse.json({ error: 'Unauthorized - Access denied' }, { status: 403 });
+    }
+
     if (gallery.guestUploads.length === 0) {
       return NextResponse.json(
-        { error: 'No guest uploads found' },
+        { error: 'No guest uploads available yet' },
         { status: 400 }
       );
     }
 
-    // Create CSV content
-    const csvHeader = 'Guest Name,Message,Photo URL,Uploaded At,Status,Selected For Print\n';
-    const csvRows = gallery.guestUploads
-      .map((upload: any) => {
-        const name = upload.uploaderName.replace(/"/g, '""');
-        const message = (upload.message || '').replace(/"/g, '""');
-        const url = upload.fileUrl;
-        const date = new Date(upload.uploadedAt).toISOString();
-        const status = upload.status;
-        const printSelected = upload.isSelectedForPrint ? 'Yes' : 'No';
-        return `"${name}","${message}","${url}","${date}","${status}","${printSelected}"`;
-      })
-      .join('\n');
-    const csvContent = csvHeader + csvRows;
-
-    // Add photo URLs to a text file (for batch download reference)
-    const photoUrlsContent = gallery.guestUploads
-      .map((upload: any, idx: number) => `${idx + 1}. ${upload.uploaderName} - ${upload.fileUrl}`)
-      .join('\n');
-
-    // Create ZIP archive
+    // Create archive
     const archive = archiver('zip', {
       zlib: { level: 9 }, // Maximum compression
     });
 
-    // Collect chunks as the archive streams data
     const chunks: Buffer[] = [];
     
     archive.on('data', (chunk: Buffer) => {
@@ -87,9 +76,30 @@ export async function GET(
       console.error('Archive error:', err);
     });
 
-    // Add files to archive
-    archive.append(csvContent, { name: 'manifest.csv' });
-    archive.append(photoUrlsContent, { name: 'photo_urls.txt' });
+    // Create CSV manifest
+    const csvHeader = 'Guest Name,Message,Photo Number,Uploaded At,Status\n';
+    const csvRows = gallery.guestUploads
+      .map((upload: any) => {
+        const name = upload.uploaderName.replace(/"/g, '""');
+        const message = (upload.message || '').replace(/"/g, '""');
+        const date = new Date(upload.uploadedAt).toLocaleDateString();
+        const status = upload.status;
+        return `"${name}","${message}","Photo","${date}","${status}"`;
+      })
+      .join('\n');
+    const csvContent = csvHeader + csvRows;
+
+    // Add CSV to archive
+    archive.append(csvContent, { name: 'guest_uploads_manifest.csv' });
+
+    // Add photo URLs list
+    const photoUrlsList = gallery.guestUploads
+      .map((upload: any, idx: number) => 
+        `${idx + 1}. ${upload.uploaderName} - ${upload.fileUrl}`
+      )
+      .join('\n');
+    
+    archive.append(photoUrlsList, { name: 'photo_download_links.txt' });
 
     // Download and add actual photos to the archive
     console.log(`Starting download of ${gallery.guestUploads.length} photos...`);
@@ -100,15 +110,13 @@ export async function GET(
         // Create a safe filename
         const guestName = upload.uploaderName.replace(/[^a-zA-Z0-9]/g, '_');
         const timestamp = new Date(upload.uploadedAt).getTime();
-        const status = upload.status;
-        const filename = `${guestName}_${timestamp}_${status}_${upload.id}.jpg`;
+        const filename = `${guestName}_${timestamp}_${upload.id}.jpg`;
         
         // Fetch the image
         const imageBuffer = await fetchImage(upload.fileUrl);
         
-        // Add to archive in appropriate folder
-        const folder = upload.isSelectedForPrint ? 'print_selected' : 'all_photos';
-        archive.append(imageBuffer, { name: `${folder}/${filename}` });
+        // Add to archive
+        archive.append(imageBuffer, { name: `photos/${filename}` });
         downloadedCount++;
         
         console.log(`Downloaded ${downloadedCount}/${gallery.guestUploads.length}: ${filename}`);
@@ -118,10 +126,10 @@ export async function GET(
       }
     }
 
-    // Finalize archive
+    // Finalize the archive
     await archive.finalize();
 
-    // Combine all chunks into a single buffer
+    // Combine all chunks
     const buffer = Buffer.concat(chunks);
 
     // Return ZIP file

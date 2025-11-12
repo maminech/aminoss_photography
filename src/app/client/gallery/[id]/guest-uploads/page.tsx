@@ -145,7 +145,7 @@ export default function ClientGuestUploadsPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.back()}
@@ -158,6 +158,14 @@ export default function ClientGuestUploadsPage() {
                 <p className="text-sm text-gray-600">{galleryName}</p>
               </div>
             </div>
+            <a
+              href={`/api/client/galleries/${params.id}/guest-uploads/export-zip`}
+              download
+              className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-lg font-medium transition-all flex items-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
+            >
+              <FiDownload className="w-5 h-5" />
+              <span>Download All Photos</span>
+            </a>
           </div>
         </div>
       </div>

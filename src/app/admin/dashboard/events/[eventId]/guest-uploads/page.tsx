@@ -175,14 +175,14 @@ export default function AdminGuestUploadsPage() {
             ))}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <a
               href={`/api/admin/events/${params.eventId}/guest-uploads/export-zip`}
               download
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all flex items-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105"
             >
-              <FiDownload className="w-4 h-4" />
-              <span className="hidden sm:inline">Export ZIP</span>
+              <FiDownload className="w-5 h-5" />
+              <span>Download All Photos</span>
             </a>
             <a
               href={`/api/admin/events/${params.eventId}/guest-uploads/export-csv`}
