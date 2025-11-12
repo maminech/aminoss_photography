@@ -15,6 +15,7 @@ export default function PhotobookEditorPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const galleryId = searchParams.get('galleryId');
+  const photobookId = searchParams.get('photobookId');
   
   const [photos, setPhotos] = useState<Array<{
     id: string;
@@ -22,6 +23,7 @@ export default function PhotobookEditorPage() {
     width?: number;
     height?: number;
   }>>([]);
+  const [photobook, setPhotobook] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,42 +34,105 @@ export default function PhotobookEditorPage() {
       return;
     }
 
-    // Fetch gallery photos
-    fetch(`/api/galleries/${galleryId}/photos`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load gallery photos');
-        return res.json();
-      })
-      .then((data) => {
-        setPhotos(data.photos || []);
+    const loadData = async () => {
+      try {
+        // Fetch gallery photos
+        const photosRes = await fetch(`/api/galleries/${galleryId}/photos`);
+        if (!photosRes.ok) throw new Error('Failed to load gallery photos');
+        const photosData = await photosRes.json();
+        setPhotos(photosData.photos || []);
+
+        // If photobookId provided, load existing photobook
+        if (photobookId) {
+          const photobookRes = await fetch(`/api/client/photobook?photobookId=${photobookId}`);
+          if (photobookRes.ok) {
+            const photobookData = await photobookRes.json();
+            setPhotobook(photobookData.photobook);
+          }
+        }
+
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error loading photos:', err);
-        setError('Failed to load gallery photos');
+      } catch (err) {
+        console.error('Error loading data:', err);
+        setError('Failed to load data');
         setLoading(false);
-      });
-  }, [galleryId]);
+      }
+    };
+
+    loadData();
+  }, [galleryId, photobookId]);
 
   const handleSave = async (design: any) => {
     try {
-      const response = await fetch('/api/photobooks', {
-        method: 'POST',
+      // If we have a photobookId, update existing, otherwise create new
+      let endpoint = '/api/client/photobook';
+      let method = photobookId ? 'PUT' : 'POST';
+      
+      const body: any = {
+        galleryId,
+        design,
+        title: `Photobook ${new Date().toLocaleDateString()}`,
+      };
+      
+      if (photobookId) {
+        body.photobookId = photobookId;
+      }
+
+      const response = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          galleryId,
-          design,
-          name: `Photobook ${new Date().toLocaleDateString()}`,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) throw new Error('Failed to save photobook');
 
       const data = await response.json();
+      
+      // Update photobook state with returned data
+      if (data.photobook) {
+        setPhotobook(data.photobook);
+        // Update URL if this was a new photobook
+        if (!photobookId && data.photobook.id) {
+          window.history.replaceState(
+            null,
+            '',
+            `/client/photobook?galleryId=${galleryId}&photobookId=${data.photobook.id}`
+          );
+        }
+      }
+      
       alert('Photobook saved successfully!');
     } catch (error) {
       console.error('Error saving photobook:', error);
       alert('Failed to save photobook. Please try again.');
+    }
+  };
+
+  const handleSubmit = async (design: any, coverPhotoUrl: string | null) => {
+    if (!photobookId) {
+      alert('Please save your photobook first before submitting.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/client/photobook/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          photobookId,
+          title: photobook?.title || `Photobook ${new Date().toLocaleDateString()}`,
+          design,
+          coverPhotoUrl,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to submit photobook');
+
+      alert('Photobook submitted successfully! Our team will review it shortly.');
+      router.push('/client/photobooks');
+    } catch (error) {
+      console.error('Error submitting photobook:', error);
+      throw error; // Re-throw to let the editor handle it
     }
   };
 
@@ -125,9 +190,13 @@ export default function PhotobookEditorPage() {
   return (
     <PhotobookEditorV3
       galleryId={galleryId}
+      photobookId={photobookId || undefined}
       photos={photos}
+      initialDesign={photobook?.design}
       onSave={handleSave}
+      onSubmit={handleSubmit}
       onExport={handleExport}
+      onClose={() => router.push('/client/photobooks')}
     />
   );
 }

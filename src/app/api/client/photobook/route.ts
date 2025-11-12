@@ -19,7 +19,7 @@ async function getClientFromToken(request: NextRequest) {
   }
 }
 
-// Get photobook for a gallery
+// Get photobook for a gallery or by photobookId
 export async function GET(request: NextRequest) {
   try {
     const clientId = await getClientFromToken(request);
@@ -30,23 +30,41 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const galleryId = searchParams.get('galleryId');
+    const photobookId = searchParams.get('photobookId');
 
-    if (!galleryId) {
-      return NextResponse.json({ error: 'Gallery ID required' }, { status: 400 });
-    }
+    let photobook = null;
 
-    // Get existing photobook if any
-    const photobook = await prisma.photobook.findFirst({
-      where: {
-        clientId: clientId,
-        galleryId: galleryId,
-      },
-      include: {
-        pages: {
-          orderBy: { pageNumber: 'asc' },
+    if (photobookId) {
+      // Get specific photobook by ID
+      photobook = await prisma.photobook.findUnique({
+        where: { id: photobookId },
+        include: {
+          pages: {
+            orderBy: { pageNumber: 'asc' },
+          },
         },
-      },
-    });
+      });
+
+      // Verify ownership
+      if (photobook && photobook.clientId !== clientId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+    } else if (galleryId) {
+      // Get existing photobook for gallery if any
+      photobook = await prisma.photobook.findFirst({
+        where: {
+          clientId: clientId,
+          galleryId: galleryId,
+        },
+        include: {
+          pages: {
+            orderBy: { pageNumber: 'asc' },
+          },
+        },
+      });
+    } else {
+      return NextResponse.json({ error: 'Gallery ID or Photobook ID required' }, { status: 400 });
+    }
 
     return NextResponse.json({ photobook });
   } catch (error) {
@@ -58,7 +76,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Create new photobook
+// Create new photobook or save/update existing draft
 export async function POST(request: NextRequest) {
   try {
     const clientId = await getClientFromToken(request);
@@ -70,26 +88,36 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { galleryId, format, title } = body;
+    const { galleryId, format, title, design } = body;
 
-    console.log('Request body:', { galleryId, format, title });
+    console.log('Request body:', { galleryId, format, title, hasDesign: !!design });
 
-    if (!galleryId || !format) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!galleryId) {
+      return NextResponse.json({ error: 'Gallery ID required' }, { status: 400 });
     }
 
-    // Check if photobook already exists
+    // Check if photobook already exists for this gallery
     const existing = await prisma.photobook.findFirst({
       where: {
         clientId: clientId,
         galleryId: galleryId,
+        status: 'draft', // Only match draft photobooks
       },
     });
 
-    console.log('Existing photobook:', existing ? 'found' : 'not found');
+    console.log('Existing draft photobook:', existing ? 'found' : 'not found');
 
     if (existing) {
-      return NextResponse.json({ photobook: existing });
+      // Update existing draft with new design
+      const updated = await prisma.photobook.update({
+        where: { id: existing.id },
+        data: {
+          title: title || existing.title,
+          design: design || existing.design,
+          updatedAt: new Date(),
+        },
+      });
+      return NextResponse.json({ photobook: updated });
     }
 
     // Create new photobook
@@ -98,10 +126,11 @@ export async function POST(request: NextRequest) {
       data: {
         clientId: clientId,
         galleryId: galleryId,
-        format: format,
+        format: format || 'A4_LANDSCAPE',
         title: title || 'My Photobook',
         status: 'draft',
         totalPages: 0,
+        design: design || undefined,
       },
     });
 

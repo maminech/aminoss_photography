@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { photobookId, title, notes, pages } = await request.json();
+    const { photobookId, title, notes, pages, design, coverPhotoUrl } = await request.json();
 
     if (!photobookId) {
       return NextResponse.json({ error: 'Photobook ID required' }, { status: 400 });
@@ -42,45 +42,68 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    if (!pages || pages.length === 0) {
+    // Calculate total pages from design if available, otherwise from pages array
+    let totalPages = 0;
+    let finalCoverPhotoUrl = coverPhotoUrl;
+
+    if (design && design.pages) {
+      totalPages = design.pages.length;
+      // Try to extract cover photo from first page if not provided
+      if (!finalCoverPhotoUrl && design.pages[0]) {
+        const firstPage = design.pages[0];
+        const imageElement = firstPage.children?.find((child: any) => child.type === 'image');
+        if (imageElement && imageElement.src) {
+          finalCoverPhotoUrl = imageElement.src;
+        }
+      }
+    } else if (pages && pages.length > 0) {
+      totalPages = pages.length;
+      // Get cover photo URL from first page for old-style photobooks
+      if (!finalCoverPhotoUrl) {
+        const firstPagePhotos = pages[0]?.photos;
+        finalCoverPhotoUrl = firstPagePhotos && firstPagePhotos.length > 0 
+          ? firstPagePhotos[0].url 
+          : null;
+      }
+    }
+
+    if (totalPages === 0) {
       return NextResponse.json({ error: 'Photobook must have at least one page' }, { status: 400 });
     }
 
-    // Get cover photo URL from first page
-    const firstPagePhotos = pages[0]?.photos;
-    const coverPhotoUrl = firstPagePhotos && firstPagePhotos.length > 0 
-      ? firstPagePhotos[0].url 
-      : null;
-
-    // Update photobook to submitted status
+    // Update photobook to submitted status with design field
     const updated = await prisma.photobook.update({
       where: { id: photobookId },
       data: {
         title: title || photobook.title,
         notes: notes || photobook.notes,
-        totalPages: pages.length,
+        totalPages: totalPages,
         status: 'submitted',
-        coverPhotoUrl: coverPhotoUrl,
+        coverPhotoUrl: finalCoverPhotoUrl,
+        design: design || photobook.design, // Save Polotno design state
         submittedAt: new Date(),
         updatedAt: new Date(),
-      },
+      } as any,
     });
 
-    // Delete existing pages
-    await prisma.photobookPage.deleteMany({
-      where: { photobookId: photobookId },
-    });
+    // Only handle pages for old-style photobooks
+    if (pages && pages.length > 0) {
+      // Delete existing pages
+      await prisma.photobookPage.deleteMany({
+        where: { photobookId: photobookId },
+      });
 
-    // Create new pages
-    await prisma.photobookPage.createMany({
-      data: pages.map((page: any) => ({
-        photobookId: photobookId,
-        pageNumber: page.pageNumber,
-        layoutType: page.layoutType,
-        photos: page.photos,
-        notes: page.notes || null,
-      })),
-    });
+      // Create new pages
+      await prisma.photobookPage.createMany({
+        data: pages.map((page: any) => ({
+          photobookId: photobookId,
+          pageNumber: page.pageNumber,
+          layoutType: page.layoutType,
+          photos: page.photos,
+          notes: page.notes || null,
+        })),
+      });
+    }
 
     return NextResponse.json({ 
       success: true, 
