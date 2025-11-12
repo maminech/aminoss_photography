@@ -35,6 +35,8 @@ export default function AdminPhotosPage() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  const [uploadQueue, setUploadQueue] = useState<any[]>([]);
+  const [showAlbumPrompt, setShowAlbumPrompt] = useState(false);
 
   const categories = ['all', 'weddings', 'portraits', 'travel', 'fashion', 'events'];
 
@@ -54,39 +56,54 @@ export default function AdminPhotosPage() {
     }
   };
 
-  // Handle upload success
+  // Handle upload success - now supports batch uploads
   const handleUploadSuccess = async (result: any) => {
+    try {
+      const uploadedPhotos = Array.isArray(result) ? result : [result];
+      
+      // If multiple photos uploaded, ask if they should be grouped as an album (like Instagram carousel)
+      if (uploadedPhotos.length > 1) {
+        setUploadQueue(uploadedPhotos.map((r: any) => r.info));
+        setShowAlbumPrompt(true);
+      } else {
+        // Single photo - upload directly
+        await uploadSinglePhoto(uploadedPhotos[0].info);
+      }
+    } catch (error) {
+      console.error('Error handling upload:', error);
+      alert('❌ Failed to handle upload');
+    }
+  };
+
+  // Upload single photo
+  const uploadSinglePhoto = async (photoInfo: any) => {
     try {
       setUploading(true);
       
-      // Generate thumbnail URL with Cloudinary transformation
-      // Using larger size and higher quality for crisp display
-      const thumbnailUrl = result.info.secure_url.replace(
+      const thumbnailUrl = photoInfo.secure_url.replace(
         '/upload/',
         '/upload/w_800,h_800,c_fill,q_90,f_auto/'
       );
       
-      // Extract filename from public_id and clean it up for title
-      const filename = result.info.public_id.split('/').pop() || 'Untitled';
-      // Remove Cloudinary ID suffix (e.g., "_abc123") and replace underscores/hyphens with spaces
+      const filename = photoInfo.public_id.split('/').pop() || 'Untitled';
       const cleanTitle = filename
-        .replace(/_[a-z0-9]{6}$/i, '') // Remove Cloudinary suffix
-        .replace(/[_-]/g, ' ') // Replace underscores and hyphens with spaces
-        .replace(/\s+/g, ' ') // Normalize multiple spaces
+        .replace(/_[a-z0-9]{6}$/i, '')
+        .replace(/[_-]/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
       
       const response = await fetch('/api/admin/images/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          cloudinaryId: result.info.public_id,
-          url: result.info.secure_url,
+          cloudinaryId: photoInfo.public_id,
+          url: photoInfo.secure_url,
           thumbnailUrl: thumbnailUrl,
           title: cleanTitle || null,
-          width: result.info.width,
-          height: result.info.height,
-          format: result.info.format,
-          category: 'weddings', // default category
+          width: photoInfo.width,
+          height: photoInfo.height,
+          format: photoInfo.format,
+          category: 'weddings',
           tags: [],
           featured: false,
           showOnHomepage: false,
@@ -95,7 +112,6 @@ export default function AdminPhotosPage() {
       });
 
       if (response.ok) {
-        alert('✅ Photo uploaded successfully!');
         fetchImages();
       } else {
         const error = await response.json();
@@ -104,6 +120,87 @@ export default function AdminPhotosPage() {
     } catch (error) {
       console.error('Error saving photo:', error);
       alert('❌ Failed to save photo');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Handle album creation choice
+  const handleAlbumChoice = async (createAsAlbum: boolean) => {
+    try {
+      setUploading(true);
+      setShowAlbumPrompt(false);
+
+      if (createAsAlbum) {
+        // Create as ONE album (Instagram carousel style)
+        const albumTitle = prompt('📸 Album Title (like Instagram caption):', 
+          `Photo Album ${new Date().toLocaleDateString()}`);
+        
+        if (!albumTitle) {
+          setUploadQueue([]);
+          setUploading(false);
+          return;
+        }
+
+        // Create album first
+        const albumRes = await fetch('/api/admin/albums', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: albumTitle,
+            category: 'weddings',
+            showInGallery: true,
+          }),
+        });
+
+        if (!albumRes.ok) {
+          throw new Error('Failed to create album');
+        }
+
+        const album = await albumRes.json();
+
+        // Upload all photos with albumId
+        for (const photoInfo of uploadQueue) {
+          const thumbnailUrl = photoInfo.secure_url.replace(
+            '/upload/',
+            '/upload/w_800,h_800,c_fill,q_90,f_auto/'
+          );
+
+          await fetch('/api/admin/images/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              cloudinaryId: photoInfo.public_id,
+              url: photoInfo.secure_url,
+              thumbnailUrl: thumbnailUrl,
+              title: null,
+              width: photoInfo.width,
+              height: photoInfo.height,
+              format: photoInfo.format,
+              category: 'weddings',
+              tags: [],
+              featured: false,
+              showOnHomepage: false,
+              showInGallery: false, // Don't show individually, only in album
+              albumId: album.id,
+            }),
+          });
+        }
+
+        alert(`✅ Created album "${albumTitle}" with ${uploadQueue.length} photos!`);
+      } else {
+        // Upload as SEPARATE posts
+        for (const photoInfo of uploadQueue) {
+          await uploadSinglePhoto(photoInfo);
+        }
+        alert(`✅ Uploaded ${uploadQueue.length} photos separately!`);
+      }
+
+      setUploadQueue([]);
+      fetchImages();
+    } catch (error) {
+      console.error('Error processing uploads:', error);
+      alert('❌ Failed to process uploads');
     } finally {
       setUploading(false);
     }
@@ -509,6 +606,68 @@ export default function AdminPhotosPage() {
           onSave={(data) => updateImage(selectedImage.id, data)}
           categories={categories.filter((c) => c !== 'all')}
         />
+      )}
+
+      {/* Album Grouping Prompt */}
+      {showAlbumPrompt && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-dark-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+              📸 Group as Album?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              You uploaded <strong>{uploadQueue.length} photos</strong>. How would you like to display them?
+            </p>
+            
+            <div className="space-y-3">
+              {/* Option 1: Album (Instagram Carousel) */}
+              <button
+                onClick={() => handleAlbumChoice(true)}
+                className="w-full p-4 border-2 border-primary bg-primary/5 rounded-xl hover:bg-primary/10 transition text-left group"
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="text-2xl">🎞️</div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                      One Album (Instagram Style)
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Like Instagram carousel - all {uploadQueue.length} photos in one post
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Option 2: Separate Posts */}
+              <button
+                onClick={() => handleAlbumChoice(false)}
+                className="w-full p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-700 transition text-left"
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="text-2xl">🖼️</div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                      Separate Posts
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {uploadQueue.length} individual photos shown separately
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowAlbumPrompt(false);
+                setUploadQueue([]);
+              }}
+              className="w-full mt-4 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

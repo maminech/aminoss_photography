@@ -96,9 +96,9 @@ export async function GET(request: NextRequest) {
 
     const instagramAccountId = igAccountData.instagram_business_account.id;
 
-    // Step 5: Fetch Instagram media
+    // Step 5: Fetch Instagram media (including carousel children)
     const mediaResponse = await fetch(
-      `https://graph.facebook.com/v18.0/${instagramAccountId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&access_token=${pageAccessToken}`
+      `https://graph.facebook.com/v18.0/${instagramAccountId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,children{id,media_type,media_url,thumbnail_url}&access_token=${pageAccessToken}`
     );
 
     if (!mediaResponse.ok) {
@@ -141,7 +141,79 @@ export async function POST(request: NextRequest) {
 
       for (const item of media) {
       try {
-        // Import both images and videos
+        // Handle CAROUSEL_ALBUM (Instagram posts with multiple photos)
+        if (item.media_type === 'CAROUSEL_ALBUM' && item.children?.data) {
+          // Check if already imported
+          const existingAlbum = await prisma.album.findFirst({
+            where: {
+              title: item.caption?.substring(0, 100) || `Instagram Album ${item.id}`
+            }
+          });
+
+          if (existingAlbum) {
+            skipped++;
+            continue;
+          }
+
+          // Create album for carousel
+          const album = await prisma.album.create({
+            data: {
+              title: item.caption?.substring(0, 100) || `Instagram Album ${item.id}`,
+              description: item.caption || '',
+              category: 'instagram',
+              showInGallery: true,
+              featured: false,
+              showOnHomepage: false,
+            },
+          });
+
+          // Import all children photos into the album
+          for (const child of item.children.data) {
+            try {
+              // Upload to Cloudinary
+              const uploadResponse = await fetch('/api/admin/cloudinary-upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  imageUrl: child.media_url,
+                  folder: 'instagram-imports',
+                }),
+              });
+
+              if (!uploadResponse.ok) continue;
+
+              const uploadData = await uploadResponse.json();
+
+              // Save to database linked to album
+              await prisma.image.create({
+                data: {
+                  cloudinaryId: uploadData.public_id,
+                  url: uploadData.secure_url,
+                  thumbnailUrl: uploadData.thumbnail_url || uploadData.secure_url,
+                  title: null,
+                  description: '',
+                  category: 'instagram',
+                  tags: ['instagram', 'carousel'],
+                  featured: false,
+                  showOnHomepage: false,
+                  showInGallery: false, // Only show in album, not individually
+                  albumId: album.id,
+                  order: 0,
+                  width: uploadData.width,
+                  height: uploadData.height,
+                  format: uploadData.format,
+                },
+              });
+            } catch (childError) {
+              console.error(`Error importing carousel child:`, childError);
+            }
+          }
+
+          imported++;
+          continue;
+        }
+
+        // Handle single IMAGE or VIDEO
         if (item.media_type !== 'IMAGE' && item.media_type !== 'VIDEO') {
           skipped++;
           continue;
@@ -179,7 +251,7 @@ export async function POST(request: NextRequest) {
 
         const uploadData = await uploadResponse.json();
 
-        // Save to database (use Image model for both images and videos for now)
+        // Save single post to database
         await prisma.image.create({
           data: {
             cloudinaryId: uploadData.public_id,
@@ -187,7 +259,7 @@ export async function POST(request: NextRequest) {
             thumbnailUrl: uploadData.thumbnail_url || uploadData.secure_url,
             title: item.caption?.substring(0, 100) || `Instagram ${item.media_type.toLowerCase()} ${item.id}`,
             description: item.caption || '',
-            category: 'travel', // Default category
+            category: 'instagram',
             tags: ['instagram', 'import', item.media_type.toLowerCase()],
             featured: false,
             showOnHomepage: false,

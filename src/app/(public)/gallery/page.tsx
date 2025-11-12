@@ -7,83 +7,124 @@ import { useLayoutTheme } from '@/contexts/ThemeContext';
 import CategoryFilter from '@/components/CategoryFilter';
 import GalleryGrid from '@/components/GalleryGrid';
 import LightboxModal from '@/components/LightboxModal';
+import AlbumCarousel from '@/components/AlbumCarousel';
+import AlbumLightboxModal from '@/components/AlbumLightboxModal';
 import NavigationButton from '@/components/NavigationButton';
 import PublicPWAInstallPrompt from '@/components/PublicPWAInstallPrompt';
 import { MediaItem, Category } from '@/types';
 import { getSampleImages, filterImagesByCategory } from '@/lib/sample-data';
 
+interface GalleryAlbum {
+  type: 'album';
+  id: string;
+  title?: string;
+  description?: string;
+  category: string;
+  coverImage?: string;
+  photoCount: number;
+  photos: Array<{
+    id: string;
+    url: string;
+    thumbnailUrl?: string;
+    width?: number;
+    height?: number;
+  }>;
+  createdAt: string;
+  featured?: boolean;
+}
+
+interface GalleryImage {
+  type: 'image';
+  id: string;
+  publicId: string;
+  url: string;
+  thumbnailUrl?: string;
+  title?: string;
+  description?: string;
+  category: string;
+  tags?: string[];
+  width?: number;
+  height?: number;
+  format?: string;
+  createdAt: string;
+}
+
+type GalleryItem = GalleryAlbum | GalleryImage;
+
 export default function GalleryPage() {
   const { currentTheme } = useLayoutTheme();
-  const [allImages, setAllImages] = useState<MediaItem[]>([]);
-  const [filteredImages, setFilteredImages] = useState<MediaItem[]>([]);
+  const [allItems, setAllItems] = useState<GalleryItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<GalleryItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [sortBy, setSortBy] = useState<'date' | 'title'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [albumLightboxOpen, setAlbumLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentAlbum, setCurrentAlbum] = useState<GalleryAlbum | null>(null);
   const [loading, setLoading] = useState(true);
   const isProfessional = currentTheme === 'professional';
 
   useEffect(() => {
-    const loadImages = async () => {
+    const loadGallery = async () => {
       try {
-        // Load real images from database that are visible in gallery
-        const res = await fetch('/api/admin/images');
+        // Load gallery items (albums + standalone images) from new unified API
+        const res = await fetch('/api/public/gallery');
         if (res.ok) {
-          const data = await res.json();
-          // Filter images that should be shown in gallery
-          const galleryImages = data.filter((img: any) => img.showInGallery !== false);
-          // Map to MediaItem format
-          const mappedImages = galleryImages.map((img: any) => ({
-            id: img.id,
-            publicId: img.cloudinaryId,
-            url: img.url,
-            thumbnailUrl: img.thumbnailUrl,
-            title: img.title || 'Untitled',
-            description: img.description || '',
-            category: img.category,
-            width: img.width,
-            height: img.height,
-            format: img.format,
-            createdAt: img.createdAt,
-            tags: img.tags || [],
-          }));
-          setAllImages(mappedImages);
-          setFilteredImages(mappedImages);
+          const data: GalleryItem[] = await res.json();
+          setAllItems(data);
+          setFilteredItems(data);
         } else {
-          // Fallback to sample data
-          const data = await getSampleImages('all');
-          setAllImages(data);
-          setFilteredImages(data);
+          // Fallback to old API
+          const imgRes = await fetch('/api/admin/images');
+          if (imgRes.ok) {
+            const imgData = await imgRes.json();
+            const galleryImages = imgData.filter((img: any) => img.showInGallery !== false);
+            const mappedImages: GalleryImage[] = galleryImages.map((img: any) => ({
+              type: 'image',
+              id: img.id,
+              publicId: img.cloudinaryId,
+              url: img.url,
+              thumbnailUrl: img.thumbnailUrl,
+              title: img.title || 'Untitled',
+              description: img.description || '',
+              category: img.category,
+              width: img.width,
+              height: img.height,
+              format: img.format,
+              createdAt: img.createdAt,
+              tags: img.tags || [],
+            }));
+            setAllItems(mappedImages);
+            setFilteredItems(mappedImages);
+          }
         }
       } catch (error) {
-        console.error('Error loading images:', error);
-        // Fallback to sample data on error
-        const data = await getSampleImages('all');
-        setAllImages(data);
-        setFilteredImages(data);
+        console.error('Error loading gallery:', error);
       } finally {
         setLoading(false);
       }
     };
-    loadImages();
+    loadGallery();
   }, []);
 
   const handleCategoryChange = (category: Category) => {
     setActiveCategory(category);
-    const filtered = filterImagesByCategory(allImages, category);
-    setFilteredImages(sortImages(filtered));
+    const filtered = category === 'all' 
+      ? allItems 
+      : allItems.filter(item => item.category === category);
+    setFilteredItems(sortItems(filtered));
   };
 
-  const sortImages = (images: MediaItem[]) => {
-    const sorted = [...images].sort((a, b) => {
+  const sortItems = (items: GalleryItem[]) => {
+    const sorted = [...items].sort((a, b) => {
       if (sortBy === 'date') {
         const dateA = new Date(a.createdAt || 0).getTime();
         const dateB = new Date(b.createdAt || 0).getTime();
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
       } else {
-        const titleA = a.title.toLowerCase();
-        const titleB = b.title.toLowerCase();
+        const titleA = (a.type === 'album' ? a.title : a.title)?.toLowerCase() || '';
+        const titleB = (b.type === 'album' ? b.title : b.title)?.toLowerCase() || '';
         return sortOrder === 'asc' 
           ? titleA.localeCompare(titleB)
           : titleB.localeCompare(titleA);
@@ -99,7 +140,7 @@ export default function GalleryPage() {
       setSortBy(newSortBy);
       setSortOrder('desc');
     }
-    setFilteredImages(sortImages(filteredImages));
+    setFilteredItems(sortItems(filteredItems));
   };
 
   const openLightbox = (index: number) => {
@@ -107,13 +148,40 @@ export default function GalleryPage() {
     setLightboxOpen(true);
   };
 
+  const openAlbumLightbox = (album: GalleryAlbum) => {
+    setCurrentAlbum(album);
+    setAlbumLightboxOpen(true);
+  };
+
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % filteredImages.length);
+    // Get only standalone images for lightbox navigation
+    const standaloneImages = filteredItems.filter(item => item.type === 'image') as GalleryImage[];
+    setCurrentImageIndex((prev) => (prev + 1) % standaloneImages.length);
   };
 
   const previousImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + filteredImages.length) % filteredImages.length);
+    const standaloneImages = filteredItems.filter(item => item.type === 'image') as GalleryImage[];
+    setCurrentImageIndex((prev) => (prev - 1 + standaloneImages.length) % standaloneImages.length);
   };
+
+  // Convert filtered items to MediaItems for lightbox (only standalone images)
+  const standaloneImages: MediaItem[] = filteredItems
+    .filter(item => item.type === 'image')
+    .map(item => item as GalleryImage)
+    .map(img => ({
+      id: img.id,
+      publicId: img.publicId,
+      url: img.url,
+      thumbnailUrl: img.thumbnailUrl,
+      title: img.title || 'Untitled',
+      description: img.description || '',
+      category: img.category,
+      width: img.width,
+      height: img.height,
+      format: img.format,
+      createdAt: img.createdAt,
+      tags: img.tags || [],
+    }));
 
   // Professional/Novo Theme Layout
   if (isProfessional) {
@@ -185,7 +253,7 @@ export default function GalleryPage() {
                   Title {sortBy === 'title' && (sortOrder === 'desc' ? '↓' : '↑')}
                 </button>
                 <span className="text-gray-500 font-lato">
-                  ({filteredImages.length} {filteredImages.length === 1 ? 'photo' : 'photos'})
+                  ({filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'})
                 </span>
               </div>
             </motion.div>
@@ -197,46 +265,83 @@ export default function GalleryPage() {
                   <div key={i} className="aspect-square bg-gray-200 animate-pulse" />
                 ))}
               </div>
-            ) : filteredImages.length > 0 ? (
+            ) : filteredItems.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                {filteredImages.map((image, index) => (
-                  <motion.div
-                    key={image.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.6, delay: index * 0.05 }}
-                    onClick={() => openLightbox(index)}
-                    className="group relative aspect-square overflow-hidden bg-gray-200 cursor-pointer"
-                  >
-                    <Image
-                      src={image.url}
-                      alt={image.title || `Photo ${index + 1}`}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    
-                    {/* Hover Overlay - Clean without text */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </motion.div>
-                ))}
+                {filteredItems.map((item, index) => {
+                  if (item.type === 'album') {
+                    return (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.6, delay: index * 0.05 }}
+                      >
+                        <AlbumCarousel
+                          photos={item.photos}
+                          coverImage={item.coverImage}
+                          photoCount={item.photoCount}
+                          onOpen={() => openAlbumLightbox(item)}
+                        />
+                      </motion.div>
+                    );
+                  } else {
+                    const imageIndex = filteredItems
+                      .slice(0, index)
+                      .filter(i => i.type === 'image').length;
+                    return (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.6, delay: index * 0.05 }}
+                        onClick={() => openLightbox(imageIndex)}
+                        className="group relative aspect-square overflow-hidden bg-gray-200 cursor-pointer"
+                      >
+                        <Image
+                          src={item.thumbnailUrl || item.url}
+                          alt={item.title || `Photo ${imageIndex + 1}`}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        
+                        {/* Hover Overlay - Clean without text */}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </motion.div>
+                    );
+                  }
+                })}
               </div>
             ) : (
               <div className="text-center py-16">
-                <p className="text-gray-500 font-lato text-lg">No images found in this category.</p>
+                <p className="text-gray-500 font-lato text-lg">No content found in this category.</p>
               </div>
             )}
           </div>
         </section>
 
+        {/* Lightbox for standalone images */}
         <LightboxModal
-          images={filteredImages}
+          images={standaloneImages}
           currentIndex={currentImageIndex}
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
           onNext={nextImage}
           onPrevious={previousImage}
         />
+
+        {/* Album Lightbox */}
+        {currentAlbum && (
+          <AlbumLightboxModal
+            photos={currentAlbum.photos}
+            albumTitle={currentAlbum.title}
+            albumDescription={currentAlbum.description}
+            currentIndex={0}
+            isOpen={albumLightboxOpen}
+            onClose={() => setAlbumLightboxOpen(false)}
+          />
+        )}
       </div>
     );
   }
@@ -289,7 +394,7 @@ export default function GalleryPage() {
                 </button>
               </div>
               <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 w-full xs:w-auto text-center xs:text-left">
-                ({filteredImages.length} {filteredImages.length === 1 ? 'photo' : 'photos'})
+                ({filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'})
               </span>
             </div>
           </div>
@@ -300,24 +405,83 @@ export default function GalleryPage() {
                 <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse rounded-lg sm:rounded-xl" />
               ))}
             </div>
-          ) : filteredImages.length > 0 ? (
-            <GalleryGrid images={filteredImages} onImageClick={openLightbox} />
+          ) : filteredItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {filteredItems.map((item, index) => {
+                if (item.type === 'album') {
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                    >
+                      <AlbumCarousel
+                        photos={item.photos}
+                        coverImage={item.coverImage}
+                        photoCount={item.photoCount}
+                        onOpen={() => openAlbumLightbox(item)}
+                        className="rounded-lg sm:rounded-xl"
+                      />
+                    </motion.div>
+                  );
+                } else {
+                  const imageIndex = filteredItems
+                    .slice(0, index)
+                    .filter(i => i.type === 'image').length;
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      onClick={() => openLightbox(imageIndex)}
+                      className="group relative aspect-square overflow-hidden bg-gray-200 dark:bg-dark-700 cursor-pointer rounded-lg sm:rounded-xl"
+                    >
+                      <Image
+                        src={item.thumbnailUrl || item.url}
+                        alt={item.title || `Photo ${imageIndex + 1}`}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                      
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </motion.div>
+                  );
+                }
+              })}
+            </div>
           ) : (
             <div className="text-center py-12 sm:py-16">
-              <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg">No images found in this category.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg">No content found in this category.</p>
             </div>
           )}
         </motion.div>
       </div>
 
+      {/* Lightbox for standalone images */}
       <LightboxModal
-        images={filteredImages}
+        images={standaloneImages}
         currentIndex={currentImageIndex}
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
         onNext={nextImage}
         onPrevious={previousImage}
       />
+
+      {/* Album Lightbox */}
+      {currentAlbum && (
+        <AlbumLightboxModal
+          photos={currentAlbum.photos}
+          albumTitle={currentAlbum.title}
+          albumDescription={currentAlbum.description}
+          currentIndex={0}
+          isOpen={albumLightboxOpen}
+          onClose={() => setAlbumLightboxOpen(false)}
+        />
+      )}
 
       {/* PWA Install Prompt */}
       <PublicPWAInstallPrompt />
