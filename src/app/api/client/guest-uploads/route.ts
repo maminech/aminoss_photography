@@ -40,13 +40,6 @@ export async function GET(req: NextRequest) {
           orderBy: {
             uploadedAt: 'desc',
           },
-          include: {
-            photos: {
-              orderBy: {
-                uploadedAt: 'asc',
-              },
-            },
-          },
         },
       },
       orderBy: {
@@ -54,33 +47,49 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Transform the data for easier frontend consumption
+    // Transform the data - each GuestUpload IS a photo
     const galleriesWithUploads = galleries
       .filter(gallery => gallery.guestUploads.length > 0)
       .map(gallery => {
-        const uploads = gallery.guestUploads.map(upload => {
-          const photos = upload.photos.map(photo => ({
-            id: photo.id,
-            fileUrl: photo.fileUrl,
-            thumbnailUrl: photo.thumbnailUrl || photo.fileUrl,
-            isSelectedForPrint: photo.isSelectedForPrint,
-          }));
+        // Group uploads by uploadGroupId
+        const groupedUploads = gallery.guestUploads.reduce((acc: any, upload) => {
+          const groupId = upload.uploadGroupId;
+          
+          if (!acc[groupId]) {
+            acc[groupId] = {
+              uploadGroupId: groupId,
+              uploaderName: upload.uploaderName,
+              message: upload.message || '',
+              uploadedAt: upload.uploadedAt.toISOString(),
+              photos: [],
+              photoCount: 0,
+              printPhoto: null,
+              photoboothPrintUrl: upload.photoboothPrintUrl,
+              status: upload.status,
+            };
+          }
 
-          return {
-            uploadGroupId: upload.uploadGroupId,
-            uploaderName: upload.uploaderName,
-            message: upload.message,
-            uploadedAt: upload.uploadedAt.toISOString(),
-            photoCount: photos.length,
-            photos,
-            printPhoto: photos.find(p => p.isSelectedForPrint) || null,
-            photoboothPrintUrl: upload.photoboothPrintUrl,
-            status: upload.status,
+          // Each upload IS a photo
+          const photo = {
+            id: upload.id,
+            fileUrl: upload.fileUrl,
+            thumbnailUrl: upload.thumbnailUrl,
+            isSelectedForPrint: upload.isSelectedForPrint,
           };
-        });
 
-        const totalPhotos = uploads.reduce((sum, u) => sum + u.photoCount, 0);
-        const printSelected = uploads.filter(u => u.printPhoto).length;
+          acc[groupId].photos.push(photo);
+          acc[groupId].photoCount++;
+
+          if (upload.isSelectedForPrint) {
+            acc[groupId].printPhoto = photo;
+          }
+
+          return acc;
+        }, {});
+
+        const uploads = Object.values(groupedUploads);
+        const totalPhotos = gallery.guestUploads.length;
+        const printSelected = uploads.filter((u: any) => u.printPhoto).length;
 
         return {
           id: gallery.id,
