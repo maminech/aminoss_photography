@@ -18,6 +18,7 @@ interface Photobook {
   approvedAt?: string;
   createdAt: string;
   gallery: {
+    id: string;
     name: string;
   };
 }
@@ -222,7 +223,7 @@ export default function ClientPhotobooksPage() {
                   <div className="flex gap-2">
                     {photobook.status === 'draft' && (
                       <Link
-                        href={`/client/gallery/${photobook.gallery}/photobook/${photobook.id}`}
+                        href={`/client/gallery/${photobook.gallery.id}/photobook/${photobook.id}`}
                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
                       >
                         <FiEdit className="w-4 h-4" />
