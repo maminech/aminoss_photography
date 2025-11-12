@@ -3,6 +3,44 @@
 import { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiUsers, FiMail, FiPhone, FiLock } from 'react-icons/fi';
 
+// Add animations
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.2s ease-out;
+    }
+    .animate-slideUp {
+      animation: slideUp 0.3s ease-out;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 interface Client {
   id: string;
   name: string;
@@ -132,78 +170,108 @@ export default function AdminClientsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 sticky top-0 z-30">
-        <div className="px-6 py-4">
+      <header className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-30 shadow-sm">
+        <div className="px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Client Management</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {clients.length} total clients • {clients.filter(c => c.active).length} active
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="p-2 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
+                  <FiUsers className="w-6 h-6 text-primary" />
+                </div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+                  Client Management
+                </h1>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 ml-14">
+                <span className="font-semibold text-primary">{clients.length}</span> total clients • 
+                <span className="font-semibold text-green-600 ml-1">{clients.filter(c => c.active).length}</span> active
               </p>
             </div>
             <button
               onClick={() => openModal()}
-              className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+              className="group relative flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 transform hover:scale-105"
             >
-              <FiPlus className="w-4 h-4" />
-              <span>Add Client</span>
+              <FiPlus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="font-medium">Add Client</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="p-6">
+      <main className="p-6 max-w-7xl mx-auto">
         {clients.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <FiUsers className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Clients Yet</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Create your first client account to start sharing photos
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-16 text-center transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="relative inline-block mb-6">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 blur-2xl"></div>
+              <FiUsers className="relative w-20 h-20 text-primary mx-auto" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">No Clients Yet</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+              Create your first client account to start sharing beautiful photos and galleries
             </p>
             <button
               onClick={() => openModal()}
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+              className="group inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl hover:shadow-xl hover:shadow-primary/25 transition-all duration-300 transform hover:scale-105"
             >
-              <FiPlus className="w-5 h-5" />
-              <span>Add First Client</span>
+              <FiPlus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="font-semibold">Add First Client</span>
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clients.map((client) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {clients.map((client, index) => (
               <div
                 key={client.id}
-                className={`bg-white rounded-lg shadow-sm border overflow-hidden group ${
-                  !client.active ? 'opacity-60 border-gray-300' : 'border-gray-200 hover:border-primary hover:shadow-md'
-                } transition-all duration-200`}
+                className={`relative bg-gradient-to-br from-white to-gray-50/50 dark:from-dark-800 dark:to-dark-900 rounded-2xl shadow-lg border overflow-hidden group transform hover:scale-[1.02] transition-all duration-300 ${
+                  !client.active 
+                    ? 'opacity-60 border-gray-300' 
+                    : 'border-gray-200/50 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10'
+                }`}
+                style={{
+                  animationDelay: `${index * 50}ms`,
+                  animation: 'fadeInUp 0.5s ease-out forwards'
+                }}
               >
-                <a href={`/admin/dashboard/clients/${client.id}`} className="block p-6 cursor-pointer">
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-primary/10 transition-all duration-300 pointer-events-none"></div>
+                
+                <a href={`/admin/dashboard/clients/${client.id}`} className="relative block p-6 cursor-pointer">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-primary transition">
-                        {client.name}
-                      </h3>
-                      <div className="flex items-center text-sm text-gray-600 mb-1">
-                        <FiMail className="w-4 h-4 mr-1" />
-                        {client.email}
-                      </div>
-                      {client.phone && (
-                        <div className="flex items-center text-sm text-gray-600">
-                          <FiPhone className="w-4 h-4 mr-1" />
-                          {client.phone}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <span className="text-primary font-bold text-lg">
+                            {client.name.charAt(0).toUpperCase()}
+                          </span>
                         </div>
-                      )}
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors duration-300 truncate">
+                          {client.name}
+                        </h3>
+                      </div>
+                      <div className="space-y-2 ml-12">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiMail className="w-4 h-4 mr-2 flex-shrink-0" />
+                          <span className="truncate">{client.email}</span>
+                        </div>
+                        {client.phone && (
+                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                            <FiPhone className="w-4 h-4 mr-2 flex-shrink-0" />
+                            <span>{client.phone}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex space-x-2" onClick={(e) => e.preventDefault()}>
+                    <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" onClick={(e) => e.preventDefault()}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           openModal(client);
                         }}
-                        className="p-2 text-gray-400 hover:text-primary-600 hover:bg-gray-100 rounded transition"
+                        className="p-2.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200 transform hover:scale-110"
+                        title="Edit client"
                       >
                         <FiEdit2 className="w-4 h-4" />
                       </button>
@@ -212,7 +280,8 @@ export default function AdminClientsPage() {
                           e.stopPropagation();
                           handleDelete(client.id);
                         }}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition"
+                        className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 transform hover:scale-110"
+                        title="Delete client"
                       >
                         <FiTrash2 className="w-4 h-4" />
                       </button>
@@ -220,22 +289,31 @@ export default function AdminClientsPage() {
                   </div>
 
                   {client.notes && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{client.notes}</p>
+                    <div className="mb-4 p-3 bg-gray-50/50 dark:bg-dark-700/30 rounded-lg">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 italic">
+                        "{client.notes}"
+                      </p>
+                    </div>
                   )}
 
-                  <div className="pt-3 border-t border-gray-100">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">
-                        {client._count.galleries} {client._count.galleries === 1 ? 'gallery' : 'galleries'}
-                      </span>
+                  <div className="pt-4 mt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <span className="text-primary font-bold text-sm">{client._count.galleries}</span>
+                        </div>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {client._count.galleries === 1 ? 'Gallery' : 'Galleries'}
+                        </span>
+                      </div>
                       <span
-                        className={`px-2 py-1 rounded text-xs font-semibold ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${
                           client.active
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                            : 'bg-gray-200 text-gray-700'
                         }`}
                       >
-                        {client.active ? 'Active' : 'Inactive'}
+                        {client.active ? '● Active' : '○ Inactive'}
                       </span>
                     </div>
                   </div>
@@ -248,114 +326,130 @@ export default function AdminClientsPage() {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                {selectedClient ? 'Edit Client' : 'Add New Client'}
-              </h2>
-              <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white dark:bg-dark-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform animate-slideUp">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-gray-50 to-white dark:from-dark-700 dark:to-dark-800">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                  {selectedClient ? (
+                    <FiEdit2 className="w-5 h-5 text-primary" />
+                  ) : (
+                    <FiPlus className="w-5 h-5 text-primary" />
+                  )}
+                </div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+                  {selectedClient ? 'Edit Client' : 'Add New Client'}
+                </h2>
+              </div>
+              <button 
+                onClick={closeModal} 
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 p-2 rounded-lg transition-all duration-200 transform hover:scale-110"
+              >
                 <FiX className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
+            <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-88px)]">
+              <div className="space-y-2">
+                <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <FiUsers className="w-4 h-4 text-primary" />
+                  <span>Full Name *</span>
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-dark-700 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
                   placeholder="John Doe"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
+              <div className="space-y-2">
+                <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <FiMail className="w-4 h-4 text-primary" />
+                  <span>Email Address *</span>
                 </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-dark-700 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
                   placeholder="john@example.com"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password {selectedClient && '(leave blank to keep current)'}
-                  {!selectedClient && ' *'}
+              <div className="space-y-2">
+                <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <FiLock className="w-4 h-4 text-primary" />
+                  <span>Password {selectedClient && '(leave blank to keep current)'}{!selectedClient && ' *'}</span>
                 </label>
                 <input
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required={!selectedClient}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-dark-700 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
                   placeholder="••••••••"
                   minLength={6}
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
+              <div className="space-y-2">
+                <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <FiPhone className="w-4 h-4 text-primary" />
+                  <span>Phone Number</span>
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-dark-700 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Notes (Internal)
+              <div className="space-y-2">
+                <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <span>📝</span>
+                  <span>Notes (Internal)</span>
                 </label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-dark-700 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 resize-none"
                   placeholder="Wedding shoot - June 2025"
                 />
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center p-4 bg-gray-50 dark:bg-dark-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
                 <input
                   type="checkbox"
                   id="active"
                   checked={formData.active}
                   onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                  className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
                 />
-                <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                  Active (client can log in)
+                <label htmlFor="active" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                  Active (client can log in and access galleries)
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-700 transition-all duration-200 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                  className="px-8 py-3 bg-gradient-to-r from-primary to-primary/90 text-white rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 transform hover:scale-105 font-semibold"
                 >
-                  {selectedClient ? 'Update Client' : 'Create Client'}
+                  {selectedClient ? '✓ Update Client' : '+ Create Client'}
                 </button>
               </div>
             </form>

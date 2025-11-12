@@ -49,6 +49,11 @@ export default function NotificationManager() {
     setError(null);
 
     try {
+      // Validate VAPID key
+      if (!VAPID_PUBLIC_KEY || VAPID_PUBLIC_KEY.trim() === '') {
+        throw new Error('Push notifications are not configured. Please contact the administrator.');
+      }
+
       // Request notification permission
       const permission = await Notification.requestPermission();
       
