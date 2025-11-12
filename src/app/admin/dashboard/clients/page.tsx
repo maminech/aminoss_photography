@@ -170,23 +170,23 @@ export default function AdminClientsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 dark:bg-dark-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-30 shadow-sm">
+      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-dark-700 sticky top-0 z-30 shadow-sm">
         <div className="px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center space-x-3 mb-2">
-                <div className="p-2 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
+                <div className="p-2 bg-primary/10 dark:bg-primary/20 rounded-lg">
                   <FiUsers className="w-6 h-6 text-primary" />
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                   Client Management
                 </h1>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 ml-14">
                 <span className="font-semibold text-primary">{clients.length}</span> total clients • 
-                <span className="font-semibold text-green-600 ml-1">{clients.filter(c => c.active).length}</span> active
+                <span className="font-semibold text-green-600 dark:text-green-500 ml-1">{clients.filter(c => c.active).length}</span> active
               </p>
             </div>
             <button
@@ -203,12 +203,12 @@ export default function AdminClientsPage() {
       {/* Main Content */}
       <main className="p-6 max-w-7xl mx-auto">
         {clients.length === 0 ? (
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-16 text-center transform hover:scale-[1.02] transition-transform duration-300">
+          <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl border border-gray-200 dark:border-dark-700 p-16 text-center transform hover:scale-[1.02] transition-transform duration-300">
             <div className="relative inline-block mb-6">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 blur-2xl"></div>
               <FiUsers className="relative w-20 h-20 text-primary mx-auto" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">No Clients Yet</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">No Clients Yet</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
               Create your first client account to start sharing beautiful photos and galleries
             </p>
@@ -225,10 +225,10 @@ export default function AdminClientsPage() {
             {clients.map((client, index) => (
               <div
                 key={client.id}
-                className={`relative bg-gradient-to-br from-white to-gray-50/50 dark:from-dark-800 dark:to-dark-900 rounded-2xl shadow-lg border overflow-hidden group transform hover:scale-[1.02] transition-all duration-300 ${
+                className={`relative bg-white dark:bg-dark-800 rounded-2xl shadow-lg border overflow-hidden group transform hover:scale-[1.02] transition-all duration-300 ${
                   !client.active 
-                    ? 'opacity-60 border-gray-300' 
-                    : 'border-gray-200/50 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10'
+                    ? 'opacity-60 border-gray-300 dark:border-dark-600' 
+                    : 'border-gray-200 dark:border-dark-700 hover:border-primary/30 dark:hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10'
                 }`}
                 style={{
                   animationDelay: `${index * 50}ms`,
@@ -242,12 +242,12 @@ export default function AdminClientsPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                           <span className="text-primary font-bold text-lg">
                             {client.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors duration-300 truncate">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors duration-300 truncate">
                           {client.name}
                         </h3>
                       </div>
@@ -264,13 +264,13 @@ export default function AdminClientsPage() {
                         )}
                       </div>
                     </div>
-                    <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" onClick={(e) => e.preventDefault()}>
+                    <div className="flex space-x-1" onClick={(e) => e.preventDefault()}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           openModal(client);
                         }}
-                        className="p-2.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200 transform hover:scale-110"
+                        className="p-2.5 text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg transition-all duration-200 transform hover:scale-110"
                         title="Edit client"
                       >
                         <FiEdit2 className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function AdminClientsPage() {
                           e.stopPropagation();
                           handleDelete(client.id);
                         }}
-                        className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 transform hover:scale-110"
+                        className="p-2.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all duration-200 transform hover:scale-110"
                         title="Delete client"
                       >
                         <FiTrash2 className="w-4 h-4" />
@@ -289,17 +289,17 @@ export default function AdminClientsPage() {
                   </div>
 
                   {client.notes && (
-                    <div className="mb-4 p-3 bg-gray-50/50 dark:bg-dark-700/30 rounded-lg">
+                    <div className="mb-4 p-3 bg-gray-50 dark:bg-dark-700/50 rounded-lg border border-gray-100 dark:border-dark-600">
                       <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 italic">
                         "{client.notes}"
                       </p>
                     </div>
                   )}
 
-                  <div className="pt-4 mt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                  <div className="pt-4 mt-4 border-t border-gray-200 dark:border-dark-700">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
                           <span className="text-primary font-bold text-sm">{client._count.galleries}</span>
                         </div>
                         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -310,7 +310,7 @@ export default function AdminClientsPage() {
                         className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${
                           client.active
                             ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
-                            : 'bg-gray-200 text-gray-700'
+                            : 'bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-400'
                         }`}
                       >
                         {client.active ? '● Active' : '○ Inactive'}
@@ -327,23 +327,23 @@ export default function AdminClientsPage() {
       {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white dark:bg-dark-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl transform animate-slideUp">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-gray-50 to-white dark:from-dark-700 dark:to-dark-800">
+          <div className="bg-white dark:bg-dark-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-gray-200 dark:border-dark-700 transform animate-slideUp">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-dark-700 bg-gray-50 dark:bg-dark-700/50">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
                   {selectedClient ? (
                     <FiEdit2 className="w-5 h-5 text-primary" />
                   ) : (
                     <FiPlus className="w-5 h-5 text-primary" />
                   )}
                 </div>
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {selectedClient ? 'Edit Client' : 'Add New Client'}
                 </h2>
               </div>
               <button 
                 onClick={closeModal} 
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 p-2 rounded-lg transition-all duration-200 transform hover:scale-110"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-110"
               >
                 <FiX className="w-6 h-6" />
               </button>
@@ -424,24 +424,24 @@ export default function AdminClientsPage() {
                 />
               </div>
 
-              <div className="flex items-center p-4 bg-gray-50 dark:bg-dark-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+              <div className="flex items-center p-4 bg-gray-50 dark:bg-dark-700/50 rounded-xl border border-gray-200 dark:border-dark-600">
                 <input
                   type="checkbox"
                   id="active"
                   checked={formData.active}
                   onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                  className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                  className="w-5 h-5 text-primary border-gray-300 dark:border-dark-600 rounded focus:ring-primary cursor-pointer"
                 />
                 <label htmlFor="active" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
                   Active (client can log in and access galleries)
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+              <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-dark-700">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-700 transition-all duration-200 font-medium"
+                  className="px-6 py-3 border border-gray-300 dark:border-dark-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-dark-700 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-600 transition-all duration-200 font-medium"
                 >
                   Cancel
                 </button>
