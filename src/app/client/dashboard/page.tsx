@@ -159,22 +159,20 @@ export default function ClientDashboardPage() {
             </div>
           </Link>
 
-          {galleries.length > 0 && (
-            <Link
-              href={`/client/gallery/${galleries[0].id}/guest-uploads`}
-              className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition group"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-lg group-hover:bg-green-600 group-hover:text-white transition">
-                  <FiDownload className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Guest Uploads</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Photos from guests</p>
-                </div>
+          <Link
+            href="/client/guest-uploads"
+            className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md hover:border-primary-300 dark:hover:border-primary-600 transition group"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-lg group-hover:bg-green-600 group-hover:text-white transition">
+                <FiDownload className="w-5 h-5" />
               </div>
-            </Link>
-          )}
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Guest Uploads</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">All photos from guests</p>
+              </div>
+            </div>
+          </Link>
 
           {galleries.length > 0 && (
             <Link
