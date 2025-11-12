@@ -88,53 +88,41 @@ export async function GET(
       console.error('Archive error:', err);
     });
 
-    // Create CSV manifest
-    const csvHeader = 'Guest Name,Message,Photo Number,Uploaded At,Status\n';
-    const csvRows = gallery.guestUploads
-      .map((upload: any) => {
-        const name = upload.uploaderName.replace(/"/g, '""');
-        const message = (upload.message || '').replace(/"/g, '""');
-        const date = new Date(upload.uploadedAt).toLocaleDateString();
-        const status = upload.status;
-        return `"${name}","${message}","Photo","${date}","${status}"`;
-      })
-      .join('\n');
-    const csvContent = csvHeader + csvRows;
-
-    // Add CSV to archive
-    archive.append(csvContent, { name: 'guest_uploads_manifest.csv' });
-
-    // Add photo URLs list
-    const photoUrlsList = gallery.guestUploads
-      .map((upload: any, idx: number) => 
-        `${idx + 1}. ${upload.uploaderName} - ${upload.fileUrl}`
-      )
-      .join('\n');
-    
-    archive.append(photoUrlsList, { name: 'photo_download_links.txt' });
-
-    // Download and add actual photos to the archive
+    // Download and add actual photos to the archive (ONLY photos, no metadata files)
     console.log(`Starting download of ${gallery.guestUploads.length} photos...`);
     
-    let downloadedCount = 0;
+    // Group uploads by uploadGroupId to organize by guest
+    const uploadGroups = new Map<string, typeof gallery.guestUploads>();
     for (const upload of gallery.guestUploads) {
-      try {
-        // Create a safe filename
-        const guestName = upload.uploaderName.replace(/[^a-zA-Z0-9]/g, '_');
-        const timestamp = new Date(upload.uploadedAt).getTime();
-        const filename = `${guestName}_${timestamp}_${upload.id}.jpg`;
-        
-        // Fetch the image
-        const imageBuffer = await fetchImage(upload.fileUrl);
-        
-        // Add to archive
-        archive.append(imageBuffer, { name: `photos/${filename}` });
-        downloadedCount++;
-        
-        console.log(`Downloaded ${downloadedCount}/${gallery.guestUploads.length}: ${filename}`);
-      } catch (error) {
-        console.error(`Failed to download photo ${upload.id}:`, error);
-        // Continue with other photos even if one fails
+      if (!uploadGroups.has(upload.uploadGroupId)) {
+        uploadGroups.set(upload.uploadGroupId, []);
+      }
+      uploadGroups.get(upload.uploadGroupId)!.push(upload);
+    }
+    
+    let downloadedCount = 0;
+    // Process each guest's photos
+    for (const [groupId, uploads] of uploadGroups.entries()) {
+      const guestName = uploads[0].uploaderName.replace(/[^a-zA-Z0-9]/g, '_');
+      
+      // Add each photo from this guest
+      for (let i = 0; i < uploads.length; i++) {
+        const upload = uploads[i];
+        try {
+          const filename = `${guestName}/photo_${i + 1}.jpg`;
+          
+          // Fetch the image
+          const imageBuffer = await fetchImage(upload.fileUrl);
+          
+          // Add to archive
+          archive.append(imageBuffer, { name: filename });
+          downloadedCount++;
+          
+          console.log(`Downloaded ${downloadedCount}/${gallery.guestUploads.length}: ${filename}`);
+        } catch (error) {
+          console.error(`Failed to download photo ${upload.id}:`, error);
+          // Continue with other photos even if one fails
+        }
       }
     }
 

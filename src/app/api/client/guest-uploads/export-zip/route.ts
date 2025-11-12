@@ -50,8 +50,8 @@ export async function GET(req: NextRequest) {
           where: {
             status: 'approved',
           },
-          include: {
-            photos: true,
+          orderBy: {
+            uploadedAt: 'asc',
           },
         },
       },
@@ -87,36 +87,35 @@ export async function GET(req: NextRequest) {
       archive.on('error', reject);
     });
 
-    // Add files to archive organized by gallery
+    // Add files to archive organized by gallery (ONLY photos, no metadata)
     for (const gallery of galleriesWithUploads) {
       const galleryFolderName = gallery.name.replace(/[^a-z0-9]/gi, '_');
 
+      // Group uploads by uploadGroupId to organize photos by guest
+      const uploadGroups = new Map<string, typeof gallery.guestUploads>();
       for (const upload of gallery.guestUploads) {
-        const guestFolderName = upload.uploaderName.replace(/[^a-z0-9]/gi, '_');
+        if (!uploadGroups.has(upload.uploadGroupId)) {
+          uploadGroups.set(upload.uploadGroupId, []);
+        }
+        uploadGroups.get(upload.uploadGroupId)!.push(upload);
+      }
+
+      // Process each guest's uploads
+      for (const [groupId, uploads] of uploadGroups.entries()) {
+        const firstUpload = uploads[0];
+        const guestFolderName = firstUpload.uploaderName.replace(/[^a-z0-9]/gi, '_');
         
-        // Add all photos from this upload
-        for (let i = 0; i < upload.photos.length; i++) {
-          const photo = upload.photos[i];
+        // Add each photo from this guest
+        for (let i = 0; i < uploads.length; i++) {
+          const upload = uploads[i];
           try {
-            const imageBuffer = await fetchImageAsBuffer(photo.fileUrl);
+            const imageBuffer = await fetchImageAsBuffer(upload.fileUrl);
             const fileName = `photo_${i + 1}.jpg`;
             archive.append(imageBuffer, {
               name: `${galleryFolderName}/${guestFolderName}/${fileName}`,
             });
           } catch (error) {
-            console.error(`Failed to fetch image: ${photo.fileUrl}`, error);
-          }
-        }
-
-        // Add photobooth print if exists
-        if (upload.photoboothPrintUrl) {
-          try {
-            const printBuffer = await fetchImageAsBuffer(upload.photoboothPrintUrl);
-            archive.append(printBuffer, {
-              name: `${galleryFolderName}/${guestFolderName}/photobooth_print.jpg`,
-            });
-          } catch (error) {
-            console.error(`Failed to fetch photobooth: ${upload.photoboothPrintUrl}`, error);
+            console.error(`Failed to fetch image: ${upload.fileUrl}`, error);
           }
         }
       }
