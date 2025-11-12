@@ -61,6 +61,22 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// Albums (Instagram-style posts)
+model Album {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  description    String?
+  coverImageUrl  String?  // First image or custom cover
+  category       String   @default("all")
+  featured       Boolean  @default(false)
+  showOnHomepage Boolean  @default(false)
+  showInGallery  Boolean  @default(true)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  images         Image[]  @relation("AlbumImages")
+}
+
 // Portfolio Images
 model Image {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -78,6 +94,8 @@ model Image {
   width          Int?
   height         Int?
   format         String?
+  albumId        String?  @db.ObjectId    // Link to album (optional)
+  album          Album?   @relation("AlbumImages", fields: [albumId], references: [id], onDelete: SetNull)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -433,15 +451,17 @@ model ContactMessage {
 
 // Remerciements (Thank You Messages/Images)
 model Remerciement {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  type      String   // image, text, testimonial
-  content   String   @db.String // Message text or image description
-  author    String?  // Client name (optional)
-  image     String?  // Image URL (optional)
-  active    Boolean  @default(true) // Whether to show in carousel
-  order     Int      @default(0) // Display order in carousel
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        String   // image, text, testimonial
+  content     String   @db.String // Message text or image description
+  author      String?  // Client name (optional)
+  image       String?  // Image URL (optional)
+  clientEmail String?  // Email of submitter (for approval workflow)
+  approved    Boolean  @default(false) // Admin approval required
+  active      Boolean  @default(false) // Whether to show in carousel
+  order       Int      @default(0) // Display order in carousel
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // Instagram Highlights (Stories)

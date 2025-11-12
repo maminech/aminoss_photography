@@ -63,6 +63,7 @@ export default function AdminDashboard() {
 
   const menuItems = [
     { name: 'Overview', icon: FiHome, href: '/admin/dashboard', active: true },
+    { name: 'Albums', icon: FiImage, href: '/admin/dashboard/albums' },
     { name: 'Photos', icon: FiImage, href: '/admin/dashboard/photos' },
     { name: 'Videos & Reels', icon: FiVideo, href: '/admin/dashboard/videos' },
     { name: 'Design', icon: MdPalette, href: '/admin/dashboard/design' },

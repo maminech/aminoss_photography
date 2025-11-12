@@ -26,6 +26,7 @@ export async function POST(request: Request) {
       width,
       height,
       format,
+      albumId, // NEW: Support for album assignment
     } = body;
 
     // Validate required fields
@@ -70,8 +71,24 @@ export async function POST(request: Request) {
         width: width || null,
         height: height || null,
         format: format || null,
+        albumId: albumId || null, // NEW: Link to album if provided
       },
     });
+
+    // If albumId provided, update album's cover image if not set
+    if (albumId) {
+      const album = await prisma.album.findUnique({
+        where: { id: albumId },
+        select: { coverImageUrl: true },
+      });
+
+      if (album && !album.coverImageUrl) {
+        await prisma.album.update({
+          where: { id: albumId },
+          data: { coverImageUrl: url },
+        });
+      }
+    }
 
     return NextResponse.json({
       message: 'Photo uploaded successfully',

@@ -362,6 +362,31 @@ export default function ProfessionalHomePage() {
           </div>
         </motion.div>
       </section>
+      {/* Gallery CTA Button - Bottom Center */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 3.0 }}
+        className="fixed bottom-20 sm:bottom-24 lg:bottom-28 left-1/2 -translate-x-1/2 z-40"
+      >
+        <Link
+          href="/gallery"
+          className="group relative px-8 sm:px-12 py-3 sm:py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-500 inline-flex items-center justify-center gap-3 touch-manipulation overflow-hidden"
+        >
+          {/* Animated background */}
+          <span className="absolute inset-0 bg-gradient-to-r from-[#d4af37]/0 via-[#d4af37]/20 to-[#d4af37]/0 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          
+          {/* Icon */}
+          <FiGrid className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:rotate-90 transition-transform duration-500" />
+          
+          {/* Text */}
+          <span className="relative z-10 font-semibold">Explore Gallery</span>
+          
+          {/* Arrow */}
+          <FiChevronRight className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+        </Link>
+      </motion.div>
+
       {/* Social Links - Bottom Left (Desktop Only) */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}

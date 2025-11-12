@@ -9,15 +9,34 @@ import { prisma } from '@/lib/prisma';
  */
 export async function GET(request: NextRequest) {
   try {
-    // Public endpoint - no auth required for fetching active items
     const url = new URL(request.url);
     const activeOnly = url.searchParams.get('activeOnly') === 'true';
+    const pendingOnly = url.searchParams.get('pendingOnly') === 'true';
 
-    const where = activeOnly ? { active: true } : {};
+    // For public display (activeOnly), no auth needed
+    // For admin view, check auth
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === 'ADMIN';
+
+    let where: any = {};
+
+    if (activeOnly) {
+      where.active = true;
+      where.approved = true; // Only show approved items publicly
+    } else if (pendingOnly) {
+      if (!isAdmin) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      where.approved = false;
+    } else if (!isAdmin) {
+      // Non-admin users can only see active, approved items
+      where.active = true;
+      where.approved = true;
+    }
 
     const remerciements = await prisma.remerciement.findMany({
       where,
-      orderBy: { order: 'asc' },
+      orderBy: [{ approved: 'asc' }, { order: 'asc' }], // Show pending first for admin
     });
 
     return NextResponse.json(remerciements);
@@ -55,14 +74,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
+    // Get the highest order number
+    const maxOrder = await prisma.remerciement.aggregate({
+      _max: { order: true },
+    });
+
     const remerciement = await prisma.remerciement.create({
       data: {
         type,
         content,
         author,
         image,
+        clientEmail: session.user.email, // Admin's email
+        approved: true, // Admin-created items are auto-approved
         active: active !== undefined ? active : true,
-        order: order !== undefined ? order : 0,
+        order: order !== undefined ? order : ((maxOrder._max.order || 0) + 1),
       },
     });
 

@@ -20,10 +20,12 @@ import {
   FiUsers
 } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
-// Dynamically import PhotobookEditorV3 (client-side only)
-const PhotobookEditorV3 = dynamic(
-  () => import('@/components/PhotobookEditorV3'),
+// Dynamically import Smart Photobook Builder (client-side only)
+const SmartPhotobookBuilder = dynamic(
+  () => import('@/components/photobook/SmartPhotobookBuilder'),
   { ssr: false }
 );
 
@@ -252,7 +254,13 @@ export default function ClientGalleryPage() {
               )}
               {selectedPhotos.size > 0 && (
                 <button
-                  onClick={() => setPhotobookEditorOpen(true)}
+                  onClick={() => {
+                    if (selectedPhotos.size === 0) {
+                      alert('Please select at least one photo to create a photobook');
+                      return;
+                    }
+                    setPhotobookEditorOpen(true);
+                  }}
                   className="flex items-center gap-2 px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition touch-manipulation text-sm md:text-base font-semibold"
                 >
                   <FiBook className="w-4 h-4 md:w-5 md:h-5" />
@@ -357,95 +365,51 @@ export default function ClientGalleryPage() {
         )}
       </AnimatePresence>
 
-      {/* Photobook Editor */}
-      {photobookEditorOpen && gallery && (
-        <PhotobookEditorV3
-          galleryId={gallery.id}
-          photos={gallery.photos.filter(p => selectedPhotos.has(p.id)).map(p => ({
-            id: p.id,
-            url: p.url,
-            width: p.width,
-            height: p.height,
-            title: p.title,
-          }))}
-          onClose={() => setPhotobookEditorOpen(false)}
-          onSave={async (design: any) => {
-            try {
-              setSaving(true);
-              const response = await fetch('/api/client/photobook', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  galleryId: gallery.id,
-                  design,
-                  title: `${gallery.name} - Photobook`,
-                }),
-              });
-              if (response.ok) {
-                const data = await response.json();
-                alert('Photobook saved successfully!');
-                // Don't close editor, let them continue editing
-              } else {
-                const data = await response.json();
-                alert(data.error || 'Failed to save photobook. Please try again.');
+      {/* Smart Photobook Builder */}
+      {photobookEditorOpen && gallery && selectedPhotos.size > 0 && (
+        <DndProvider backend={HTML5Backend}>
+          <SmartPhotobookBuilder
+            galleryId={gallery.id}
+            photos={gallery.photos.filter(p => selectedPhotos.has(p.id)).map(p => ({
+              id: p.id,
+              url: p.url,
+              thumbnailUrl: p.thumbnailUrl,
+              width: p.width,
+              height: p.height,
+              title: p.title,
+            }))}
+            onClose={() => setPhotobookEditorOpen(false)}
+            onSave={async (photobookData: any) => {
+              try {
+                setSaving(true);
+                const response = await fetch('/api/client/photobook', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    galleryId: gallery.id,
+                    design: photobookData,
+                    title: photobookData.settings?.title || `${gallery.name} - Photobook`,
+                  }),
+                });
+                
+                if (response.ok) {
+                  const data = await response.json();
+                  console.log('Photobook saved successfully:', data);
+                  // Don't close immediately - let them continue editing or submit
+                } else {
+                  const errorData = await response.json();
+                  console.error('Save failed:', errorData);
+                  alert(errorData.error || 'Failed to save photobook. Please try again.');
+                }
+              } catch (error) {
+                console.error('Error saving photobook:', error);
+                alert('Failed to save photobook. Please check your connection and try again.');
+              } finally {
+                setSaving(false);
               }
-            } catch (error) {
-              console.error('Error saving photobook:', error);
-              alert('Failed to save photobook. Please check your connection and try again.');
-            } finally {
-              setSaving(false);
-            }
-          }}
-          onSubmit={async (design: any, coverPhotoUrl: string | null) => {
-            try {
-              // First, ensure photobook is saved/created
-              const saveResponse = await fetch('/api/client/photobook', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  galleryId: gallery.id,
-                  design,
-                  title: `${gallery.name} - Photobook`,
-                }),
-              });
-              
-              if (!saveResponse.ok) {
-                throw new Error('Failed to save photobook');
-              }
-              
-              const saveData = await saveResponse.json();
-              const photobookId = saveData.photobook.id;
-              
-              // Now submit for review
-              const submitResponse = await fetch('/api/client/photobook/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  photobookId,
-                  title: `${gallery.name} - Photobook`,
-                  design,
-                  coverPhotoUrl,
-                }),
-              });
-              
-              if (!submitResponse.ok) {
-                throw new Error('Failed to submit photobook');
-              }
-              
-              setPhotobookEditorOpen(false);
-              setShowPhotobookConfirmation(true);
-              setTimeout(() => setShowPhotobookConfirmation(false), 5000);
-              
-              // Redirect to photobooks page
-              setTimeout(() => {
-                router.push('/client/photobooks');
-              }, 2000);
-            } catch (error) {
-              console.error('Error submitting photobook:', error);
-              throw error; // Let the editor handle the error
-            }
-          }}
-        />
+            }}
+          />
+        </DndProvider>
       )}
 
       {/* Main Content */}
