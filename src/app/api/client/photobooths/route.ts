@@ -1,18 +1,21 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
-  try {
-    const cookieStore = await cookies();
-    const clientCookie = cookieStore.get('client-session');
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || 'your-secret-key'
+);
 
-    if (!clientCookie) {
+export async function GET(request: NextRequest) {
+  try {
+    const token = request.cookies.get('client-token')?.value;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const clientData = JSON.parse(clientCookie.value);
-    const clientId = clientData.clientId;
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const clientId = payload.clientId as string;
 
     // Get all guest uploads with photobooth prints for this client's galleries
     const clientGalleries = await prisma.clientGallery.findMany({
@@ -32,6 +35,9 @@ export async function GET() {
           select: {
             id: true,
             name: true,
+            eventDate: true,
+            brideName: true,
+            groomName: true,
           },
         },
       },
@@ -47,7 +53,7 @@ export async function GET() {
       createdAt: upload.uploadedAt,
       gallery: upload.gallery,
       guestName: upload.uploaderName,
-      guestEmail: upload.guestEmail || null,
+      message: upload.message,
     }));
 
     return NextResponse.json({ prints });
