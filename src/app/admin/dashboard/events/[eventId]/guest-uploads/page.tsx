@@ -41,6 +41,7 @@ export default function AdminGuestUploadsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [viewingPhotos, setViewingPhotos] = useState<GuestUpload | null>(null);
+  const [generatingPhotobooth, setGeneratingPhotobooth] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUploads();
@@ -80,6 +81,38 @@ export default function AdminGuestUploadsPage() {
       fetchUploads();
     } catch (err: any) {
       alert(`Error: ${err.message}`);
+    }
+  };
+
+  const handleGeneratePhotobooth = async (upload: GuestUpload) => {
+    if (!upload.printPhoto) {
+      alert('No print photo selected');
+      return;
+    }
+
+    setGeneratingPhotobooth(upload.uploadGroupId);
+    
+    try {
+      const res = await fetch(`/api/events/${params.eventId}/guest-upload/generate-photobooth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoId: upload.printPhoto.id }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to generate photobooth');
+      }
+
+      const data = await res.json();
+      alert('✅ Photobooth print generated successfully!');
+      
+      // Refresh data
+      fetchUploads();
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    } finally {
+      setGeneratingPhotobooth(null);
     }
   };
 
@@ -270,7 +303,7 @@ export default function AdminGuestUploadsPage() {
                               className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
                             >
                               <FiPrinter className="w-3 h-3" />
-                              View
+                              View Print
                             </a>
                             <a
                               href={upload.photoboothPrintUrl}
@@ -281,8 +314,26 @@ export default function AdminGuestUploadsPage() {
                               Download
                             </a>
                           </div>
+                        ) : upload.printPhoto ? (
+                          <button
+                            onClick={() => handleGeneratePhotobooth(upload)}
+                            disabled={generatingPhotobooth === upload.uploadGroupId}
+                            className="flex items-center gap-1 px-2 py-1 text-xs bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          >
+                            {generatingPhotobooth === upload.uploadGroupId ? (
+                              <>
+                                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FiPrinter className="w-3 h-3" />
+                                Generate
+                              </>
+                            )}
+                          </button>
                         ) : (
-                          <span className="text-xs text-gray-400 dark:text-gray-500">Not generated</span>
+                          <span className="text-xs text-gray-400 dark:text-gray-500">No print photo</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
