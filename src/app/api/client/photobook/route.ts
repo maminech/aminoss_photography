@@ -185,3 +185,55 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
+
+// Delete photobook
+export async function DELETE(request: NextRequest) {
+  try {
+    const clientId = await getClientFromToken(request);
+
+    if (!clientId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { photobookId } = await request.json();
+
+    if (!photobookId) {
+      return NextResponse.json({ error: 'Photobook ID required' }, { status: 400 });
+    }
+
+    // Verify ownership
+    const photobook = await prisma.photobook.findUnique({
+      where: { id: photobookId },
+    });
+
+    if (!photobook || photobook.clientId !== clientId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Only allow deleting draft photobooks
+    if (photobook.status !== 'draft') {
+      return NextResponse.json(
+        { error: 'Only draft photobooks can be deleted' },
+        { status: 400 }
+      );
+    }
+
+    // Delete photobook pages first (cascade)
+    await prisma.photobookPage.deleteMany({
+      where: { photobookId: photobookId },
+    });
+
+    // Delete photobook
+    await prisma.photobook.delete({
+      where: { id: photobookId },
+    });
+
+    return NextResponse.json({ success: true, message: 'Photobook deleted successfully' });
+  } catch (error) {
+    console.error('Delete photobook error:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete photobook' },
+      { status: 500 }
+    );
+  }
+}
