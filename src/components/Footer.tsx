@@ -44,6 +44,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/testimonials" className="text-sm hover:text-primary-400 dark:hover:text-primary-500 transition-colors inline-block min-h-[44px] flex items-center">
+                  Testimonials
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-sm hover:text-primary-400 dark:hover:text-primary-500 transition-colors inline-block min-h-[44px] flex items-center">
                   About
                 </Link>
