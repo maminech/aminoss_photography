@@ -145,11 +145,18 @@ export default function AllGuestUploadsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Loading guest uploads...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900 flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-primary-200 dark:border-primary-900 rounded-full" />
+            <div className="absolute inset-0 border-4 border-primary-600 dark:border-primary-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+          <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">Loading guest uploads...</p>
+        </motion.div>
       </div>
     );
   }
@@ -175,29 +182,39 @@ export default function AllGuestUploadsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-dark-900 dark:via-dark-800 dark:to-dark-900">
       {/* Header */}
-      <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-lg"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => router.push('/client/dashboard')}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition-all duration-200"
               >
                 <FiArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </button>
+              </motion.button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">All Guest Uploads</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-primary-600 to-purple-600 dark:from-gray-100 dark:via-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  All Guest Uploads
+                </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Photos uploaded by your event guests
                 </p>
               </div>
             </div>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={downloadAllPhotos}
               disabled={downloading || galleries.length === 0}
-              className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg font-medium transition-all flex items-center gap-2 shadow-md hover:shadow-lg transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
+              className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg font-medium transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
             >
               {downloading ? (
                 <>
@@ -210,85 +227,125 @@ export default function AllGuestUploadsPage() {
                   <span>Download All Photos</span>
                 </>
               )}
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white dark:bg-dark-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8"
+          >
+            <motion.div 
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-gradient-to-br from-white to-blue-50 dark:from-dark-800 dark:to-blue-900/20 rounded-xl p-6 shadow-lg border border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all duration-300"
+            >
               <div className="flex items-center gap-3">
-                <FiFolder className="w-8 h-8 text-blue-500" />
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <FiFolder className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalGalleries}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Galleries</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white dark:bg-dark-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <motion.div 
+              whileHover={{ y: -4, scale: 1.02 }}
+              transition={{ delay: 0.05 }}
+              className="bg-gradient-to-br from-white to-green-50 dark:from-dark-800 dark:to-green-900/20 rounded-xl p-6 shadow-lg border border-green-200 dark:border-green-800 hover:shadow-xl transition-all duration-300"
+            >
               <div className="flex items-center gap-3">
-                <FiUsers className="w-8 h-8 text-green-500" />
+                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <FiUsers className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalGuests}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Guests</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white dark:bg-dark-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <motion.div 
+              whileHover={{ y: -4, scale: 1.02 }}
+              transition={{ delay: 0.1 }}
+              className="bg-gradient-to-br from-white to-purple-50 dark:from-dark-800 dark:to-purple-900/20 rounded-xl p-6 shadow-lg border border-purple-200 dark:border-purple-800 hover:shadow-xl transition-all duration-300"
+            >
               <div className="flex items-center gap-3">
-                <FiImage className="w-8 h-8 text-purple-500" />
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <FiImage className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalPhotos}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Photos</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white dark:bg-dark-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <motion.div 
+              whileHover={{ y: -4, scale: 1.02 }}
+              transition={{ delay: 0.15 }}
+              className="bg-gradient-to-br from-white to-pink-50 dark:from-dark-800 dark:to-pink-900/20 rounded-xl p-6 shadow-lg border border-pink-200 dark:border-pink-800 hover:shadow-xl transition-all duration-300"
+            >
               <div className="flex items-center gap-3">
-                <FiPrinter className="w-8 h-8 text-pink-500" />
+                <div className="p-3 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
+                  <FiPrinter className="w-8 h-8 text-pink-600 dark:text-pink-400" />
+                </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.printSelected}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">For Print</p>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Gallery Filter */}
         {galleries.length > 1 && (
-          <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
-            <button
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-primary-600 scrollbar-track-gray-200 dark:scrollbar-track-dark-800"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedGallery(null)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap transition ${
+              className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-300 ${
                 !selectedGallery
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600'
+                  ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg'
+                  : 'bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-md'
               }`}
             >
               <FiGrid className="inline w-4 h-4 mr-2" />
               All Galleries ({galleries.length})
-            </button>
-            {galleries.map((gallery) => (
-              <button
+            </motion.button>
+            {galleries.map((gallery, index) => (
+              <motion.button
                 key={gallery.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + index * 0.05 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedGallery(gallery.id)}
-                className={`px-4 py-2 rounded-lg whitespace-nowrap transition ${
+                className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-300 ${
                   selectedGallery === gallery.id
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600'
+                    ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg'
+                    : 'bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-md'
                 }`}
               >
                 {gallery.name} ({gallery.uploadCount})
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Galleries and Uploads */}
@@ -307,42 +364,63 @@ export default function AllGuestUploadsPage() {
             {filteredGalleries.map((gallery) => (
               <div key={gallery.id} className="space-y-4">
                 {/* Gallery Header */}
-                <div className="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-primary-200 dark:border-primary-800">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-gradient-to-r from-primary-50 via-purple-50 to-pink-50 dark:from-primary-900/20 dark:via-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border-2 border-primary-200 dark:border-primary-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-4">
                       {gallery.coverImage && (
-                        <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                        <motion.div 
+                          whileHover={{ scale: 1.1, rotate: 2 }}
+                          className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-md"
+                        >
                           <Image
                             src={gallery.coverImage}
                             alt={gallery.name}
                             fill
                             className="object-cover"
                           />
-                        </div>
+                        </motion.div>
                       )}
                       <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{gallery.name}</h2>
+                        <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 dark:from-primary-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                          {gallery.name}
+                        </h2>
                         <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mt-1">
-                          <span>{gallery.uploadCount} guests</span>
+                          <span className="flex items-center gap-1">
+                            <FiUsers className="w-4 h-4" />
+                            {gallery.uploadCount} guests
+                          </span>
                           <span>•</span>
-                          <span>{gallery.totalPhotos} photos</span>
+                          <span className="flex items-center gap-1">
+                            <FiImage className="w-4 h-4" />
+                            {gallery.totalPhotos} photos
+                          </span>
                           {gallery.printSelected > 0 && (
                             <>
                               <span>•</span>
-                              <span>{gallery.printSelected} for print</span>
+                              <span className="flex items-center gap-1">
+                                <FiPrinter className="w-4 h-4" />
+                                {gallery.printSelected} for print
+                              </span>
                             </>
                           )}
                         </div>
                       </div>
                     </div>
-                    <Link
-                      href={`/client/gallery/${gallery.id}/guest-uploads`}
-                      className="px-4 py-2 bg-white dark:bg-dark-800 text-primary-600 dark:text-primary-400 border border-primary-300 dark:border-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition text-sm font-medium"
-                    >
-                      View Gallery Details
-                    </Link>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Link
+                        href={`/client/gallery/${gallery.id}/guest-uploads`}
+                        className="px-4 py-2 bg-white dark:bg-dark-800 text-primary-600 dark:text-primary-400 border-2 border-primary-300 dark:border-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-all duration-300 text-sm font-medium shadow-md hover:shadow-lg"
+                      >
+                        View Gallery Details
+                      </Link>
+                    </motion.div>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Guest Uploads for this Gallery */}
                 <div className="space-y-4">
