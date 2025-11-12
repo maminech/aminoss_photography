@@ -242,14 +242,20 @@ export default function AdminGuestUploadsPage() {
                       </td>
                       <td className="px-4 py-3">
                         {upload.printPhoto ? (
-                          <div className="w-12 h-12 relative rounded-lg overflow-hidden border-2 border-pink-500">
+                          <a 
+                            href={upload.printPhoto.fileUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="block w-12 h-12 relative rounded-lg overflow-hidden border-2 border-pink-500 hover:scale-110 transition-transform cursor-pointer"
+                          >
                             <Image
-                              src={upload.printPhoto.thumbnailUrl}
+                              src={upload.printPhoto.fileUrl}
                               alt="Print photo"
                               fill
                               className="object-cover"
+                              quality={90}
                             />
-                          </div>
+                          </a>
                         ) : (
                           <span className="text-xs text-gray-400 dark:text-gray-500">None selected</span>
                         )}
@@ -361,18 +367,40 @@ export default function AdminGuestUploadsPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {viewingPhotos.photos.map((photo) => (
-                <div key={photo.id} className="relative aspect-square rounded-lg overflow-hidden">
+                <div key={photo.id} className="group relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <Image
-                    src={photo.thumbnailUrl}
+                    src={photo.fileUrl}
                     alt="Guest photo"
                     fill
-                    className="object-cover"
+                    className="object-cover hover:scale-110 transition-transform duration-300"
+                    quality={100}
+                    sizes="(max-width: 768px) 50vw, 33vw"
                   />
                   {photo.isSelectedForPrint && (
-                    <div className="absolute top-2 right-2 bg-pink-500 text-white rounded-full p-2">
+                    <div className="absolute top-2 right-2 bg-pink-500 text-white rounded-full p-2 shadow-lg">
                       <FiPrinter className="w-4 h-4" />
                     </div>
                   )}
+                  {/* Hover overlay with actions */}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
+                    <a
+                      href={photo.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 bg-white/90 hover:bg-white rounded-full transition-all transform hover:scale-110"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <FiEye className="w-5 h-5 text-gray-900" />
+                    </a>
+                    <a
+                      href={photo.fileUrl}
+                      download
+                      className="p-3 bg-white/90 hover:bg-white rounded-full transition-all transform hover:scale-110"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <FiDownload className="w-5 h-5 text-gray-900" />
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>

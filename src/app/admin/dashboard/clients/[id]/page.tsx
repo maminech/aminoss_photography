@@ -306,11 +306,14 @@ export default function ClientDetailPage() {
                 className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition"
               >
                 {gallery.coverImage ? (
-                  <div className="aspect-video bg-gray-100 dark:bg-dark-700 relative">
-                    <img
+                  <div className="aspect-video bg-gray-100 dark:bg-dark-700 relative overflow-hidden">
+                    <Image
                       src={gallery.coverImage}
                       alt={gallery.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover hover:scale-110 transition-transform duration-300"
+                      quality={100}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   </div>
                 ) : (

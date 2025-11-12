@@ -277,22 +277,33 @@ export default function ClientGuestUploadsPage() {
                     {upload.photos.map((photo, index) => (
                       <div
                         key={photo.id}
-                        className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer"
+                        className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer bg-gray-100"
                         onClick={() => setViewingPhotos(upload)}
                       >
                         <Image
-                          src={photo.thumbnailUrl}
+                          src={photo.fileUrl}
                           alt={`Photo ${index + 1}`}
                           fill
                           className="object-cover group-hover:scale-110 transition duration-300"
+                          quality={100}
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
                         />
                         {photo.isSelectedForPrint && (
-                          <div className="absolute top-2 right-2 bg-pink-500 text-white rounded-full p-1.5">
+                          <div className="absolute top-2 right-2 bg-pink-500 text-white rounded-full p-1.5 shadow-lg">
                             <FiPrinter className="w-3 h-3" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
-                          <FiEye className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center gap-2">
+                          <FiEye className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition drop-shadow-lg" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              downloadPhoto(photo.fileUrl, upload.uploaderName, index);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 transition"
+                          >
+                            <FiDownload className="w-6 h-6 text-white drop-shadow-lg" />
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -370,26 +381,39 @@ export default function ClientGuestUploadsPage() {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {viewingPhotos.photos.map((photo, index) => (
-                  <div key={photo.id} className="relative">
-                    <div className="relative aspect-square rounded-lg overflow-hidden">
+                  <div key={photo.id} className="relative group">
+                    <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                       <Image
                         src={photo.fileUrl}
                         alt={`Photo ${index + 1}`}
                         fill
-                        className="object-cover"
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        quality={100}
+                        sizes="(max-width: 640px) 50vw, 33vw"
                       />
                       {photo.isSelectedForPrint && (
-                        <div className="absolute top-2 right-2 bg-pink-500 text-white rounded-full p-2">
+                        <div className="absolute top-2 right-2 bg-pink-500 text-white rounded-full p-2 shadow-lg">
                           <FiPrinter className="w-4 h-4" />
                         </div>
                       )}
                     </div>
-                    <button
-                      onClick={() => downloadPhoto(photo.fileUrl, viewingPhotos.uploaderName, index)}
-                      className="absolute bottom-2 right-2 p-2 bg-white/90 hover:bg-white rounded-lg shadow-lg transition"
-                    >
-                      <FiDownload className="w-4 h-4 text-gray-700" />
-                    </button>
+                    <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <a
+                        href={photo.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-white/95 hover:bg-white rounded-lg shadow-lg transition"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FiEye className="w-4 h-4 text-gray-700" />
+                      </a>
+                      <button
+                        onClick={() => downloadPhoto(photo.fileUrl, viewingPhotos.uploaderName, index)}
+                        className="p-2 bg-white/95 hover:bg-white rounded-lg shadow-lg transition"
+                      >
+                        <FiDownload className="w-4 h-4 text-gray-700" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -427,8 +451,18 @@ export default function ClientGuestUploadsPage() {
                   alt="Photobooth Print"
                   fill
                   className="object-contain"
+                  quality={100}
+                  sizes="100vw"
                 />
               </div>
+              <a
+                href={viewingPhotobooth}
+                download
+                className="absolute bottom-4 right-4 p-3 bg-white/90 hover:bg-white rounded-lg shadow-lg transition flex items-center gap-2"
+              >
+                <FiDownload className="w-5 h-5 text-gray-700" />
+                <span className="text-gray-700 font-medium">Download</span>
+              </a>
             </motion.div>
           </motion.div>
         )}
