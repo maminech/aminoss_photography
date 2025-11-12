@@ -21,9 +21,9 @@ import {
 } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
 
-// Dynamically import SimplePhotobookEditor (client-side only)
-const SimplePhotobookEditor = dynamic(
-  () => import('@/components/SimplePhotobookEditor'),
+// Dynamically import PhotobookEditorV3 (client-side only)
+const PhotobookEditorV3 = dynamic(
+  () => import('@/components/PhotobookEditorV3'),
   { ssr: false }
 );
 
@@ -359,7 +359,7 @@ export default function ClientGalleryPage() {
 
       {/* Photobook Editor */}
       {photobookEditorOpen && gallery && (
-        <SimplePhotobookEditor
+        <PhotobookEditorV3
           galleryId={gallery.id}
           photos={gallery.photos.filter(p => selectedPhotos.has(p.id)).map(p => ({
             id: p.id,
@@ -372,20 +372,19 @@ export default function ClientGalleryPage() {
           onSave={async (design: any) => {
             try {
               setSaving(true);
-              const response = await fetch('/api/photobooks', {
+              const response = await fetch('/api/client/photobook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Include cookies for authentication
                 body: JSON.stringify({
                   galleryId: gallery.id,
                   design,
-                  name: `${gallery.name} - Photobook`,
+                  title: `${gallery.name} - Photobook`,
                 }),
               });
               if (response.ok) {
-                setPhotobookEditorOpen(false);
-                setShowPhotobookConfirmation(true);
-                setTimeout(() => setShowPhotobookConfirmation(false), 5000);
+                const data = await response.json();
+                alert('Photobook saved successfully!');
+                // Don't close editor, let them continue editing
               } else {
                 const data = await response.json();
                 alert(data.error || 'Failed to save photobook. Please try again.');
@@ -395,6 +394,55 @@ export default function ClientGalleryPage() {
               alert('Failed to save photobook. Please check your connection and try again.');
             } finally {
               setSaving(false);
+            }
+          }}
+          onSubmit={async (design: any, coverPhotoUrl: string | null) => {
+            try {
+              // First, ensure photobook is saved/created
+              const saveResponse = await fetch('/api/client/photobook', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  galleryId: gallery.id,
+                  design,
+                  title: `${gallery.name} - Photobook`,
+                }),
+              });
+              
+              if (!saveResponse.ok) {
+                throw new Error('Failed to save photobook');
+              }
+              
+              const saveData = await saveResponse.json();
+              const photobookId = saveData.photobook.id;
+              
+              // Now submit for review
+              const submitResponse = await fetch('/api/client/photobook/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  photobookId,
+                  title: `${gallery.name} - Photobook`,
+                  design,
+                  coverPhotoUrl,
+                }),
+              });
+              
+              if (!submitResponse.ok) {
+                throw new Error('Failed to submit photobook');
+              }
+              
+              setPhotobookEditorOpen(false);
+              setShowPhotobookConfirmation(true);
+              setTimeout(() => setShowPhotobookConfirmation(false), 5000);
+              
+              // Redirect to photobooks page
+              setTimeout(() => {
+                router.push('/client/photobooks');
+              }, 2000);
+            } catch (error) {
+              console.error('Error submitting photobook:', error);
+              throw error; // Let the editor handle the error
             }
           }}
         />
