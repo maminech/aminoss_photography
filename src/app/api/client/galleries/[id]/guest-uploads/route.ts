@@ -1,13 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { jwtVerify } from 'jose';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || 'your-secret-key'
+);
+
+async function getClientFromToken(request: NextRequest) {
+  const token = request.cookies.get('client-token')?.value;
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload.clientId as string;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Get client session (from cookie)
-    const clientId = req.cookies.get('clientId')?.value;
+    // Get client session (from JWT token)
+    const clientId = await getClientFromToken(req);
     
     if (!clientId) {
       return NextResponse.json(

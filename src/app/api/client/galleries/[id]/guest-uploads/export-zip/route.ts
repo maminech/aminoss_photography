@@ -2,7 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import archiver from 'archiver';
 import https from 'https';
-import { Readable } from 'stream';
+import { jwtVerify } from 'jose';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || 'your-secret-key'
+);
+
+async function getClientFromToken(request: NextRequest) {
+  const token = request.cookies.get('client-token')?.value;
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload.clientId as string;
+  } catch {
+    return null;
+  }
+}
 
 // Helper function to fetch image from URL
 async function fetchImage(url: string): Promise<Buffer> {
@@ -24,18 +40,19 @@ export async function GET(
     const galleryId = params.id;
 
     // Verify the client is accessing their own gallery
-    const cookies = req.cookies;
-    const clientEmail = cookies.get('client-email')?.value;
+    const clientId = await getClientFromToken(req);
 
-    if (!clientEmail) {
+    if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized - Please login' }, { status: 401 });
     }
 
     // Fetch gallery with guest uploads
-    const gallery = await prisma.clientGallery.findUnique({
-      where: { id: galleryId },
+    const gallery = await prisma.clientGallery.findFirst({
+      where: { 
+        id: galleryId,
+        clientId: clientId, // Verify ownership
+      },
       include: {
-        client: true,
         guestUploads: {
           where: {
             status: 'approved', // Only approved photos
@@ -46,12 +63,7 @@ export async function GET(
     });
 
     if (!gallery) {
-      return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
-    }
-
-    // Verify client owns this gallery
-    if (gallery.client.email !== clientEmail) {
-      return NextResponse.json({ error: 'Unauthorized - Access denied' }, { status: 403 });
+      return NextResponse.json({ error: 'Gallery not found or access denied' }, { status: 404 });
     }
 
     if (gallery.guestUploads.length === 0) {
