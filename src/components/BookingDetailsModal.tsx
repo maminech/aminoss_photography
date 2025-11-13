@@ -367,41 +367,7 @@ export default function BookingDetailsModal({ booking, isOpen, onClose, onStatus
                   )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  {status !== 'approved' && (
-                    <button
-                      onClick={() => handleStatusChange('approved')}
-                      disabled={saving}
-                      className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      <CheckCircle className="w-5 h-5" />
-                      Approve & Sync to Calendar
-                    </button>
-                  )}
-
-                  {status !== 'rejected' && (
-                    <button
-                      onClick={() => handleStatusChange('rejected')}
-                      disabled={saving}
-                      className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      <XCircle className="w-5 h-5" />
-                      Reject
-                    </button>
-                  )}
-
-                  {status !== 'pending' && status !== 'approved' && (
-                    <button
-                      onClick={() => handleStatusChange('pending')}
-                      disabled={saving}
-                      className="flex-1 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      <Clock3 className="w-5 h-5" />
-                      Set Pending
-                    </button>
-                  )}
-                </div>
+                {/* Information Only - No Action Buttons */}
               </div>
             </div>
           </motion.div>

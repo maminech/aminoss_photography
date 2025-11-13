@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheck, FiClock, FiDollarSign, FiCalendar, FiX } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
@@ -239,13 +240,13 @@ export default function PacksPage() {
                       )}
                     </ul>
 
-                    {/* Book Button */}
-                    <button
-                      onClick={() => openBookingModal(pack)}
-                      className="w-full px-6 py-3 bg-[#1a1a1a] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300"
+                    {/* Demande de Devis Button */}
+                    <Link
+                      href="/booking"
+                      className="block w-full px-6 py-3 bg-[#1a1a1a] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300 text-center"
                     >
-                      Book Now
-                    </button>
+                      Demande de Devis
+                    </Link>
                   </div>
                 </motion.div>
               ))}

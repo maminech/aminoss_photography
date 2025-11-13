@@ -57,8 +57,43 @@ interface InvoiceEditorProps {
 export default function InvoiceEditor({ booking, existingInvoice, onClose, onSave }: InvoiceEditorProps) {
   const [isEditing, setIsEditing] = useState(!existingInvoice);
   const [isSaving, setIsSaving] = useState(false);
-  const [invoice, setInvoice] = useState<Partial<Invoice>>(
-    existingInvoice || {
+  const [invoice, setInvoice] = useState<Partial<Invoice>>(() => {
+    if (existingInvoice) return existingInvoice;
+    
+    // Generate items from ALL events if available
+    const items: InvoiceItem[] = [];
+    let subtotal = 0;
+    
+    if (booking.events && Array.isArray(booking.events) && booking.events.length > 0) {
+      // Create line item for each event
+      booking.events.forEach((event: any, index: number) => {
+        const packageType = event.packageType ? (event.packageType === 'aymen' ? 'Par Aymen' : 'Par Équipe') : '';
+        const packageLevel = event.packageLevel ? event.packageLevel.toUpperCase() : '';
+        const packageInfo = packageType && packageLevel ? ` - ${packageType} ${packageLevel}` : '';
+        const timeSlot = event.timeSlot || '';
+        
+        const itemPrice = booking.packagePrice || 0;
+        items.push({
+          description: `Événement ${index + 1}: ${event.eventType}${packageInfo} - ${new Date(event.eventDate).toLocaleDateString('fr-FR')} (${timeSlot})`,
+          quantity: 1,
+          unitPrice: itemPrice,
+          total: itemPrice
+        });
+        subtotal += itemPrice;
+      });
+    } else {
+      // Fallback to single event
+      const itemPrice = booking.packagePrice || 0;
+      items.push({
+        description: `Service photographique - ${booking.eventType}${booking.packageName ? ` (${booking.packageName})` : ''}`,
+        quantity: 1,
+        unitPrice: itemPrice,
+        total: itemPrice
+      });
+      subtotal = itemPrice;
+    }
+    
+    return {
       clientName: booking.name,
       clientEmail: booking.email,
       clientPhone: booking.phone,
@@ -66,26 +101,18 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
       eventType: booking.eventType,
       eventDate: booking.eventDate,
       eventLocation: booking.location,
-      items: [
-        {
-          description: `Service photographique - ${booking.eventType}${booking.packageName ? ` (${booking.packageName})` : ''}`,
-          quantity: 1,
-          unitPrice: booking.packagePrice || 0,
-          total: booking.packagePrice || 0
-        }
-      ],
-      subtotal: booking.packagePrice || 0,
+      items,
+      subtotal,
       taxRate: 0, // TVA removed as per client feedback
       taxAmount: 0,
       discount: 0,
-      totalAmount: booking.packagePrice || 0,
+      totalAmount: subtotal,
       paidAmount: 0,
       paymentStatus: 'unpaid',
       issueDate: new Date().toISOString().split('T')[0],
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
-      termsConditions: 'Paiement dû dans les 30 jours. Un acompte de 30% est requis pour confirmer la réservation.'
-    }
-  );
+      termsConditions: 'Un acompte de 30% est requis pour confirmer la réservation.'
+    };
+  });
 
   const calculateTotals = (items: InvoiceItem[], taxRate: number, discount: number) => {
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
@@ -384,15 +411,6 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                       />
                     </div>
                     <div className="flex justify-end items-center gap-2">
-                      <label className="text-sm">Date d'échéance:</label>
-                      <input
-                        type="date"
-                        value={invoice.dueDate || ''}
-                        onChange={(e) => setInvoice({ ...invoice, dueDate: e.target.value })}
-                        className="input-field text-sm w-40"
-                      />
-                    </div>
-                    <div className="flex justify-end items-center gap-2">
                       <label className="text-sm">Type d'événement:</label>
                       <input
                         type="text"
@@ -414,7 +432,6 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                 ) : (
                   <div className="text-sm space-y-1">
                     <p><span className="text-gray-500">Date:</span> {new Date(invoice.issueDate!).toLocaleDateString('fr-FR')}</p>
-                    {invoice.dueDate && <p><span className="text-gray-500">Échéance:</span> {new Date(invoice.dueDate).toLocaleDateString('fr-FR')}</p>}
                     <p><span className="text-gray-500">Événement:</span> {invoice.eventType}</p>
                     <p><span className="text-gray-500">Date événement:</span> {new Date(invoice.eventDate!).toLocaleDateString('fr-FR')}</p>
                   </div>
