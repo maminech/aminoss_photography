@@ -65,14 +65,25 @@ export default function BookingsTracking() {
       const response = await fetch('/api/bookings');
       if (response.ok) {
         const data = await response.json();
-        setBookings(data);
+        // Sort by latest (createdAt descending)
+        const sortedData = data.sort((a: Booking, b: Booking) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setBookings(sortedData);
       }
 
       // Fetch grouped bookings
       const groupedResponse = await fetch('/api/bookings?grouped=true');
       if (groupedResponse.ok) {
         const groupedData = await groupedResponse.json();
-        setGroupedBookings(groupedData);
+        // Sort each group's bookings by latest
+        const sortedGroupedData = groupedData.map((group: any) => ({
+          ...group,
+          bookings: group.bookings.sort((a: Booking, b: Booking) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+        }));
+        setGroupedBookings(sortedGroupedData);
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);

@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, MapPin, MessageSquare, Send, Check, AlertCircle, Package, ChevronRight, X, Edit } from 'lucide-react';
+import { Calendar, Clock, MapPin, MessageSquare, Send, Check, AlertCircle, Package, ChevronRight, ChevronLeft, X, Edit } from 'lucide-react';
 
 interface EventDetails {
   eventType: string;
@@ -79,6 +79,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
   const [loadingPackages, setLoadingPackages] = useState(true);
   const [packageImages, setPackageImages] = useState<string[]>([]);
   const [showPackageImages, setShowPackageImages] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [hasViewedPackages, setHasViewedPackages] = useState(false);
 
   // Load packages from database
@@ -1049,7 +1050,7 @@ Envoyé depuis innov8production.com
                           src={image}
                           alt={`Package ${index + 1}`}
                           className="w-full h-auto rounded-xl shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
-                          onClick={() => window.open(image, '_blank')}
+                          onClick={() => setSelectedImageIndex(index)}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
                           <p className="text-white font-semibold">Cliquez pour agrandir</p>
@@ -1087,6 +1088,86 @@ Envoyé depuis innov8production.com
                   <span>J'ai vu les packages, continuer</span>
                   <ChevronRight className="w-5 h-5" />
                 </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox Modal */}
+      <AnimatePresence>
+        {selectedImageIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImageIndex(null)}
+            className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center p-4"
+          >
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImageIndex(null);
+              }}
+              className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-10"
+            >
+              <X className="w-6 h-6" />
+            </motion.button>
+
+            {/* Navigation buttons */}
+            {packageImages.length > 1 && (
+              <>
+                <motion.button
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImageIndex((prev) => 
+                      prev === null ? null : prev === 0 ? packageImages.length - 1 : prev - 1
+                    );
+                  }}
+                  className="absolute left-4 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImageIndex((prev) => 
+                      prev === null ? null : (prev + 1) % packageImages.length
+                    );
+                  }}
+                  className="absolute right-4 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </motion.button>
+              </>
+            )}
+
+            {/* Image */}
+            <motion.div
+              key={selectedImageIndex}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="relative max-w-7xl max-h-[90vh] w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={packageImages[selectedImageIndex]}
+                alt={`Package ${selectedImageIndex + 1}`}
+                className="w-full h-full object-contain rounded-lg"
+              />
+              
+              {/* Image counter */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 text-white rounded-full text-sm">
+                {selectedImageIndex + 1} / {packageImages.length}
               </div>
             </motion.div>
           </motion.div>

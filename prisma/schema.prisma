@@ -339,6 +339,7 @@ model Pack {
   coverImage  String
   features    String[] // List of included features
   category    String // e.g., "Wedding", "Portrait", "Fashion"
+  packageType String   @default("aymen") // "aymen" or "equipe" - photographer type
   active      Boolean   @default(true)
   order       Int       @default(0)
   createdAt   DateTime  @default(now())

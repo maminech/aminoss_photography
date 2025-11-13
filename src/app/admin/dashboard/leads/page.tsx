@@ -67,16 +67,20 @@ export default function LeadsPage() {
       const res = await fetch('/api/bookings?includeTracking=true');
       if (res.ok) {
         const data = await res.json();
-        setLeads(data);
+        // Sort by latest (createdAt descending)
+        const sortedData = data.sort((a: Lead, b: Lead) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setLeads(sortedData);
         
         // Calculate stats
-        const tracking = data.filter((l: Lead) => l.status === 'tracking').length;
-        const pending = data.filter((l: Lead) => l.status === 'pending').length;
-        const approved = data.filter((l: Lead) => l.status === 'approved').length;
-        const conversionRate = data.length > 0 ? ((pending + approved) / data.length * 100) : 0;
+        const tracking = sortedData.filter((l: Lead) => l.status === 'tracking').length;
+        const pending = sortedData.filter((l: Lead) => l.status === 'pending').length;
+        const approved = sortedData.filter((l: Lead) => l.status === 'approved').length;
+        const conversionRate = sortedData.length > 0 ? ((pending + approved) / sortedData.length * 100) : 0;
 
         setStats({
-          total: data.length,
+          total: sortedData.length,
           tracking,
           pending,
           approved,

@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCheck, FiClock, FiDollarSign, FiCalendar, FiX } from 'react-icons/fi';
+import { FiCheck, FiClock, FiDollarSign } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import NavigationButton from '@/components/NavigationButton';
-import BookingModal from '@/components/BookingModal';
 
 interface Pack {
   id: string;
@@ -17,6 +16,7 @@ interface Pack {
   coverImage: string;
   features: string[];
   category: string;
+  packageType: 'aymen' | 'equipe';
 }
 
 export default function PacksPage() {
@@ -24,33 +24,10 @@ export default function PacksPage() {
   const isProfessional = currentTheme === 'professional';
   const [packs, setPacks] = useState<Pack[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
-  const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [filter, setFilter] = useState('all');
-  const [showFloatingButton, setShowFloatingButton] = useState(false);
-  const [bookingStatus, setBookingStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const [bookingForm, setBookingForm] = useState({
-    clientName: '',
-    clientEmail: '',
-    clientPhone: '',
-    requestedDate: '',
-    alternateDate: '',
-    message: '',
-  });
 
   useEffect(() => {
     fetchPacks();
-  }, []);
-
-  // Show floating button on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowFloatingButton(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const fetchPacks = async () => {
@@ -69,59 +46,6 @@ export default function PacksPage() {
 
   const categories = ['all', ...Array.from(new Set(packs.map(p => p.category)))];
   const filteredPacks = filter === 'all' ? packs : packs.filter(p => p.category === filter);
-
-  const openBookingModal = (pack: Pack) => {
-    setSelectedPack(pack);
-    setBookingModalOpen(true);
-  };
-
-  const closeBookingModal = () => {
-    setBookingModalOpen(false);
-    setSelectedPack(null);
-    setBookingStatus('idle');
-    setBookingForm({
-      clientName: '',
-      clientEmail: '',
-      clientPhone: '',
-      requestedDate: '',
-      alternateDate: '',
-      message: '',
-    });
-  };
-
-  const handleSubmitBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!selectedPack) return;
-
-    setBookingStatus('loading');
-
-    try {
-      const res = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...bookingForm,
-          packId: selectedPack.id,
-          packName: selectedPack.name,
-        }),
-      });
-
-      if (res.ok) {
-        setBookingStatus('success');
-        setTimeout(() => {
-          closeBookingModal();
-        }, 2000);
-      } else {
-        const data = await res.json();
-        setBookingStatus('error');
-        console.error('Booking error:', data.error);
-      }
-    } catch (error) {
-      setBookingStatus('error');
-      console.error('Booking submission error:', error);
-    }
-  };
 
   if (loading) {
     return (
@@ -164,7 +88,7 @@ export default function PacksPage() {
             </motion.div>
 
             {/* Category Filters - Novo Style */}
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <div className="flex flex-wrap justify-center gap-4 mb-16">
               {categories.map((category) => (
                 <button
                   key={category}
@@ -180,9 +104,105 @@ export default function PacksPage() {
               ))}
             </div>
 
-            {/* Packs Grid - Novo Style */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPacks.map((pack, index) => (
+            {/* Packages Par Aymen Section */}
+            <div className="mb-20">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8 text-center"
+              >
+                Packages Par Aymen
+              </motion.h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPacks.filter(pack => pack.packageType === 'aymen').map((pack, index) => (
+                  <motion.div
+                    key={pack.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#d4af37] transition-all duration-300 overflow-hidden"
+                  >
+                    {/* Pack Cover Image */}
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      {pack.coverImage ? (
+                        <img
+                          src={pack.coverImage}
+                          alt={pack.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />
+                      )}
+                      
+                      {/* Price Badge */}
+                      <div className="absolute top-4 right-4 bg-[#d4af37] text-white px-4 py-2">
+                        <span className="text-2xl font-playfair font-bold">{pack.price} TND</span>
+                      </div>
+                    </div>
+
+                    {/* Pack Details */}
+                    <div className="p-6">
+                      <h3 className="text-2xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-3">
+                        {pack.name}
+                      </h3>
+                      
+                      <p className="text-gray-600 font-lato mb-4 line-clamp-2">
+                        {pack.description}
+                      </p>
+
+                      {/* Duration */}
+                      <div className="flex items-center gap-2 mb-4 text-gray-600">
+                        <FiClock className="w-4 h-4" />
+                        <span className="font-lato text-sm">{pack.duration}</span>
+                      </div>
+
+                      {/* Features List */}
+                      <ul className="space-y-2 mb-6">
+                        {pack.features.slice(0, 4).map((feature, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                            <FiCheck className="w-4 h-4 text-[#d4af37] mt-1 flex-shrink-0" />
+                            <span className="font-lato text-sm">{feature}</span>
+                          </li>
+                        ))}
+                        {pack.features.length > 4 && (
+                          <li className="text-[#d4af37] font-lato text-sm">
+                            +{pack.features.length - 4} more features
+                          </li>
+                        )}
+                      </ul>
+
+                      {/* Demande de Devis Button */}
+                      <Link
+                        href="/booking"
+                        className="block w-full px-6 py-3 bg-[#1a1a1a] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300 text-center"
+                      >
+                        Demande de Devis
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              {filteredPacks.filter(pack => pack.packageType === 'aymen').length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 font-lato text-lg">No packages available in this category yet.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Packages Par Équipe Section */}
+            <div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8 text-center"
+              >
+                Packages Par Équipe
+              </motion.h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPacks.filter(pack => pack.packageType === 'equipe').map((pack, index) => (
                 <motion.div
                   key={pack.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -250,6 +270,12 @@ export default function PacksPage() {
                   </div>
                 </motion.div>
               ))}
+              </div>
+              {filteredPacks.filter(pack => pack.packageType === 'equipe').length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 font-lato text-lg">No packages available in this category yet.</p>
+                </div>
+              )}
             </div>
 
             {filteredPacks.length === 0 && (
@@ -259,14 +285,6 @@ export default function PacksPage() {
             )}
           </div>
         </section>
-
-        {/* Booking Modal */}
-        <BookingModal
-          pack={selectedPack}
-          isOpen={bookingModalOpen}
-          onClose={closeBookingModal}
-          allPacks={packs}
-        />
       </div>
     );
   }
@@ -347,104 +365,165 @@ export default function PacksPage() {
             </div>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {filteredPacks.map((pack, index) => (
-              <motion.div
-                key={pack.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-dark-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group touch-manipulation"
-              >
-                {/* Cover Image */}
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src={pack.coverImage}
-                    alt={pack.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-semibold rounded-full">
-                      {pack.category}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{pack.name}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{pack.description}</p>
-
-                  {/* Price & Duration */}
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center space-x-2 text-primary dark:text-primary-400">
-                      <FiDollarSign className="w-5 h-5" />
-                      <span className="text-2xl font-bold">{pack.price} TND</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                      <FiClock className="w-4 h-4" />
-                      <span className="text-sm font-medium">{pack.duration}</span>
-                    </div>
-                  </div>
-
-                  {/* Features */}
-                  <ul className="space-y-2 mb-6">
-                    {pack.features.slice(0, 4).map((feature, idx) => (
-                      <li key={idx} className="flex items-start space-x-2 text-sm text-gray-700 dark:text-gray-300">
-                        <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                    {pack.features.length > 4 && (
-                      <li className="text-sm text-primary dark:text-primary-400 font-medium">
-                        +{pack.features.length - 4} more features
-                      </li>
-                    )}
-                  </ul>
-
-                  {/* Book Now Button */}
-                  <button
-                    onClick={() => openBookingModal(pack)}
-                    className="w-full py-4 md:py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-semibold flex items-center justify-center space-x-2 group touch-manipulation text-base md:text-sm"
+          <>
+            {/* Packages Par Aymen Section */}
+            <div className="mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
+                Packages Par Aymen
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {filteredPacks.filter(pack => pack.packageType === 'aymen').map((pack, index) => (
+                  <motion.div
+                    key={pack.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white dark:bg-dark-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
                   >
-                    <FiCalendar className="w-5 h-5" />
-                    <span>Book Now</span>
-                  </button>
+                    {/* Cover Image */}
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <img
+                        src={pack.coverImage}
+                        alt={pack.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-semibold rounded-full">
+                          {pack.category}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{pack.name}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{pack.description}</p>
+
+                      {/* Price & Duration */}
+                      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center space-x-2 text-primary dark:text-primary-400">
+                          <FiDollarSign className="w-5 h-5" />
+                          <span className="text-2xl font-bold">{pack.price} TND</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                          <FiClock className="w-4 h-4" />
+                          <span className="text-sm font-medium">{pack.duration}</span>
+                        </div>
+                      </div>
+
+                      {/* Features */}
+                      <ul className="space-y-2 mb-6">
+                        {pack.features.slice(0, 4).map((feature, idx) => (
+                          <li key={idx} className="flex items-start space-x-2 text-sm text-gray-700 dark:text-gray-300">
+                            <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                        {pack.features.length > 4 && (
+                          <li className="text-sm text-primary dark:text-primary-400 font-medium">
+                            +{pack.features.length - 4} more features
+                          </li>
+                        )}
+                      </ul>
+
+                      {/* Demande de Devis Button (non-clickable, for display) */}
+                      <Link
+                        href="/booking"
+                        className="block w-full py-4 md:py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-semibold text-center text-base md:text-sm"
+                      >
+                        Demande de Devis
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              {filteredPacks.filter(pack => pack.packageType === 'aymen').length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400 text-lg">No packages available in this category yet.</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+              )}
+            </div>
+
+            {/* Packages Par Équipe Section */}
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
+                Packages Par Équipe
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {filteredPacks.filter(pack => pack.packageType === 'equipe').map((pack, index) => (
+                  <motion.div
+                    key={pack.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white dark:bg-dark-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
+                  >
+                    {/* Cover Image */}
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <img
+                        src={pack.coverImage}
+                        alt={pack.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-semibold rounded-full">
+                          {pack.category}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{pack.name}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{pack.description}</p>
+
+                      {/* Price & Duration */}
+                      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+                        <div className="flex items-center space-x-2 text-primary dark:text-primary-400">
+                          <FiDollarSign className="w-5 h-5" />
+                          <span className="text-2xl font-bold">{pack.price} TND</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                          <FiClock className="w-4 h-4" />
+                          <span className="text-sm font-medium">{pack.duration}</span>
+                        </div>
+                      </div>
+
+                      {/* Features */}
+                      <ul className="space-y-2 mb-6">
+                        {pack.features.slice(0, 4).map((feature, idx) => (
+                          <li key={idx} className="flex items-start space-x-2 text-sm text-gray-700 dark:text-gray-300">
+                            <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                        {pack.features.length > 4 && (
+                          <li className="text-sm text-primary dark:text-primary-400 font-medium">
+                            +{pack.features.length - 4} more features
+                          </li>
+                        )}
+                      </ul>
+
+                      {/* Demande de Devis Button (non-clickable, for display) */}
+                      <Link
+                        href="/booking"
+                        className="block w-full py-4 md:py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-semibold text-center text-base md:text-sm"
+                      >
+                        Demande de Devis
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              {filteredPacks.filter(pack => pack.packageType === 'equipe').length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400 text-lg">No packages available in this category yet.</p>
+                </div>
+              )}
+            </div>
+          </>
         )}
       </main>
-
-      {/* Booking Modal */}
-      <BookingModal
-        pack={selectedPack}
-        isOpen={bookingModalOpen}
-        onClose={closeBookingModal}
-        allPacks={packs}
-      />
-
-      {/* Floating Book Now Button (Mobile) */}
-      <AnimatePresence>
-        {showFloatingButton && !bookingModalOpen && (
-          <motion.button
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            onClick={() => {
-              if (packs.length > 0) {
-                setSelectedPack(packs[0]);
-                setBookingModalOpen(true);
-              }
-            }}
-            className="md:hidden fixed bottom-20 right-4 sm:right-6 z-40 bg-primary text-white px-5 sm:px-6 py-3 sm:py-4 rounded-full shadow-2xl hover:bg-primary/90 transition-all flex items-center gap-2 touch-manipulation"
-          >
-            <FiCalendar className="w-5 h-5" />
-            <span className="font-semibold">Book Now</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
