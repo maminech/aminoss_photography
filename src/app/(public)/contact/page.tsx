@@ -66,7 +66,7 @@ export default function ContactPage() {
         
         // Prepare WhatsApp message
         const whatsappNumber = contactSettings.whatsappNumber || '21655985565';
-        const whatsappMessage = `Salut Innov8, ${formData.name} vous a contacté.\n\nEmail: ${formData.email}${formData.phone ? `\nTéléphone: ${formData.phone}` : ''}\n\nMessage:\n${formData.message}`;
+        const whatsappMessage = `Salut Innov8, ${formData.name} vous a contacté.\n\nTéléphone: ${formData.phone}${formData.email ? `\nEmail: ${formData.email}` : ''}\n\nMessage:\n${formData.message}`;
         const encodedMessage = encodeURIComponent(whatsappMessage);
         
         // Open WhatsApp in new tab/window
@@ -241,24 +241,8 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-
-                  <div>
                     <label htmlFor="phone" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
-                      Phone
+                      Phone *
                     </label>
                     <input
                       type="tel"
@@ -266,8 +250,24 @@ export default function ContactPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
+                      required
                       className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
                       placeholder="Your Phone Number"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-lato font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-lato text-base focus:border-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/20 transition-all"
+                      placeholder="your@email.com (optional)"
                     />
                   </div>
 
@@ -367,24 +367,8 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="input-field text-base min-h-[48px]"
-                    placeholder="your@email.com"
-                  />
-                </div>
-
-                <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Phone Number (Optional)
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
@@ -392,8 +376,24 @@ export default function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
+                    required
                     className="input-field text-base min-h-[48px]"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+216 XX XXX XXX"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email (Optional)
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="input-field text-base min-h-[48px]"
+                    placeholder="your@email.com"
                   />
                 </div>
 
