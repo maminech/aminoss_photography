@@ -140,10 +140,10 @@ export default function SuccessPage() {
           </button>
           
           <button
-            onClick={() => window.close()}
+            onClick={() => router.push('/')}
             className="w-full py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
           >
-            Close
+            Back to Home
           </button>
         </motion.div>
 
