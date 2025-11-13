@@ -13,7 +13,7 @@ import AlbumLightboxModal from '@/components/AlbumLightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
 import ThemeSwitcherModal from '@/components/ThemeSwitcherModal';
 import PublicPWAInstallPrompt from '@/components/PublicPWAInstallPrompt';
-import { MediaItem } from '@/types';
+import { MediaItem, Category } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import dynamic from 'next/dynamic';
@@ -57,14 +57,36 @@ interface SiteSettings {
   fontBody?: string;
 }
 
+interface Post {
+  id: string;
+  type: 'post';
+  title: string;
+  description?: string;
+  category: string;
+  coverImage: string;
+  imageCount: number;
+  images: {
+    id: string;
+    url: string;
+    thumbnailUrl: string;
+    width?: number;
+    height?: number;
+    title?: string;
+    description?: string;
+  }[];
+  createdAt: string;
+  featured: boolean;
+}
+
 export default function HomePage() {
   const router = useRouter();
   const { currentTheme } = useLayoutTheme();
-  const [images, setImages] = useState<MediaItem[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({});
   const [activeTab, setActiveTab] = useState<'posts' | 'videos'>('posts');
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [albumLightboxOpen, setAlbumLightboxOpen] = useState(false);
+  const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [storiesOpen, setStoriesOpen] = useState(false);
@@ -122,28 +144,12 @@ export default function HomePage() {
           setSettings(data);
         }
 
-        // Load featured images
-        const imagesRes = await fetch('/api/admin/images?featured=true');
-        let fetchedImages: MediaItem[] = [];
+        // Load posts (Instagram-style albums with multiple images)
+        const postsRes = await fetch('/api/public/posts?homepage=true&limit=30');
         
-        if (imagesRes.ok) {
-          const data = await imagesRes.json();
-          fetchedImages = data.map((img: any) => ({
-            id: img.id,
-            publicId: img.cloudinaryId,
-            url: img.url,
-            thumbnailUrl: img.thumbnailUrl,
-            title: img.title || 'Untitled',
-            description: img.description || '',
-            category: img.category,
-            width: img.width,
-            height: img.height,
-            format: img.format,
-            createdAt: img.createdAt,
-            tags: img.tags || [],
-            type: 'image',
-          }));
-          setImages(fetchedImages);
+        if (postsRes.ok) {
+          const fetchedPosts = await postsRes.json();
+          setPosts(fetchedPosts);
         }
 
         // Load homepage videos
@@ -165,15 +171,39 @@ export default function HomePage() {
           setVideos(fetchedVideos);
         }
 
-        // Fallback to sample data if no media
-        if (fetchedImages.length === 0) {
-          const sampleData = await getSampleImages('all');
-          setImages(sampleData);
+        // Fallback to sample data if no posts
+        if (postsRes.ok) {
+          const fetchedPosts = await postsRes.json();
+          if (fetchedPosts.length === 0) {
+            // Create sample posts from sample images
+            const sampleData = await getSampleImages('all');
+            const samplePosts: Post[] = [
+              {
+                id: 'sample-1',
+                type: 'post',
+                title: 'Beautiful Moments',
+                description: 'Capturing life\'s precious memories',
+                category: 'all',
+                coverImage: sampleData[0]?.thumbnailUrl || '',
+                imageCount: 3,
+                images: sampleData.slice(0, 3).map(img => ({
+                  id: img.id,
+                  url: img.url,
+                  thumbnailUrl: img.thumbnailUrl || img.url,
+                  width: img.width,
+                  height: img.height,
+                  title: img.title,
+                  description: img.description,
+                })),
+                createdAt: new Date().toISOString(),
+                featured: true,
+              },
+            ];
+            setPosts(samplePosts);
+          }
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        const data = await getSampleImages('all');
-        setImages(data);
       } finally {
         setLoading(false);
       }
@@ -181,31 +211,24 @@ export default function HomePage() {
     loadData();
   }, []);
 
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
+  const openPostLightbox = (post: Post, imageIndex: number = 0) => {
+    setCurrentPost(post);
+    setCurrentImageIndex(imageIndex);
+    setAlbumLightboxOpen(true);
   };
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const previousImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  const displayMedia = activeTab === 'posts' ? images : videos;
+  const displayMedia = activeTab === 'posts' ? posts : videos;
 
   // Instagram Stories highlights data - Fetch from database or use fallback
   const [highlights, setHighlights] = useState([
     {
       id: 'about',
       name: 'About',
-      coverImage: images[0]?.thumbnailUrl || '/placeholder.jpg',
+      coverImage: posts[0]?.coverImage || '/placeholder.jpg',
       stories: [
-        { id: 'about-1', image: images[0]?.url || '/placeholder.jpg', title: '👋 Meet the Photographer' },
-        { id: 'about-2', image: images[1]?.url || '/placeholder.jpg', title: '📸 My Story' },
-        { id: 'about-3', image: images[2]?.url || '/placeholder.jpg', title: '🎨 My Style' },
+        { id: 'about-1', image: posts[0]?.images[0]?.url || '/placeholder.jpg', title: '👋 Meet the Photographer' },
+        { id: 'about-2', image: posts[1]?.images[0]?.url || '/placeholder.jpg', title: '📸 My Story' },
+        { id: 'about-3', image: posts[2]?.images[0]?.url || '/placeholder.jpg', title: '🎨 My Style' },
       ]
     },
     {
@@ -221,22 +244,22 @@ export default function HomePage() {
     {
       id: 'packages',
       name: 'Packages',
-      coverImage: images[3]?.thumbnailUrl || '/placeholder.jpg',
+      coverImage: posts[3]?.coverImage || '/placeholder.jpg',
       stories: [
-        { id: 'pack-1', image: images[3]?.url || '/placeholder.jpg', title: '� Wedding Package' },
-        { id: 'pack-2', image: images[4]?.url || '/placeholder.jpg', title: '👨‍👩‍👧 Family Sessions' },
-        { id: 'pack-3', image: images[5]?.url || '/placeholder.jpg', title: '🎉 Event Coverage' },
-        { id: 'pack-4', image: images[6]?.url || '/placeholder.jpg', title: '📸 Portrait Sessions' },
+        { id: 'pack-1', image: posts[3]?.images[0]?.url || '/placeholder.jpg', title: '💍 Wedding Package' },
+        { id: 'pack-2', image: posts[4]?.images[0]?.url || '/placeholder.jpg', title: '👨‍👩‍👧 Family Sessions' },
+        { id: 'pack-3', image: posts[5]?.images[0]?.url || '/placeholder.jpg', title: '🎉 Event Coverage' },
+        { id: 'pack-4', image: posts[6]?.images[0]?.url || '/placeholder.jpg', title: '📸 Portrait Sessions' },
       ]
     },
     {
       id: 'contact',
       name: 'Contact',
-      coverImage: images[7]?.thumbnailUrl || '/placeholder.jpg',
+      coverImage: posts[7]?.coverImage || '/placeholder.jpg',
       stories: [
-        { id: 'contact-1', image: images[7]?.url || '/placeholder.jpg', title: '📱 Book Your Session' },
-        { id: 'contact-2', image: images[8]?.url || '/placeholder.jpg', title: '✉️ Get in Touch' },
-        { id: 'contact-3', image: images[9]?.url || '/placeholder.jpg', title: '📍 Location' },
+        { id: 'contact-1', image: posts[7]?.images[0]?.url || '/placeholder.jpg', title: '📱 Book Your Session' },
+        { id: 'contact-2', image: posts[8]?.images[0]?.url || '/placeholder.jpg', title: '✉️ Get in Touch' },
+        { id: 'contact-3', image: posts[9]?.images[0]?.url || '/placeholder.jpg', title: '📍 Location' },
       ]
     }
   ]);
@@ -339,7 +362,7 @@ export default function HomePage() {
             <div className="flex gap-3 xs:gap-4 sm:gap-6 md:gap-10 mb-2 xs:mb-3 sm:mb-4 md:mb-5 text-xs xs:text-sm sm:text-base">
               <div className="flex-shrink-0">
                 <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
-                  {images.length + videos.length}
+                  {posts.length + videos.length}
                 </span>
                 <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> posts</span>
               </div>
@@ -612,62 +635,58 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
-            {displayMedia.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-                className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 active:opacity-75 transition-opacity"
-                onClick={() => {
-                  if (activeTab === 'posts') {
-                    openLightbox(index);
-                  }
-                }}
-              >
-                <Image
-                  src={item.thumbnailUrl || item.url}
-                  alt={item.title || 'Post'}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 33vw, 300px"
-                />
-                
-                {/* Video indicator - top right */}
-                {'isReel' in item && (
+            {activeTab === 'posts' ? (
+              posts.map((post) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 active:opacity-75 transition-opacity"
+                  onClick={() => openPostLightbox(post, 0)}
+                >
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title || 'Post'}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 33vw, 300px"
+                  />
+                  
+                  {/* Album indicator (multiple images) - top right */}
+                  {post.imageCount > 1 && (
+                    <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
+                      <svg className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 48 48">
+                        <path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path>
+                      </svg>
+                    </div>
+                  )}
+                </motion.div>
+              ))
+            ) : (
+              videos.map((video) => (
+                <motion.div
+                  key={video.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 active:opacity-75 transition-opacity"
+                >
+                  <Image
+                    src={video.thumbnailUrl}
+                    alt={video.title || 'Video'}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 33vw, 300px"
+                  />
+                  
+                  {/* Video indicator - top right */}
                   <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
                     <MdVideoLibrary className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" />
                   </div>
-                )}
-
-                {/* Album indicator (multiple images) - top right */}
-                {'albumImages' in item && item.albumImages && item.albumImages.length > 1 && (
-                  <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
-                    <svg className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 48 48">
-                      <path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path>
-                    </svg>
-                  </div>
-                )}
-
-                {/* Instagram hover overlay with likes and comments */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="flex items-center gap-4 sm:gap-6 text-white font-semibold text-xs sm:text-base">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 48 48">
-                        <path d="M34.6 3.1c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5s1.1-.2 1.6-.5c1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z"></path>
-                      </svg>
-                      <span className="hidden xs:inline">247</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current" viewBox="0 0 48 48">
-                        <path d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"></path>
-                      </svg>
-                      <span className="hidden xs:inline">18</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))
+            )}
           </div>
         )}
       </div>
@@ -679,12 +698,44 @@ export default function HomePage() {
       />
 
       {/* Album Lightbox Modal - For Posts (supports albums) */}
-      <AlbumLightboxModal
-        posts={images}
-        currentPostIndex={currentImageIndex}
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-      />
+      {currentPost && (
+        <AlbumLightboxModal
+          posts={[{
+            id: currentPost.id,
+            publicId: currentPost.id,
+            url: currentPost.coverImage,
+            thumbnailUrl: currentPost.coverImage,
+            title: currentPost.title,
+            description: currentPost.description || '',
+            category: (currentPost.category || 'all') as Category,
+            width: 1920,
+            height: 1080,
+            format: 'jpg',
+            createdAt: currentPost.createdAt,
+            tags: [],
+            albumImages: currentPost.images.map(img => ({
+              id: img.id,
+              publicId: img.id,
+              url: img.url,
+              thumbnailUrl: img.thumbnailUrl,
+              title: img.title || '',
+              description: img.description || '',
+              category: (currentPost.category || 'all') as Category,
+              width: img.width || 1920,
+              height: img.height || 1080,
+              format: 'jpg',
+              createdAt: currentPost.createdAt,
+              tags: [],
+            })),
+          }]}
+          currentPostIndex={0}
+          isOpen={albumLightboxOpen}
+          onClose={() => {
+            setAlbumLightboxOpen(false);
+            setCurrentPost(null);
+          }}
+        />
+      )}
 
       {/* Instagram Stories Viewer */}
       {storiesOpen && (

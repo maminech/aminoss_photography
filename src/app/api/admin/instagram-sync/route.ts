@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
             continue;
           }
 
-          // Create album for carousel
+          // Create album for carousel (Instagram carousel becomes one post)
           const album = await prisma.album.create({
             data: {
               title: item.caption?.substring(0, 100) || `Instagram Album ${item.id}`,
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
               category: 'instagram',
               showInGallery: true,
               featured: false,
-              showOnHomepage: false,
+              showOnHomepage: true, // Show as a post on homepage
             },
           });
 
