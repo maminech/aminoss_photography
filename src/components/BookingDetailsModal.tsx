@@ -367,7 +367,39 @@ export default function BookingDetailsModal({ booking, isOpen, onClose, onStatus
                   )}
                 </div>
 
-                {/* Information Only - No Action Buttons */}
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4">
+                  {status !== 'approved' && (
+                    <button
+                      onClick={() => handleStatusChange('approved')}
+                      disabled={saving}
+                      className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50"
+                    >
+                      <CheckCircle className="w-5 h-5" />
+                      Approve & Sync to Calendar
+                    </button>
+                  )}
+                  {status !== 'rejected' && (
+                    <button
+                      onClick={() => handleStatusChange('rejected')}
+                      disabled={saving}
+                      className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+                    >
+                      <XCircle className="w-5 h-5" />
+                      Reject
+                    </button>
+                  )}
+                  {status !== 'pending' && status !== 'approved' && (
+                    <button
+                      onClick={() => handleStatusChange('pending')}
+                      disabled={saving}
+                      className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+                    >
+                      <Clock3 className="w-5 h-5" />
+                      Set Pending
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>

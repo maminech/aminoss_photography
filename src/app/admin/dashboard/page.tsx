@@ -73,6 +73,7 @@ export default function AdminDashboard() {
     { name: 'Clients', icon: FiUser, href: '/admin/dashboard/clients' },
     { name: 'Packages (Devis)', icon: FiPackage, href: '/admin/dashboard/packs' },
     { name: 'Calendar & Bookings', icon: FiCalendar, href: '/admin/dashboard/calendar' },
+    { name: 'Leads & Tracking', icon: FiTrendingUp, href: '/admin/dashboard/leads', badge: stats.tracking > 0 ? stats.tracking : undefined },
     { name: 'Bookings Tracking', icon: FiCheck, href: '/admin/bookings-tracking', badge: stats.tracking > 0 ? stats.tracking : undefined },
     { name: 'Calendar Integration', icon: FiCalendar, href: '/admin/dashboard/calendar-integration' },
     { name: 'Photobooks', icon: FiBook, href: '/admin/dashboard/photobooks' },

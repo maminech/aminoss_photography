@@ -452,34 +452,7 @@ export default function LeadsPage() {
                 <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(selectedLead.status)}`}>
                   {getStatusLabel(selectedLead.status)}
                 </span>
-                <div className="flex gap-2">
-                  {selectedLead.status === 'tracking' && (
-                    <button
-                      onClick={() => updateLeadStatus(selectedLead.id, 'pending')}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm"
-                    >
-                      Convert to Lead
-                    </button>
-                  )}
-                  {selectedLead.status === 'pending' && (
-                    <>
-                      <button
-                        onClick={() => updateLeadStatus(selectedLead.id, 'approved')}
-                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm"
-                      >
-                        <FiCheck className="w-4 h-4 inline mr-1" />
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => updateLeadStatus(selectedLead.id, 'rejected')}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
-                      >
-                        <FiX className="w-4 h-4 inline mr-1" />
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </div>
+                {/* Information Only - No Action Buttons */}
               </div>
 
               {/* Contact Information */}
