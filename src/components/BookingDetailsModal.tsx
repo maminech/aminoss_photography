@@ -194,39 +194,99 @@ export default function BookingDetailsModal({ booking, isOpen, onClose, onStatus
                   </div>
                 </div>
 
-                {/* Event Details */}
+                {/* Event Details - Multiple Events Support */}
                 <div className="bg-gray-50 dark:bg-dark-700/50 rounded-xl p-4 space-y-3">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    Event Details
+                    {booking.events && Array.isArray(booking.events) && booking.events.length > 1 
+                      ? `Event Details (${booking.events.length} événements)`
+                      : 'Event Details'
+                    }
                   </h3>
 
-                  <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                    <Calendar className="w-5 h-5 text-gray-400" />
-                    <span>{formatDate(booking.eventDate)}</span>
-                  </div>
+                  {/* Check if booking has multiple events */}
+                  {booking.events && Array.isArray(booking.events) && booking.events.length > 0 ? (
+                    <div className="space-y-4">
+                      {(booking.events as any[]).map((event: any, index: number) => (
+                        <div 
+                          key={index}
+                          className="p-4 bg-white dark:bg-dark-800 rounded-lg border-l-4 border-primary"
+                        >
+                          <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                            <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                              #{index + 1}
+                            </span>
+                            Événement {index + 1}
+                          </h4>
 
-                  <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                    <Clock className="w-5 h-5 text-gray-400" />
-                    <span>{formatTimeSlot(booking.timeSlot)}</span>
-                  </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                              <Package className="w-4 h-4 text-gray-400" />
+                              <span className="font-medium">{event.eventType || 'N/A'}</span>
+                            </div>
 
-                  <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
-                    <MapPin className="w-5 h-5 text-gray-400" />
-                    <span>{booking.location}</span>
-                  </div>
+                            <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              <span>{event.eventDate ? formatDate(event.eventDate) : 'N/A'}</span>
+                            </div>
 
-                  <div className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                    <Package className="w-5 h-5 text-gray-400 mt-1" />
-                    <div>
-                      <div className="font-medium">{booking.eventType}</div>
-                      {booking.packageName && (
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Package: {booking.packageName}
-                          {booking.packagePrice && ` - ${booking.packagePrice} DT`}
+                            <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                              <Clock className="w-4 h-4 text-gray-400" />
+                              <span>{event.timeSlot ? formatTimeSlot(event.timeSlot) : 'N/A'}</span>
+                            </div>
+
+                            {event.location && (
+                              <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                                <MapPin className="w-4 h-4 text-gray-400" />
+                                <span>{event.location}</span>
+                              </div>
+                            )}
+
+                            {(event.packageType || event.packageLevel) && (
+                              <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                                <Package className="w-4 h-4 text-gray-400" />
+                                <span className="text-sm">
+                                  <strong>Forfait:</strong>{' '}
+                                  {event.packageType === 'aymen' ? 'Par Aymen' : event.packageType === 'equipe' ? 'Par Équipe' : event.packageType}
+                                  {event.packageLevel && ` - ${event.packageLevel.toUpperCase()}`}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      )}
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    // Fallback to single event display for backward compatibility
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                        <Calendar className="w-5 h-5 text-gray-400" />
+                        <span>{formatDate(booking.eventDate)}</span>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                        <Clock className="w-5 h-5 text-gray-400" />
+                        <span>{formatTimeSlot(booking.timeSlot)}</span>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                        <MapPin className="w-5 h-5 text-gray-400" />
+                        <span>{booking.location}</span>
+                      </div>
+
+                      <div className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                        <Package className="w-5 h-5 text-gray-400 mt-1" />
+                        <div>
+                          <div className="font-medium">{booking.eventType}</div>
+                          {booking.packageName && (
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              Package: {booking.packageName}
+                              {booking.packagePrice && ` - ${booking.packagePrice} DT`}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Message */}

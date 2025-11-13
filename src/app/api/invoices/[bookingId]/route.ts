@@ -42,15 +42,34 @@ export async function POST(
       invoiceNumber = `INV-${year}-001`;
     }
 
-    // Prepare invoice items
-    const items = body.items || [
-      {
-        description: body.serviceDescription || `${booking.eventType} - ${booking.packageName || 'Service photographique'}`,
-        quantity: 1,
-        unitPrice: body.totalAmount || booking.packagePrice || 0,
-        total: body.totalAmount || booking.packagePrice || 0
-      }
-    ];
+    // Prepare invoice items from multiple events
+    let items = body.items;
+    
+    if (!items && booking.events && Array.isArray(booking.events) && booking.events.length > 0) {
+      // Generate items from events array
+      items = (booking.events as any[]).map((event: any, index: number) => {
+        const packageType = event.packageType ? (event.packageType === 'aymen' ? 'Par Aymen' : 'Par Équipe') : '';
+        const packageLevel = event.packageLevel || '';
+        const packageInfo = packageType && packageLevel ? ` - ${packageType} ${packageLevel}` : '';
+        
+        return {
+          description: `Événement ${index + 1}: ${event.eventType}${packageInfo} - ${new Date(event.eventDate).toLocaleDateString('fr-FR')} (${event.timeSlot})`,
+          quantity: 1,
+          unitPrice: body.unitPrice || booking.packagePrice || 0,
+          total: body.unitPrice || booking.packagePrice || 0
+        };
+      });
+    } else if (!items) {
+      // Fallback to single item for backward compatibility
+      items = [
+        {
+          description: body.serviceDescription || `${booking.eventType} - ${booking.packageName || 'Service photographique'}`,
+          quantity: 1,
+          unitPrice: body.totalAmount || booking.packagePrice || 0,
+          total: body.totalAmount || booking.packagePrice || 0
+        }
+      ];
+    }
 
     const subtotal = body.subtotal || items.reduce((sum: number, item: any) => sum + item.total, 0);
     const taxRate = body.taxRate || 0;

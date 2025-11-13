@@ -16,6 +16,8 @@ interface EventDetails {
   eventDate: string;
   timeSlot: string;
   location: string;
+  packageType?: string; // 'aymen' or 'equipe'
+  packageLevel?: string; // 'pack1', 'pack2', 'pack3'
 }
 
 interface BookingFormData {
@@ -138,6 +140,8 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     eventDate: '',
     timeSlot: '',
     location: '',
+    packageType: '',
+    packageLevel: '',
   });
 
   const eventTypes = [
@@ -152,17 +156,27 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
   ];
 
   const timeSlots = [
-    { value: 'morning', label: 'Matin / Morning (8h-12h)' },
-    { value: 'afternoon', label: 'Après-midi / Afternoon (14h-18h)' },
-    { value: 'evening', label: 'Soirée / Evening (18h-22h)' },
-    { value: 'all-day', label: 'Toute la journée / All Day' },
+    { value: 'midi-apres-midi', label: 'Midi / Après-midi', icon: '☀️' },
+    { value: 'soiree', label: 'Soirée', icon: '🌙' },
+    { value: 'les-deux', label: 'Les deux', icon: '☀️🌙' },
+  ];
+
+  const packageTypes = [
+    { value: 'aymen', label: 'Par Aymen', icon: '👤' },
+    { value: 'equipe', label: 'Par Équipe', icon: '👥' },
+  ];
+
+  const packageLevels = [
+    { value: 'pack1', label: 'Pack 1', description: 'Essentiel' },
+    { value: 'pack2', label: 'Pack 2', description: 'Premium' },
+    { value: 'pack3', label: 'Pack 3', description: 'Luxe' },
   ];
 
   // Add event to the list
   const handleAddEvent = () => {
-    if (!currentEvent.eventType || !currentEvent.eventDate || !currentEvent.timeSlot) {
+    if (!currentEvent.eventType || !currentEvent.eventDate || !currentEvent.timeSlot || !currentEvent.packageType || !currentEvent.packageLevel) {
       setStatus('error');
-      setErrorMessage('Veuillez remplir tous les champs requis de l\'événement');
+      setErrorMessage('Veuillez remplir tous les champs requis de l\'événement (Type, Date, Horaire, et Forfait)');
       setTimeout(() => {
         setStatus('idle');
         setErrorMessage('');
@@ -180,6 +194,8 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
       eventDate: '',
       timeSlot: '',
       location: '',
+      packageType: '',
+      packageLevel: '',
     });
     setIsAddingEvent(false);
   };
@@ -215,6 +231,11 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
 
     try {
       const firstEvent = formData.events[0];
+      
+      // Generate package name from first event
+      const packageTypeLabel = packageTypes.find(t => t.value === firstEvent.packageType)?.label || firstEvent.packageType;
+      const packageLevelLabel = packageLevels.find(t => t.value === firstEvent.packageLevel)?.label || firstEvent.packageLevel;
+      const generatedPackageName = `${packageTypeLabel} - ${packageLevelLabel}`;
 
       const response = await fetch('/api/bookings', {
         method: 'POST',
@@ -223,13 +244,13 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
           clientName: formData.name,
           clientEmail: formData.email,
           clientPhone: formData.phone,
-          events: formData.events,
+          events: formData.events, // ALL events with package info per event
           eventType: firstEvent.eventType,
           requestedDate: firstEvent.eventDate,
           timeSlot: firstEvent.timeSlot,
           location: firstEvent.location,
           message: formData.message,
-          packName: formData.packageName || `Custom ${firstEvent.eventType}`,
+          packName: formData.packageName || generatedPackageName,
         }),
       });
 
@@ -266,12 +287,15 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     const eventsText = formData.events.map((event, index) => {
       const eventTypeLabel = eventTypes.find(t => t.value === event.eventType)?.label || event.eventType;
       const timeSlotLabel = timeSlots.find(t => t.value === event.timeSlot)?.label || event.timeSlot;
+      const packageTypeLabel = packageTypes.find(t => t.value === event.packageType)?.label || event.packageType;
+      const packageLevelLabel = packageLevels.find(t => t.value === event.packageLevel)?.label || event.packageLevel;
       
       return `
 *Événement ${index + 1}:*
    📅 Type: ${eventTypeLabel}
    📆 Date: ${new Date(event.eventDate).toLocaleDateString('fr-FR')}
    🕐 Horaire: ${timeSlotLabel}
+   📦 Forfait: ${packageTypeLabel} - ${packageLevelLabel}
    ${event.location ? `📍 Lieu: ${event.location}` : ''}`;
     }).join('\n');
 
@@ -563,6 +587,8 @@ Envoyé depuis innov8production.com
                       const eventTypeLabel = eventTypes.find(t => t.value === event.eventType)?.label || event.eventType;
                       const timeSlotLabel = timeSlots.find(t => t.value === event.timeSlot)?.label || event.timeSlot;
                       const eventIcon = eventTypes.find(t => t.value === event.eventType)?.icon || '📅';
+                      const packageTypeLabel = packageTypes.find(t => t.value === event.packageType)?.label || event.packageType;
+                      const packageLevelLabel = packageLevels.find(t => t.value === event.packageLevel)?.label || event.packageLevel;
 
                       return (
                         <motion.div
@@ -590,7 +616,8 @@ Envoyé depuis innov8production.com
                                   month: 'long', 
                                   day: 'numeric' 
                                 })}</p>
-                                <p>🕐 {timeSlotLabel.split(' / ')[0]}</p>
+                                <p>🕐 {timeSlotLabel}</p>
+                                <p>📦 <strong>{packageTypeLabel}</strong> - {packageLevelLabel}</p>
                                 {event.location && <p>📍 {event.location}</p>}
                               </div>
                             </div>
@@ -668,37 +695,97 @@ Envoyé depuis innov8production.com
                         </div>
                       </div>
 
-                      {/* Date and Time */}
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Date *
-                          </label>
-                          <input
-                            type="date"
-                            value={currentEvent.eventDate}
-                            onChange={(e) => setCurrentEvent(prev => ({ ...prev, eventDate: e.target.value }))}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="input-field"
-                          />
-                        </div>
+                      {/* Date */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Date *
+                        </label>
+                        <input
+                          type="date"
+                          value={currentEvent.eventDate}
+                          onChange={(e) => setCurrentEvent(prev => ({ ...prev, eventDate: e.target.value }))}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="input-field"
+                        />
+                      </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Horaire *
-                          </label>
-                          <select
-                            value={currentEvent.timeSlot}
-                            onChange={(e) => setCurrentEvent(prev => ({ ...prev, timeSlot: e.target.value }))}
-                            className="select-field"
-                          >
-                            <option value="">Sélectionner...</option>
-                            {timeSlots.map((slot) => (
-                              <option key={slot.value} value={slot.value}>
+                      {/* Time Slot - Radio Buttons */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                          Horaire *
+                        </label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {timeSlots.map((slot) => (
+                            <button
+                              key={slot.value}
+                              type="button"
+                              onClick={() => setCurrentEvent(prev => ({ ...prev, timeSlot: slot.value }))}
+                              className={`p-3 rounded-lg border-2 transition-all text-center ${
+                                currentEvent.timeSlot === slot.value
+                                  ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                              }`}
+                            >
+                              <div className="text-2xl mb-1">{slot.icon}</div>
+                              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
                                 {slot.label}
-                              </option>
-                            ))}
-                          </select>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Package Type - Radio Buttons */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                          Type de Forfait *
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {packageTypes.map((type) => (
+                            <button
+                              key={type.value}
+                              type="button"
+                              onClick={() => setCurrentEvent(prev => ({ ...prev, packageType: type.value }))}
+                              className={`p-4 rounded-lg border-2 transition-all text-center ${
+                                currentEvent.packageType === type.value
+                                  ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                              }`}
+                            >
+                              <div className="text-3xl mb-2">{type.icon}</div>
+                              <div className="text-sm font-bold text-gray-900 dark:text-white">
+                                {type.label}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Package Level - Radio Buttons */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                          Niveau de Pack *
+                        </label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {packageLevels.map((level) => (
+                            <button
+                              key={level.value}
+                              type="button"
+                              onClick={() => setCurrentEvent(prev => ({ ...prev, packageLevel: level.value }))}
+                              className={`p-4 rounded-lg border-2 transition-all text-center ${
+                                currentEvent.packageLevel === level.value
+                                  ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
+                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                              }`}
+                            >
+                              <div className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                                {level.label}
+                              </div>
+                              <div className="text-xs text-gray-600 dark:text-gray-400">
+                                {level.description}
+                              </div>
+                            </button>
+                          ))}
                         </div>
                       </div>
 
