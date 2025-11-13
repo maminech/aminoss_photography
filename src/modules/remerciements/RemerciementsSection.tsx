@@ -116,7 +116,45 @@ export default function RemerciementsSection({
   }
 
   if (allItems.length === 0) {
-    return null; // Don't show section if no content
+    // Show a default thank you message if no content
+    return (
+      <section className="py-20 bg-gradient-to-br from-primary/5 via-white to-primary/10 dark:from-gray-900 dark:via-black dark:to-gray-900">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+              <Heart className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+              Merci à nos clients
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Votre confiance fait notre fierté
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="glass-card p-8 md:p-12 text-center max-w-3xl mx-auto"
+          >
+            <Quote className="w-12 h-12 text-primary/30 mx-auto mb-6" />
+            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 italic mb-6">
+              "Merci de nous faire confiance pour capturer vos moments les plus précieux. Chaque événement est une nouvelle histoire que nous sommes honorés de raconter à travers nos photos."
+            </p>
+            <p className="text-lg font-semibold text-primary">
+              - L'équipe Innov8 Production
+            </p>
+          </motion.div>
+        </div>
+      </section>
+    );
   }
 
   const currentItem = allItems[currentIndex];

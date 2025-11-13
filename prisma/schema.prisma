@@ -179,8 +179,9 @@ model SiteSettings {
   designTheme    String @default("modern") // modern, glass, minimal, luxury
 
   // Package Images for Booking Form
-  packageImage1 String? // First package pricing image
-  packageImage2 String? // Second package pricing image
+  packageImage1 String? // First package pricing image (kept for backward compatibility)
+  packageImage2 String? // Second package pricing image (kept for backward compatibility)
+  packageImages String[] @default([]) // Array of package images (new flexible format)
 
   updatedAt DateTime @updatedAt
 }

@@ -118,10 +118,18 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
         const response = await fetch('/api/admin/settings');
         if (response.ok) {
           const settings = await response.json();
-          if (settings.packageImage1 || settings.packageImage2) {
-            const images = [];
+          const images = [];
+          
+          // First, check for new packageImages array format
+          if (settings.packageImages && Array.isArray(settings.packageImages) && settings.packageImages.length > 0) {
+            images.push(...settings.packageImages);
+          } else {
+            // Fallback to old format for backward compatibility
             if (settings.packageImage1) images.push(settings.packageImage1);
             if (settings.packageImage2) images.push(settings.packageImage2);
+          }
+          
+          if (images.length > 0) {
             setPackageImages(images);
           }
         }
