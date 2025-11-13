@@ -77,6 +77,9 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
   // Two-step state
   const [packages, setPackages] = useState<PackageType[]>(defaultPackages);
   const [loadingPackages, setLoadingPackages] = useState(true);
+  const [packageImages, setPackageImages] = useState<string[]>([]);
+  const [showPackageImages, setShowPackageImages] = useState(false);
+  const [hasViewedPackages, setHasViewedPackages] = useState(false);
 
   // Load packages from database
   useEffect(() => {
@@ -106,6 +109,28 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     };
 
     fetchPackages();
+  }, []);
+
+  // Load package images from settings
+  useEffect(() => {
+    const fetchPackageImages = async () => {
+      try {
+        const response = await fetch('/api/admin/settings');
+        if (response.ok) {
+          const settings = await response.json();
+          if (settings.packageImage1 || settings.packageImage2) {
+            const images = [];
+            if (settings.packageImage1) images.push(settings.packageImage1);
+            if (settings.packageImage2) images.push(settings.packageImage2);
+            setPackageImages(images);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading package images:', error);
+      }
+    };
+
+    fetchPackageImages();
   }, []);
 
   const getPackageIcon = (name: string): string => {
@@ -166,11 +191,54 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     { value: 'equipe', label: 'Par Équipe', icon: '👥' },
   ];
 
+  const [packDetails, setPackDetails] = useState<{[key: string]: PackageType}>({});
+  const [selectedPackDetails, setSelectedPackDetails] = useState<PackageType | null>(null);
+
   const packageLevels = [
-    { value: 'pack1', label: 'Pack 1', description: 'Essentiel' },
-    { value: 'pack2', label: 'Pack 2', description: 'Premium' },
-    { value: 'pack3', label: 'Pack 3', description: 'Luxe' },
+    { value: 'pack1', label: 'Pack 1', description: packDetails['pack1']?.name || 'Essentiel' },
+    { value: 'pack2', label: 'Pack 2', description: packDetails['pack2']?.name || 'Premium' },
+    { value: 'pack3', label: 'Pack 3', description: packDetails['pack3']?.name || 'Luxe' },
   ];
+
+  // Load pack details
+  useEffect(() => {
+    const fetchPackDetails = async () => {
+      try {
+        const response = await fetch('/api/admin/packs?active=true');
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.length >= 3) {
+            // Map first 3 packs to pack1, pack2, pack3
+            const details: {[key: string]: PackageType} = {
+              pack1: {
+                name: data[0].name,
+                price: data[0].price,
+                features: data[0].features || [],
+                icon: '📦',
+              },
+              pack2: {
+                name: data[1].name,
+                price: data[1].price,
+                features: data[1].features || [],
+                icon: '⭐',
+              },
+              pack3: {
+                name: data[2].name,
+                price: data[2].price,
+                features: data[2].features || [],
+                icon: '👑',
+              },
+            };
+            setPackDetails(details);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading pack details:', error);
+      }
+    };
+
+    fetchPackDetails();
+  }, []);
 
   // Add event to the list
   const handleAddEvent = () => {
@@ -478,13 +546,30 @@ Envoyé depuis innov8production.com
               )}
             </AnimatePresence>
 
-            <button
-              type="submit"
-              className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4"
+            {/* View Packages Button */}
+            <motion.button
+              type="button"
+              onClick={() => setShowPackageImages(true)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
             >
-              <span>Confirmer</span>
+              <Package className="w-6 h-6" />
+              <span>Voir nos Packages</span>
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </motion.button>
+
+            {hasViewedPackages && (
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                type="submit"
+                className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4"
+              >
+                <span>Continuer</span>
+                <ChevronRight className="w-5 h-5" />
+              </motion.button>
+            )}
 
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Vos informations restent confidentielles
@@ -771,7 +856,10 @@ Envoyé depuis innov8production.com
                             <button
                               key={level.value}
                               type="button"
-                              onClick={() => setCurrentEvent(prev => ({ ...prev, packageLevel: level.value }))}
+                              onClick={() => {
+                                setCurrentEvent(prev => ({ ...prev, packageLevel: level.value }));
+                                setSelectedPackDetails(packDetails[level.value] || null);
+                              }}
                               className={`p-4 rounded-lg border-2 transition-all text-center ${
                                 currentEvent.packageLevel === level.value
                                   ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
@@ -788,6 +876,46 @@ Envoyé depuis innov8production.com
                           ))}
                         </div>
                       </div>
+
+                      {/* Show Selected Pack Details */}
+                      <AnimatePresence>
+                        {selectedPackDetails && currentEvent.packageLevel && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border-2 border-purple-200 dark:border-purple-700"
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <div>
+                                <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                                  {selectedPackDetails.name}
+                                </h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  Détails du package sélectionné
+                                </p>
+                              </div>
+                              {selectedPackDetails.price > 0 && (
+                                <div className="text-right">
+                                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                                    {selectedPackDetails.price} DT
+                                  </div>
+                                  <div className="text-xs text-gray-500">Prix indicatif</div>
+                                </div>
+                              )}
+                            </div>
+                            
+                            <ul className="space-y-2">
+                              {selectedPackDetails.features.map((feature, idx) => (
+                                <li key={idx} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
                       {/* Location */}
                       <div>
@@ -898,6 +1026,109 @@ Envoyé depuis innov8production.com
                 En soumettant ce formulaire, vous acceptez d'être contacté par WhatsApp et email
               </p>
             </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Package Images Modal */}
+      <AnimatePresence>
+        {showPackageImages && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => {
+              setShowPackageImages(false);
+              setHasViewedPackages(true);
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="relative max-w-6xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  setShowPackageImages(false);
+                  setHasViewedPackages(true);
+                }}
+                className="absolute top-4 right-4 z-10 bg-white/90 dark:bg-gray-800/90 rounded-full p-3 shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-900 dark:text-white" />
+              </button>
+
+              {/* Header */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-t-2xl p-8 text-center text-white"
+              >
+                <Package className="w-16 h-16 mx-auto mb-4" />
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">Nos Packages</h2>
+                <p className="text-lg text-white/90">Découvrez nos offres et choisissez celle qui vous convient</p>
+              </motion.div>
+
+              {/* Package Images */}
+              <div className="bg-white dark:bg-gray-900 p-6 space-y-6">
+                {packageImages.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {packageImages.map((image, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 + index * 0.1 }}
+                        className="relative group"
+                      >
+                        <img
+                          src={image}
+                          alt={`Package ${index + 1}`}
+                          className="w-full h-auto rounded-xl shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
+                          onClick={() => window.open(image, '_blank')}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+                          <p className="text-white font-semibold">Cliquez pour agrandir</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-12"
+                  >
+                    <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Les images des packages seront bientôt disponibles
+                    </p>
+                  </motion.div>
+                )}
+
+                {/* Continue Button */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  onClick={() => {
+                    setShowPackageImages(false);
+                    setHasViewedPackages(true);
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+                >
+                  <Check className="w-6 h-6" />
+                  <span>J'ai vu les packages, continuer</span>
+                  <ChevronRight className="w-5 h-5" />
+                </motion.button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

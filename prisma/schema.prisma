@@ -178,6 +178,10 @@ model SiteSettings {
   fontBody       String @default("Inter")
   designTheme    String @default("modern") // modern, glass, minimal, luxury
 
+  // Package Images for Booking Form
+  packageImage1 String? // First package pricing image
+  packageImage2 String? // Second package pricing image
+
   updatedAt DateTime @updatedAt
 }
 
