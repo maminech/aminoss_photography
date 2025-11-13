@@ -592,54 +592,6 @@ Envoyé depuis innov8production.com
             exit={{ opacity: 0, x: -20 }}
             className="space-y-8"
           >
-            {/* Package Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                <Package className="w-4 h-4 inline mr-2" />
-                Choisissez votre package *
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {packages.map((pkg) => (
-                  <motion.button
-                    key={pkg.name}
-                    type="button"
-                    onClick={() => handlePackageSelect(pkg)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`p-6 rounded-xl border-2 transition-all duration-300 text-left ${
-                      selectedPackage?.name === pkg.name
-                        ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20 ring-2 ring-primary ring-offset-2 dark:ring-offset-gray-900'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <div className="text-3xl mb-2">{pkg.icon}</div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                          {pkg.name}
-                        </h3>
-                      </div>
-                      {pkg.price > 0 && (
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-primary">
-                            {pkg.price} DT
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <ul className="space-y-2">
-                      {pkg.features.map((feature, idx) => (
-                        <li key={idx} className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                          <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email */}
               <div>
