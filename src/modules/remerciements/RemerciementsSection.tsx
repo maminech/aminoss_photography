@@ -4,12 +4,13 @@
  * Remerciements Section
  * Rotating thank-you messages and images carousel
  * Auto-plays and can be managed from admin dashboard
+ * Now includes star ratings from client testimonials
  */
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { Heart, Quote } from 'lucide-react';
+import { Heart, Quote, Star } from 'lucide-react';
 
 interface RemerciementItem {
   id: string;
@@ -19,6 +20,18 @@ interface RemerciementItem {
   image?: string;
   active: boolean;
   order: number;
+}
+
+interface ClientTestimonial {
+  id: string;
+  clientName: string;
+  rating: number;
+  comment: string;
+  eventType?: string;
+  eventDate?: string;
+  photoUrl?: string;
+  featured: boolean;
+  createdAt: string;
 }
 
 interface RemerciementsSectionProps {
@@ -31,36 +44,54 @@ export default function RemerciementsSection({
   showDots = true 
 }: RemerciementsSectionProps) {
   const [items, setItems] = useState<RemerciementItem[]>([]);
+  const [testimonials, setTestimonials] = useState<ClientTestimonial[]>([]);
+  const [allItems, setAllItems] = useState<(RemerciementItem | ClientTestimonial)[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [direction, setDirection] = useState(1);
 
   useEffect(() => {
-    fetchRemerciements();
+    fetchAllContent();
   }, []);
 
   useEffect(() => {
-    if (items.length === 0) return;
+    if (allItems.length === 0) return;
 
     const timer = setInterval(() => {
       setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % items.length);
+      setCurrentIndex((prev) => (prev + 1) % allItems.length);
     }, autoPlayInterval);
 
     return () => clearInterval(timer);
-  }, [items.length, autoPlayInterval]);
+  }, [allItems.length, autoPlayInterval]);
 
-  const fetchRemerciements = async () => {
+  const fetchAllContent = async () => {
     try {
-      const res = await fetch('/api/admin/remerciements');
-      if (res.ok) {
-        const data = await res.json();
-        const activeItems = data.filter((item: RemerciementItem) => item.active)
-                                 .sort((a: RemerciementItem, b: RemerciementItem) => a.order - b.order);
-        setItems(activeItems);
+      // Fetch old remerciements
+      const remercRes = await fetch('/api/admin/remerciements');
+      let oldItems: RemerciementItem[] = [];
+      if (remercRes.ok) {
+        const data = await remercRes.json();
+        oldItems = data.filter((item: RemerciementItem) => item.active)
+                       .sort((a: RemerciementItem, b: RemerciementItem) => a.order - b.order);
       }
+
+      // Fetch new client testimonials
+      const testimonialRes = await fetch('/api/public/testimonials');
+      let newTestimonials: ClientTestimonial[] = [];
+      if (testimonialRes.ok) {
+        const data = await testimonialRes.json();
+        newTestimonials = data;
+      }
+
+      setItems(oldItems);
+      setTestimonials(newTestimonials);
+      
+      // Combine both types - featured testimonials first, then everything else mixed
+      const combined = [...newTestimonials, ...oldItems];
+      setAllItems(combined);
     } catch (error) {
-      console.error('Error fetching remerciements:', error);
+      console.error('Error fetching content:', error);
     } finally {
       setLoading(false);
     }
@@ -84,11 +115,12 @@ export default function RemerciementsSection({
     );
   }
 
-  if (items.length === 0) {
-    return null; // Don't show section if no remerciements
+  if (allItems.length === 0) {
+    return null; // Don't show section if no content
   }
 
-  const currentItem = items[currentIndex];
+  const currentItem = allItems[currentIndex];
+  const isTestimonial = 'rating' in currentItem; // Check if it's a ClientTestimonial
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -143,53 +175,112 @@ export default function RemerciementsSection({
                 }}
                 className="w-full"
               >
-                {/* Render based on type */}
-                {currentItem.type === 'image' && currentItem.image && (
+                {/* Client Testimonial with Star Rating */}
+                {isTestimonial && (
+                  <div className="max-w-3xl mx-auto">
+                    <div className="relative">
+                      <Quote className="absolute -top-4 -left-4 w-12 h-12 text-primary/20" />
+                      
+                      {/* Star Rating */}
+                      <div className="flex justify-center gap-1 mb-6 pl-8">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-6 h-6 ${
+                              star <= (currentItem as ClientTestimonial).rating
+                                ? 'text-yellow-500 fill-yellow-500'
+                                : 'text-gray-300 dark:text-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Comment */}
+                      <blockquote className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 italic leading-relaxed pl-8 mb-6">
+                        "{(currentItem as ClientTestimonial).comment}"
+                      </blockquote>
+
+                      {/* Client Info */}
+                      <div className="mt-6 flex items-center gap-4 pl-8">
+                        {(currentItem as ClientTestimonial).photoUrl && (
+                          <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                            <Image
+                              src={(currentItem as ClientTestimonial).photoUrl}
+                              alt={(currentItem as ClientTestimonial).clientName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-bold text-gray-900 dark:text-white text-lg">
+                            {(currentItem as ClientTestimonial).clientName}
+                          </p>
+                          <div className="flex items-center gap-2 text-sm text-primary">
+                            {(currentItem as ClientTestimonial).featured && (
+                              <span className="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-full text-xs font-medium">
+                                ⭐ Coup de cœur
+                              </span>
+                            )}
+                            {(currentItem as ClientTestimonial).eventType && (
+                              <span className="capitalize">
+                                {(currentItem as ClientTestimonial).eventType}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Old Remerciement Types */}
+                {!isTestimonial && (currentItem as RemerciementItem).type === 'image' && (currentItem as RemerciementItem).image && (
                   <div className="relative w-full max-w-4xl mx-auto">
                     <div className="relative aspect-video rounded-2xl overflow-hidden">
                       <Image
-                        src={currentItem.image}
-                        alt={currentItem.content}
+                        src={(currentItem as RemerciementItem).image!}
+                        alt={(currentItem as RemerciementItem).content}
                         fill
                         className="object-cover"
                       />
                     </div>
-                    {currentItem.content && (
+                    {(currentItem as RemerciementItem).content && (
                       <p className="text-center text-gray-700 dark:text-gray-300 mt-6 text-lg font-medium">
-                        {currentItem.content}
+                        {(currentItem as RemerciementItem).content}
                       </p>
                     )}
                   </div>
                 )}
 
-                {currentItem.type === 'text' && (
+                {!isTestimonial && (currentItem as RemerciementItem).type === 'text' && (
                   <div className="max-w-3xl mx-auto text-center">
                     <Heart className="w-16 h-16 text-primary fill-current mx-auto mb-6" />
                     <p className="text-2xl md:text-3xl font-medium text-gray-800 dark:text-gray-200 leading-relaxed">
-                      {currentItem.content}
+                      {(currentItem as RemerciementItem).content}
                     </p>
-                    {currentItem.author && (
+                    {(currentItem as RemerciementItem).author && (
                       <p className="mt-6 text-lg text-primary font-semibold">
-                        - {currentItem.author}
+                        - {(currentItem as RemerciementItem).author}
                       </p>
                     )}
                   </div>
                 )}
 
-                {currentItem.type === 'testimonial' && (
+                {!isTestimonial && (currentItem as RemerciementItem).type === 'testimonial' && (
                   <div className="max-w-3xl mx-auto">
                     <div className="relative">
                       <Quote className="absolute -top-4 -left-4 w-12 h-12 text-primary/20" />
                       <blockquote className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 italic leading-relaxed pl-8">
-                        "{currentItem.content}"
+                        "{(currentItem as RemerciementItem).content}"
                       </blockquote>
-                      {currentItem.author && (
+                      {(currentItem as RemerciementItem).author && (
                         <div className="mt-6 flex items-center gap-4">
-                          {currentItem.image && (
+                          {(currentItem as RemerciementItem).image && (
                             <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                               <Image
-                                src={currentItem.image}
-                                alt={currentItem.author}
+                                src={(currentItem as RemerciementItem).image!}
+                                alt={(currentItem as RemerciementItem).author!}
                                 fill
                                 className="object-cover"
                               />
@@ -197,7 +288,7 @@ export default function RemerciementsSection({
                           )}
                           <div>
                             <p className="font-bold text-gray-900 dark:text-white text-lg">
-                              {currentItem.author}
+                              {(currentItem as RemerciementItem).author}
                             </p>
                             <p className="text-primary text-sm">Client satisfait</p>
                           </div>
@@ -211,9 +302,9 @@ export default function RemerciementsSection({
           </div>
 
           {/* Navigation Dots */}
-          {showDots && items.length > 1 && (
+          {showDots && allItems.length > 1 && (
             <div className="flex justify-center gap-3 mt-8">
-              {items.map((_, index) => (
+              {allItems.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}

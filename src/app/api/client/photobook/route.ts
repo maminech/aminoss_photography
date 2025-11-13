@@ -50,16 +50,20 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
       }
     } else if (galleryId) {
-      // Get existing photobook for gallery if any
+      // Get existing DRAFT photobook for gallery if any (only one draft per gallery)
       photobook = await prisma.photobook.findFirst({
         where: {
           clientId: clientId,
           galleryId: galleryId,
+          status: 'draft', // Only return draft photobooks to continue editing
         },
         include: {
           pages: {
             orderBy: { pageNumber: 'asc' },
           },
+        },
+        orderBy: {
+          updatedAt: 'desc', // Get the most recently updated draft
         },
       });
     } else {
@@ -81,47 +85,76 @@ export async function POST(request: NextRequest) {
   try {
     const clientId = await getClientFromToken(request);
 
-    console.log('Client ID from token:', clientId);
-
     if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized - No client token' }, { status: 401 });
     }
 
     const body = await request.json();
-    const { galleryId, format, title, design } = body;
-
-    console.log('Request body:', { galleryId, format, title, hasDesign: !!design });
+    const { galleryId, format, title, design, photobookId } = body;
 
     if (!galleryId) {
       return NextResponse.json({ error: 'Gallery ID required' }, { status: 400 });
     }
 
-    // Check if photobook already exists for this gallery
+    // If photobookId is provided, update that specific photobook
+    if (photobookId) {
+      const existing = await prisma.photobook.findUnique({
+        where: { id: photobookId },
+      });
+
+      if (!existing) {
+        return NextResponse.json({ error: 'Photobook not found' }, { status: 404 });
+      }
+
+      if (existing.clientId !== clientId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+
+      // Only update drafts through this endpoint
+      if (existing.status !== 'draft') {
+        return NextResponse.json({ error: 'Can only update draft photobooks' }, { status: 400 });
+      }
+
+      const updated = await prisma.photobook.update({
+        where: { id: photobookId },
+        data: {
+          title: title || existing.title,
+          format: format || existing.format,
+          design: design !== undefined ? design : existing.design,
+          updatedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({ photobook: updated, isUpdate: true });
+    }
+
+    // Check if a draft photobook already exists for this gallery
     const existing = await prisma.photobook.findFirst({
       where: {
         clientId: clientId,
         galleryId: galleryId,
-        status: 'draft', // Only match draft photobooks
+        status: 'draft',
+      },
+      orderBy: {
+        updatedAt: 'desc',
       },
     });
 
-    console.log('Existing draft photobook:', existing ? 'found' : 'not found');
-
     if (existing) {
-      // Update existing draft with new design
+      // Update existing draft
       const updated = await prisma.photobook.update({
         where: { id: existing.id },
         data: {
           title: title || existing.title,
-          design: design || existing.design,
+          format: format || existing.format,
+          design: design !== undefined ? design : existing.design,
           updatedAt: new Date(),
         },
       });
-      return NextResponse.json({ photobook: updated });
+      return NextResponse.json({ photobook: updated, isUpdate: true });
     }
 
-    // Create new photobook
-    console.log('Creating new photobook...');
+    // Create new draft photobook
     const photobook = await prisma.photobook.create({
       data: {
         clientId: clientId,
@@ -130,27 +163,21 @@ export async function POST(request: NextRequest) {
         title: title || 'My Photobook',
         status: 'draft',
         totalPages: 0,
-        design: design || undefined,
+        design: design || null,
       },
     });
 
-    console.log('Photobook created:', photobook.id);
-    return NextResponse.json({ photobook });
+    return NextResponse.json({ photobook, isUpdate: false });
   } catch (error: any) {
-    console.error('Create photobook error:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
-    });
+    console.error('Create/Update photobook error:', error);
     return NextResponse.json(
-      { error: 'Failed to create photobook', details: error.message },
+      { error: 'Failed to save photobook', details: error.message },
       { status: 500 }
     );
   }
 }
 
-// Update photobook (save progress)
+// Update photobook (save progress) - DEPRECATED, use POST instead
 export async function PUT(request: NextRequest) {
   try {
     const clientId = await getClientFromToken(request);
@@ -159,41 +186,59 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { photobookId, title, notes, pages, design, coverPhotoUrl } = await request.json();
+    const { photobookId, title, notes, pages, design, coverPhotoUrl, format } = await request.json();
 
     if (!photobookId) {
       return NextResponse.json({ error: 'Photobook ID required' }, { status: 400 });
     }
 
-    // Verify ownership
+    // Verify ownership and status
     const photobook = await prisma.photobook.findUnique({
       where: { id: photobookId },
     });
 
-    if (!photobook || photobook.clientId !== clientId) {
+    if (!photobook) {
+      return NextResponse.json({ error: 'Photobook not found' }, { status: 404 });
+    }
+
+    if (photobook.clientId !== clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    if (photobook.status !== 'draft') {
+      return NextResponse.json({ error: 'Can only update draft photobooks' }, { status: 400 });
+    }
+
+    // Calculate total pages from design if available
+    let totalPages = photobook.totalPages;
+    if (design && design.pages) {
+      totalPages = design.pages.length;
+    } else if (pages && pages.length > 0) {
+      totalPages = pages.length;
     }
 
     // Update photobook
     const updated = await prisma.photobook.update({
       where: { id: photobookId },
       data: {
-        title: title || photobook.title,
-        notes: notes || photobook.notes,
-        totalPages: pages?.length || photobook.totalPages,
-        design: design !== undefined ? design : photobook.design, // Save Polotno design state
+        title: title !== undefined ? title : photobook.title,
+        notes: notes !== undefined ? notes : photobook.notes,
+        format: format !== undefined ? format : photobook.format,
+        totalPages: totalPages,
+        design: design !== undefined ? design : photobook.design,
         coverPhotoUrl: coverPhotoUrl !== undefined ? coverPhotoUrl : photobook.coverPhotoUrl,
         updatedAt: new Date(),
       },
     });
 
-    // Delete existing pages
-    await prisma.photobookPage.deleteMany({
-      where: { photobookId: photobookId },
-    });
-
-    // Create new pages
+    // Only handle pages for old-style photobooks (legacy support)
     if (pages && pages.length > 0) {
+      // Delete existing pages
+      await prisma.photobookPage.deleteMany({
+        where: { photobookId: photobookId },
+      });
+
+      // Create new pages
       await prisma.photobookPage.createMany({
         data: pages.map((page: any) => ({
           photobookId: photobookId,

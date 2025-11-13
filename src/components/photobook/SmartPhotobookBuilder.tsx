@@ -54,6 +54,7 @@ export default function SmartPhotobookBuilder({
   const [selectedTemplate, setSelectedTemplate] = useState<PageTemplate | null>(null);
   const [zoomLevel, setZoomLevel] = useState(100);
   const [isExporting, setIsExporting] = useState(false);
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
   const autoSaveTimerRef = useRef<NodeJS.Timeout>();
 
   // Auto-save functionality
@@ -105,19 +106,49 @@ export default function SmartPhotobookBuilder({
     }
   };
 
-  const handleAutoFill = useCallback(() => {
-    const unusedPhotos = photos.filter(photo => 
-      !pages.some(page => 
-        page.slots.some(slot => slot.photo?.id === photo.id)
-      )
-    );
-
-    if (unusedPhotos.length === 0) return;
-
-    const autoLayoutEngine = new AutoLayoutEngine(unusedPhotos);
-    const newPages = autoLayoutEngine.generateOptimalLayout();
+  const handleAutoFill = useCallback(async () => {
+    setIsAutoFilling(true);
     
-    newPages.forEach(page => addPage(page));
+    try {
+      // Get all unused photos
+      const unusedPhotos = photos.filter(photo => 
+        !pages.some(page => 
+          page.slots.some(slot => slot.photo?.id === photo.id)
+        )
+      );
+
+      if (unusedPhotos.length === 0) {
+        // Show notification that all photos are already used
+        alert('✨ All photos are already in the photobook!');
+        setIsAutoFilling(false);
+        return;
+      }
+
+      // Generate optimal layout
+      const autoLayoutEngine = new AutoLayoutEngine(unusedPhotos);
+      const newPages = autoLayoutEngine.generateOptimalLayout();
+      
+      if (newPages.length === 0) {
+        alert('⚠️ Could not create pages. Please try adding them manually.');
+        setIsAutoFilling(false);
+        return;
+      }
+
+      // Add pages with smooth animation (batch add)
+      for (const page of newPages) {
+        addPage(page);
+        // Small delay for smooth visual feedback
+        await new Promise(resolve => setTimeout(resolve, 30));
+      }
+
+      // Success feedback
+      alert(`🎉 Success! Added ${newPages.length} pages with ${unusedPhotos.length} photos!`);
+    } catch (error) {
+      console.error('Auto-fill error:', error);
+      alert('❌ Error during auto-fill. Please try again.');
+    } finally {
+      setIsAutoFilling(false);
+    }
   }, [photos, pages, addPage]);
 
   const handleTemplateSelect = (template: PageTemplate) => {
@@ -201,11 +232,21 @@ export default function SmartPhotobookBuilder({
           {/* Auto-fill */}
           <button
             onClick={handleAutoFill}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all text-white font-medium text-xs sm:text-sm"
+            disabled={isAutoFilling}
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-purple-800 disabled:to-pink-800 disabled:cursor-not-allowed rounded-lg transition-all text-white font-medium text-xs sm:text-sm touch-manipulation"
           >
-            <FiZap className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Auto-Fill</span>
-            <span className="sm:hidden">Auto</span>
+            {isAutoFilling ? (
+              <>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="hidden sm:inline">Filling...</span>
+              </>
+            ) : (
+              <>
+                <FiZap className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Auto-Fill All</span>
+                <span className="sm:hidden">Auto</span>
+              </>
+            )}
           </button>
 
           {/* Zoom controls - Hidden on mobile */}
@@ -374,20 +415,45 @@ export default function SmartPhotobookBuilder({
 
             <button
               onClick={() => addPage()}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors text-white text-sm font-medium"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors text-white text-sm font-medium touch-manipulation min-h-[44px]"
             >
               <FiPlus className="w-4 h-4" />
-              Add Page
+              <span className="hidden sm:inline">Add Page</span>
+              <span className="sm:hidden">+</span>
             </button>
           </div>
 
-          {/* Canvas Content */}
-          <div className="flex-1 flex items-center justify-center p-8 overflow-auto">
+          {/* Canvas Content with Swipe Support */}
+          <motion.div 
+            className="flex-1 flex items-center justify-center p-4 sm:p-8 overflow-hidden relative"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipeThreshold = 100;
+              const swipeVelocity = 500;
+              
+              // Swipe left (next page)
+              if (offset.x < -swipeThreshold || velocity.x < -swipeVelocity) {
+                if (currentPageIndex < pages.length - 1) {
+                  setCurrentPage(currentPageIndex + 1);
+                }
+              }
+              // Swipe right (previous page)
+              else if (offset.x > swipeThreshold || velocity.x > swipeVelocity) {
+                if (currentPageIndex > 0) {
+                  setCurrentPage(currentPageIndex - 1);
+                }
+              }
+            }}
+          >
             <motion.div
-              style={{
-                transform: `scale(${zoomLevel / 100})`
-              }}
-              className="transition-transform duration-200 origin-center"
+              key={currentPageIndex}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: zoomLevel / 100 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="origin-center w-full max-w-4xl"
             >
               {pages[currentPageIndex] && (
                 <PhotobookPage
@@ -397,7 +463,7 @@ export default function SmartPhotobookBuilder({
                 />
               )}
             </motion.div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Right Sidebar - Templates */}

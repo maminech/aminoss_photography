@@ -11,7 +11,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get filter from query params
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status'); // 'draft', 'submitted', 'approved', 'printing', 'completed'
+
+    // Build where clause
+    const where: any = {};
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
     const photobooks = await prisma.photobook.findMany({
+      where,
       include: {
         pages: {
           orderBy: {
@@ -19,9 +30,10 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: [
+        { status: 'asc' }, // Show submitted/pending first
+        { updatedAt: 'desc' }, // Then by most recent
+      ],
     });
 
     // Get client and gallery info for each photobook
@@ -29,18 +41,18 @@ export async function GET(request: NextRequest) {
       photobooks.map(async (photobook) => {
         const client = await prisma.client.findUnique({
           where: { id: photobook.clientId },
-          select: { name: true, email: true },
+          select: { id: true, name: true, email: true },
         });
 
         const gallery = await prisma.clientGallery.findUnique({
           where: { id: photobook.galleryId },
-          select: { name: true },
+          select: { id: true, name: true },
         });
 
         return {
           ...photobook,
-          client: client || { name: 'Unknown', email: '' },
-          gallery: gallery || { name: 'Unknown' },
+          client: client || { id: photobook.clientId, name: 'Unknown Client', email: 'N/A' },
+          gallery: gallery || { id: photobook.galleryId, name: 'Unknown Gallery' },
         };
       })
     );
@@ -49,5 +61,70 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching photobooks:', error);
     return NextResponse.json({ error: 'Failed to fetch photobooks' }, { status: 500 });
+  }
+}
+
+// Update photobook status (admin only)
+export async function PATCH(request: NextRequest) {
+  try {
+    const cookieStore = await cookies();
+    const adminCookie = cookieStore.get('admin-session');
+
+    if (!adminCookie) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { photobookId, status, adminNotes } = await request.json();
+
+    if (!photobookId) {
+      return NextResponse.json({ error: 'Photobook ID required' }, { status: 400 });
+    }
+
+    if (!status) {
+      return NextResponse.json({ error: 'Status required' }, { status: 400 });
+    }
+
+    // Validate status
+    const validStatuses = ['draft', 'submitted', 'approved', 'printing', 'completed'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    const photobook = await prisma.photobook.findUnique({
+      where: { id: photobookId },
+    });
+
+    if (!photobook) {
+      return NextResponse.json({ error: 'Photobook not found' }, { status: 404 });
+    }
+
+    // Update photobook
+    const updateData: any = {
+      status,
+      updatedAt: new Date(),
+    };
+
+    if (adminNotes !== undefined) {
+      updateData.adminNotes = adminNotes;
+    }
+
+    // Set approvedAt timestamp when status changes to approved
+    if (status === 'approved' && photobook.status !== 'approved') {
+      updateData.approvedAt = new Date();
+    }
+
+    const updated = await prisma.photobook.update({
+      where: { id: photobookId },
+      data: updateData,
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      photobook: updated,
+      message: `Photobook status updated to ${status}` 
+    });
+  } catch (error) {
+    console.error('Error updating photobook:', error);
+    return NextResponse.json({ error: 'Failed to update photobook' }, { status: 500 });
   }
 }

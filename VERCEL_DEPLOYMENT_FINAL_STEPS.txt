@@ -1,0 +1,232 @@
+================================================================================
+                    VERCEL DEPLOYMENT - FINAL STEPS
+================================================================================
+Your app is already on Vercel! Just complete these 3 simple steps.
+Time needed: 10-15 minutes
+================================================================================
+
+STEP 1: ADD DOMAIN TO VERCEL (3 minutes)
+================================================================================
+
+1. Open your browser and go to:
+   https://vercel.com/dashboard
+
+2. Find your project: "aminoss_photography" or "aminossphotography"
+   Click on it
+
+3. Click "Settings" (top menu)
+
+4. Click "Domains" (left sidebar)
+
+5. In the "Add Domain" box, type:
+   innov8.tn
+
+6. Click "Add"
+
+7. Vercel will show you DNS records. Copy these (you'll need them for Step 3):
+   
+   Record 1:
+   Type: A
+   Name: @
+   Value: 76.76.21.21 (or whatever Vercel shows)
+   
+   Record 2:
+   Type: CNAME
+   Name: www
+   Value: cname.vercel-dns.com (or whatever Vercel shows)
+
+8. Keep this page open!
+
+================================================================================
+STEP 2: UPDATE ENVIRONMENT VARIABLES (5 minutes)
+================================================================================
+
+Still in Vercel dashboard:
+
+1. Click "Settings" (if not already there)
+
+2. Click "Environment Variables" (left sidebar)
+
+3. Find and UPDATE these 3 variables (click Edit button for each):
+
+   Variable 1: NEXT_PUBLIC_SITE_URL
+   ┌─────────────────────────────────────────┐
+   │ Value: https://innov8.tn               │
+   └─────────────────────────────────────────┘
+   Environment: Production, Preview, Development (check all 3)
+   Click "Save"
+
+   Variable 2: NEXTAUTH_URL
+   ┌─────────────────────────────────────────┐
+   │ Value: https://innov8.tn               │
+   └─────────────────────────────────────────┘
+   Environment: Production, Preview, Development (check all 3)
+   Click "Save"
+
+   Variable 3: INSTAGRAM_REDIRECT_URI
+   ┌─────────────────────────────────────────┐
+   │ Value: https://innov8.tn/admin/dashboard/photos │
+   └─────────────────────────────────────────┘
+   Environment: Production, Preview, Development (check all 3)
+   Click "Save"
+
+4. After updating all 3 variables, click "Deployments" (top menu)
+
+5. Click the "..." menu on the latest deployment
+
+6. Click "Redeploy"
+
+7. Click "Redeploy" again to confirm
+
+8. Wait 2-3 minutes for deployment to complete
+
+================================================================================
+STEP 3: UPDATE DNS RECORDS (5 minutes + 1-4 hours propagation)
+================================================================================
+
+Now you need to update DNS at your domain registrar.
+
+Option A: If you registered innov8.tn with a registrar (GoDaddy, Namecheap, etc.)
+------------------------------------------------------------------------
+
+1. Log into the website where you bought innov8.tn
+   (Could be: GoDaddy, Namecheap, OVH, 1&1, etc.)
+
+2. Find "DNS Management" or "Domain Settings"
+
+3. Look for existing A and CNAME records for innov8.tn
+
+4. DELETE or UPDATE the existing records:
+   
+   Update A record:
+   Type: A
+   Host/Name: @ (or leave empty or put innov8.tn)
+   Points to/Value: 76.76.21.21
+   TTL: 3600 (or Auto)
+   
+   Update CNAME record:
+   Type: CNAME
+   Host/Name: www
+   Points to/Value: cname.vercel-dns.com
+   TTL: 3600 (or Auto)
+
+5. Click "Save" or "Update"
+
+6. Wait 1-4 hours for DNS to propagate (usually 1-2 hours)
+
+Option B: If DNS is managed by your hosting provider
+------------------------------------------------------------------------
+
+1. Log into your hosting cPanel
+
+2. Find "Zone Editor" or "DNS Zone Editor"
+
+3. Find innov8.tn domain
+
+4. Click "Manage" or "Edit"
+
+5. Update the records as shown in Option A above
+
+6. Save and wait for propagation
+
+================================================================================
+STEP 4: VERIFY DEPLOYMENT (After DNS propagation)
+================================================================================
+
+After 1-4 hours, test these URLs:
+
+Public Pages:
+□ https://innov8.tn (Homepage)
+□ https://innov8.tn/portfolio (Gallery)
+□ https://innov8.tn/booking (Booking)
+□ https://innov8.tn/contact (Contact)
+
+Admin Pages:
+□ https://innov8.tn/admin (Login)
+□ https://innov8.tn/admin/dashboard (Dashboard)
+
+Check DNS Propagation:
+https://www.whatsmydns.net/#A/innov8.tn
+
+Check SSL Certificate:
+https://www.ssllabs.com/ssltest/analyze.html?d=innov8.tn
+
+If everything loads correctly: ✅ DEPLOYMENT COMPLETE!
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue: "Domain already exists"
+Solution: The domain is already added. Just proceed to Step 2.
+
+Issue: "DNS verification pending"
+Solution: This is normal. Complete Steps 2 & 3, then wait for propagation.
+
+Issue: Site not loading after 4 hours
+Solution:
+- Check DNS records are correct
+- Try clearing browser cache (Ctrl+Shift+Delete)
+- Try incognito/private browsing mode
+- Check https://www.whatsmydns.net/#A/innov8.tn
+
+Issue: SSL certificate error
+Solution: Wait another hour. Vercel provisions SSL automatically (takes 5-60 min)
+
+Issue: "This site can't be reached"
+Solution: DNS not propagated yet. Wait longer or check DNS records.
+
+Issue: Old WordPress site still showing
+Solution: DNS still pointing to old hosting. Verify DNS records are correct.
+
+================================================================================
+QUICK CHECKLIST
+================================================================================
+
+□ Domain added to Vercel (innov8.tn)
+□ Environment variables updated (3 variables)
+□ Vercel redeployed with new variables
+□ DNS A record updated (@ -> 76.76.21.21)
+□ DNS CNAME record updated (www -> cname.vercel-dns.com)
+□ Waited for DNS propagation (1-4 hours)
+□ Tested https://innov8.tn
+□ All pages loading correctly
+□ SSL certificate active (green lock icon)
+
+================================================================================
+COMPLETION
+================================================================================
+
+Deployment Date: ______________
+DNS Updated: ______________
+DNS Propagated: ______________
+SSL Active: ______________
+Testing Complete: ______________
+
+Final URL: https://innov8.tn
+
+Status: □ Complete □ Waiting for DNS □ Issues
+
+Notes:
+_________________________________________________________________
+_________________________________________________________________
+
+================================================================================
+SUCCESS!
+================================================================================
+
+Once DNS propagates and all tests pass, your Aminoss Photography Platform
+will be live at https://innov8.tn
+
+Benefits of Vercel deployment:
+✅ Automatic SSL/HTTPS
+✅ Global CDN for fast loading
+✅ Automatic backups
+✅ Zero downtime deployments
+✅ Auto-scaling
+✅ 99.99% uptime
+✅ Professional infrastructure
+
+No server management needed!
+
+================================================================================

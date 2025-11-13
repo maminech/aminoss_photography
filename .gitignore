@@ -25,6 +25,7 @@ yarn-error.log*
 # Local env files
 .env*.local
 .env
+.env.production
 
 # Vercel
 .vercel
@@ -32,3 +33,13 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Migration & Backup Files
+/backup_innov8_old_website/
+/deployment_package/
+*.zip
+*.tar.gz
+
+# FTP Credentials (NEVER COMMIT)
+ftp-credentials.txt
+deployment-credentials.txt

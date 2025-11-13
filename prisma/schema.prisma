@@ -66,7 +66,7 @@ model Album {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   title          String
   description    String?
-  coverImageUrl  String?  // First image or custom cover
+  coverImageUrl  String? // First image or custom cover
   category       String   @default("all")
   featured       Boolean  @default(false)
   showOnHomepage Boolean  @default(false)
@@ -89,12 +89,12 @@ model Image {
   tags           String[]
   featured       Boolean  @default(false)
   showOnHomepage Boolean  @default(false) // Show in homepage gallery
-  showInGallery  Boolean  @default(true)  // Show in gallery page
-  order          Int      @default(0)     // Display order
+  showInGallery  Boolean  @default(true) // Show in gallery page
+  order          Int      @default(0) // Display order
   width          Int?
   height         Int?
   format         String?
-  albumId        String?  @db.ObjectId    // Link to album (optional)
+  albumId        String?  @db.ObjectId // Link to album (optional)
   album          Album?   @relation("AlbumImages", fields: [albumId], references: [id], onDelete: SetNull)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -110,75 +110,75 @@ model Video {
   description    String?
   category       String   @default("videos")
   tags           String[]
-  duration       Float?   // Duration in seconds
+  duration       Float? // Duration in seconds
   width          Int?
   height         Int?
   format         String?
   featured       Boolean  @default(false)
   showOnHomepage Boolean  @default(false) // Show in homepage video section
-  showInGallery  Boolean  @default(true)  // Show in videos page
-  order          Int      @default(0)     // Display order
+  showInGallery  Boolean  @default(true) // Show in videos page
+  order          Int      @default(0) // Display order
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
 // Site Settings
 model SiteSettings {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  siteName          String   @default("Innov8 Production")
-  tagline           String   @default("Capturing Moments, Creating Memories")
-  description       String?
-  location          String   @default("Sousse, Tunisia")
-  email             String?
-  phone             String?
-  whatsappNumber    String?  // WhatsApp number for contact
-  instagramUrl      String?
-  facebookUrl       String?
-  youtubeUrl        String?  // YouTube channel URL
-  twitterUrl        String?
-  linkedinUrl       String?
-  
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  siteName       String  @default("Innov8 Production")
+  tagline        String  @default("Capturing Moments, Creating Memories")
+  description    String?
+  location       String  @default("Sousse, Tunisia")
+  email          String?
+  phone          String?
+  whatsappNumber String? // WhatsApp number for contact
+  instagramUrl   String?
+  facebookUrl    String?
+  youtubeUrl     String? // YouTube channel URL
+  twitterUrl     String?
+  linkedinUrl    String?
+
   // Instagram Integration
-  instagramAccessToken  String?
-  instagramUserId       String?
-  instagramUsername     String?
-  instagramAutoSync     Boolean  @default(false)
-  instagramLastSync     DateTime?
-  
+  instagramAccessToken String?
+  instagramUserId      String?
+  instagramUsername    String?
+  instagramAutoSync    Boolean   @default(false)
+  instagramLastSync    DateTime?
+
   // Google Calendar Integration
-  googleCalendarAccessToken   String?
-  googleCalendarRefreshToken  String?
-  googleCalendarEmail         String?
-  googleCalendarLastSync      DateTime?
-  
+  googleCalendarAccessToken  String?
+  googleCalendarRefreshToken String?
+  googleCalendarEmail        String?
+  googleCalendarLastSync     DateTime?
+
   // Hero Section
-  heroTitle         String   @default("Capturing Life's Beautiful Moments")
-  heroSubtitle      String   @default("Professional Photography & Videography")
-  heroImage         String?
-  
+  heroTitle    String  @default("Capturing Life's Beautiful Moments")
+  heroSubtitle String  @default("Professional Photography & Videography")
+  heroImage    String?
+
   // About Page
-  aboutTitle        String   @default("About Me")
-  aboutContent      String   @db.String
-  aboutImage        String?
-  aboutBio          String   @default("Professional photographer capturing life's beautiful moments") @db.String
-  
+  aboutTitle   String  @default("About Me")
+  aboutContent String  @db.String
+  aboutImage   String?
+  aboutBio     String  @default("Professional photographer capturing life's beautiful moments") @db.String
+
   // About Page Stats (for both themes)
-  aboutStatProjects     String   @default("+270")
-  aboutStatFollowers    String   @default("+47.6K")
-  aboutStatSatisfaction String   @default("100%")
-  aboutStatExperience   String   @default("10+")
-  
+  aboutStatProjects     String @default("+270")
+  aboutStatFollowers    String @default("+47.6K")
+  aboutStatSatisfaction String @default("100%")
+  aboutStatExperience   String @default("10+")
+
   // Services
-  services          Json[]   @default([])
-  
+  services Json[] @default([])
+
   // Design Settings
-  primaryColor      String   @default("#c67548")
-  secondaryColor    String   @default("#2d3748")
-  fontHeading       String   @default("Poppins")
-  fontBody          String   @default("Inter")
-  designTheme       String   @default("modern") // modern, glass, minimal, luxury
-  
-  updatedAt         DateTime @updatedAt
+  primaryColor   String @default("#c67548")
+  secondaryColor String @default("#2d3748")
+  fontHeading    String @default("Poppins")
+  fontBody       String @default("Inter")
+  designTheme    String @default("modern") // modern, glass, minimal, luxury
+
+  updatedAt DateTime @updatedAt
 }
 
 // Categories
@@ -203,7 +203,7 @@ model TeamMember {
   instagram      String?
   facebook       String?
   email          String?
-  monthlySalary  Float?          // Expected monthly salary
+  monthlySalary  Float? // Expected monthly salary
   order          Int             @default(0)
   visible        Boolean         @default(true)
   createdAt      DateTime        @default(now())
@@ -213,98 +213,115 @@ model TeamMember {
 
 // Client Portal - Clients who can log in to view their photos
 model Client {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  email         String          @unique
-  password      String
-  phone         String?
-  notes         String?         // Admin notes about the client
-  active        Boolean         @default(true)
-  lastActivity  DateTime?       // Last login or activity
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  galleries     ClientGallery[]
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String          @unique
+  password     String
+  phone        String?
+  notes        String? // Admin notes about the client
+  active       Boolean         @default(true)
+  lastActivity DateTime? // Last login or activity
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  galleries    ClientGallery[]
 }
 
 // Client Galleries - Collections of photos for each client
 model ClientGallery {
-  id                  String        @id @default(auto()) @map("_id") @db.ObjectId
-  clientId            String        @db.ObjectId
-  name                String        // e.g., "Wedding Photos - John & Jane"
-  description         String?
-  coverImage          String?       // Cover photo URL
-  expiresAt           DateTime?     // Optional expiration date
-  allowDownload       Boolean       @default(true)
-  password            String?       // Optional additional password for gallery
-  downloads           Int           @default(0) // Track number of downloads
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  clientId           String        @db.ObjectId
+  name               String // e.g., "Wedding Photos - John & Jane"
+  description        String?
+  coverImage         String? // Cover photo URL
+  expiresAt          DateTime? // Optional expiration date
+  allowDownload      Boolean       @default(true)
+  password           String? // Optional additional password for gallery
+  downloads          Int           @default(0) // Track number of downloads
   // Guest Upload Settings
-  guestUploadEnabled  Boolean       @default(false) // Enable guest photo uploads
-  qrCodeUrl           String?       // Generated QR code for guest uploads
-  eventDate           DateTime?     // Event date for wedding/events
+  guestUploadEnabled Boolean       @default(false) // Enable guest photo uploads
+  qrCodeUrl          String? // Generated QR code for guest uploads
+  eventDate          DateTime? // Event date for wedding/events
   // Photobooth Print Settings
-  brideName           String?       // Bride's name for print template
-  groomName           String?       // Groom's name for print template
-  photoboothMessage   String?       // Custom message for print (e.g., "Thank you for celebrating with us!")
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
-  client              Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  photos              ClientPhoto[]
-  guestUploads        GuestUpload[] // Guest uploaded photos
+  brideName          String? // Bride's name for print template
+  groomName          String? // Groom's name for print template
+  photoboothMessage  String? // Custom message for print (e.g., "Thank you for celebrating with us!")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  client             Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  photos             ClientPhoto[]
+  guestUploads       GuestUpload[] // Guest uploaded photos
 }
 
 // Client Photos - Individual photos in a gallery
 model ClientPhoto {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  galleryId       String        @db.ObjectId
-  cloudinaryId    String
-  url             String
-  thumbnailUrl    String
-  title           String?
-  description     String?
-  width           Int?
-  height          Int?
-  format          String?
-  fileSize        Int?          // in bytes
-  order           Int           @default(0)
-  photoNumber     Int           // Display number (1, 2, 3...)
-  selectedForPrint Boolean      @default(false)
-  createdAt       DateTime      @default(now())
-  gallery         ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  galleryId        String        @db.ObjectId
+  cloudinaryId     String
+  url              String
+  thumbnailUrl     String
+  title            String?
+  description      String?
+  width            Int?
+  height           Int?
+  format           String?
+  fileSize         Int? // in bytes
+  order            Int           @default(0)
+  photoNumber      Int // Display number (1, 2, 3...)
+  selectedForPrint Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  gallery          ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
 }
 
 // Photobook - Client's custom photobook creation
 model Photobook {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  clientId      String         @db.ObjectId
-  galleryId     String         @db.ObjectId
-  title         String         @default("My Photobook")
-  format        String         @default("A4") // "A4", "20x30", "30x30", custom
-  status        String         @default("draft") // draft, submitted, approved, printing, completed
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  clientId      String          @db.ObjectId
+  galleryId     String          @db.ObjectId
+  title         String          @default("My Photobook")
+  format        String          @default("A4") // "A4", "20x30", "30x30", custom
+  status        String          @default("draft") // draft, submitted, approved, printing, completed
   coverPhotoUrl String?
-  totalPages    Int            @default(0)
-  design        Json?          // Polotno design JSON - full editor state
+  totalPages    Int             @default(0)
+  design        Json? // Polotno design JSON - full editor state
   approvedAt    DateTime?
   submittedAt   DateTime?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   pages         PhotobookPage[]
-  notes         String?        // Client notes for admin
-  adminNotes    String?        // Admin notes
+  notes         String? // Client notes for admin
+  adminNotes    String? // Admin notes
 }
 
 // Photobook Page - Individual pages in a photobook
 model PhotobookPage {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  photobookId String      @db.ObjectId
-  pageNumber  Int         // 1, 2, 3, 4...
-  layoutType  String      // "full", "split", "triple", "quad", "collage-3", "collage-4"
-  photos      Json        // Array of photo objects: [{ photoId, url, position, rotation, zoom }]
-  notes       String?     // Page-specific notes
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  photobook   Photobook   @relation(fields: [photobookId], references: [id], onDelete: Cascade)
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  photobookId String    @db.ObjectId
+  pageNumber  Int // 1, 2, 3, 4...
+  layoutType  String // "full", "split", "triple", "quad", "collage-3", "collage-4"
+  photos      Json // Array of photo objects: [{ photoId, url, position, rotation, zoom }]
+  notes       String? // Page-specific notes
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  photobook   Photobook @relation(fields: [photobookId], references: [id], onDelete: Cascade)
 
   @@unique([photobookId, pageNumber])
+}
+
+// Client Testimonials/Reviews
+model Testimonial {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String    @db.ObjectId
+  clientName  String // Client's name
+  clientEmail String? // Optional email
+  rating      Int // 1-5 stars
+  comment     String // Review text
+  eventType   String? // wedding, engagement, portrait, etc.
+  eventDate   DateTime? // When the event happened
+  approved    Boolean   @default(false) // Admin approval before showing publicly
+  featured    Boolean   @default(false) // Highlight this testimonial
+  photoUrl    String? // Optional photo (event photo or client photo)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 // Photography Packs
@@ -313,10 +330,10 @@ model Pack {
   name        String
   description String
   price       Float
-  duration    String    // e.g., "2 hours", "Full day"
+  duration    String // e.g., "2 hours", "Full day"
   coverImage  String
-  features    String[]  // List of included features
-  category    String    // e.g., "Wedding", "Portrait", "Fashion"
+  features    String[] // List of included features
+  category    String // e.g., "Wedding", "Portrait", "Fashion"
   active      Boolean   @default(true)
   order       Int       @default(0)
   createdAt   DateTime  @default(now())
@@ -326,83 +343,83 @@ model Pack {
 
 // Booking Management
 model Booking {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  name              String   // Client name
-  email             String?  // Client email (optional)
-  phone             String   // Client phone
-  packId            String?  @db.ObjectId
-  packageName       String?  // Store pack name for reference
-  packagePrice      Float?   // Store pack price for reference
-  
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  name         String // Client name
+  email        String? // Client email (optional)
+  phone        String // Client phone
+  packId       String? @db.ObjectId
+  packageName  String? // Store pack name for reference
+  packagePrice Float? // Store pack price for reference
+
   // Multi-event support: New field for multiple events
-  events            Json[]   @default([]) // Array of {eventType, eventDate, timeSlot, location}
-  
+  events Json[] @default([]) // Array of {eventType, eventDate, timeSlot, location}
+
   // Legacy fields (kept for backward compatibility, uses first event from events array)
-  eventType         String   // wedding, engagement, studio, portrait, fashion, event, commercial, other
-  eventDate         DateTime // Requested date
-  timeSlot          String   // morning, afternoon, evening, all-day
-  location          String   // Event location
-  
-  message           String?  @db.String
-  status            String   @default("pending") // pending, approved, rejected, cancelled
-  contractGenerated Boolean  @default(false) // Whether contract PDF was generated
-  calendarEventId   String?  // Google Calendar event ID
-  adminNotes        String?  @db.String // Internal notes
-  
+  eventType String // wedding, engagement, studio, portrait, fashion, event, commercial, other
+  eventDate DateTime // Requested date
+  timeSlot  String // morning, afternoon, evening, all-day
+  location  String // Event location
+
+  message           String? @db.String
+  status            String  @default("pending") // pending, approved, rejected, cancelled
+  contractGenerated Boolean @default(false) // Whether contract PDF was generated
+  calendarEventId   String? // Google Calendar event ID
+  adminNotes        String? @db.String // Internal notes
+
   // Tracking fields for admin visibility
-  viewedPackages    Boolean  @default(false) // Whether user reached step 2 and viewed packages
-  packageViewedAt   DateTime? // When packages were viewed
-  selectedPackages  String[] @default([]) // Array of package names user viewed/selected
-  completedForm     Boolean  @default(false) // Whether user completed full form
-  ipAddress         String?  // User's IP for tracking
-  userAgent         String?  // Browser info
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  pack              Pack?    @relation(fields: [packId], references: [id], onDelete: SetNull)
-  invoices          Invoice[] // Relation to invoices
+  viewedPackages   Boolean   @default(false) // Whether user reached step 2 and viewed packages
+  packageViewedAt  DateTime? // When packages were viewed
+  selectedPackages String[]  @default([]) // Array of package names user viewed/selected
+  completedForm    Boolean   @default(false) // Whether user completed full form
+  ipAddress        String? // User's IP for tracking
+  userAgent        String? // Browser info
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  pack      Pack?     @relation(fields: [packId], references: [id], onDelete: SetNull)
+  invoices  Invoice[] // Relation to invoices
 }
 
 // Invoice for approved bookings
 model Invoice {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  invoiceNumber   String   @unique // e.g., INV-2025-001
-  bookingId       String   @db.ObjectId
-  
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceNumber String @unique // e.g., INV-2025-001
+  bookingId     String @db.ObjectId
+
   // Client info
-  clientName      String
-  clientEmail     String?
-  clientPhone     String
-  clientAddress   String?
-  
+  clientName    String
+  clientEmail   String?
+  clientPhone   String
+  clientAddress String?
+
   // Invoice details
-  eventType       String
-  eventDate       DateTime
-  eventLocation   String
-  
+  eventType     String
+  eventDate     DateTime
+  eventLocation String
+
   // Financial details
-  items           Json[]   // Array of {description, quantity, unitPrice, total}
-  subtotal        Float
-  taxRate         Float    @default(0) // Tax percentage (e.g., 19 for 19%)
-  taxAmount       Float    @default(0)
-  discount        Float    @default(0) // Discount amount
-  totalAmount     Float
-  
+  items       Json[] // Array of {description, quantity, unitPrice, total}
+  subtotal    Float
+  taxRate     Float  @default(0) // Tax percentage (e.g., 19 for 19%)
+  taxAmount   Float  @default(0)
+  discount    Float  @default(0) // Discount amount
+  totalAmount Float
+
   // Payment tracking
-  paidAmount      Float    @default(0)
-  paymentStatus   String   @default("unpaid") // unpaid, partial, paid
-  paymentMethod   String?  // cash, bank_transfer, check, credit_card
-  paymentDate     DateTime?
-  
+  paidAmount    Float     @default(0)
+  paymentStatus String    @default("unpaid") // unpaid, partial, paid
+  paymentMethod String? // cash, bank_transfer, check, credit_card
+  paymentDate   DateTime?
+
   // Invoice metadata
-  issueDate       DateTime @default(now())
+  issueDate       DateTime  @default(now())
   dueDate         DateTime?
-  notes           String?  @db.String
-  termsConditions String?  @db.String
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  booking         Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  notes           String?   @db.String
+  termsConditions String?   @db.String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 // Blocked Dates (for calendar)
@@ -415,48 +432,48 @@ model BlockedDate {
 
 // Calendar Events (bookings, notes, reminders)
 model CalendarEvent {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  date        DateTime
-  title       String
-  clientName  String?
-  eventType   String   @default("other") // wedding, portrait, event, travel, other
-  startTime   String?
-  endTime     String?
-  location    String?
-  price       Float?
-  deposit     Float?
-  notes       String?  @db.String
-  status      String   @default("pending") // pending, confirmed, completed, cancelled
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  date       DateTime
+  title      String
+  clientName String?
+  eventType  String   @default("other") // wedding, portrait, event, travel, other
+  startTime  String?
+  endTime    String?
+  location   String?
+  price      Float?
+  deposit    Float?
+  notes      String?  @db.String
+  status     String   @default("pending") // pending, confirmed, completed, cancelled
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 // Contact Messages
 model ContactMessage {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String
-  phone       String?
-  subject     String?
-  message     String   @db.String
-  status      String   @default("unread") // unread, read, replied, archived
-  replied     Boolean  @default(false)
-  replyText   String?  @db.String
-  repliedAt   DateTime?
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String    @db.String
+  status    String    @default("unread") // unread, read, replied, archived
+  replied   Boolean   @default(false)
+  replyText String?   @db.String
+  repliedAt DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 // Remerciements (Thank You Messages/Images)
 model Remerciement {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  type        String   // image, text, testimonial
+  type        String // image, text, testimonial
   content     String   @db.String // Message text or image description
-  author      String?  // Client name (optional)
-  image       String?  // Image URL (optional)
-  clientEmail String?  // Email of submitter (for approval workflow)
+  author      String? // Client name (optional)
+  image       String? // Image URL (optional)
+  clientEmail String? // Email of submitter (for approval workflow)
   approved    Boolean  @default(false) // Admin approval required
   active      Boolean  @default(false) // Whether to show in carousel
   order       Int      @default(0) // Display order in carousel
@@ -466,51 +483,51 @@ model Remerciement {
 
 // Instagram Highlights (Stories)
 model InstagramHighlight {
-  id              String              @id @default(auto()) @map("_id") @db.ObjectId
-  instagramId     String              @unique // Instagram highlight ID
-  name            String              // Highlight name
-  coverImage      String              // Cover image URL
-  order           Int                 @default(0)
-  active          Boolean             @default(true)
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  stories         InstagramStory[]
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  instagramId String           @unique // Instagram highlight ID
+  name        String // Highlight name
+  coverImage  String // Cover image URL
+  order       Int              @default(0)
+  active      Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  stories     InstagramStory[]
 }
 
 // Instagram Stories within Highlights
 model InstagramStory {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
-  highlightId     String            @db.ObjectId
-  instagramId     String            @unique // Instagram story ID
-  mediaType       String            // IMAGE or VIDEO
-  mediaUrl        String            // Story image/video URL
-  thumbnailUrl    String?           // Thumbnail for videos
-  timestamp       DateTime          // When story was posted
-  order           Int               @default(0)
-  createdAt       DateTime          @default(now())
-  highlight       InstagramHighlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  highlightId  String             @db.ObjectId
+  instagramId  String             @unique // Instagram story ID
+  mediaType    String // IMAGE or VIDEO
+  mediaUrl     String // Story image/video URL
+  thumbnailUrl String? // Thumbnail for videos
+  timestamp    DateTime // When story was posted
+  order        Int                @default(0)
+  createdAt    DateTime           @default(now())
+  highlight    InstagramHighlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
 }
 
 // Guest Uploads - Photos uploaded by wedding guests via QR code
 model GuestUpload {
-  id                  String        @id @default(auto()) @map("_id") @db.ObjectId
-  galleryId           String        @db.ObjectId // Event/gallery this belongs to
-  uploadGroupId       String        // UUID - groups all photos from one guest session
-  uploaderName        String        // Guest's name
-  message             String        @db.String // Heartfelt message (max 200 chars)
-  cloudinaryId        String        // Cloudinary public ID
-  fileUrl             String        // Full resolution URL
-  thumbnailUrl        String        // Thumbnail URL
-  width               Int?
-  height              Int?
-  format              String?
-  fileSize            Int?          // in bytes
-  isSelectedForPrint  Boolean       @default(false) // Only ONE per uploadGroupId can be true
-  photoboothPrintUrl  String?       // Generated photobooth-style print URL
-  status              String        @default("pending") // pending, approved, rejected
-  uploadedAt          DateTime      @default(now())
-  gallery             ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
-  
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  galleryId          String        @db.ObjectId // Event/gallery this belongs to
+  uploadGroupId      String // UUID - groups all photos from one guest session
+  uploaderName       String // Guest's name
+  message            String        @db.String // Heartfelt message (max 200 chars)
+  cloudinaryId       String // Cloudinary public ID
+  fileUrl            String // Full resolution URL
+  thumbnailUrl       String // Thumbnail URL
+  width              Int?
+  height             Int?
+  format             String?
+  fileSize           Int? // in bytes
+  isSelectedForPrint Boolean       @default(false) // Only ONE per uploadGroupId can be true
+  photoboothPrintUrl String? // Generated photobooth-style print URL
+  status             String        @default("pending") // pending, approved, rejected
+  uploadedAt         DateTime      @default(now())
+  gallery            ClientGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+
   @@index([galleryId])
   @@index([uploadGroupId])
   @@index([isSelectedForPrint])
@@ -518,14 +535,14 @@ model GuestUpload {
 
 // Push Notification Subscriptions - For admin web push notifications
 model PushSubscription {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @db.ObjectId // Admin user who subscribed
-  endpoint    String   @unique
-  keys        Json     // { p256dh, auth }
-  userAgent   String?  // Browser info
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId // Admin user who subscribed
+  endpoint  String   @unique
+  keys      Json // { p256dh, auth }
+  userAgent String? // Browser info
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
 }
 
@@ -533,44 +550,44 @@ model PushSubscription {
 
 // Expenses - Track business expenses
 model Expense {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  title           String   // Short description
-  category        String   // equipment, software, travel, marketing, maintenance, utilities, supplies, other
-  amount          Float
-  paymentMethod   String?  // cash, bank_transfer, credit_card, check
-  receiptUrl      String?  // Upload receipt/invoice
-  vendor          String?  // Who was paid
-  description     String?  @db.String
-  date            DateTime // Date of expense
-  isPaid          Boolean  @default(true)
-  notes           String?  @db.String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String // Short description
+  category      String // equipment, software, travel, marketing, maintenance, utilities, supplies, other
+  amount        Float
+  paymentMethod String? // cash, bank_transfer, credit_card, check
+  receiptUrl    String? // Upload receipt/invoice
+  vendor        String? // Who was paid
+  description   String?  @db.String
+  date          DateTime // Date of expense
+  isPaid        Boolean  @default(true)
+  notes         String?  @db.String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
   @@index([category])
   @@index([date])
 }
 
 // Salary Payments - Track team member salaries
 model SalaryPayment {
-  id              String     @id @default(auto()) @map("_id") @db.ObjectId
-  teamMemberId    String     @db.ObjectId
-  teamMemberName  String     // Store name for history
-  teamMemberRole  String     // Store role for context
-  amount          Float
-  month           String     // e.g., "2025-01" for January 2025
-  paymentDate     DateTime
-  paymentMethod   String?    // cash, bank_transfer, check
-  bonus           Float      @default(0) // Additional bonus
-  deductions      Float      @default(0) // Any deductions
-  netAmount       Float      // amount + bonus - deductions
-  status          String     @default("pending") // pending, paid, cancelled
-  notes           String?    @db.String
-  receiptUrl      String?    // Payment receipt/proof
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  teamMember      TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
-  
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  teamMemberId   String     @db.ObjectId
+  teamMemberName String // Store name for history
+  teamMemberRole String // Store role for context
+  amount         Float
+  month          String // e.g., "2025-01" for January 2025
+  paymentDate    DateTime
+  paymentMethod  String? // cash, bank_transfer, check
+  bonus          Float      @default(0) // Additional bonus
+  deductions     Float      @default(0) // Any deductions
+  netAmount      Float // amount + bonus - deductions
+  status         String     @default("pending") // pending, paid, cancelled
+  notes          String?    @db.String
+  receiptUrl     String? // Payment receipt/proof
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  teamMember     TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+
   @@index([teamMemberId])
   @@index([month])
   @@index([status])

@@ -71,15 +71,31 @@ export default class AutoLayoutEngine {
     let currentIndex = 0;
 
     while (currentIndex < photos.length) {
-      const remainingPhotos = photos.length - currentIndex;
-      const page = this.selectOptimalTemplate(photos.slice(currentIndex), orientation);
+      const remainingPhotos = photos.slice(currentIndex);
+      const page = this.selectOptimalTemplate(remainingPhotos, orientation);
       
       if (page) {
         page.pageNumber = startPageNumber + pages.length;
         pages.push(page);
-        currentIndex += page.slots.filter(s => s.photo).length;
+        const usedPhotos = page.slots.filter(s => s.photo).length;
+        currentIndex += usedPhotos;
+        
+        // Safety check: if no photos were used, break to avoid infinite loop
+        if (usedPhotos === 0) {
+          console.warn('No photos used in page, breaking to avoid infinite loop');
+          break;
+        }
       } else {
-        break;
+        // If we can't create a page, try with fewer photos
+        if (remainingPhotos.length > 0) {
+          // Create a single photo page as fallback
+          const fallbackPage = this.createSinglePhotoPage(remainingPhotos[0], orientation);
+          fallbackPage.pageNumber = startPageNumber + pages.length;
+          pages.push(fallbackPage);
+          currentIndex += 1;
+        } else {
+          break;
+        }
       }
     }
 

@@ -17,7 +17,8 @@ import {
   FiChevronRight,
   FiDownloadCloud,
   FiBook,
-  FiUsers
+  FiUsers,
+  FiStar
 } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
 import { DndProvider } from 'react-dnd';
@@ -62,6 +63,11 @@ export default function ClientGalleryPage() {
   const [downloading, setDownloading] = useState(false);
   const [photobookEditorOpen, setPhotobookEditorOpen] = useState(false);
   const [showPhotobookPrompt, setShowPhotobookPrompt] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [ratingComment, setRatingComment] = useState('');
+  const [submittingRating, setSubmittingRating] = useState(false);
 
   useEffect(() => {
     fetchGallery();
@@ -127,10 +133,8 @@ export default function ClientGalleryPage() {
         setShowConfirmation(true);
         setTimeout(() => {
           setShowConfirmation(false);
-          // Show photobook prompt after successful save
-          if (selectedPhotos.size > 0) {
-            setShowPhotobookPrompt(true);
-          }
+          // Optional: Show photobook prompt (user can dismiss or create later from dashboard)
+          // Removed auto-popup - let users create photobook when they're ready
         }, 3000);
       }
     } catch (error) {
@@ -181,6 +185,40 @@ export default function ClientGalleryPage() {
     }
   };
 
+  const submitRating = async () => {
+    if (rating === 0) {
+      alert('Please select a rating');
+      return;
+    }
+
+    setSubmittingRating(true);
+    try {
+      const response = await fetch('/api/client/galleries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          galleryId: gallery?.id,
+          rating: rating,
+          comment: ratingComment,
+        }),
+      });
+
+      if (response.ok) {
+        alert('Thank you for your feedback! ⭐');
+        setShowRatingModal(false);
+        setRating(0);
+        setRatingComment('');
+      } else {
+        alert('Failed to submit rating. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      alert('Failed to submit rating. Please try again.');
+    } finally {
+      setSubmittingRating(false);
+    }
+  };
+
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
     setLightboxOpen(true);
@@ -228,11 +266,23 @@ export default function ClientGalleryPage() {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2 md:gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <div className="text-sm md:text-base text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-dark-700 px-3 md:px-4 py-2 rounded-lg">
                 <span className="font-semibold text-primary">{selectedPhotos.size}</span> of{' '}
                 <span className="font-semibold text-gray-900 dark:text-gray-100">{gallery.photos.length}</span> selected
               </div>
+              
+              {/* Rate Gallery Button */}
+              <button
+                onClick={() => setShowRatingModal(true)}
+                className="flex items-center gap-2 px-3 md:px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-lg transition touch-manipulation text-sm md:text-base font-semibold shadow-lg hover:shadow-xl"
+                title="Rate this gallery"
+              >
+                <FiStar className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden lg:inline">Rate Gallery</span>
+                <span className="lg:hidden">Rate</span>
+              </button>
+
               <button
                 onClick={() => router.push(`/client/gallery/${params.id}/guest-uploads`)}
                 className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition touch-manipulation text-sm md:text-base font-semibold"
@@ -241,6 +291,7 @@ export default function ClientGalleryPage() {
                 <span className="hidden sm:inline">Guest Uploads</span>
                 <span className="sm:hidden">Guests</span>
               </button>
+              
               {gallery.allowDownload && selectedPhotos.size > 0 && (
                 <button
                   onClick={downloadAllSelected}
@@ -248,33 +299,19 @@ export default function ClientGalleryPage() {
                   className="flex items-center gap-2 px-3 md:px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-sm md:text-base"
                 >
                   <FiDownloadCloud className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="hidden sm:inline">{downloading ? 'Downloading...' : 'Download Selected'}</span>
-                  <span className="sm:hidden">{downloading ? '...' : 'Download'}</span>
+                  <span className="hidden sm:inline">{downloading ? 'Downloading...' : 'Download'}</span>
+                  <span className="sm:hidden">Download</span>
                 </button>
               )}
-              {selectedPhotos.size > 0 && (
-                <button
-                  onClick={() => {
-                    if (selectedPhotos.size === 0) {
-                      alert('Please select at least one photo to create a photobook');
-                      return;
-                    }
-                    setPhotobookEditorOpen(true);
-                  }}
-                  className="flex items-center gap-2 px-3 md:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition touch-manipulation text-sm md:text-base font-semibold"
-                >
-                  <FiBook className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="hidden sm:inline">Create Photobook</span>
-                  <span className="sm:hidden">Photobook</span>
-                </button>
-              )}
+
               <button
                 onClick={saveSelections}
                 disabled={saving}
                 className="flex items-center gap-2 px-3 md:px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-sm md:text-base font-semibold"
               >
                 <FiCheckCircle className="w-4 h-4 md:w-5 md:h-5" />
-                <span>{saving ? 'Saving...' : 'Approve Selection'}</span>
+                <span className="hidden md:inline">{saving ? 'Saving...' : 'Approve'}</span>
+                <span className="md:hidden">✓</span>
               </button>
             </div>
           </div>
@@ -412,8 +449,34 @@ export default function ClientGalleryPage() {
         </DndProvider>
       )}
 
+      {/* Floating Photobook Button */}
+      {selectedPhotos.size > 0 && (
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            if (selectedPhotos.size === 0) {
+              alert('Please select at least one photo to create a photobook');
+              return;
+            }
+            setPhotobookEditorOpen(true);
+          }}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all touch-manipulation font-bold text-base md:text-lg"
+        >
+          <FiBook className="w-6 h-6" />
+          <span className="hidden sm:inline">Create Photobook</span>
+          <span className="sm:inline md:hidden">Photobook</span>
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 text-purple-900 rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
+            {selectedPhotos.size}
+          </div>
+        </motion.button>
+      )}
+
       {/* Main Content */}
-      <main className="p-3 md:p-6">
+      <main className="p-3 md:p-6 pb-24">
         {gallery.photos.length === 0 ? (
           <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 md:p-12 text-center">
             <FiImage className="w-12 h-12 md:w-16 md:h-16 text-gray-400 mx-auto mb-4" />
@@ -424,16 +487,36 @@ export default function ClientGalleryPage() {
           </div>
         ) : (
           <>
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
-              <div className="flex items-start gap-2 md:gap-3">
-                <FiAlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 md:p-5 mb-4 md:mb-6 shadow-sm">
+              <div className="flex items-start gap-3 md:gap-4">
+                <div className="p-2 bg-blue-600 rounded-lg">
+                  <FiAlertCircle className="w-5 h-5 text-white flex-shrink-0" />
+                </div>
                 <div className="text-sm md:text-base text-blue-900 dark:text-blue-100">
-                  <p className="font-semibold mb-1">How to select photos:</p>
-                  <ul className="list-disc list-inside space-y-1 text-blue-800 dark:text-blue-200">
-                    <li>Click any photo to view it in full quality</li>
-                    <li>Click the checkmark to select for printing</li>
-                    <li>Click "Approve Selection" when done to save your choices</li>
-                    {gallery.allowDownload && <li>Download individual photos or all selected at once</li>}
+                  <p className="font-bold mb-2 text-lg">📸 How to Create Your Photobook:</p>
+                  <ul className="space-y-2 text-blue-800 dark:text-blue-200">
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 font-bold">1.</span>
+                      <span>Click the checkmark on photos you want in your photobook</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 font-bold">2.</span>
+                      <span>See the purple "Create Photobook" button appear at bottom-right</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 font-bold">3.</span>
+                      <span>Click it to design your beautiful photobook!</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 font-bold">4.</span>
+                      <span>Don't forget to "Approve Selection" to save your choices</span>
+                    </li>
+                    {gallery.allowDownload && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-green-600 font-bold">•</span>
+                        <span>Download individual photos or all selected at once</span>
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -635,6 +718,124 @@ export default function ClientGalleryPage() {
                 />
               ))}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Rating Modal */}
+      <AnimatePresence>
+        {showRatingModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => !submittingRating && setShowRatingModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white dark:bg-dark-800 rounded-2xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-gray-200 dark:border-gray-700"
+            >
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 via-orange-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <FiStar className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Rate This Gallery
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  How would you rate your experience with {gallery.name}?
+                </p>
+              </div>
+
+              {/* Star Rating */}
+              <div className="flex justify-center gap-2 md:gap-3 mb-6">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <motion.button
+                    key={star}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setRating(star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    className="touch-manipulation focus:outline-none"
+                  >
+                    <FiStar
+                      className={`w-10 h-10 md:w-12 md:h-12 transition-all ${
+                        star <= (hoverRating || rating)
+                          ? 'fill-yellow-400 text-yellow-400 drop-shadow-lg'
+                          : 'text-gray-300 dark:text-gray-600'
+                      }`}
+                    />
+                  </motion.button>
+                ))}
+              </div>
+
+              {rating > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center mb-6"
+                >
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {rating === 5 && '🌟 Outstanding!'}
+                    {rating === 4 && '😊 Great!'}
+                    {rating === 3 && '👍 Good'}
+                    {rating === 2 && '😐 Okay'}
+                    {rating === 1 && '😕 Needs Improvement'}
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Comment Box */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Additional Comments (Optional)
+                </label>
+                <textarea
+                  value={ratingComment}
+                  onChange={(e) => setRatingComment(e.target.value)}
+                  placeholder="Tell us more about your experience..."
+                  rows={4}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition text-gray-900 dark:text-gray-100 placeholder-gray-400 resize-none"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => setShowRatingModal(false)}
+                  disabled={submittingRating}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-700 transition font-semibold disabled:opacity-50 touch-manipulation"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={submitRating}
+                  disabled={submittingRating || rating === 0}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 text-white rounded-xl hover:from-yellow-600 hover:via-orange-600 hover:to-pink-600 transition font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation flex items-center justify-center gap-2"
+                >
+                  {submittingRating ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <FiStar className="w-5 h-5" />
+                      Submit Rating
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
