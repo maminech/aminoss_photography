@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'link';
+import Link from 'next/link';
 import { FiArrowRight, FiChevronDown, FiPlay } from 'react-icons/fi';
 import { fadeInUp, staggerContainer, imageReveal } from '@/lib/animations';
 
