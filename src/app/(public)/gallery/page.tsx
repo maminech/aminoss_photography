@@ -334,10 +334,26 @@ export default function GalleryPage() {
         {/* Album Lightbox */}
         {currentAlbum && (
           <AlbumLightboxModal
-            photos={currentAlbum.photos}
-            albumTitle={currentAlbum.title}
-            albumDescription={currentAlbum.description}
-            currentIndex={0}
+            posts={currentAlbum.photos.map((photo, idx) => ({
+              id: photo.id,
+              publicId: photo.id,
+              url: photo.url,
+              thumbnailUrl: photo.thumbnailUrl || photo.url,
+              title: currentAlbum.title || '',
+              description: currentAlbum.description || '',
+              category: currentAlbum.category as any,
+              width: photo.width,
+              height: photo.height,
+              albumImages: currentAlbum.photos.map(p => ({
+                id: p.id,
+                publicId: p.id,
+                url: p.url,
+                thumbnailUrl: p.thumbnailUrl || p.url,
+                width: p.width,
+                height: p.height,
+              })) as any,
+            }))}
+            currentPostIndex={0}
             isOpen={albumLightboxOpen}
             onClose={() => setAlbumLightboxOpen(false)}
           />
@@ -474,10 +490,26 @@ export default function GalleryPage() {
       {/* Album Lightbox */}
       {currentAlbum && (
         <AlbumLightboxModal
-          photos={currentAlbum.photos}
-          albumTitle={currentAlbum.title}
-          albumDescription={currentAlbum.description}
-          currentIndex={0}
+          posts={currentAlbum.photos.map((photo, idx) => ({
+            id: photo.id,
+            publicId: photo.id,
+            url: photo.url,
+            thumbnailUrl: photo.thumbnailUrl || photo.url,
+            title: currentAlbum.title || '',
+            description: currentAlbum.description || '',
+            category: currentAlbum.category as any,
+            width: photo.width,
+            height: photo.height,
+            albumImages: currentAlbum.photos.map(p => ({
+              id: p.id,
+              publicId: p.id,
+              url: p.url,
+              thumbnailUrl: p.thumbnailUrl || p.url,
+              width: p.width,
+              height: p.height,
+            })) as any,
+          }))}
+          currentPostIndex={0}
           isOpen={albumLightboxOpen}
           onClose={() => setAlbumLightboxOpen(false)}
         />
