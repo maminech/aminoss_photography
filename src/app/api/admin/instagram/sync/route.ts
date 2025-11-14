@@ -84,48 +84,47 @@ export async function POST(req: Request) {
     let syncedPosts = 0;
     let syncedHighlights = 0;
     let syncedStories = 0;
-
-    // Import Cloudinary for uploading
-    const cloudinary = await import('cloudinary').then(m => m.v2);
-    cloudinary.config({
-      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
+    let uploadedToCloudinary = 0;
 
     // Sync Instagram Feed Posts and upload to Cloudinary
     for (const post of mediaPosts) {
       try {
         // Only sync images (videos can be added later)
         if (post.media_type === 'IMAGE') {
-          // Check if already uploaded to Cloudinary
-          const existing = await prisma.instagramPost.findUnique({
-            where: { instagramId: post.id },
-          });
-
           let cloudinaryUrl = post.media_url;
           let cloudinaryThumbnail = post.thumbnail_url || post.media_url;
 
-          // Upload to Cloudinary if not already done
-          if (!existing || !existing.mediaUrl.includes('cloudinary')) {
-            console.log(`📤 Uploading ${post.id} to Cloudinary...`);
-            try {
-              const uploadResult = await cloudinary.uploader.upload(post.media_url, {
-                folder: 'aminoss_portfolio/instagram',
-                resource_type: 'image',
-                transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
-              });
+          // Always upload to Cloudinary (using fetch API to avoid cloudinary package issues)
+          console.log(`📤 Uploading ${post.id} to Cloudinary...`);
+          try {
+            const uploadResponse = await fetch(
+              `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  file: post.media_url,
+                  upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio',
+                  folder: 'aminoss_portfolio/instagram',
+                }),
+              }
+            );
 
+            if (uploadResponse.ok) {
+              const uploadResult = await uploadResponse.json();
               cloudinaryUrl = uploadResult.secure_url;
               cloudinaryThumbnail = uploadResult.secure_url.replace(
                 '/upload/',
                 '/upload/w_800,h_800,c_fill,q_90,f_auto/'
               );
+              uploadedToCloudinary++;
               console.log(`✅ Uploaded to Cloudinary: ${cloudinaryUrl}`);
-            } catch (uploadError) {
-              console.error(`Failed to upload ${post.id} to Cloudinary:`, uploadError);
-              // Fallback to Instagram URL if upload fails
+            } else {
+              console.error(`Failed to upload ${post.id} to Cloudinary`);
             }
+          } catch (uploadError) {
+            console.error(`Upload error for ${post.id}:`, uploadError);
+            // Keep Instagram URL as fallback
           }
 
           await prisma.instagramPost.upsert({
