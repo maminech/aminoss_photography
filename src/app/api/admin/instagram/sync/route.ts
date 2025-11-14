@@ -10,6 +10,9 @@ interface InstagramMedia {
   thumbnail_url?: string;
   timestamp: string;
   caption?: string;
+  permalink?: string;
+  like_count?: number;
+  comments_count?: number;
 }
 
 interface InstagramHighlight {
@@ -49,95 +52,147 @@ export async function POST(req: Request) {
 
     console.log('🔄 Starting Instagram sync...');
 
-    // Fetch Instagram Highlights (Stories)
-    const highlightsResponse = await fetch(
-      `https://graph.instagram.com/${userId}/stories?fields=id,name,cover_media{thumbnail_url}&access_token=${accessToken}`
+    // Fetch Instagram Media (Feed Posts)
+    const mediaResponse = await fetch(
+      `https://graph.instagram.com/${userId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count&limit=50&access_token=${accessToken}`
     );
 
-    if (!highlightsResponse.ok) {
-      const error = await highlightsResponse.json();
+    if (!mediaResponse.ok) {
+      const error = await mediaResponse.json();
       console.error('Instagram API Error:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch Instagram highlights', details: error },
-        { status: highlightsResponse.status }
+        { error: 'Failed to fetch Instagram media', details: error },
+        { status: mediaResponse.status }
       );
     }
 
-    const highlightsData = await highlightsResponse.json();
-    const highlights: InstagramHighlight[] = highlightsData.data || [];
+    const mediaData = await mediaResponse.json();
+    const mediaPosts: InstagramMedia[] = mediaData.data || [];
 
-    console.log(`📚 Found ${highlights.length} highlights`);
+    console.log(`📸 Found ${mediaPosts.length} Instagram posts`);
 
+    let syncedPosts = 0;
     let syncedHighlights = 0;
     let syncedStories = 0;
 
-    // Sync each highlight
-    for (let index = 0; index < highlights.length; index++) {
-      const highlight = highlights[index];
-      
+    // Sync Instagram Feed Posts
+    for (const post of mediaPosts) {
       try {
-        // Fetch stories in this highlight
-        const storiesResponse = await fetch(
-          `https://graph.instagram.com/${highlight.id}/stories?fields=id,media_type,media_url,thumbnail_url,timestamp&access_token=${accessToken}`
-        );
-
-        if (!storiesResponse.ok) {
-          console.error(`Failed to fetch stories for highlight ${highlight.id}`);
-          continue;
-        }
-
-        const storiesData = await storiesResponse.json();
-        const stories: InstagramMedia[] = storiesData.data || [];
-
-        console.log(`  📖 Highlight "${highlight.name}": ${stories.length} stories`);
-
-        // Upsert highlight
-        const dbHighlight = await prisma.instagramHighlight.upsert({
-          where: { instagramId: highlight.id },
-          update: {
-            name: highlight.name,
-            coverImage: highlight.cover_media?.thumbnail_url || '',
-            order: index,
-            active: true,
-            updatedAt: new Date(),
-          },
-          create: {
-            instagramId: highlight.id,
-            name: highlight.name,
-            coverImage: highlight.cover_media?.thumbnail_url || '',
-            order: index,
-            active: true,
-          },
-        });
-
-        syncedHighlights++;
-
-        // Delete existing stories for this highlight
-        await prisma.instagramStory.deleteMany({
-          where: { highlightId: dbHighlight.id },
-        });
-
-        // Insert stories
-        for (let storyIndex = 0; storyIndex < stories.length; storyIndex++) {
-          const story = stories[storyIndex];
-          
-          await prisma.instagramStory.create({
-            data: {
-              highlightId: dbHighlight.id,
-              instagramId: story.id,
-              mediaType: story.media_type,
-              mediaUrl: story.media_url,
-              thumbnailUrl: story.thumbnail_url || story.media_url,
-              timestamp: new Date(story.timestamp),
-              order: storyIndex,
+        // Only sync images and videos (not carousels for now)
+        if (post.media_type === 'IMAGE' || post.media_type === 'VIDEO') {
+          await prisma.instagramPost.upsert({
+            where: { instagramId: post.id },
+            update: {
+              caption: post.caption || '',
+              mediaType: post.media_type,
+              mediaUrl: post.media_url,
+              thumbnailUrl: post.thumbnail_url || post.media_url,
+              permalink: post.permalink || '',
+              timestamp: new Date(post.timestamp),
+              active: true,
+              updatedAt: new Date(),
+            },
+            create: {
+              instagramId: post.id,
+              caption: post.caption || '',
+              mediaType: post.media_type,
+              mediaUrl: post.media_url,
+              thumbnailUrl: post.thumbnail_url || post.media_url,
+              permalink: post.permalink || '',
+              timestamp: new Date(post.timestamp),
+              active: true,
             },
           });
-
-          syncedStories++;
+          syncedPosts++;
         }
       } catch (error) {
-        console.error(`Error syncing highlight ${highlight.id}:`, error);
+        console.error(`Error syncing post ${post.id}:`, error);
       }
+    }
+
+    // Also fetch Instagram Highlights (Stories) if available
+    try {
+      const highlightsResponse = await fetch(
+        `https://graph.instagram.com/${userId}/stories?fields=id,name,cover_media{thumbnail_url}&access_token=${accessToken}`
+      );
+
+      if (highlightsResponse.ok) {
+        const highlightsData = await highlightsResponse.json();
+        const highlights: InstagramHighlight[] = highlightsData.data || [];
+
+        console.log(`📚 Found ${highlights.length} highlights`);
+
+        // Sync each highlight
+        for (let index = 0; index < highlights.length; index++) {
+          const highlight = highlights[index];
+          
+          try {
+            // Fetch stories in this highlight
+            const storiesResponse = await fetch(
+              `https://graph.instagram.com/${highlight.id}/stories?fields=id,media_type,media_url,thumbnail_url,timestamp&access_token=${accessToken}`
+            );
+
+            if (!storiesResponse.ok) {
+              console.error(`Failed to fetch stories for highlight ${highlight.id}`);
+              continue;
+            }
+
+            const storiesData = await storiesResponse.json();
+            const stories: InstagramMedia[] = storiesData.data || [];
+
+            console.log(`  📖 Highlight "${highlight.name}": ${stories.length} stories`);
+
+            // Upsert highlight
+            const dbHighlight = await prisma.instagramHighlight.upsert({
+              where: { instagramId: highlight.id },
+              update: {
+                name: highlight.name,
+                coverImage: highlight.cover_media?.thumbnail_url || '',
+                order: index,
+                active: true,
+                updatedAt: new Date(),
+              },
+              create: {
+                instagramId: highlight.id,
+                name: highlight.name,
+                coverImage: highlight.cover_media?.thumbnail_url || '',
+                order: index,
+                active: true,
+              },
+            });
+
+            syncedHighlights++;
+
+            // Delete existing stories for this highlight
+            await prisma.instagramStory.deleteMany({
+              where: { highlightId: dbHighlight.id },
+            });
+
+            // Insert stories
+            for (let storyIndex = 0; storyIndex < stories.length; storyIndex++) {
+              const story = stories[storyIndex];
+              
+              await prisma.instagramStory.create({
+                data: {
+                  highlightId: dbHighlight.id,
+                  instagramId: story.id,
+                  mediaType: story.media_type,
+                  mediaUrl: story.media_url,
+                  thumbnailUrl: story.thumbnail_url || story.media_url,
+                  timestamp: new Date(story.timestamp),
+                  order: storyIndex,
+                },
+              });
+
+              syncedStories++;
+            }
+          } catch (error) {
+            console.error(`Error syncing highlight ${highlight.id}:`, error);
+          }
+        }
+      }
+    } catch (highlightError) {
+      console.log('ℹ️ Stories/highlights not available or not supported');
     }
 
     // Update last sync time
@@ -146,12 +201,13 @@ export async function POST(req: Request) {
       data: { instagramLastSync: new Date() },
     });
 
-    console.log(`✅ Sync complete: ${syncedHighlights} highlights, ${syncedStories} stories`);
+    console.log(`✅ Sync complete: ${syncedPosts} posts, ${syncedHighlights} highlights, ${syncedStories} stories`);
 
     return NextResponse.json({
       success: true,
-      message: `Successfully synced ${syncedHighlights} highlights with ${syncedStories} stories`,
+      message: `Successfully synced ${syncedPosts} posts, ${syncedHighlights} highlights, ${syncedStories} stories`,
       data: {
+        posts: syncedPosts,
         highlights: syncedHighlights,
         stories: syncedStories,
       },
@@ -174,6 +230,7 @@ export async function GET(req: Request) {
     }
 
     const settings = await prisma.siteSettings.findFirst();
+    const postsCount = await prisma.instagramPost.count();
     const highlightsCount = await prisma.instagramHighlight.count();
     const storiesCount = await prisma.instagramStory.count();
 
@@ -182,6 +239,7 @@ export async function GET(req: Request) {
       username: settings?.instagramUsername,
       lastSync: settings?.instagramLastSync,
       autoSync: settings?.instagramAutoSync,
+      postsCount,
       highlightsCount,
       storiesCount,
     });

@@ -487,6 +487,21 @@ model Remerciement {
   updatedAt   DateTime @updatedAt
 }
 
+// Instagram Feed Posts
+model InstagramPost {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  instagramId  String   @unique // Instagram post ID
+  caption      String   @db.String // Post caption
+  mediaType    String // IMAGE or VIDEO
+  mediaUrl     String // Post image/video URL
+  thumbnailUrl String // Thumbnail URL
+  permalink    String // Link to Instagram post
+  timestamp    DateTime // When post was published
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 // Instagram Highlights (Stories)
 model InstagramHighlight {
   id          String           @id @default(auto()) @map("_id") @db.ObjectId
