@@ -17,6 +17,7 @@ interface VideoData {
   featured: boolean;
   showOnHomepage: boolean;
   showInGallery: boolean;
+  showInProfessionalMode?: boolean;
   order: number;
   width?: number;
   height?: number;
@@ -31,9 +32,12 @@ export default function AdminVideosPage() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
+  const [selectedVideos, setSelectedVideos] = useState<Set<string>>(new Set());
+  const [bulkEditMode, setBulkEditMode] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
+  const [bulkEditModalOpen, setBulkEditModalOpen] = useState(false);
   const [syncFolder, setSyncFolder] = useState('videos');
   const [filterCategory, setFilterCategory] = useState('all');
 
@@ -106,6 +110,53 @@ export default function AdminVideosPage() {
     } catch (error) {
       console.error('Error updating video:', error);
     }
+  };
+
+  // Bulk update videos
+  const bulkUpdateVideos = async (data: Partial<VideoData>) => {
+    try {
+      const promises = Array.from(selectedVideos).map(id =>
+        fetch('/api/admin/videos', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, ...data }),
+        })
+      );
+
+      await Promise.all(promises);
+      alert(`✅ Updated ${selectedVideos.size} videos`);
+      fetchVideos();
+      setBulkEditModalOpen(false);
+      setSelectedVideos(new Set());
+      setBulkEditMode(false);
+    } catch (error) {
+      console.error('Error bulk updating:', error);
+      alert('❌ Failed to update videos');
+    }
+  };
+
+  // Toggle video selection
+  const toggleVideoSelection = (id: string) => {
+    const newSelection = new Set(selectedVideos);
+    if (newSelection.has(id)) {
+      newSelection.delete(id);
+    } else {
+      newSelection.add(id);
+    }
+    setSelectedVideos(newSelection);
+  };
+
+  // Select all filtered videos
+  const selectAll = () => {
+    const filtered = filteredVideos();
+    const allIds = new Set(filtered.map(v => v.id));
+    setSelectedVideos(allIds);
+  };
+
+  // Clear selection
+  const clearSelection = () => {
+    setSelectedVideos(new Set());
+    setBulkEditMode(false);
   };
 
   // Delete video
