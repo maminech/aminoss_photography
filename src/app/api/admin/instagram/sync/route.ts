@@ -89,16 +89,18 @@ export async function POST(req: Request) {
     // Sync Instagram Feed Posts and upload to Cloudinary
     for (const post of mediaPosts) {
       try {
-        // Only sync images (videos can be added later)
-        if (post.media_type === 'IMAGE') {
+        // Sync both images and videos (use thumbnail for videos)
+        if (post.media_type === 'IMAGE' || post.media_type === 'VIDEO') {
           let cloudinaryUrl = post.media_url;
           let cloudinaryThumbnail = post.thumbnail_url || post.media_url;
 
-          // Always upload to Cloudinary (using form-data)
-          console.log(`📤 Uploading ${post.id} to Cloudinary...`);
+          // Upload thumbnail to Cloudinary (videos use thumbnail_url for display)
+          const urlToUpload = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
+          console.log(`📤 Uploading ${post.media_type} ${post.id} to Cloudinary...`);
+          
           try {
             const formData = new FormData();
-            formData.append('file', post.media_url);
+            formData.append('file', urlToUpload);
             formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio');
             formData.append('folder', 'aminoss_portfolio/instagram');
 
