@@ -106,6 +106,37 @@ export default function InstagramIntegrationPage() {
     }
   };
 
+  const handleClearPosts = async () => {
+    if (!confirm('Delete all synced Instagram posts? This will remove them from the homepage. You can re-sync anytime.')) {
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/admin/instagram/clear', {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ 
+          type: 'success', 
+          text: `Deleted ${data.count} Instagram posts. Click Sync Now to re-sync with Cloudinary URLs.` 
+        });
+        fetchSyncStatus();
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to clear posts' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to clear Instagram posts' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleImportToPhotos = async () => {
     if (!confirm('Import all Instagram posts to Photos section and Cloudinary? This will skip already imported posts.')) {
       return;
@@ -336,10 +367,10 @@ export default function InstagramIntegrationPage() {
               Sync Actions
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Sync fetches posts from Instagram. Import uploads them to Cloudinary and Photos section.
+              Sync fetches posts from Instagram and uploads to Cloudinary. Import adds them to Photos section.
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <button
                 onClick={handleSync}
                 disabled={syncing}
@@ -374,6 +405,15 @@ export default function InstagramIntegrationPage() {
                     Import to Photos
                   </>
                 )}
+              </button>
+
+              <button
+                onClick={handleClearPosts}
+                disabled={loading}
+                className="py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <FiTrash2 className="w-5 h-5" />
+                Clear Posts
               </button>
 
               <button
