@@ -94,19 +94,19 @@ export async function POST(req: Request) {
           let cloudinaryUrl = post.media_url;
           let cloudinaryThumbnail = post.thumbnail_url || post.media_url;
 
-          // Always upload to Cloudinary (using fetch API to avoid cloudinary package issues)
+          // Always upload to Cloudinary (using form-data)
           console.log(`📤 Uploading ${post.id} to Cloudinary...`);
           try {
+            const formData = new FormData();
+            formData.append('file', post.media_url);
+            formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio');
+            formData.append('folder', 'aminoss_portfolio/instagram');
+
             const uploadResponse = await fetch(
               `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
               {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  file: post.media_url,
-                  upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio',
-                  folder: 'aminoss_portfolio/instagram',
-                }),
+                body: formData,
               }
             );
 
@@ -120,7 +120,8 @@ export async function POST(req: Request) {
               uploadedToCloudinary++;
               console.log(`✅ Uploaded to Cloudinary: ${cloudinaryUrl}`);
             } else {
-              console.error(`Failed to upload ${post.id} to Cloudinary`);
+              const errorData = await uploadResponse.json();
+              console.error(`Failed to upload ${post.id} to Cloudinary:`, errorData);
             }
           } catch (uploadError) {
             console.error(`Upload error for ${post.id}:`, uploadError);
