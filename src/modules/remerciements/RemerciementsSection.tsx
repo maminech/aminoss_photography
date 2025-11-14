@@ -67,13 +67,12 @@ export default function RemerciementsSection({
 
   const fetchAllContent = async () => {
     try {
-      // Fetch old remerciements
-      const remercRes = await fetch('/api/admin/remerciements');
+      // Fetch old remerciements (only active and approved ones)
+      const remercRes = await fetch('/api/admin/remerciements?activeOnly=true');
       let oldItems: RemerciementItem[] = [];
       if (remercRes.ok) {
         const data = await remercRes.json();
-        oldItems = data.filter((item: RemerciementItem) => item.active)
-                       .sort((a: RemerciementItem, b: RemerciementItem) => a.order - b.order);
+        oldItems = data.sort((a: RemerciementItem, b: RemerciementItem) => a.order - b.order);
       }
 
       // Fetch new client testimonials
