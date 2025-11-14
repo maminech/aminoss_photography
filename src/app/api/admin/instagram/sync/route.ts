@@ -85,18 +85,56 @@ export async function POST(req: Request) {
     let syncedHighlights = 0;
     let syncedStories = 0;
 
-    // Sync Instagram Feed Posts
+    // Import Cloudinary for uploading
+    const cloudinary = await import('cloudinary').then(m => m.v2);
+    cloudinary.config({
+      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
+    // Sync Instagram Feed Posts and upload to Cloudinary
     for (const post of mediaPosts) {
       try {
-        // Only sync images and videos (not carousels for now)
-        if (post.media_type === 'IMAGE' || post.media_type === 'VIDEO') {
+        // Only sync images (videos can be added later)
+        if (post.media_type === 'IMAGE') {
+          // Check if already uploaded to Cloudinary
+          const existing = await prisma.instagramPost.findUnique({
+            where: { instagramId: post.id },
+          });
+
+          let cloudinaryUrl = post.media_url;
+          let cloudinaryThumbnail = post.thumbnail_url || post.media_url;
+
+          // Upload to Cloudinary if not already done
+          if (!existing || !existing.mediaUrl.includes('cloudinary')) {
+            console.log(`📤 Uploading ${post.id} to Cloudinary...`);
+            try {
+              const uploadResult = await cloudinary.uploader.upload(post.media_url, {
+                folder: 'aminoss_portfolio/instagram',
+                resource_type: 'image',
+                transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
+              });
+
+              cloudinaryUrl = uploadResult.secure_url;
+              cloudinaryThumbnail = uploadResult.secure_url.replace(
+                '/upload/',
+                '/upload/w_800,h_800,c_fill,q_90,f_auto/'
+              );
+              console.log(`✅ Uploaded to Cloudinary: ${cloudinaryUrl}`);
+            } catch (uploadError) {
+              console.error(`Failed to upload ${post.id} to Cloudinary:`, uploadError);
+              // Fallback to Instagram URL if upload fails
+            }
+          }
+
           await prisma.instagramPost.upsert({
             where: { instagramId: post.id },
             update: {
               caption: post.caption || '',
               mediaType: post.media_type,
-              mediaUrl: post.media_url,
-              thumbnailUrl: post.thumbnail_url || post.media_url,
+              mediaUrl: cloudinaryUrl,
+              thumbnailUrl: cloudinaryThumbnail,
               permalink: post.permalink || '',
               timestamp: new Date(post.timestamp),
               active: true,
@@ -106,8 +144,8 @@ export async function POST(req: Request) {
               instagramId: post.id,
               caption: post.caption || '',
               mediaType: post.media_type,
-              mediaUrl: post.media_url,
-              thumbnailUrl: post.thumbnail_url || post.media_url,
+              mediaUrl: cloudinaryUrl,
+              thumbnailUrl: cloudinaryThumbnail,
               permalink: post.permalink || '',
               timestamp: new Date(post.timestamp),
               active: true,
