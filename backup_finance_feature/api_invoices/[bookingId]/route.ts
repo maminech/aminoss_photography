@@ -49,20 +49,7 @@ export async function POST(
       // Generate items from events array
       items = (booking.events as any[]).map((event: any, index: number) => {
         const packageType = event.packageType ? (event.packageType === 'aymen' ? 'Par Aymen' : 'Par Équipe') : '';
-        
-        // Map packageLevel to tier names
-        let packageLevel = '';
-        if (event.packageLevel === 'silver') {
-          packageLevel = '🥈 Silver';
-        } else if (event.packageLevel === 'gold') {
-          packageLevel = '🥇 Gold';
-        } else if (event.packageLevel === 'diamond') {
-          packageLevel = '💎 Diamond';
-        } else if (event.packageLevel) {
-          // Fallback for old pack1/pack2/pack3 format
-          packageLevel = event.packageLevel.replace('pack', 'Pack ');
-        }
-        
+        const packageLevel = event.packageLevel || '';
         const packageInfo = packageType && packageLevel ? ` - ${packageType} ${packageLevel}` : '';
         
         return {

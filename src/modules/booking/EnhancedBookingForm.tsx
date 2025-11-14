@@ -16,6 +16,7 @@ interface EventDetails {
   eventDate: string;
   timeSlot: string;
   location: string;
+  message?: string;
   packageType?: string; // 'aymen' or 'equipe'
   packageLevel?: string; // 'pack1', 'pack2', 'pack3'
 }
@@ -73,6 +74,20 @@ const defaultPackages: PackageType[] = [
   },
 ];
 
+// Country codes list
+const countryCodes = [
+  { code: '+216', country: 'Tunisia 🇹🇳', flag: '🇹🇳' },
+  { code: '+213', country: 'Algeria 🇩🇿', flag: '🇩🇿' },
+  { code: '+212', country: 'Morocco 🇲🇦', flag: '🇲🇦' },
+  { code: '+33', country: 'France 🇫🇷', flag: '🇫🇷' },
+  { code: '+49', country: 'Germany 🇩🇪', flag: '🇩🇪' },
+  { code: '+39', country: 'Italy 🇮🇹', flag: '🇮🇹' },
+  { code: '+1', country: 'USA/Canada 🇺🇸🇨🇦', flag: '🇺🇸' },
+  { code: '+44', country: 'UK 🇬🇧', flag: '🇬🇧' },
+  { code: '+971', country: 'UAE 🇦🇪', flag: '🇦🇪' },
+  { code: '+966', country: 'Saudi Arabia 🇸🇦', flag: '🇸🇦' },
+];
+
 export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }: EnhancedBookingFormProps) {
   // Two-step state
   const [packages, setPackages] = useState<PackageType[]>(defaultPackages);
@@ -81,6 +96,10 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
   const [showPackageImages, setShowPackageImages] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [hasViewedPackages, setHasViewedPackages] = useState(false);
+  const [countryCode, setCountryCode] = useState('+216');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
+  const [expandedPackageLevel, setExpandedPackageLevel] = useState<string | null>(null);
 
   // Load packages from database
   useEffect(() => {
@@ -200,46 +219,24 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
     { value: 'equipe', label: 'Par Équipe', icon: '👥' },
   ];
 
-  const [packDetails, setPackDetails] = useState<{[key: string]: PackageType}>({});
+  const [allPackages, setAllPackages] = useState<any[]>([]);
+  const [filteredPackages, setFilteredPackages] = useState<{[key: string]: PackageType}>({});
   const [selectedPackDetails, setSelectedPackDetails] = useState<PackageType | null>(null);
 
   const packageLevels = [
-    { value: 'pack1', label: 'Pack 1', description: packDetails['pack1']?.name || 'Essentiel' },
-    { value: 'pack2', label: 'Pack 2', description: packDetails['pack2']?.name || 'Premium' },
-    { value: 'pack3', label: 'Pack 3', description: packDetails['pack3']?.name || 'Luxe' },
+    { value: 'pack1', label: filteredPackages['pack1']?.name || 'Package 1', description: filteredPackages['pack1']?.name || 'Package 1', tier: 'pack1' },
+    { value: 'pack2', label: filteredPackages['pack2']?.name || 'Package 2', description: filteredPackages['pack2']?.name || 'Package 2', tier: 'pack2' },
+    { value: 'pack3', label: filteredPackages['pack3']?.name || 'Package 3', description: filteredPackages['pack3']?.name || 'Package 3', tier: 'pack3' },
   ];
 
-  // Load pack details
+  // Load all packages from database
   useEffect(() => {
     const fetchPackDetails = async () => {
       try {
         const response = await fetch('/api/admin/packs?active=true');
         if (response.ok) {
           const data = await response.json();
-          if (data && data.length >= 3) {
-            // Map first 3 packs to pack1, pack2, pack3
-            const details: {[key: string]: PackageType} = {
-              pack1: {
-                name: data[0].name,
-                price: data[0].price,
-                features: data[0].features || [],
-                icon: '📦',
-              },
-              pack2: {
-                name: data[1].name,
-                price: data[1].price,
-                features: data[1].features || [],
-                icon: '⭐',
-              },
-              pack3: {
-                name: data[2].name,
-                price: data[2].price,
-                features: data[2].features || [],
-                icon: '👑',
-              },
-            };
-            setPackDetails(details);
-          }
+          setAllPackages(data);
         }
       } catch (error) {
         console.error('Error loading pack details:', error);
@@ -248,6 +245,60 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
 
     fetchPackDetails();
   }, []);
+
+  // Filter packages when packageType changes
+  useEffect(() => {
+    if (!currentEvent.packageType || allPackages.length === 0) {
+      setFilteredPackages({});
+      return;
+    }
+
+    // Filter packages by selected packageType (aymen or equipe)
+    const filtered = allPackages.filter(pkg => pkg.packageType === currentEvent.packageType);
+    
+    // Map packages to pack1, pack2, pack3 based on order or price
+    const sorted = [...filtered].sort((a, b) => {
+      // Sort by order first, then by price
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      }
+      return a.price - b.price;
+    });
+
+    const tierMapping: {[key: string]: PackageType} = {};
+    
+    if (sorted.length >= 1) {
+      tierMapping['pack1'] = {
+        id: sorted[0].id,
+        name: sorted[0].name,
+        price: sorted[0].price,
+        features: sorted[0].features || [],
+        icon: '📦',
+      };
+    }
+    
+    if (sorted.length >= 2) {
+      tierMapping['pack2'] = {
+        id: sorted[1].id,
+        name: sorted[1].name,
+        price: sorted[1].price,
+        features: sorted[1].features || [],
+        icon: '📦',
+      };
+    }
+    
+    if (sorted.length >= 3) {
+      tierMapping['pack3'] = {
+        id: sorted[2].id,
+        name: sorted[2].name,
+        price: sorted[2].price,
+        features: sorted[2].features || [],
+        icon: '�',
+      };
+    }
+
+    setFilteredPackages(tierMapping);
+  }, [currentEvent.packageType, allPackages]);
 
   // Add event to the list
   const handleAddEvent = () => {
@@ -365,7 +416,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
       const eventTypeLabel = eventTypes.find(t => t.value === event.eventType)?.label || event.eventType;
       const timeSlotLabel = timeSlots.find(t => t.value === event.timeSlot)?.label || event.timeSlot;
       const packageTypeLabel = packageTypes.find(t => t.value === event.packageType)?.label || event.packageType;
-      const packageLevelLabel = packageLevels.find(t => t.value === event.packageLevel)?.label || event.packageLevel;
+      const packageLevelLabel = packageLevels.find(t => t.value === event.packageLevel)?.label?.split(' ')[1] || event.packageLevel;
       
       return `
 *Événement ${index + 1}:*
@@ -416,13 +467,17 @@ Envoyé depuis innov8production.com
       return;
     }
 
+    // Combine country code with phone number
+    const fullPhone = `${countryCode} ${formData.phone.trim()}`;
+    setFormData(prev => ({ ...prev, phone: fullPhone }));
+
     try {
       await fetch('/api/bookings/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
-          phone: formData.phone,
+          phone: fullPhone,
           action: 'view-packages',
         }),
       });
@@ -525,14 +580,34 @@ Envoyé depuis innov8production.com
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Téléphone / Phone *
               </label>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="input-field text-lg py-4"
-                placeholder="+216 XX XXX XXX"
-              />
+              <div className="flex gap-2">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="input-field text-lg py-4 w-32 flex-shrink-0"
+                >
+                  {countryCodes.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => {
+                    // Remove any non-digit characters except spaces
+                    const cleaned = e.target.value.replace(/[^\d\s]/g, '');
+                    handleInputChange('phone', cleaned);
+                  }}
+                  className="input-field text-lg py-4 flex-1"
+                  placeholder="XX XXX XXX"
+                />
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Numéro complet: {countryCode} {formData.phone}
+              </p>
             </div>
 
             {/* Status Messages */}
@@ -555,25 +630,15 @@ Envoyé depuis innov8production.com
               )}
             </AnimatePresence>
 
-            {/* View Packages Button */}
-            <motion.button
-              type="button"
-              onClick={() => setShowPackageImages(true)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
-            >
-              <Package className="w-6 h-6" />
-              <span>Voir nos Packages</span>
-              <ChevronRight className="w-5 h-5" />
-            </motion.button>
-
-            {hasViewedPackages && (
+            {/* Continue Button - Show when name and phone are filled */}
+            {formData.name.trim() && formData.phone.trim() && (
               <motion.button
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 type="submit"
-                className="btn-primary w-full flex items-center justify-center gap-2 text-lg py-4"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
               >
                 <span>Continuer</span>
                 <ChevronRight className="w-5 h-5" />
@@ -616,13 +681,20 @@ Envoyé depuis innov8production.com
                     Événements / Events * {formData.events.length > 0 && `(${formData.events.length})`}
                   </label>
                   {!isAddingEvent && (
-                    <button
+                    <motion.button
                       type="button"
                       onClick={() => setIsAddingEvent(true)}
-                      className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="relative overflow-hidden px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transition-all group"
                     >
-                      <span>+ Ajouter un événement</span>
-                    </button>
+                      <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="relative flex items-center gap-3">
+                        <span className="text-2xl">✨</span>
+                        <span>Ajouter un événement</span>
+                        <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </motion.button>
                   )}
                 </div>
 
@@ -715,30 +787,42 @@ Envoyé depuis innov8production.com
                         </button>
                       </div>
 
-                      {/* Event Type */}
+                      {/* Event Type - Text Input */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                          <span className="text-lg">📝</span>
                           Type d'événement *
                         </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                          {eventTypes.map((type) => (
-                            <button
-                              key={type.value}
-                              type="button"
-                              onClick={() => setCurrentEvent(prev => ({ ...prev, eventType: type.value }))}
-                              className={`p-3 rounded-lg border-2 transition-all text-center ${
-                                currentEvent.eventType === type.value
-                                  ? 'border-primary bg-primary/10'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
-                              }`}
-                            >
-                              <div className="text-2xl mb-1">{type.icon}</div>
-                              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                                {type.label.split(' / ')[0]}
+                        <div className="relative group">
+                          <input
+                            type="text"
+                            value={currentEvent.eventType}
+                            onChange={(e) => setCurrentEvent(prev => ({ ...prev, eventType: e.target.value }))}
+                            placeholder="Ex: Mariage, Anniversaire, Séance Photo..."
+                            className="input-field text-base pr-12 transition-all focus:ring-2 focus:ring-purple-500"
+                          />
+                          {/* Beautiful animated icon on the right */}
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-300">
+                            {currentEvent.eventType ? (
+                              <motion.div
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ type: "spring", stiffness: 200 }}
+                                className="text-2xl"
+                              >
+                                ✨
+                              </motion.div>
+                            ) : (
+                              <div className="text-gray-300 dark:text-gray-600 text-xl">
+                                ✏️
                               </div>
-                            </button>
-                          ))}
+                            )}
+                          </div>
                         </div>
+                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <span>💡</span>
+                          <span>Décrivez votre événement en quelques mots</span>
+                        </p>
                       </div>
 
                       {/* Date */}
@@ -810,32 +894,117 @@ Envoyé depuis innov8production.com
                       {/* Package Level - Radio Buttons */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                          Niveau de Pack *
+                          Niveau de Pack * {currentEvent.packageType && `(${packageTypes.find(t => t.value === currentEvent.packageType)?.label})`}
                         </label>
-                        <div className="grid grid-cols-3 gap-3">
-                          {packageLevels.map((level) => (
-                            <button
-                              key={level.value}
-                              type="button"
-                              onClick={() => {
-                                setCurrentEvent(prev => ({ ...prev, packageLevel: level.value }));
-                                setSelectedPackDetails(packDetails[level.value] || null);
-                              }}
-                              className={`p-4 rounded-lg border-2 transition-all text-center ${
-                                currentEvent.packageLevel === level.value
-                                  ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
-                              }`}
-                            >
-                              <div className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                                {level.label}
-                              </div>
-                              <div className="text-xs text-gray-600 dark:text-gray-400">
-                                {level.description}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
+                        
+                        {!currentEvent.packageType ? (
+                          <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            Veuillez d'abord sélectionner le type de forfait (Par Aymen ou Par Équipe)
+                          </div>
+                        ) : Object.keys(filteredPackages).length === 0 ? (
+                          <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            Aucun package disponible pour {packageTypes.find(t => t.value === currentEvent.packageType)?.label}
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-4">
+                            {packageLevels.map((level) => {
+                              const packageData = filteredPackages[level.tier];
+                              if (!packageData) return null; // Skip if no package for this tier
+                              
+                              const isExpanded = expandedPackageLevel === level.value;
+                              const isSelected = currentEvent.packageLevel === level.value;
+                              
+                              return (
+                                <motion.div
+                                  key={level.value}
+                                  initial={false}
+                                  animate={{ height: 'auto' }}
+                                  className={`rounded-xl border-2 transition-all overflow-hidden ${
+                                    isSelected
+                                      ? 'border-primary bg-primary/10 shadow-lg'
+                                      : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                                  }`}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      // Toggle expansion and selection
+                                      if (isExpanded) {
+                                        // If already expanded, select it
+                                        setCurrentEvent(prev => ({ ...prev, packageLevel: level.value }));
+                                        setSelectedPackDetails(packageData);
+                                        setExpandedPackageLevel(null);
+                                      } else {
+                                        // Expand to show details
+                                        setExpandedPackageLevel(level.value);
+                                      }
+                                    }}
+                                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                  >
+                                    <div className="flex items-center gap-4">
+                                      <div className="text-3xl">{packageData.icon}</div>
+                                      <div className="text-left">
+                                        <div className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                          {packageData.name}
+                                          {isSelected && <Check className="w-5 h-5 text-primary" />}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      {packageData.price > 0 && (
+                                        <div className="text-right">
+                                          <div className="text-lg font-bold text-primary">
+                                            {packageData.price} DT
+                                          </div>
+                                          <div className="text-xs text-gray-500">Prix</div>
+                                        </div>
+                                      )}
+                                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                    </div>
+                                  </button>
+
+                                  {/* Expandable Package Details */}
+                                  <AnimatePresence>
+                                    {isExpanded && (
+                                      <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: 'auto', opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4"
+                                      >
+                                        <h5 className="font-semibold text-gray-900 dark:text-white mb-3">✨ Ce qui est inclus:</h5>
+                                        <ul className="space-y-2 mb-4">
+                                          {packageData.features.map((feature: string, idx: number) => (
+                                            <li key={idx} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                              <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                              <span>{feature}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                        <motion.button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setCurrentEvent(prev => ({ ...prev, packageLevel: level.value }));
+                                            setSelectedPackDetails(packageData);
+                                            setExpandedPackageLevel(null);
+                                          }}
+                                          whileHover={{ scale: 1.02 }}
+                                          whileTap={{ scale: 0.98 }}
+                                          className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                                        >
+                                          <Check className="w-5 h-5" />
+                                          <span>Choisir ce package</span>
+                                        </motion.button>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
 
                       {/* Show Selected Pack Details */}
@@ -893,6 +1062,24 @@ Envoyé depuis innov8production.com
                         />
                       </div>
 
+                      {/* Event Message/Notes */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <MessageSquare className="w-4 h-4 inline mr-2" />
+                          Message / Notes (optionnel)
+                        </label>
+                        <textarea
+                          value={currentEvent.message || ''}
+                          onChange={(e) => setCurrentEvent(prev => ({ ...prev, message: e.target.value }))}
+                          rows={3}
+                          className="textarea-field"
+                          placeholder="Détails supplémentaires sur cet événement, nombre d'invités, besoins spécifiques..."
+                        />
+                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                          💡 Ajoutez des détails spécifiques pour cet événement
+                        </p>
+                      </div>
+
                       {/* Add Event Button */}
                       <button
                         type="button"
@@ -905,21 +1092,6 @@ Envoyé depuis innov8production.com
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  <MessageSquare className="w-4 h-4 inline mr-2" />
-                  Message (optionnel)
-                </label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => handleInputChange('message', e.target.value)}
-                  rows={4}
-                  className="textarea-field"
-                  placeholder="Détails supplémentaires sur vos événements, nombre d'invités, besoins spécifiques..."
-                />
               </div>
 
               {/* Status Messages */}
@@ -1049,11 +1221,14 @@ Envoyé depuis innov8production.com
                         <img
                           src={image}
                           alt={`Package ${index + 1}`}
-                          className="w-full h-auto rounded-xl shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
-                          onClick={() => setSelectedImageIndex(index)}
+                          className="w-full h-auto rounded-xl shadow-lg hover:shadow-2xl transition-all cursor-pointer hover:scale-105"
+                          onClick={() => {
+                            setLightboxImageIndex(index);
+                            setLightboxOpen(true);
+                          }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
-                          <p className="text-white font-semibold">Cliquez pour agrandir</p>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+                          <p className="text-white font-semibold text-lg">🔍 Cliquez pour agrandir</p>
                         </div>
                       </motion.div>
                     ))}
@@ -1169,6 +1344,83 @@ Envoyé depuis innov8production.com
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 text-white rounded-full text-sm">
                 {selectedImageIndex + 1} / {packageImages.length}
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Full-Size Image Lightbox */}
+      <AnimatePresence>
+        {lightboxOpen && packageImages.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+            onClick={() => setLightboxOpen(false)}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setLightboxOpen(false)}
+              className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full p-3 transition-colors"
+            >
+              <X className="w-7 h-7 text-white" />
+            </button>
+
+            {/* Navigation buttons */}
+            {packageImages.length > 1 && (
+              <>
+                <motion.button
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxImageIndex((prev) => 
+                      prev === 0 ? packageImages.length - 1 : prev - 1
+                    );
+                  }}
+                  className="absolute left-4 p-4 bg-white/10 hover:bg-white/25 backdrop-blur-sm text-white rounded-full transition-all hover:scale-110"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxImageIndex((prev) => (prev + 1) % packageImages.length);
+                  }}
+                  className="absolute right-4 p-4 bg-white/10 hover:bg-white/25 backdrop-blur-sm text-white rounded-full transition-all hover:scale-110"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </motion.button>
+              </>
+            )}
+
+            {/* Image */}
+            <motion.div
+              key={lightboxImageIndex}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="relative max-w-7xl max-h-[95vh] w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={packageImages[lightboxImageIndex]}
+                alt={`Package ${lightboxImageIndex + 1}`}
+                className="w-full h-full object-contain rounded-lg shadow-2xl"
+              />
+              
+              {/* Image counter */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 bg-black/70 backdrop-blur-sm text-white rounded-full text-base font-semibold shadow-lg"
+              >
+                {lightboxImageIndex + 1} / {packageImages.length}
+              </motion.div>
             </motion.div>
           </motion.div>
         )}

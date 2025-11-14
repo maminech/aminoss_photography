@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheck, FiClock, FiDollarSign } from 'react-icons/fi';
@@ -20,11 +22,22 @@ interface Pack {
 }
 
 export default function PacksPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const { currentTheme } = useLayoutTheme();
   const isProfessional = currentTheme === 'professional';
   const [packs, setPacks] = useState<Pack[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+
+  // Protect page - redirect non-admin users to homepage
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session || session.user?.role?.toLowerCase() !== 'admin') {
+      router.push('/');
+    }
+  }, [session, status, router]);
 
   useEffect(() => {
     fetchPacks();
@@ -47,15 +60,23 @@ export default function PacksPage() {
   const categories = ['all', ...Array.from(new Set(packs.map(p => p.category)))];
   const filteredPacks = filter === 'all' ? packs : packs.filter(p => p.category === filter);
 
-  if (loading) {
+  // Show loading while checking authentication or fetching data
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading packages...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            {status === 'loading' ? 'Verifying access...' : 'Loading packages...'}
+          </p>
         </div>
       </div>
     );
+  }
+
+  // Don't render content if not admin (will redirect in useEffect)
+  if (!session || session.user?.role?.toLowerCase() !== 'admin') {
+    return null;
   }
 
   // Professional/Novo Theme Layout

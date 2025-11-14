@@ -44,18 +44,20 @@ export default function GoogleCalendarIntegration() {
     setConnecting(true);
     try {
       const res = await fetch('/api/admin/google-calendar/auth');
+      const data = await res.json();
+      
       if (res.ok) {
-        const data = await res.json();
         // Redirect to Google OAuth
         window.location.href = data.authUrl;
       } else {
         setStatus('error');
-        setMessage('Erreur lors de la connexion à Google Calendar');
+        console.error('Google Calendar auth error:', data);
+        setMessage(data.message || data.error || 'Erreur lors de la connexion à Google Calendar');
       }
     } catch (error) {
       console.error('Error connecting to Google Calendar:', error);
       setStatus('error');
-      setMessage('Erreur lors de la connexion');
+      setMessage('Erreur lors de la connexion: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setConnecting(false);
     }

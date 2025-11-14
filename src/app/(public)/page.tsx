@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { FiGrid, FiVideo, FiBookmark, FiSettings, FiMail, FiMenu, FiX, FiHome, FiPackage, FiUser } from 'react-icons/fi';
+import { FiGrid, FiVideo, FiBookmark, FiSettings, FiMail, FiMenu, FiX, FiHome, FiPackage, FiUser, FiRotateCw } from 'react-icons/fi';
 import { BsGrid3X3 } from 'react-icons/bs';
 import { MdVideoLibrary } from 'react-icons/md';
 import LightboxModal from '@/components/LightboxModal';
@@ -95,6 +95,9 @@ export default function HomePage() {
   const [showThemeSwitcher, setShowThemeSwitcher] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isPulling, setIsPulling] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -134,82 +137,136 @@ export default function HomePage() {
     );
   }
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load settings
-        const settingsRes = await fetch('/api/admin/settings');
-        if (settingsRes.ok) {
-          const data = await settingsRes.json();
-          setSettings(data);
-        }
-
-        // Load posts (Instagram-style albums with multiple images)
-        const postsRes = await fetch('/api/public/posts?homepage=true&limit=30');
-        
-        if (postsRes.ok) {
-          const fetchedPosts = await postsRes.json();
-          setPosts(fetchedPosts);
-        }
-
-        // Load homepage videos
-        const videosRes = await fetch('/api/videos?homepage=true');
-        
-        if (videosRes.ok) {
-          const data = await videosRes.json();
-          const fetchedVideos = data.map((vid: any) => ({
-            id: vid.id,
-            title: vid.title,
-            description: vid.description,
-            url: vid.url,
-            thumbnailUrl: vid.thumbnailUrl,
-            width: vid.width,
-            height: vid.height,
-            isReel: vid.isReel,
-            type: 'video',
-          }));
-          setVideos(fetchedVideos);
-        }
-
-        // Fallback to sample data if no posts
-        if (postsRes.ok) {
-          const fetchedPosts = await postsRes.json();
-          if (fetchedPosts.length === 0) {
-            // Create sample posts from sample images
-            const sampleData = await getSampleImages('all');
-            const samplePosts: Post[] = [
-              {
-                id: 'sample-1',
-                type: 'post',
-                title: 'Beautiful Moments',
-                description: 'Capturing life\'s precious memories',
-                category: 'all',
-                coverImage: sampleData[0]?.thumbnailUrl || '',
-                imageCount: 3,
-                images: sampleData.slice(0, 3).map(img => ({
-                  id: img.id,
-                  url: img.url,
-                  thumbnailUrl: img.thumbnailUrl || img.url,
-                  width: img.width,
-                  height: img.height,
-                  title: img.title,
-                  description: img.description,
-                })),
-                createdAt: new Date().toISOString(),
-                featured: true,
-              },
-            ];
-            setPosts(samplePosts);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      
+      // Clear any cached posts first
+      setPosts([]);
+      setVideos([]);
+      
+      // Load settings
+      const settingsRes = await fetch('/api/admin/settings', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+      });
+      if (settingsRes.ok) {
+        const data = await settingsRes.json();
+        setSettings(data);
       }
-    };
+
+      // Load posts with aggressive cache-busting
+      const timestamp = new Date().getTime();
+      const random = Math.random().toString(36).substring(7);
+      const postsRes = await fetch(`/api/public/posts?homepage=true&limit=30&_t=${timestamp}&_r=${random}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      });
+      
+      if (postsRes.ok) {
+        const fetchedPosts = await postsRes.json();
+        console.log('Loaded posts:', fetchedPosts.length, 'posts');
+        if (fetchedPosts.length > 0) {
+          setPosts(fetchedPosts);
+        } else {
+          console.warn('No posts found with showOnHomepage=true');
+        }
+      } else {
+        console.error('Failed to load posts:', postsRes.status);
+      }
+
+      // Load homepage videos
+      const videosRes = await fetch(`/api/videos?homepage=true&_t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      });
+      
+      if (videosRes.ok) {
+        const data = await videosRes.json();
+        const fetchedVideos = data.map((vid: any) => ({
+          id: vid.id,
+          title: vid.title,
+          description: vid.description,
+          url: vid.url,
+          thumbnailUrl: vid.thumbnailUrl,
+          width: vid.width,
+          height: vid.height,
+          isReel: vid.isReel,
+          type: 'video',
+        }));
+        setVideos(fetchedVideos);
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
     loadData();
   }, []);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadData();
+  };
+
+  // Pull to refresh functionality
+  useEffect(() => {
+    if (!mounted) return;
+
+    let startY = 0;
+    const threshold = 80;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        setIsPulling(true);
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isPulling || window.scrollY > 0) return;
+
+      const currentY = e.touches[0].clientY;
+      const distance = currentY - startY;
+
+      if (distance > 0 && distance < threshold * 2) {
+        setPullDistance(distance);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (pullDistance > threshold && !refreshing) {
+        handleRefresh();
+      }
+      setPullDistance(0);
+      setIsPulling(false);
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [mounted, isPulling, pullDistance, refreshing]);
 
   const openPostLightbox = (post: Post, imageIndex: number = 0) => {
     setCurrentPost(post);
@@ -299,22 +356,57 @@ export default function HomePage() {
       {/* Animated Intro - First Visit Only */}
       {showIntro && <AnimatedIntro onComplete={handleIntroComplete} />}
       
-      <div className="min-h-screen bg-white dark:bg-dark-900">
+      <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Pull to Refresh Indicator */}
+      {pullDistance > 0 && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none"
+          style={{
+            transform: `translateY(${Math.min(pullDistance - 50, 30)}px)`,
+            opacity: Math.min(pullDistance / 80, 1)
+          }}
+        >
+          <div className="mt-4 bg-white dark:bg-gray-800 rounded-full shadow-2xl p-3">
+            {pullDistance > 80 ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </motion.div>
+            ) : (
+              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            )}
+          </div>
+        </motion.div>
+      )}
+
       {/* Top Navigation Bar - Instagram Style */}
       <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 pb-2 flex justify-between items-center">
-        <h1 className="text-base sm:text-lg md:text-xl font-semibold text-white tracking-tight truncate pr-2">
+        <motion.h1 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white tracking-tight truncate pr-2"
+        >
           {settings.siteName || 'Innov8 Production'}
-        </h1>
+        </motion.h1>
         <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           {/* Menu Button */}
-          <button
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
             onClick={() => setMenuOpen(true)}
-            className="p-2.5 hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
+            className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
             aria-label="Open Menu"
             title="Open Navigation Menu"
           >
-            <FiMenu className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
-          </button>
+            <FiMenu className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors" />
+          </motion.button>
         </div>
       </div>
 
@@ -621,75 +713,194 @@ export default function HomePage() {
             ))}
           </div>
         ) : displayMedia.length === 0 ? (
-          <div className="text-center py-16 sm:py-20 px-4">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-gray-900 dark:border-white mx-auto mb-4 flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16 sm:py-20 px-4"
+          >
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-3 border-gray-200 dark:border-gray-700 mx-auto mb-6 flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+            >
               {activeTab === 'posts' ? (
-                <BsGrid3X3 className="w-6 h-6 sm:w-7 sm:h-7 text-gray-900 dark:text-white" />
+                <BsGrid3X3 className="w-7 h-7 sm:w-9 sm:h-9 text-gray-400 dark:text-gray-500" />
               ) : (
-                <MdVideoLibrary className="w-6 h-6 sm:w-7 sm:h-7 text-gray-900 dark:text-white" />
+                <MdVideoLibrary className="w-7 h-7 sm:w-9 sm:h-9 text-gray-400 dark:text-gray-500" />
               )}
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-light text-gray-900 dark:text-white mb-2">
-              No Posts Yet
+            </motion.div>
+            <h3 className="text-2xl sm:text-3xl font-light text-gray-900 dark:text-white mb-3">
+              No {activeTab === 'posts' ? 'Posts' : 'Videos'} Yet
             </h3>
-          </div>
+            <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm sm:text-base">
+              Check back soon for amazing content!
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="px-6 py-3 bg-primary text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-shadow disabled:opacity-50"
+            >
+              {refreshing ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Refreshing...
+                </span>
+              ) : (
+                'Refresh Content'
+              )}
+            </motion.button>
+          </motion.div>
         ) : (
           <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
             {activeTab === 'posts' ? (
-              posts.map((post) => (
+              posts.map((post, index) => (
                 <motion.div
                   key={post.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 active:opacity-75 transition-opacity"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ 
+                    duration: 0.4,
+                    delay: index * 0.05,
+                    ease: [0.4, 0, 0.2, 1]
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm hover:shadow-xl transition-shadow duration-300"
                   onClick={() => openPostLightbox(post, 0)}
                 >
                   <Image
                     src={post.coverImage}
                     alt={post.title || 'Post'}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 33vw, 300px"
+                    priority={index < 6}
                   />
+                  
+                  {/* Hover overlay with gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Album indicator (multiple images) - top right */}
                   {post.imageCount > 1 && (
-                    <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
-                      <svg className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 48 48">
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: index * 0.05 + 0.2 }}
+                      className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10 bg-black/30 backdrop-blur-sm rounded-full p-1.5"
+                    >
+                      <svg className="w-3 h-3 xs:w-4 xs:h-4 text-white" fill="currentColor" viewBox="0 0 48 48">
                         <path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path>
                       </svg>
+                    </motion.div>
+                  )}
+
+                  {/* Title overlay on hover */}
+                  {post.title && (
+                    <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-white text-xs xs:text-sm font-medium line-clamp-2 drop-shadow-lg">
+                        {post.title}
+                      </p>
                     </div>
                   )}
                 </motion.div>
               ))
             ) : (
-              videos.map((video) => (
+              videos.map((video, index) => (
                 <motion.div
                   key={video.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 active:opacity-75 transition-opacity"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ 
+                    duration: 0.4,
+                    delay: index * 0.05,
+                    ease: [0.4, 0, 0.2, 1]
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm hover:shadow-xl transition-shadow duration-300"
                 >
                   <Image
                     src={video.thumbnailUrl}
                     alt={video.title || 'Video'}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 33vw, 300px"
+                    priority={index < 6}
                   />
                   
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
                   {/* Video indicator - top right */}
-                  <div className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10">
-                    <MdVideoLibrary className="w-4 h-4 xs:w-5 xs:h-5 text-white drop-shadow-lg" />
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.05 + 0.2 }}
+                    className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10 bg-black/30 backdrop-blur-sm rounded-full p-1.5"
+                  >
+                    <MdVideoLibrary className="w-3 h-3 xs:w-4 xs:h-4 text-white" />
+                  </motion.div>
+
+                  {/* Play button overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-12 h-12 xs:w-14 xs:h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl">
+                      <div className="w-0 h-0 border-l-8 border-l-gray-900 border-y-6 border-y-transparent ml-1" />
+                    </div>
                   </div>
+
+                  {/* Title overlay */}
+                  {video.title && (
+                    <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-white text-xs xs:text-sm font-medium line-clamp-2 drop-shadow-lg">
+                        {video.title}
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               ))
             )}
           </div>
         )}
       </div>
+
+      {/* Floating Refresh Button */}
+      {!loading && posts.length > 0 && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-2xl flex items-center justify-center backdrop-blur-sm disabled:opacity-50 hover:shadow-3xl transition-all"
+          title="Refresh content to see latest photos"
+        >
+          {refreshing ? (
+            <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <motion.svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              animate={{ rotate: 0 }}
+              whileHover={{ rotate: 180 }}
+              transition={{ duration: 0.5 }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </motion.svg>
+          )}
+        </motion.button>
+      )}
 
       {/* Remerciements Section */}
       <RemerciementsSection 

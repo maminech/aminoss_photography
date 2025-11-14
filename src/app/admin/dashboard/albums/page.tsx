@@ -58,23 +58,27 @@ export default function AdminAlbumsPage() {
   // Create album
   const createAlbum = async (data: Partial<AlbumData>) => {
     try {
+      console.log('Creating album with data:', data);
       const res = await fetch('/api/admin/albums', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
+      console.log('Response status:', res.status);
+      const responseData = await res.json();
+      console.log('Response data:', responseData);
+
       if (res.ok) {
         alert('✅ Album created successfully!');
         fetchAlbums();
         setCreateModalOpen(false);
       } else {
-        const error = await res.json();
-        alert(`❌ Error: ${error.error || 'Failed to create album'}`);
+        alert(`❌ Error: ${responseData.error || 'Failed to create album'}\n\nStatus: ${res.status}`);
       }
     } catch (error) {
       console.error('Error creating album:', error);
-      alert('❌ Failed to create album');
+      alert(`❌ Failed to create album\n\nError: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

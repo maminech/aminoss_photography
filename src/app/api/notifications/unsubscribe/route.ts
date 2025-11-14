@@ -18,8 +18,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Delete subscription
-    await (prisma as any).pushSubscription?.delete({
+    await prisma.pushSubscription.delete({
       where: { endpoint }
+    }).catch(() => {
+      // Ignore if subscription doesn't exist
     });
 
     return NextResponse.json({ message: 'Unsubscribed successfully', success: true });

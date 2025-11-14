@@ -81,7 +81,7 @@ export async function PATCH(
       where: { email: session.user.email },
     });
 
-    if (!user || user.role !== 'admin') {
+    if (!user || user.role?.toLowerCase() !== 'admin') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
@@ -131,7 +131,7 @@ export async function DELETE(
       where: { email: session.user.email },
     });
 
-    if (!user || user.role !== 'admin') {
+    if (!user || user.role?.toLowerCase() !== 'admin') {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 

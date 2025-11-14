@@ -17,6 +17,9 @@ export default function ProfessionalHomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [backgroundVideo, setBackgroundVideo] = useState<string | null>(null);
+  const [videoLoading, setVideoLoading] = useState(true);
+  const [videoPoster, setVideoPoster] = useState<string | null>(null);
 
   // Prevent hydration errors and ensure component is mounted
   useEffect(() => {
@@ -50,6 +53,26 @@ export default function ProfessionalHomePage() {
       }
     };
     loadImages();
+  }, []);
+
+  // Load background video
+  useEffect(() => {
+    const loadBackgroundVideo = async () => {
+      try {
+        // Fetch videos marked for homepage display
+        const res = await fetch('/api/videos?homepage=true&limit=1');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0 && data[0].url) {
+            setBackgroundVideo(data[0].url);
+            setVideoPoster(data[0].thumbnailUrl || null);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading background video:', error);
+      }
+    };
+    loadBackgroundVideo();
   }, []);
 
   useEffect(() => {
@@ -108,6 +131,51 @@ export default function ProfessionalHomePage() {
 
   return (
     <div className="novo-professional-home fixed inset-0 bg-white overflow-hidden">
+      {/* Background Video Layer */}
+      {backgroundVideo && (
+        <div className="fixed inset-0 z-0">
+          {/* Video Loading Placeholder */}
+          {videoLoading && videoPoster && (
+            <div className="absolute inset-0 bg-black">
+              <Image 
+                src={videoPoster} 
+                alt="Loading video..." 
+                fill 
+                className="object-cover" 
+                style={{ filter: 'brightness(0.7)' }}
+                priority
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin" />
+              </div>
+            </div>
+          )}
+          
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster={videoPoster || undefined}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoLoading ? 'opacity-0' : 'opacity-100'}`}
+            style={{ filter: 'brightness(0.7)' }}
+            onLoadStart={() => {
+              setVideoLoading(true);
+            }}
+            onCanPlay={() => {
+              setVideoLoading(false);
+            }}
+          >
+            <source src={backgroundVideo} type="video/mp4" />
+          </video>
+          {/* Elegant Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
+          {/* Vignette Effect */}
+          <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-black/50" />
+        </div>
+      )}
+
       {/* Fixed Navigation Overlay */}
       <motion.nav 
         initial={{ opacity: 0 }} 
@@ -240,62 +308,65 @@ export default function ProfessionalHomePage() {
       </motion.nav>
 
       {/* Hero Section with Slider - Full Screen */}
-      <section className="fixed inset-0 w-full h-full">
-        {/* Image Slider Background */}
-        <div className="absolute inset-0">
-          <AnimatePresence mode="wait">
-            {images.length > 0 && images[currentSlide] ? (
-              <motion.div 
-                key={currentSlide} 
-                initial={{ opacity: 0, scale: 1.1 }} 
-                animate={{ opacity: 1, scale: 1 }} 
-                exit={{ opacity: 0, scale: 0.95 }} 
-                transition={{ duration: 1.5, ease: 'easeInOut' }} 
-                className="absolute inset-0"
-              >
-                <Image 
-                  src={images[currentSlide]?.url || '/placeholder.jpg'} 
-                  alt={images[currentSlide]?.title || 'Portfolio'} 
-                  fill 
-                  className="object-cover" 
-                  priority={currentSlide === 0} 
-                  quality={90}
-                  onError={(e) => {
-                    // Fallback on image load error
-                    e.currentTarget.src = '/placeholder.jpg';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              </motion.div>
-            ) : (
-              // Fallback when no images available
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-white/20">
-                    <svg className="w-32 h-32 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                    </svg>
-                    <p className="text-lg font-playfair">No images available</p>
+      <section className="fixed inset-0 w-full h-full z-10">
+        {/* Content is positioned above the background video */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Slider only visible if no background video */}
+          {!backgroundVideo && (
+            <AnimatePresence mode="wait">
+              {images.length > 0 && images[currentSlide] ? (
+                <motion.div 
+                  key={currentSlide} 
+                  initial={{ opacity: 0, scale: 1.1 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0, scale: 0.95 }} 
+                  transition={{ duration: 1.5, ease: 'easeInOut' }} 
+                  className="absolute inset-0"
+                >
+                  <Image 
+                    src={images[currentSlide]?.url || '/placeholder.jpg'} 
+                    alt={images[currentSlide]?.title || 'Portfolio'} 
+                    fill 
+                    className="object-cover" 
+                    priority={currentSlide === 0} 
+                    quality={90}
+                    onError={(e) => {
+                      // Fallback on image load error
+                      e.currentTarget.src = '/placeholder.jpg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                </motion.div>
+              ) : (
+                // Fallback when no images available
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white/20">
+                      <svg className="w-32 h-32 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                      </svg>
+                      <p className="text-lg font-playfair">No images available</p>
+                    </div>
                   </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              </div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
+          )}
 
-          {/* Slider Controls */}
-          {images.length > 1 && (
+          {/* Slider Controls - Only show when no video background */}
+          {!backgroundVideo && images.length > 1 && (
             <>
               <button 
                 onClick={prevSlide} 
-                className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300 group touch-manipulation" 
+                className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300 group touch-manipulation pointer-events-auto" 
                 aria-label="Previous"
               >
                 <FiChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:transform group-hover:-translate-x-1 transition-transform" />
               </button>
               <button 
                 onClick={nextSlide} 
-                className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300 group touch-manipulation" 
+                className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300 group touch-manipulation pointer-events-auto" 
                 aria-label="Next"
               >
                 <FiChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:transform group-hover:translate-x-1 transition-transform" />
@@ -319,8 +390,9 @@ export default function ProfessionalHomePage() {
           initial={{ opacity: 0, y: 50 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 1, delay: 2.2 }} 
-          className="absolute inset-0 flex flex-col items-center justify-center z-30 text-center px-4 sm:px-6"
+          className="absolute inset-0 flex flex-col items-center justify-center z-30 text-center px-4 sm:px-6 pointer-events-none"
         >
+          <div className="pointer-events-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-playfair font-bold text-white mb-4 sm:mb-6 leading-tight">
             Capturing Life's
             <br />
@@ -339,27 +411,30 @@ export default function ProfessionalHomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none px-4">
-            <motion.button
-              onClick={async () => {
-                try {
-                  setIsTransitioning(true);
-                  await new Promise(resolve => setTimeout(resolve, 300));
-                  switchTheme('simple');
-                  router.push('/');
-                } catch (error) {
-                  console.error('Error switching theme:', error);
-                  setIsTransitioning(false);
-                }
-              }}
-              disabled={isTransitioning}
+            {/* Demande de Devis Button - Primary CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation disabled:opacity-50"
+              className="w-full sm:w-auto"
             >
-              <FiGrid className="w-4 h-4" />
-              {isTransitioning ? 'Switching...' : 'Switch to Simple Mode'}
-            </motion.button>
-            
+              <Link
+                href="/booking"
+                className="group relative w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-[#d4af37] text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation overflow-hidden font-semibold"
+              >
+                {/* Shine effect */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                
+                {/* Text */}
+                <span className="relative z-10">Demande de Devis</span>
+                
+                {/* Arrow */}
+                <FiChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -385,6 +460,28 @@ export default function ProfessionalHomePage() {
                 <FiChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
             </motion.div>
+            
+            <motion.button
+              onClick={async () => {
+                try {
+                  setIsTransitioning(true);
+                  await new Promise(resolve => setTimeout(resolve, 300));
+                  switchTheme('simple');
+                  router.push('/');
+                } catch (error) {
+                  console.error('Error switching theme:', error);
+                  setIsTransitioning(false);
+                }
+              }}
+              disabled={isTransitioning}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation disabled:opacity-50"
+            >
+              <FiGrid className="w-4 h-4" />
+              {isTransitioning ? 'Switching...' : 'Switch to Simple Mode'}
+            </motion.button>
+          </div>
           </div>
         </motion.div>
       </section>

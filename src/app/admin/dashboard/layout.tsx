@@ -1,7 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
+import { FiMenu } from 'react-icons/fi';
+import AdminSidebar from '@/components/AdminSidebar';
 
 export default function AdminLayout({
   children,
@@ -9,6 +12,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { data: session, status } = useSession();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Show loading state while checking authentication
   if (status === 'loading') {
@@ -33,7 +37,7 @@ export default function AdminLayout({
     );
   }
 
-  // Authenticated - render the dashboard
+  // Authenticated - render the dashboard with sidebar
   return (
     <>
       <Toaster 
@@ -70,7 +74,34 @@ export default function AdminLayout({
           },
         }}
       />
-      {children}
+      
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
+        {/* Mobile Sidebar Backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+        {/* Main Content */}
+        <div className="lg:pl-64">
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden fixed top-4 left-4 z-40">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-3 bg-white dark:bg-dark-800 rounded-lg shadow-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700"
+            >
+              <FiMenu className="w-6 h-6" />
+            </button>
+          </div>
+
+          {children}
+        </div>
+      </div>
     </>
   );
 }

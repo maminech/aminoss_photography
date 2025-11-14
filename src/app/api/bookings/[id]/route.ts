@@ -49,29 +49,64 @@ export async function PATCH(
       },
     });
 
-    // If approved, sync to calendar
-    if (status === 'approved' && !booking.calendarEventId) {
+    // If approved, sync ALL events to calendar
+    if (status === 'approved') {
       try {
-        const calendarEvent = await prisma.calendarEvent.create({
-          data: {
-            date: booking.eventDate,
-            title: `${booking.eventType} - ${booking.name}`,
-            clientName: booking.name,
-            eventType: booking.eventType,
-            location: booking.location,
-            notes: booking.message || undefined,
-            status: 'confirmed',
-            price: booking.packagePrice || undefined,
-          },
-        });
+        // Check if booking has multiple events (new format)
+        if (booking.events && Array.isArray(booking.events) && booking.events.length > 0) {
+          // Create calendar event for EACH event in the booking
+          const calendarEventIds: string[] = [];
+          
+          for (const event of booking.events as any[]) {
+            const calendarEvent = await prisma.calendarEvent.create({
+              data: {
+                date: new Date(event.eventDate),
+                title: `${event.eventType} - ${booking.name}`,
+                clientName: booking.name,
+                eventType: event.eventType,
+                location: booking.location || event.eventName || undefined,
+                notes: `${event.eventName || ''}\nPackage: ${event.packageType || ''} ${event.packageLevel || ''}\nTime: ${event.timeSlot || ''}\n${booking.message || ''}`.trim(),
+                status: 'confirmed',
+                price: booking.packagePrice || undefined,
+              },
+            });
+            
+            calendarEventIds.push(calendarEvent.id);
+          }
+          
+          // Store all calendar event IDs in the booking (as JSON array)
+          await prisma.booking.update({
+            where: { id: params.id },
+            data: {
+              calendarEventId: calendarEventIds[0], // First event ID for backward compatibility
+              // Store all IDs in adminNotes for reference
+              adminNotes: `${booking.adminNotes || ''}\n[Calendar Events: ${calendarEventIds.join(', ')}]`.trim(),
+            },
+          });
+        } 
+        // Fallback for old single-event bookings
+        else if (!booking.calendarEventId) {
+          const calendarEvent = await prisma.calendarEvent.create({
+            data: {
+              date: booking.eventDate,
+              title: `${booking.eventType} - ${booking.name}`,
+              clientName: booking.name,
+              eventType: booking.eventType,
+              location: booking.location,
+              notes: booking.message || undefined,
+              status: 'confirmed',
+              price: booking.packagePrice || undefined,
+            },
+          });
 
-        // Link calendar event to booking
-        await prisma.booking.update({
-          where: { id: params.id },
-          data: {
-            calendarEventId: calendarEvent.id,
-          },
-        });
+          // Link calendar event to booking
+          await prisma.booking.update({
+            where: { id: params.id },
+            data: {
+              calendarEventId: calendarEvent.id,
+            },
+          });
+        }
       } catch (calendarError) {
         console.error('Error creating calendar event:', calendarError);
         // Continue even if calendar sync fails

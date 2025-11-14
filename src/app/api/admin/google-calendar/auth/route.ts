@@ -17,7 +17,18 @@ export async function GET() {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const redirectUri = process.env.GOOGLE_REDIRECT_URI;
 
+    console.log('Google Calendar auth check:', {
+      hasClientId: !!clientId,
+      hasRedirectUri: !!redirectUri,
+      clientId: clientId?.substring(0, 20) + '...',
+      redirectUri
+    });
+
     if (!clientId || !redirectUri) {
+      console.error('Missing Google Calendar credentials:', {
+        GOOGLE_CLIENT_ID: !!clientId,
+        GOOGLE_REDIRECT_URI: !!redirectUri
+      });
       return NextResponse.json(
         { 
           error: 'Google Calendar not configured',

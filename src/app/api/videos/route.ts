@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 // Public API - Get videos for display on website
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +21,14 @@ export async function GET(request: NextRequest) {
       ],
     });
 
-    return NextResponse.json(videos);
+    const response = NextResponse.json(videos);
+    
+    // Prevent caching
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    return response;
   } catch (error: any) {
     console.error('Error fetching public videos:', error);
     return NextResponse.json(

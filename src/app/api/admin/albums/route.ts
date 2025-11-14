@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || session.user?.role?.toLowerCase() !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -51,11 +51,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    console.log('Album POST - Session check:', {
+      hasSession: !!session,
+      user: session?.user,
+      role: session?.user?.role,
+    });
+    
+    if (!session) {
+      console.error('Album POST - No session found');
+      return NextResponse.json({ error: 'Not authenticated. Please log in again.' }, { status: 401 });
+    }
+    
+    const userRole = session.user?.role?.toLowerCase();
+    if (userRole !== 'admin') {
+      console.error('Album POST - User is not admin. Role:', session.user?.role);
+      return NextResponse.json({ error: 'Unauthorized. Admin access required.' }, { status: 401 });
     }
 
     const body = await request.json();
+    console.log('Creating album with body:', body);
+    
     const {
       title,
       description,
@@ -67,6 +82,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!title) {
+      console.error('Album creation failed: Title is required');
       return NextResponse.json(
         { error: 'Title is required' },
         { status: 400 }
@@ -91,11 +107,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Album created successfully:', album.id);
     return NextResponse.json(album);
   } catch (error) {
     console.error('Error creating album:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to create album' },
+      { error: 'Failed to create album', details: errorMessage },
       { status: 500 }
     );
   }
@@ -105,7 +123,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || session.user?.role?.toLowerCase() !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -146,7 +164,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || session.user?.role?.toLowerCase() !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

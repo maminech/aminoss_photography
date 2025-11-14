@@ -14,11 +14,21 @@ export async function GET(request: Request) {
     const homepage = searchParams.get('homepage') === 'true';
     const limit = parseInt(searchParams.get('limit') || '20');
 
-    // Fetch albums that should be shown
+    // Fetch albums that should be shown - with fresh data
     const albums = await prisma.album.findMany({
       where: homepage
-        ? { showOnHomepage: true }
-        : { showInGallery: true },
+        ? { 
+            showOnHomepage: true,
+            images: {
+              some: {}  // Only albums with at least one image
+            }
+          }
+        : { 
+            showInGallery: true,
+            images: {
+              some: {}
+            }
+          },
       include: {
         images: {
           orderBy: { order: 'asc' },
@@ -40,21 +50,41 @@ export async function GET(request: Request) {
       take: limit,
     });
 
-    // Transform to post format
-    const posts = albums.map((album) => ({
-      id: album.id,
-      type: 'post' as const,
-      title: album.title,
-      description: album.description,
-      category: album.category,
-      coverImage: album.coverImageUrl || album.images[0]?.thumbnailUrl || '',
-      imageCount: album.images.length,
-      images: album.images,
-      createdAt: album.createdAt,
-      featured: album.featured,
-    }));
+    // Add cache-busting timestamp to all image URLs
+    const timestamp = Date.now();
+    const cacheBuster = `?v=${timestamp}`;
 
-    return NextResponse.json(posts);
+    // Transform to post format with cache-busting URLs
+    const posts = albums
+      .filter(album => album.images.length > 0) // Only albums with images
+      .map((album) => ({
+        id: album.id,
+        type: 'post' as const,
+        title: album.title,
+        description: album.description,
+        category: album.category,
+        coverImage: (album.coverImageUrl || album.images[0]?.thumbnailUrl || '') + cacheBuster,
+        imageCount: album.images.length,
+        images: album.images.map(img => ({
+          ...img,
+          url: img.url + cacheBuster,
+          thumbnailUrl: img.thumbnailUrl + cacheBuster,
+        })),
+        createdAt: album.createdAt,
+        featured: album.featured,
+      }));
+
+    const response = NextResponse.json(posts);
+    
+    // Aggressive cache prevention
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, s-maxage=0, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Surrogate-Control', 'no-store');
+    response.headers.set('CDN-Cache-Control', 'no-store');
+    response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+    
+    return response;
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json(

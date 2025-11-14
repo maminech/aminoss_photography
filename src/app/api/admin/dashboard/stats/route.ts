@@ -12,6 +12,7 @@ export async function GET() {
       totalBookings,
       totalTeamMembers,
       unreadMessages,
+      tracking,
     ] = await Promise.all([
       prisma.image.count(),
       prisma.video.count(),
@@ -20,6 +21,14 @@ export async function GET() {
       prisma.booking.count(),
       prisma.teamMember.count(),
       prisma.contactMessage.count({ where: { status: 'unread' } }),
+      prisma.booking.count({ 
+        where: { 
+          OR: [
+            { status: 'pending' },
+            { viewedPackages: true, completedForm: false }
+          ]
+        } 
+      }),
     ]);
 
     return NextResponse.json({
@@ -30,6 +39,7 @@ export async function GET() {
       totalBookings,
       totalTeamMembers,
       unreadMessages,
+      tracking,
     });
   } catch (error: any) {
     console.error('Error fetching dashboard stats:', error);

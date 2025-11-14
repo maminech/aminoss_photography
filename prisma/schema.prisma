@@ -336,7 +336,7 @@ model Pack {
   description String
   price       Float
   duration    String // e.g., "2 hours", "Full day"
-  coverImage  String
+  coverImage  String? // Optional cover image
   features    String[] // List of included features
   category    String // e.g., "Wedding", "Portrait", "Fashion"
   packageType String   @default("aymen") // "aymen" or "equipe" - photographer type

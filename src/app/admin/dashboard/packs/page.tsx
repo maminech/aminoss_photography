@@ -9,9 +9,10 @@ interface Pack {
   description: string;
   price: number;
   duration: string;
-  coverImage: string;
+  coverImage?: string;
   features: string[];
   category: string;
+  packageType?: string;
   active: boolean;
   order: number;
   _count?: {
@@ -24,6 +25,7 @@ export default function AdminPacksPage() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
+  const [imageUploading, setImageUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -33,6 +35,7 @@ export default function AdminPacksPage() {
     coverImage: '',
     features: [''],
     category: 'Wedding',
+    packageType: 'aymen',
     active: true,
     order: 0,
   });
@@ -63,9 +66,10 @@ export default function AdminPacksPage() {
         description: pack.description,
         price: pack.price.toString(),
         duration: pack.duration,
-        coverImage: pack.coverImage,
+        coverImage: pack.coverImage || '',
         features: pack.features.length > 0 ? pack.features : [''],
         category: pack.category,
+        packageType: pack.packageType || 'aymen',
         active: pack.active,
         order: pack.order,
       });
@@ -79,6 +83,7 @@ export default function AdminPacksPage() {
         coverImage: '',
         features: [''],
         category: 'Wedding',
+        packageType: 'aymen',
         active: true,
         order: 0,
       });
@@ -146,6 +151,54 @@ export default function AdminPacksPage() {
   const removeFeature = (index: number) => {
     if (formData.features.length > 1) {
       setFormData({ ...formData, features: formData.features.filter((_, i) => i !== index) });
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+
+    setImageUploading(true);
+
+    try {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dc67gl8fu';
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'aminoss_portfolio');
+      formData.append('folder', 'packages');
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      setFormData((prev) => ({ ...prev, coverImage: data.secure_url }));
+      alert('✅ Image uploaded successfully!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('❌ Failed to upload image');
+    } finally {
+      setImageUploading(false);
     }
   };
 
@@ -371,21 +424,83 @@ export default function AdminPacksPage() {
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Package Type *
+                  </label>
+                  <select
+                    value={formData.packageType}
+                    onChange={(e) => setFormData({ ...formData, packageType: e.target.value })}
+                    required
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  >
+                    <option value="aymen">Par Aymen</option>
+                    <option value="equipe">Par Équipe</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Order
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Cover Image URL *
+                  Cover Image (Optional)
                 </label>
-                <input
-                  type="url"
-                  value={formData.coverImage}
-                  onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  required
-                  className="w-full px-4 py-2 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="https://images.unsplash.com/..."
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Use Unsplash, Cloudinary, or any image URL
-                </p>
+                <div className="space-y-3">
+                  {/* Current Image Preview */}
+                  {formData.coverImage && (
+                    <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                      <img
+                        src={formData.coverImage}
+                        alt="Cover preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, coverImage: '' })}
+                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      >
+                        <FiX className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Upload Button */}
+                  <div className="flex items-center space-x-3">
+                    <label className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={imageUploading}
+                        className="hidden"
+                      />
+                      <div className={`flex items-center justify-center space-x-2 px-4 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-dark-700 transition ${
+                        imageUploading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}>
+                        <FiImage className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {imageUploading ? 'Uploading...' : formData.coverImage ? 'Change Image' : 'Upload Image'}
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Optional: Upload a cover image for this package (Max 10MB)
+                  </p>
+                </div>
               </div>
 
               <div>
