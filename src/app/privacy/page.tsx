@@ -11,6 +11,10 @@ export default function PrivacyPolicyPage() {
             Last updated: {new Date().toLocaleDateString()}
           </p>
 
+          <p className="text-gray-700 dark:text-gray-300 mb-6">
+            Aminoss Photography ("we", "our", "us") operates aminossphotography.vercel.app. This page informs you of our policies regarding the collection, use, and disclosure of personal data.
+          </p>
+
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
               1. Information We Collect

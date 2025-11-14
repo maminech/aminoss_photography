@@ -8,7 +8,7 @@ export default function DataDeletionPage() {
         
         <div className="prose prose-lg dark:prose-invert max-w-none">
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            We respect your privacy and your right to control your data.
+            Aminoss Photography respects your privacy and your right to control your data.
           </p>
 
           <section className="mb-8">
