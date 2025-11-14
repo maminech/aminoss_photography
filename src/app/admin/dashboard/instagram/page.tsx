@@ -10,7 +10,9 @@ import {
   FiClock,
   FiDownload,
   FiTrash2,
-  FiAlertCircle
+  FiAlertCircle,
+  FiImage,
+  FiVideo
 } from 'react-icons/fi';
 
 interface SyncStatus {
@@ -137,8 +139,9 @@ export default function InstagramIntegrationPage() {
     }
   };
 
-  const handleImportToPhotos = async () => {
-    if (!confirm('Import all Instagram posts to Photos section and Cloudinary? This will skip already imported posts.')) {
+  const handleImportToPhotos = async (type?: 'photos' | 'videos') => {
+    const typeText = type === 'photos' ? 'Photos' : type === 'videos' ? 'Videos' : 'Photos and Videos';
+    if (!confirm(`Import all Instagram ${typeText.toLowerCase()} to ${typeText} section? This will skip already imported items.`)) {
       return;
     }
 
@@ -149,7 +152,7 @@ export default function InstagramIntegrationPage() {
       const response = await fetch('/api/admin/instagram/import-to-photos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ type }),
       });
 
       const data = await response.json();
@@ -157,7 +160,7 @@ export default function InstagramIntegrationPage() {
       if (response.ok) {
         setMessage({ 
           type: 'success', 
-          text: `✅ ${data.message}. Imported: ${data.stats.imported}, Skipped: ${data.stats.skipped}` 
+          text: `✅ ${data.message}. Total imported: ${data.stats.imported}, Skipped: ${data.stats.skipped}` 
         });
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to import posts' });
@@ -370,7 +373,7 @@ export default function InstagramIntegrationPage() {
               Sync fetches posts from Instagram and uploads to Cloudinary. Import adds them to Photos section.
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <button
                 onClick={handleSync}
                 disabled={syncing}
@@ -390,7 +393,25 @@ export default function InstagramIntegrationPage() {
               </button>
 
               <button
-                onClick={handleImportToPhotos}
+                onClick={() => handleImportToPhotos('photos')}
+                disabled={loading}
+                className="py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <FiRefreshCw className="w-5 h-5 animate-spin" />
+                    Importing...
+                  </>
+                ) : (
+                  <>
+                    <FiImage className="w-5 h-5" />
+                    Import Photos
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => handleImportToPhotos('videos')}
                 disabled={loading}
                 className="py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
@@ -401,8 +422,8 @@ export default function InstagramIntegrationPage() {
                   </>
                 ) : (
                   <>
-                    <FiDownload className="w-5 h-5" />
-                    Import to Photos
+                    <FiVideo className="w-5 h-5" />
+                    Import Videos
                   </>
                 )}
               </button>
