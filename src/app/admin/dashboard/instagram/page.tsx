@@ -18,6 +18,7 @@ interface SyncStatus {
   username?: string;
   lastSync?: string;
   autoSync: boolean;
+  postsCount?: number;
   highlightsCount: number;
   storiesCount: number;
 }
@@ -89,9 +90,10 @@ export default function InstagramIntegrationPage() {
       const data = await response.json();
 
       if (response.ok) {
+        const postsText = data.data.posts ? `${data.data.posts} posts, ` : '';
         setMessage({ 
           type: 'success', 
-          text: `Synced ${data.data.highlights} highlights with ${data.data.stories} stories` 
+          text: `Synced ${postsText}${data.data.highlights} highlights, ${data.data.stories} stories` 
         });
         fetchSyncStatus();
       } else {
@@ -139,7 +141,7 @@ export default function InstagramIntegrationPage() {
             Instagram Integration
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Connect your Instagram account to automatically sync highlights and stories
+            Connect your Instagram account to automatically sync feed posts, highlights, and stories
           </p>
         </div>
 
@@ -194,6 +196,12 @@ export default function InstagramIntegrationPage() {
                   <span className="text-gray-600 dark:text-gray-400">Username:</span>
                   <span className="text-gray-900 dark:text-white font-medium">
                     @{syncStatus.username}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Feed Posts:</span>
+                  <span className="text-gray-900 dark:text-white font-medium">
+                    {syncStatus.postsCount || 0}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
