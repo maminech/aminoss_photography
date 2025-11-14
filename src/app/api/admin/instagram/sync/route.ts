@@ -89,6 +89,94 @@ export async function POST(req: Request) {
     // Sync Instagram Feed Posts and upload to Cloudinary
     for (const post of mediaPosts) {
       try {
+        // Handle CAROUSEL_ALBUM - fetch children media
+        if (post.media_type === 'CAROUSEL_ALBUM') {
+          console.log(`📦 Found carousel album ${post.id}, fetching children...`);
+          
+          try {
+            const childrenResponse = await fetch(
+              `https://graph.instagram.com/${post.id}/children?fields=id,media_type,media_url,thumbnail_url&access_token=${accessToken}`
+            );
+
+            if (childrenResponse.ok) {
+              const childrenData = await childrenResponse.json();
+              const children = childrenData.data || [];
+              
+              console.log(`  📸 Found ${children.length} items in carousel`);
+              
+              // Process each child media item
+              for (const child of children) {
+                if (child.media_type === 'IMAGE') {
+                  let cloudinaryUrl = child.media_url;
+                  let cloudinaryThumbnail = child.media_url;
+
+                  console.log(`📤 Uploading carousel image ${child.id} to Cloudinary...`);
+                  
+                  try {
+                    const formBody = new URLSearchParams({
+                      file: child.media_url || '',
+                      upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio',
+                      folder: 'aminoss_portfolio/instagram',
+                    });
+
+                    const uploadResponse = await fetch(
+                      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                      {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: formBody.toString(),
+                      }
+                    );
+
+                    if (uploadResponse.ok) {
+                      const uploadResult = await uploadResponse.json();
+                      cloudinaryUrl = uploadResult.secure_url;
+                      cloudinaryThumbnail = uploadResult.secure_url.replace(
+                        '/upload/',
+                        '/upload/w_800,h_800,c_fill,q_90,f_auto/'
+                      );
+                      uploadedToCloudinary++;
+                      console.log(`✅ Uploaded carousel image to Cloudinary: ${cloudinaryUrl}`);
+                    }
+                  } catch (uploadError) {
+                    console.error(`Upload error for carousel item ${child.id}:`, uploadError);
+                  }
+
+                  // Save each carousel image as separate post
+                  await prisma.instagramPost.upsert({
+                    where: { instagramId: child.id },
+                    update: {
+                      caption: post.caption || '', // Use parent carousel caption
+                      mediaType: 'IMAGE',
+                      mediaUrl: cloudinaryUrl,
+                      thumbnailUrl: cloudinaryThumbnail,
+                      permalink: post.permalink || '',
+                      timestamp: new Date(post.timestamp),
+                      active: true,
+                      updatedAt: new Date(),
+                    },
+                    create: {
+                      instagramId: child.id,
+                      caption: post.caption || '',
+                      mediaType: 'IMAGE',
+                      mediaUrl: cloudinaryUrl,
+                      thumbnailUrl: cloudinaryThumbnail,
+                      permalink: post.permalink || '',
+                      timestamp: new Date(post.timestamp),
+                      active: true,
+                    },
+                  });
+                  syncedPosts++;
+                }
+              }
+            }
+          } catch (carouselError) {
+            console.error(`Error fetching carousel children for ${post.id}:`, carouselError);
+          }
+          
+          continue; // Skip to next post after processing carousel
+        }
+
         // Sync both images and videos (use thumbnail for videos)
         if (post.media_type === 'IMAGE' || post.media_type === 'VIDEO') {
           let cloudinaryUrl = post.media_url;
