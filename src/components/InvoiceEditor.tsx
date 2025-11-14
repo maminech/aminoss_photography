@@ -114,6 +114,26 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
     };
   });
 
+  // Recalculate all item totals on mount to ensure consistency
+  useEffect(() => {
+    if (invoice.items && invoice.items.length > 0) {
+      const newItems = invoice.items.map(item => ({
+        ...item,
+        total: Number(item.quantity) * Number(item.unitPrice)
+      }));
+      
+      const { subtotal, taxAmount, totalAmount } = calculateTotals(newItems, invoice.taxRate || 0, invoice.discount || 0);
+      
+      setInvoice(prev => ({
+        ...prev,
+        items: newItems,
+        subtotal,
+        taxAmount,
+        totalAmount
+      }));
+    }
+  }, []); // Run once on mount
+
   const calculateTotals = (items: InvoiceItem[], taxRate: number, discount: number) => {
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
     const taxAmount = 0; // TVA removed
@@ -121,17 +141,47 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
     return { subtotal, taxAmount, totalAmount };
   };
 
+  // Recalculate all item totals on mount to ensure consistency
+  useEffect(() => {
+    if (invoice.items && invoice.items.length > 0) {
+      const needsRecalculation = invoice.items.some(item => 
+        item.total !== (Number(item.quantity) * Number(item.unitPrice))
+      );
+      
+      if (needsRecalculation) {
+        const newItems = invoice.items.map(item => ({
+          ...item,
+          total: Number(item.quantity) * Number(item.unitPrice)
+        }));
+        
+        const { subtotal, taxAmount, totalAmount } = calculateTotals(newItems, invoice.taxRate || 0, invoice.discount || 0);
+        
+        setInvoice(prev => ({
+          ...prev,
+          items: newItems,
+          subtotal,
+          taxAmount,
+          totalAmount
+        }));
+      }
+    }
+  }, []); // Run once on mount
+
   const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
     const newItems = [...(invoice.items || [])];
+    
+    // Convert string to number for numeric fields
+    const numericValue = (field === 'quantity' || field === 'unitPrice') 
+      ? (typeof value === 'string' ? parseFloat(value) || 0 : value)
+      : value;
+    
     newItems[index] = {
       ...newItems[index],
-      [field]: value
+      [field]: numericValue
     };
     
-    // Recalculate item total
-    if (field === 'quantity' || field === 'unitPrice') {
-      newItems[index].total = newItems[index].quantity * newItems[index].unitPrice;
-    }
+    // Always recalculate item total after any change to quantity or unitPrice
+    newItems[index].total = Number(newItems[index].quantity) * Number(newItems[index].unitPrice);
 
     const { subtotal, taxAmount, totalAmount } = calculateTotals(newItems, invoice.taxRate || 0, invoice.discount || 0);
     
@@ -472,9 +522,10 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                           <input
                             type="number"
                             value={item.quantity}
-                            onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => updateItem(index, 'quantity', e.target.value)}
                             className="input-field text-sm w-20 text-center"
                             min="0"
+                            step="1"
                           />
                         ) : (
                           <span className="text-sm">{item.quantity}</span>
@@ -485,7 +536,7 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                           <input
                             type="number"
                             value={item.unitPrice}
-                            onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => updateItem(index, 'unitPrice', e.target.value)}
                             className="input-field text-sm w-28 text-right"
                             min="0"
                             step="0.01"

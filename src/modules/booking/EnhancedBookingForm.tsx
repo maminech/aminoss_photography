@@ -939,7 +939,7 @@ Envoyé depuis innov8production.com
                                         setExpandedPackageLevel(level.value);
                                       }
                                     }}
-                                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                    className="w-full p-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
                                   >
                                     <div className="flex items-center gap-4">
                                       <div className="text-3xl">{packageData.icon}</div>
