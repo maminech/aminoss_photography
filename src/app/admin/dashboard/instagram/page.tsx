@@ -106,6 +106,38 @@ export default function InstagramIntegrationPage() {
     }
   };
 
+  const handleImportToPhotos = async () => {
+    if (!confirm('Import all Instagram posts to Photos section and Cloudinary? This will skip already imported posts.')) {
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/admin/instagram/import-to-photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ 
+          type: 'success', 
+          text: `✅ ${data.message}. Imported: ${data.stats.imported}, Skipped: ${data.stats.skipped}` 
+        });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to import posts' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to import Instagram posts' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDisconnect = async () => {
     if (!confirm('Are you sure you want to disconnect Instagram? All synced data will be deleted.')) {
       return;
@@ -300,11 +332,14 @@ export default function InstagramIntegrationPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6"
           >
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Sync Actions
             </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Sync fetches posts from Instagram. Import uploads them to Cloudinary and Photos section.
+            </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <button
                 onClick={handleSync}
                 disabled={syncing}
@@ -319,6 +354,24 @@ export default function InstagramIntegrationPage() {
                   <>
                     <FiDownload className="w-5 h-5" />
                     Sync Now
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={handleImportToPhotos}
+                disabled={loading}
+                className="py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <FiRefreshCw className="w-5 h-5 animate-spin" />
+                    Importing...
+                  </>
+                ) : (
+                  <>
+                    <FiDownload className="w-5 h-5" />
+                    Import to Photos
                   </>
                 )}
               </button>
