@@ -52,24 +52,34 @@ export async function POST(req: Request) {
 
     console.log('🔄 Starting Instagram sync...');
 
-    // Fetch Instagram Media (Feed Posts)
+    // Try to fetch Instagram Media (Feed Posts) - requires Business account
     const mediaResponse = await fetch(
-      `https://graph.instagram.com/${userId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count&limit=50&access_token=${accessToken}`
+      `https://graph.instagram.com/${userId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&limit=50&access_token=${accessToken}`
     );
 
+    let mediaPosts: InstagramMedia[] = [];
+    
     if (!mediaResponse.ok) {
       const error = await mediaResponse.json();
-      console.error('Instagram API Error:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch Instagram media', details: error },
-        { status: mediaResponse.status }
-      );
+      console.error('Instagram Media API Error:', error);
+      console.log('ℹ️ Note: Feed posts require Instagram Business Account with proper permissions');
+      
+      // Check if it's a permissions error
+      if (error.error?.code === 190 || error.error?.code === 10 || error.error?.message?.includes('business')) {
+        return NextResponse.json({
+          error: 'Instagram Business Account Required',
+          message: 'To sync Instagram feed posts, you need:\n1. Convert your Instagram to a Business Account\n2. Connect it to a Facebook Page\n3. Generate a new access token with instagram_business_basic permission',
+          details: error
+        }, { status: 400 });
+      }
+      
+      // Continue with highlights/stories only
+      console.log('⚠️ Skipping feed posts, will try highlights only');
+    } else {
+      const mediaData = await mediaResponse.json();
+      mediaPosts = mediaData.data || [];
+      console.log(`📸 Found ${mediaPosts.length} Instagram posts`);
     }
-
-    const mediaData = await mediaResponse.json();
-    const mediaPosts: InstagramMedia[] = mediaData.data || [];
-
-    console.log(`📸 Found ${mediaPosts.length} Instagram posts`);
 
     let syncedPosts = 0;
     let syncedHighlights = 0;
