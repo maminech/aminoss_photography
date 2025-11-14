@@ -99,16 +99,21 @@ export async function POST(req: Request) {
           console.log(`📤 Uploading ${post.media_type} ${post.id} to Cloudinary...`);
           
           try {
-            const formData = new FormData();
-            formData.append('file', urlToUpload);
-            formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio');
-            formData.append('folder', 'aminoss_portfolio/instagram');
+            // Use URLSearchParams for proper form encoding
+            const formBody = new URLSearchParams({
+              file: urlToUpload || '',
+              upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio',
+              folder: 'aminoss_portfolio/instagram',
+            });
 
             const uploadResponse = await fetch(
               `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
               {
                 method: 'POST',
-                body: formData,
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formBody.toString(),
               }
             );
 
