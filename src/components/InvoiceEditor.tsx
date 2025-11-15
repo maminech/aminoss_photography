@@ -389,20 +389,42 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
       
       const method = existingInvoice ? 'PATCH' : 'POST';
       
+      // Clean the invoice data - remove extra metadata from items and ensure proper types
+      const cleanedInvoice = {
+        ...invoice,
+        items: invoice.items?.map(item => ({
+          description: String(item.description || ''),
+          quantity: Number(item.quantity) || 1,
+          unitPrice: Number(item.unitPrice) || 0,
+          total: Number(item.total) || 0
+        })),
+        subtotal: Number(invoice.subtotal) || 0,
+        taxRate: Number(invoice.taxRate) || 0,
+        taxAmount: Number(invoice.taxAmount) || 0,
+        discount: Number(invoice.discount) || 0,
+        totalAmount: Number(invoice.totalAmount) || 0,
+        paidAmount: Number(invoice.paidAmount) || 0
+      };
+      
       const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(invoice)
+        body: JSON.stringify(cleanedInvoice)
       });
 
-      if (!response.ok) throw new Error('Failed to save invoice');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Save error:', errorData);
+        throw new Error(errorData.error || 'Failed to save invoice');
+      }
       
       const savedInvoice = await response.json();
       onSave(savedInvoice);
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving invoice:', error);
-      alert('Erreur lors de la sauvegarde de la facture');
+      const errorMessage = error.message || 'Erreur lors de la sauvegarde de la facture';
+      alert(`❌ ${errorMessage}\n\nVeuillez vérifier les données et réessayer.`);
     } finally {
       setIsSaving(false);
     }
