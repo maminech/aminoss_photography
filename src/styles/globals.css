@@ -453,4 +453,53 @@ html {
   .touch-action-pan-y {
     touch-action: pan-y;
   }
+  
+  /* Luxury Video Section Enhancements */
+  .video-card-luxury {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, box-shadow;
+  }
+  
+  .video-card-luxury:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Smooth video element transitions */
+  video {
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  }
+  
+  /* Custom video controls styling */
+  video::-webkit-media-controls-panel {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  }
+  
+  /* Luxury scrollbar for modals */
+  .luxury-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .luxury-scrollbar::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 4px;
+  }
+  
+  .luxury-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.4);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+  
+  .luxury-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.7);
+  }
+  
+  /* Touch-friendly video cards */
+  @media (hover: none) and (pointer: coarse) {
+    .video-card-luxury:active {
+      transform: scale(0.98);
+    }
+  }
 }

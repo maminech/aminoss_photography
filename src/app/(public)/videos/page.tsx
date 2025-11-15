@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import VideoPlayer from '@/components/VideoPlayer';
 import NavigationButton from '@/components/NavigationButton';
 import { VideoItem } from '@/types';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
-import { FiPlay } from 'react-icons/fi';
+import { FiPlay, FiX, FiMaximize2, FiVolume2, FiVolumeX } from 'react-icons/fi';
 
 export default function VideosPage() {
   const { currentTheme } = useLayoutTheme();
@@ -14,6 +14,10 @@ export default function VideosPage() {
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
+  const [hoveredVideo, setHoveredVideo] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({});
 
   useEffect(() => {
     const loadVideos = async () => {
@@ -104,7 +108,7 @@ export default function VideosPage() {
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="aspect-video bg-gray-200 animate-pulse" />
+                  <div key={i} className="aspect-video bg-gray-200 dark:bg-gray-800 animate-pulse rounded-lg" />
                 ))}
               </div>
             ) : filteredVideos.length > 0 ? (
@@ -119,46 +123,91 @@ export default function VideosPage() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
-                      className={`group relative overflow-hidden ${isReel ? 'md:col-span-1 mx-auto max-w-sm' : ''}`}
+                      className={`group relative overflow-hidden cursor-pointer ${isReel ? 'md:col-span-1 mx-auto max-w-sm' : ''}`}
+                      onClick={() => setSelectedVideo(video)}
+                      onMouseEnter={() => {
+                        setHoveredVideo(video.id);
+                        const videoEl = videoRefs.current[video.id];
+                        if (videoEl) {
+                          videoEl.play().catch(() => {});
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        setHoveredVideo(null);
+                        const videoEl = videoRefs.current[video.id];
+                        if (videoEl) {
+                          videoEl.pause();
+                          videoEl.currentTime = 0;
+                        }
+                      }}
                     >
-                      <div className="relative aspect-video bg-gray-900 overflow-hidden">
-                        {video.thumbnailUrl ? (
+                      <div className="relative aspect-video bg-gray-900 overflow-hidden rounded-lg shadow-2xl">
+                        {/* Video preview on hover */}
+                        <video
+                          ref={(el) => { videoRefs.current[video.id] = el; }}
+                          src={video.url}
+                          muted
+                          loop
+                          playsInline
+                          className="absolute inset-0 w-full h-full object-cover"
+                          style={{ opacity: hoveredVideo === video.id ? 1 : 0 }}
+                        />
+                        
+                        {/* Thumbnail */}
+                        {video.thumbnailUrl && (
                           <img
                             src={video.thumbnailUrl}
                             alt={video.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+                            style={{ 
+                              opacity: hoveredVideo === video.id ? 0 : 1,
+                              transform: hoveredVideo === video.id ? 'scale(1.1)' : 'scale(1)'
+                            }}
                           />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
                         )}
                         
-                        {/* Novo-style overlay */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <div className="w-16 h-16 rounded-full border-2 border-[#d4af37] flex items-center justify-center">
-                            <FiPlay className="w-8 h-8 text-[#d4af37] ml-1" />
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-4">
-                        <h3 className="text-xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-2 group-hover:text-[#d4af37] transition-colors">
-                          {video.title}
-                        </h3>
-                        {video.description && (
-                          <p className="text-gray-600 font-lato text-sm line-clamp-2">
-                            {video.description}
-                          </p>
-                        )}
-                        {video.category && (
-                          <span className="inline-block mt-2 text-xs font-lato uppercase tracking-wider text-[#d4af37]">
-                            {video.category}
-                          </span>
-                        )}
-                      </div>
+                        {/* Luxury gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                        
+                        {/* Play button overlay - hidden on hover */}
+                        <motion.div 
+                          className="absolute inset-0 flex items-center justify-center"
+                          animate={{ opacity: hoveredVideo === video.id ? 0 : 1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-md border-2 border-[#d4af37] flex items-center justify-center shadow-2xl"
+                          >
+                            <FiPlay className="w-10 h-10 text-[#d4af37] ml-1" />
+                          </motion.div>
+                        </motion.div>
 
-                      {/* Video Player Component */}
-                      <div className="mt-4">
-                        <VideoPlayer video={video} />
+                        {/* Title overlay at bottom */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                          <motion.h3 
+                            className="text-xl font-playfair font-bold text-white mb-2"
+                            initial={{ opacity: 0.9 }}
+                            whileHover={{ opacity: 1 }}
+                          >
+                            {video.title}
+                          </motion.h3>
+                          {video.description && (
+                            <motion.p 
+                              className="text-white/90 font-lato text-sm line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                              initial={{ y: 10 }}
+                              whileHover={{ y: 0 }}
+                            >
+                              {video.description}
+                            </motion.p>
+                          )}
+                          {video.category && (
+                            <span className="inline-block mt-2 px-3 py-1 bg-[#d4af37]/20 backdrop-blur-sm border border-[#d4af37]/50 rounded-full text-xs font-lato uppercase tracking-wider text-[#d4af37]">
+                              {video.category}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -171,6 +220,98 @@ export default function VideosPage() {
             )}
           </div>
         </section>
+
+        {/* Luxury Fullscreen Video Modal */}
+        <AnimatePresence>
+          {selectedVideo && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
+              onClick={() => setSelectedVideo(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="relative w-full max-w-6xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close button */}
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setSelectedVideo(null)}
+                  className="absolute -top-12 right-0 md:-right-12 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
+                >
+                  <FiX className="w-5 h-5" />
+                </motion.button>
+
+                {/* Video container */}
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
+                  <video
+                    src={selectedVideo.url}
+                    controls
+                    autoPlay
+                    muted={isMuted}
+                    playsInline
+                    className="w-full h-full object-contain bg-black"
+                    onTouchStart={(e) => {
+                      // Mobile gesture support - double tap to play/pause
+                      const video = e.currentTarget;
+                      if (video.paused) {
+                        video.play();
+                      } else {
+                        video.pause();
+                      }
+                    }}
+                  />
+
+                  {/* Luxury controls overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                    <h3 className="text-2xl font-playfair font-bold text-white mb-2">
+                      {selectedVideo.title}
+                    </h3>
+                    {selectedVideo.description && (
+                      <p className="text-white/90 font-lato text-sm mb-4">
+                        {selectedVideo.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-3">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsMuted(!isMuted)}
+                        className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-colors flex items-center gap-2"
+                      >
+                        {isMuted ? <FiVolumeX className="w-4 h-4" /> : <FiVolume2 className="w-4 h-4" />}
+                        <span className="text-sm font-lato">{isMuted ? 'Unmute' : 'Mute'}</span>
+                      </motion.button>
+                      {selectedVideo.category && (
+                        <span className="px-4 py-2 rounded-full bg-[#d4af37]/20 backdrop-blur-md border border-[#d4af37]/50 text-[#d4af37] text-xs font-lato uppercase tracking-wider">
+                          {selectedVideo.category}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Swipe instruction for mobile */}
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 0.6, y: 0 }}
+                  transition={{ delay: 1 }}
+                  className="text-center text-white/60 text-sm font-lato mt-4 md:hidden"
+                >
+                  Swipe down to close
+                </motion.p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
