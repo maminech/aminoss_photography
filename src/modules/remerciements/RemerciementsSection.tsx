@@ -73,6 +73,9 @@ export default function RemerciementsSection({
       if (remercRes.ok) {
         const data = await remercRes.json();
         oldItems = data.sort((a: RemerciementItem, b: RemerciementItem) => a.order - b.order);
+        console.log('Remerciements loaded:', oldItems.length, 'items');
+      } else {
+        console.warn('Failed to load remerciements:', remercRes.status);
       }
 
       // Fetch new client testimonials
@@ -81,6 +84,9 @@ export default function RemerciementsSection({
       if (testimonialRes.ok) {
         const data = await testimonialRes.json();
         newTestimonials = data;
+        console.log('Testimonials loaded:', newTestimonials.length, 'items');
+      } else {
+        console.warn('Failed to load testimonials:', testimonialRes.status);
       }
 
       setItems(oldItems);
@@ -88,6 +94,7 @@ export default function RemerciementsSection({
       
       // Combine both types - featured testimonials first, then everything else mixed
       const combined = [...newTestimonials, ...oldItems];
+      console.log('Total combined items:', combined.length);
       setAllItems(combined);
     } catch (error) {
       console.error('Error fetching content:', error);

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         image,
         clientEmail: session.user.email, // Admin's email
         approved: true, // Admin-created items are auto-approved
-        active: active !== undefined ? active : true,
+        active: true, // Always active when created by admin
         order: order !== undefined ? order : ((maxOrder._max.order || 0) + 1),
       },
     });
