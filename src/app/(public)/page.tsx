@@ -352,69 +352,37 @@ export default function HomePage() {
       ) // POSTS tab: Show both photos and videos together, sorted by date
     : videos.filter(v => v.url && v.thumbnailUrl); // VIDEOS tab: Only show videos
 
-  // Instagram Stories highlights data - Fetch from database or use fallback
-  const [highlights, setHighlights] = useState([
-    {
-      id: 'about',
-      name: 'About',
-      coverImage: posts[0]?.coverImage || '/placeholder.jpg',
-      stories: [
-        { id: 'about-1', image: posts[0]?.images[0]?.url || '/placeholder.jpg', title: '👋 Meet the Photographer' },
-        { id: 'about-2', image: posts[1]?.images[0]?.url || '/placeholder.jpg', title: '📸 My Story' },
-        { id: 'about-3', image: posts[2]?.images[0]?.url || '/placeholder.jpg', title: '🎨 My Style' },
-      ]
-    },
-    {
-      id: 'videos',
-      name: 'Videos',
-      coverImage: videos[0]?.thumbnailUrl || '/placeholder.jpg',
-      stories: videos.slice(0, 4).map((vid) => ({
-        id: vid.id,
-        image: vid.thumbnailUrl,
-        title: vid.title
-      }))
-    },
-    {
-      id: 'packages',
-      name: 'Packages',
-      coverImage: posts[3]?.coverImage || '/placeholder.jpg',
-      stories: [
-        { id: 'pack-1', image: posts[3]?.images[0]?.url || '/placeholder.jpg', title: '💍 Wedding Package' },
-        { id: 'pack-2', image: posts[4]?.images[0]?.url || '/placeholder.jpg', title: '👨‍👩‍👧 Family Sessions' },
-        { id: 'pack-3', image: posts[5]?.images[0]?.url || '/placeholder.jpg', title: '🎉 Event Coverage' },
-        { id: 'pack-4', image: posts[6]?.images[0]?.url || '/placeholder.jpg', title: '📸 Portrait Sessions' },
-      ]
-    },
-    {
-      id: 'contact',
-      name: 'Contact',
-      coverImage: posts[7]?.coverImage || '/placeholder.jpg',
-      stories: [
-        { id: 'contact-1', image: posts[7]?.images[0]?.url || '/placeholder.jpg', title: '📱 Book Your Session' },
-        { id: 'contact-2', image: posts[8]?.images[0]?.url || '/placeholder.jpg', title: '✉️ Get in Touch' },
-        { id: 'contact-3', image: posts[9]?.images[0]?.url || '/placeholder.jpg', title: '📍 Location' },
-      ]
-    }
-  ]);
+  // Dynamic highlights from database
+  const [highlights, setHighlights] = useState<any[]>([]);
+  const [highlightsLoading, setHighlightsLoading] = useState(true);
 
-  // Load Instagram highlights if available
+  // Load highlights from database
   useEffect(() => {
-    const loadInstagramHighlights = async () => {
+    const loadHighlights = async () => {
       try {
-        const response = await fetch('/api/instagram/highlights');
+        setHighlightsLoading(true);
+        const response = await fetch('/api/instagram/highlights', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+        });
+        
         if (response.ok) {
-          const instagramHighlights = await response.json();
-          if (instagramHighlights && instagramHighlights.length > 0) {
-            setHighlights(instagramHighlights);
+          const data = await response.json();
+          if (data && data.length > 0) {
+            setHighlights(data);
           }
         }
       } catch (error) {
-        console.error('Failed to load Instagram highlights:', error);
-        // Keep fallback highlights
+        console.error('Failed to load highlights:', error);
+      } finally {
+        setHighlightsLoading(false);
       }
     };
 
-    loadInstagramHighlights();
+    loadHighlights();
   }, []);
 
   const openStories = (index: number) => {
@@ -629,150 +597,78 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Highlights - Instagram Stories Style */}
+        {/* Dynamic Highlights - Instagram Stories Style */}
         <div className="flex gap-4 xs:gap-5 sm:gap-6 overflow-x-auto pb-4 mb-1 px-1" style={{ 
           scrollSnapType: 'x mandatory',
           WebkitOverflowScrolling: 'touch',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'
         }}>
-          <button 
-            onClick={() => openStories(0)} 
-            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
-            style={{ scrollSnapAlign: 'start' }}
-          >
-            <div className="relative">
+          {highlightsLoading ? (
+            // Loading skeletons
+            [...Array(4)].map((_, i) => (
               <div 
-                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
-                style={{ 
-                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
-                }}
+                key={`skeleton-${i}`}
+                className="flex flex-col items-center gap-1.5 flex-shrink-0" 
+                style={{ scrollSnapAlign: 'start' }}
               >
-                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
-                  <div className="w-full h-full rounded-full overflow-hidden">
-                    {highlights[0]?.coverImage ? (
-                      <Image
-                        src={highlights[0].coverImage}
-                        alt="About"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div 
-                        className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary-600"
-                      >
-                        <BsGrid3X3 className="w-6 h-6 text-white" />
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <div className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse" />
+                <div className="w-12 h-3 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
               </div>
-            </div>
-            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">About</span>
-          </button>
-          
-          <button 
-            onClick={() => openStories(1)} 
-            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
-            style={{ scrollSnapAlign: 'start' }}
-          >
-            <div className="relative">
-              <div 
-                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
-                style={{ 
-                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
+            ))
+          ) : highlights.length > 0 ? (
+            // Dynamic highlights from database
+            highlights.map((highlight, index) => (
+              <motion.button
+                key={highlight.id}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  duration: 0.3,
+                  delay: index * 0.1,
+                  ease: [0.4, 0, 0.2, 1]
                 }}
+                onClick={() => openStories(index)} 
+                className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
+                style={{ scrollSnapAlign: 'start' }}
               >
-                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
-                  <div className="w-full h-full rounded-full overflow-hidden">
-                    {highlights[1]?.coverImage ? (
-                      <Image
-                        src={highlights[1].coverImage}
-                        alt="Videos"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-purple-600">
-                        <MdVideoLibrary className="w-6 h-6 text-white" />
+                <div className="relative">
+                  <motion.div 
+                    className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
+                    style={{ 
+                      backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
+                      <div className="w-full h-full rounded-full overflow-hidden">
+                        {highlight.coverImage ? (
+                          <Image
+                            src={highlight.coverImage}
+                            alt={highlight.name}
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-cover"
+                            unoptimized={highlight.coverImage.includes('cloudinary')}
+                          />
+                        ) : (
+                          <div 
+                            className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary-600"
+                          >
+                            <FiBookmark className="w-6 h-6 text-white" />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  </motion.div>
                 </div>
-              </div>
-            </div>
-            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Videos</span>
-          </button>
-          
-          <button 
-            onClick={() => openStories(2)} 
-            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
-            style={{ scrollSnapAlign: 'start' }}
-          >
-            <div className="relative">
-              <div 
-                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
-                style={{ 
-                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
-                }}
-              >
-                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
-                  <div className="w-full h-full rounded-full overflow-hidden">
-                    {highlights[2]?.coverImage ? (
-                      <Image
-                        src={highlights[2].coverImage}
-                        alt="Packages"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600">
-                        <FiPackage className="w-6 h-6 text-white" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Packages</span>
-          </button>
-          
-          <button 
-            onClick={() => openStories(3)} 
-            className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-all hover:opacity-80" 
-            style={{ scrollSnapAlign: 'start' }}
-          >
-            <div className="relative">
-              <div 
-                className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-tr"
-                style={{ 
-                  backgroundImage: `linear-gradient(135deg, ${settings.primaryColor || '#c67548'}, ${settings.primaryColor || '#c67548'}dd)` 
-                }}
-              >
-                <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-dark-900 p-[2px]">
-                  <div className="w-full h-full rounded-full overflow-hidden">
-                    {highlights[3]?.coverImage ? (
-                      <Image
-                        src={highlights[3].coverImage}
-                        alt="Contact"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500 to-pink-600">
-                        <FiMail className="w-6 h-6 text-white" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Contact</span>
-          </button>
+                <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">
+                  {highlight.name}
+                </span>
+              </motion.button>
+            ))
+          ) : null}
         </div>
       </div>
 
