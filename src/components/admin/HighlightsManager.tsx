@@ -265,46 +265,83 @@ export default function HighlightsManager() {
 
       {/* Highlights Grid */}
       {highlights.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-2xl">
-          <FiImage className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            No highlights yet
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Create your first highlight to showcase stories on your homepage
-          </p>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition-opacity"
-          >
-            Create First Highlight
-          </button>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-24 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-3xl border-2 border-dashed border-purple-300 dark:border-gray-700 relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-100/50 via-pink-100/50 to-orange-100/50 dark:from-purple-900/10 dark:via-pink-900/10 dark:to-orange-900/10 animate-pulse" />
+          <div className="relative">
+            <motion.div
+              animate={{ 
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="inline-block"
+            >
+              <FiImage className="w-20 h-20 mx-auto text-purple-400 dark:text-purple-500 mb-6" />
+            </motion.div>
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-3">
+              No highlights yet
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto text-lg">
+              Create your first highlight to showcase Instagram-style stories on your homepage
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(168, 85, 247, 0.3)' }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowCreateModal(true)}
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all"
+            >
+              ✨ Create First Highlight
+            </motion.button>
+          </div>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {highlights.map((highlight) => (
             <motion.div
               key={highlight.id}
               layout
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl transition-shadow"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary/30"
             >
               {/* Cover Image */}
-              <div className="relative aspect-square">
-                <Image
-                  src={highlight.coverImage}
-                  alt={highlight.title}
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative aspect-square overflow-hidden">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.6 }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={highlight.coverImage}
+                    alt={highlight.title}
+                    fill
+                    className="object-cover"
+                  />
+                </motion.div>
                 
-                {/* Gradient Ring (Instagram style) */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                {/* Animated Gradient Ring (Instagram style) */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.3 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400"
+                />
                 
                 {/* Status Badge */}
                 {!highlight.active && (
-                  <div className="absolute top-3 right-3 bg-gray-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-3 right-3 bg-gray-900/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg"
+                  >
                     Hidden
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
@@ -427,36 +464,64 @@ export default function HighlightsManager() {
                     Cover Image *
                   </label>
                   {newHighlightCover ? (
-                    <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="relative aspect-square rounded-xl overflow-hidden mb-3 ring-4 ring-primary/20"
+                    >
                       <Image
                         src={newHighlightCover}
                         alt="Cover"
                         fill
                         className="object-cover"
                       />
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.1, rotate: 90 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => setNewHighlightCover('')}
-                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        className="absolute top-3 right-3 p-2.5 bg-red-500/90 backdrop-blur-sm text-white rounded-full hover:bg-red-600 shadow-lg transition-all"
                       >
-                        <FiX className="w-4 h-4" />
-                      </button>
-                    </div>
+                        <FiX className="w-5 h-5" />
+                      </motion.button>
+                    </motion.div>
                   ) : (
                     <CldUploadWidget
-                      uploadPreset="ml_default"
+                      uploadPreset="aminoss_portfolio"
+                      options={{
+                        maxFiles: 1,
+                        resourceType: 'image',
+                        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                        maxFileSize: 10000000,
+                        sources: ['local', 'url', 'camera'],
+                        showSkipCropButton: false,
+                        cropping: true,
+                        croppingAspectRatio: 1,
+                        croppingShowDimensions: true,
+                      }}
                       onSuccess={(result: any) => {
                         setNewHighlightCover(result.info.secure_url);
                       }}
                     >
                       {({ open }) => (
-                        <button
+                        <motion.button
                           type="button"
                           onClick={() => open()}
-                          className="w-full aspect-square border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-primary transition-colors flex flex-col items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:text-primary"
+                          whileHover={{ scale: 1.02, borderColor: 'var(--primary)' }}
+                          whileTap={{ scale: 0.98 }}
+                          className="group w-full aspect-square border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:text-primary relative overflow-hidden"
                         >
-                          <FiImage className="w-12 h-12" />
-                          <span className="font-medium">Upload Cover Image</span>
-                        </button>
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <motion.div
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            className="relative"
+                          >
+                            <FiImage className="w-14 h-14" />
+                          </motion.div>
+                          <div className="relative text-center">
+                            <span className="font-semibold text-base block">Upload Cover Image</span>
+                            <span className="text-xs text-gray-400 mt-1 block">Square format recommended</span>
+                          </div>
+                        </motion.button>
                       )}
                     </CldUploadWidget>
                   )}
@@ -533,20 +598,57 @@ export default function HighlightsManager() {
                 {/* Upload Button */}
                 <div className="mb-6">
                   <CldUploadWidget
-                    uploadPreset="ml_default"
+                    uploadPreset="aminoss_portfolio"
+                    options={{
+                      multiple: true,
+                      maxFiles: 10,
+                      resourceType: 'auto',
+                      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'mp4', 'mov', 'avi'],
+                      maxFileSize: 100000000,
+                      sources: ['local', 'url', 'camera'],
+                      showSkipCropButton: true,
+                      styles: {
+                        palette: {
+                          window: '#FFFFFF',
+                          windowBorder: '#90A0B3',
+                          tabIcon: '#c67548',
+                          menuIcons: '#5A616A',
+                          textDark: '#000000',
+                          textLight: '#FFFFFF',
+                          link: '#c67548',
+                          action: '#c67548',
+                          inactiveTabIcon: '#0E2F5A',
+                          error: '#F44235',
+                          inProgress: '#0078FF',
+                          complete: '#20B832',
+                          sourceBg: '#E4EBF1'
+                        }
+                      }
+                    }}
                     onSuccess={(result: any) => {
                       handleAddItem(editingHighlight.id, result.info);
                     }}
                   >
                     {({ open }) => (
                       <motion.button
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.02, boxShadow: '0 20px 40px rgba(168, 85, 247, 0.4)' }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => open()}
-                        className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                        className="group relative w-full px-8 py-5 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all overflow-hidden"
                       >
-                        <FiPlus className="w-5 h-5" />
-                        Add Photo or Video
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative flex items-center justify-center gap-3">
+                          <motion.div
+                            animate={{ rotate: [0, 180, 360] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                            className="opacity-0 group-hover:opacity-100"
+                          >
+                            <FiPlus className="w-6 h-6" />
+                          </motion.div>
+                          <FiPlus className="w-6 h-6 group-hover:opacity-0" />
+                          <span>Add Photos or Videos</span>
+                          <span className="text-sm font-normal opacity-75">• Drag & Drop</span>
+                        </div>
                       </motion.button>
                     )}
                   </CldUploadWidget>
