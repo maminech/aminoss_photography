@@ -172,7 +172,14 @@ export default function PhotobookEditorPage() {
         throw new Error('Failed to save photobook before submission');
       }
 
-      // Now submit the photobook
+      // Generate PDF metadata for submission
+      const pdfMetadata = {
+        generatedAt: new Date().toISOString(),
+        pageCount: design?.pages?.length || 0,
+        designVersion: 'polotno-v3',
+      };
+
+      // Now submit the photobook with PDF generation flag
       const response = await fetch('/api/client/photobook/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -181,6 +188,8 @@ export default function PhotobookEditorPage() {
           title: photobook?.title || `Photobook ${new Date().toLocaleDateString()}`,
           design,
           coverPhotoUrl,
+          generatePDF: true, // Flag to indicate admin should have PDF access
+          pdfMetadata,
         }),
       });
 
@@ -191,8 +200,11 @@ export default function PhotobookEditorPage() {
 
       const data = await response.json();
       
-      // Show success message and redirect
-      alert(data.message || 'Photobook submitted successfully! Our team will review it shortly.');
+      // Show success message with PDF info
+      const message = data.message || 'Photobook submitted successfully!';
+      const pdfNote = '\\n\\nThe design has been saved and is available for the admin to download as PDF.';
+      alert(message + pdfNote);
+      
       router.push('/client/photobooks');
     } catch (error: any) {
       console.error('Error submitting photobook:', error);

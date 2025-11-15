@@ -737,15 +737,25 @@ export default function ClientGalleryPage() {
               whileTap={{ scale: 0.95 }}
               onClick={async () => {
                 try {
+                  const selectionArray = Array.from(selectedPhotos);
+                  console.log('Approving selection:', selectionArray);
+                  
                   const res = await fetch(`/api/client/gallery/${gallery.id}/selection`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      selectedPhotoIds: Array.from(selectedPhotos)
+                      selectedPhotoIds: selectionArray
                     })
                   });
+                  
+                  const data = await res.json();
+                  
                   if (res.ok) {
                     alert(`✅ ${selectedPhotos.size} photos approved! Your selection has been saved.`);
+                    console.log('Selection saved successfully:', data);
+                  } else {
+                    console.error('API error:', data);
+                    alert(`Failed to save: ${data.error || 'Unknown error'}`);
                   }
                 } catch (error) {
                   console.error('Error saving selection:', error);

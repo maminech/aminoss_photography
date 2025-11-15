@@ -71,6 +71,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Photobook must have at least one page' }, { status: 400 });
     }
 
+    // Generate PDF URL placeholder (client will need to export PDF separately)
+    // The design JSON is saved and admin can regenerate PDF from it
+    const pdfUrl = design ? `/api/photobook/${photobookId}/pdf` : null;
+
     // Update photobook to submitted status with design field
     const updated = await prisma.photobook.update({
       where: { id: photobookId },
@@ -81,6 +85,7 @@ export async function POST(request: NextRequest) {
         status: 'submitted',
         coverPhotoUrl: finalCoverPhotoUrl,
         design: design || photobook.design, // Save Polotno design state
+        pdfUrl: pdfUrl, // Reference to PDF generation endpoint
         submittedAt: new Date(),
         updatedAt: new Date(),
       } as any,
