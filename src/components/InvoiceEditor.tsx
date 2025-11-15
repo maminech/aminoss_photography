@@ -60,6 +60,13 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
   const [invoice, setInvoice] = useState<Partial<Invoice>>(() => {
     if (existingInvoice) return existingInvoice;
     
+    console.log('📋 Creating new invoice for booking:', {
+      name: booking.name,
+      packagePrice: booking.packagePrice,
+      events: booking.events?.length || 0,
+      eventType: booking.eventType
+    });
+    
     // Generate items from ALL events if available
     const items: InvoiceItem[] = [];
     let subtotal = 0;
@@ -72,7 +79,9 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
         const packageInfo = packageType && packageLevel ? ` - ${packageType} ${packageLevel}` : '';
         const timeSlot = event.timeSlot || '';
         
-        const itemPrice = booking.packagePrice || 0;
+        // Try to get price from multiple sources
+        const itemPrice = event.packagePrice || booking.packagePrice || 0;
+        
         items.push({
           description: `Événement ${index + 1}: ${event.eventType}${packageInfo} - ${new Date(event.eventDate).toLocaleDateString('fr-FR')} (${timeSlot})`,
           quantity: 1,
@@ -535,11 +544,12 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                         {isEditing ? (
                           <input
                             type="number"
-                            value={item.unitPrice}
+                            value={item.unitPrice || ''}
                             onChange={(e) => updateItem(index, 'unitPrice', e.target.value)}
                             className="input-field text-sm w-28 text-right"
                             min="0"
                             step="0.01"
+                            placeholder="0.00"
                           />
                         ) : (
                           <span className="text-sm">{item.unitPrice.toFixed(2)} DT</span>
