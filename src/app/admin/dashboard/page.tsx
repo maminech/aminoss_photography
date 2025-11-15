@@ -7,6 +7,7 @@ import {
   FiImage, FiUser, FiVideo, FiMail, FiCalendar, FiBook, FiFileText, FiUsers, FiHome, FiTrendingUp
 } from 'react-icons/fi';
 import { MdPalette } from 'react-icons/md';
+import { motion } from 'framer-motion';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import NotificationManager from '@/components/NotificationManager';
 
@@ -74,7 +75,12 @@ export default function AdminDashboard() {
       {/* Dashboard Content */}
       <main className="p-6">
           {/* Stats Grid - Optimized for most important metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <StatCard
               title="Leads"
               value={loading ? '...' : stats.tracking.toString()}
@@ -105,15 +111,20 @@ export default function AdminDashboard() {
               icon={FiVideo}
               color="green"
             />
-          </div>
+          </motion.div>
 
           {/* Notification Manager */}
           <div className="mb-8">
             <NotificationManager />
           </div>
 
-          {/* Priority Quick Actions - Only 6 most important */}
-          <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+          {/* Priority Quick Actions */}
+          <motion.div 
+            className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
               <span>⚡</span>
               Quick Actions
@@ -127,13 +138,6 @@ export default function AdminDashboard() {
                 color="purple"
               />
               <ActionButton
-                title="View Bookings"
-                description="Manage confirmed bookings"
-                href="/admin/dashboard/calendar"
-                icon={FiCalendar}
-                color="green"
-              />
-              <ActionButton
                 title="Messages"
                 description="Respond to client messages"
                 href="/admin/dashboard/messages"
@@ -141,19 +145,73 @@ export default function AdminDashboard() {
                 color="red"
               />
               <ActionButton
+                title="View Bookings"
+                description="Manage confirmed bookings"
+                href="/admin/dashboard/calendar"
+                icon={FiCalendar}
+                color="green"
+              />
+            </div>
+          </motion.div>
+
+          {/* Gallery Management Section */}
+          <motion.div 
+            className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl shadow-sm border-2 border-purple-200 dark:border-purple-700 p-6 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+              <span>🎨</span>
+              Gallery Management
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Manage your photos, videos, and visual content for both Simple & Professional modes
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <ActionButton
+                title="Photos"
+                description="Upload & manage photos"
+                href="/admin/dashboard/photos"
+                icon={FiImage}
+                color="blue"
+              />
+              <ActionButton
+                title="Videos"
+                description="Upload & manage videos"
+                href="/admin/dashboard/videos"
+                icon={FiVideo}
+                color="green"
+              />
+              <ActionButton
                 title="Highlights"
-                description="Manage story highlights"
+                description="Instagram-style stories"
                 href="/admin/highlights"
                 icon={FiImage}
                 color="purple"
               />
               <ActionButton
-                title="Sync Photos"
-                description="Import from Cloudinary"
-                href="/admin/dashboard/photos"
+                title="Albums"
+                description="Organize in collections"
+                href="/admin/dashboard/albums"
                 icon={FiImage}
-                color="blue"
+                color="orange"
               />
+            </div>
+          </motion.div>
+
+          {/* Additional Tools */}
+          <motion.div 
+            className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+              <span>🛠️</span>
+              Additional Tools
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <ActionButton
                 title="Customize Design"
                 description="Change colors & layout"
@@ -168,8 +226,15 @@ export default function AdminDashboard() {
                 icon={FiBook}
                 color="orange"
               />
+              <ActionButton
+                title="Team Management"
+                description="Manage team members"
+                href="/admin/dashboard/team"
+                icon={FiUsers}
+                color="blue"
+              />
             </div>
-          </div>
+          </motion.div>
         </main>
 
       {/* PWA Install Prompt */}

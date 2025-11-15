@@ -88,8 +88,9 @@ model Image {
   category       String   @default("all")
   tags           String[]
   featured       Boolean  @default(false)
-  showOnHomepage Boolean  @default(false) // Show in homepage gallery
+  showOnHomepage Boolean  @default(false) // Show in homepage gallery (Simple/Instagram mode)
   showInGallery  Boolean  @default(true) // Show in gallery page
+  showInProfessionalMode Boolean @default(false) // Show in professional mode gallery
   order          Int      @default(0) // Display order
   width          Int?
   height         Int?

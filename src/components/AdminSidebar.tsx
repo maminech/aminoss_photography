@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { 
   FiImage, FiSettings, FiLogOut, FiX, 
   FiHome, FiFileText, FiUser, FiUsers, FiCheck, FiPackage, FiCalendar, FiVideo, FiMail, FiBook, FiInstagram,
@@ -113,29 +114,39 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {menuItems.map((item) => {
+          {menuItems.map((item, index) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             
             return (
-              <Link
+              <motion.div
                 key={item.name}
-                href={item.href}
-                onClick={() => onClose()}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition relative ${
-                  isActive
-                    ? 'bg-primary text-white'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700'
-                }`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.02 }}
               >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium flex-1">{item.name}</span>
-                {item.badge && item.badge > 0 && (
-                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white animate-pulse">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
+                <Link
+                  href={item.href}
+                  onClick={() => onClose()}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 relative group ${
+                    isActive
+                      ? 'bg-primary text-white shadow-md scale-[1.02]'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 hover:scale-[1.01] hover:shadow-sm'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? '' : 'group-hover:scale-110'}`} />
+                  <span className="font-medium flex-1">{item.name}</span>
+                  {item.badge && item.badge > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white"
+                    >
+                      {item.badge}
+                    </motion.span>
+                  )}
+                </Link>
+              </motion.div>
             );
           })}
         </nav>

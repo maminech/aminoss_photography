@@ -18,6 +18,7 @@ interface ImageData {
   featured: boolean;
   showOnHomepage: boolean;
   showInGallery: boolean;
+  showInProfessionalMode: boolean;
   order: number;
   width?: number;
   height?: number;
@@ -108,6 +109,7 @@ export default function AdminPhotosPage() {
           featured: false,
           showOnHomepage: false,
           showInGallery: true,
+          showInProfessionalMode: false,
         }),
       });
 
@@ -182,6 +184,7 @@ export default function AdminPhotosPage() {
               featured: false,
               showOnHomepage: false,
               showInGallery: false, // Don't show individually, only in album
+              showInProfessionalMode: false,
               albumId: album.id,
             }),
           });
@@ -450,6 +453,13 @@ export default function AdminPhotosPage() {
                     Homepage
                   </button>
                   <button
+                    onClick={() => bulkUpdate({ showInProfessionalMode: true })}
+                    className="px-3 py-2 min-h-[44px] bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-sm rounded-lg hover:from-amber-600 hover:to-yellow-600 transition active:scale-95 flex items-center gap-1"
+                  >
+                    <span>✨</span>
+                    <span>Pro Mode</span>
+                  </button>
+                  <button
                     onClick={() => {
                       setSelectedIds(new Set());
                       setSelectAll(false);
@@ -691,6 +701,7 @@ function EditImageModal({
     featured: image.featured,
     showOnHomepage: image.showOnHomepage,
     showInGallery: image.showInGallery,
+    showInProfessionalMode: image.showInProfessionalMode || false,
     order: image.order,
   });
 
@@ -818,6 +829,46 @@ function EditImageModal({
             />
             <label htmlFor="showInGallery" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               📸 Show in gallery page
+            </label>
+          </div>
+
+          {/* Show in Professional Mode */}
+          <div className="flex items-center space-x-3 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-700">
+            <input
+              type="checkbox"
+              id="showInProfessionalMode"
+              checked={formData.showInProfessionalMode}
+              onChange={(e) =>
+                setFormData({ ...formData, showInProfessionalMode: e.target.checked })
+              }
+              className="w-4 h-4 text-amber-600 border-amber-300 dark:border-amber-600 rounded focus:ring-amber-500"
+            />
+            <label htmlFor="showInProfessionalMode" className="text-sm font-medium text-amber-900 dark:text-amber-300 flex items-center gap-2">
+              <span className="text-lg">✨</span>
+              <div>
+                <div>Show in Professional Mode Gallery</div>
+                <div className="text-xs font-normal opacity-75">Display in professional/luxury theme</div>
+              </div>
+            </label>
+          </div>
+
+          {/* Display Order */}
+          <div className="flex items-center space-x-3 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-700">
+            <input
+              type="checkbox"
+              id="showInProfessionalMode"
+              checked={formData.showInProfessionalMode}
+              onChange={(e) =>
+                setFormData({ ...formData, showInProfessionalMode: e.target.checked })
+              }
+              className="w-4 h-4 text-amber-600 border-amber-300 dark:border-amber-600 rounded focus:ring-amber-500"
+            />
+            <label htmlFor="showInProfessionalMode" className="text-sm font-medium text-amber-900 dark:text-amber-300 flex items-center gap-2">
+              <span className="text-lg">✨</span>
+              <div>
+                <div>Show in Professional Mode Gallery</div>
+                <div className="text-xs font-normal opacity-75">Display in professional/luxury theme</div>
+              </div>
             </label>
           </div>
 

@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
     const featured = searchParams.get('featured');
+    const professionalMode = searchParams.get('professionalMode');
 
     const where: any = {};
     if (category && category !== 'all') {
@@ -27,6 +28,9 @@ export async function GET(req: NextRequest) {
     }
     if (featured === 'true') {
       where.featured = true;
+    }
+    if (professionalMode === 'true') {
+      where.showInProfessionalMode = true;
     }
 
     const images = await prisma.image.findMany({

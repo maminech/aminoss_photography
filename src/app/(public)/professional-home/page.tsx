@@ -29,15 +29,16 @@ export default function ProfessionalHomePage() {
   useEffect(() => {
     const loadImages = async () => {
       try {
-        const res = await fetch('/api/admin/images?featured=true&limit=10');
+        // Load only photos marked for professional mode
+        const res = await fetch('/api/admin/images?professionalMode=true&limit=10');
         if (res.ok) {
           const data = await res.json();
           // Ensure we have valid data
           if (Array.isArray(data) && data.length > 0) {
             setImages(data);
           } else {
-            // Fallback: load any images if no featured ones
-            const fallbackRes = await fetch('/api/admin/images?limit=10');
+            // Fallback: load featured images if no professional mode images yet
+            const fallbackRes = await fetch('/api/admin/images?featured=true&limit=10');
             if (fallbackRes.ok) {
               const fallbackData = await fallbackRes.json();
               setImages(Array.isArray(fallbackData) ? fallbackData : []);

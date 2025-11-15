@@ -68,8 +68,13 @@ export default function GalleryPage() {
   useEffect(() => {
     const loadGallery = async () => {
       try {
-        // Load gallery items (albums + standalone images) from new unified API
-        const res = await fetch('/api/public/gallery');
+        // For professional mode, load only admin-uploaded content with professionalMode flag
+        // For simple mode, this gallery page is not used (Instagram feed on homepage)
+        const imageUrl = isProfessional 
+          ? '/api/admin/images?professionalMode=true'
+          : '/api/public/gallery';
+        
+        const res = await fetch(imageUrl);
         if (res.ok) {
           const data: GalleryItem[] = await res.json();
           setAllItems(data);

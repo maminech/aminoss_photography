@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const homepage = searchParams.get('homepage') === 'true';
     const backgroundVideo = searchParams.get('backgroundVideo') === 'true';
+    const professionalMode = searchParams.get('professionalMode') === 'true';
     const limit = searchParams.get('limit');
     
     // Build where clause - background videos don't need showInGallery check
@@ -19,8 +20,11 @@ export async function GET(request: NextRequest) {
     if (backgroundVideo) {
       // For background video, only check the backgroundVideo flag
       whereClause.backgroundVideo = true;
+    } else if (professionalMode) {
+      // For professional mode, only show videos marked for professional mode
+      whereClause.showInProfessionalMode = true;
     } else {
-      // For regular videos, check showInGallery
+      // For regular/simple mode videos, check showInGallery
       whereClause.showInGallery = true;
       if (homepage) {
         whereClause.showOnHomepage = true;
