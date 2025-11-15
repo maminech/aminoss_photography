@@ -141,6 +141,13 @@ export default function AdminDashboard() {
                 color="red"
               />
               <ActionButton
+                title="Highlights"
+                description="Manage story highlights"
+                href="/admin/highlights"
+                icon={FiImage}
+                color="purple"
+              />
+              <ActionButton
                 title="Sync Photos"
                 description="Import from Cloudinary"
                 href="/admin/dashboard/photos"

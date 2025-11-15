@@ -504,7 +504,7 @@ model InstagramPost {
   updatedAt    DateTime @updatedAt
 }
 
-// Instagram Highlights (Stories)
+// Instagram Highlights (Stories) - Auto-synced from Instagram
 model InstagramHighlight {
   id          String           @id @default(auto()) @map("_id") @db.ObjectId
   instagramId String           @unique // Instagram highlight ID
@@ -529,6 +529,39 @@ model InstagramStory {
   order        Int                @default(0)
   createdAt    DateTime           @default(now())
   highlight    InstagramHighlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+}
+
+// Manual Highlights - Admin-uploaded highlights (alternative to Instagram API)
+model Highlight {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  title       String // Highlight name (e.g., "Wedding", "Travel", "Behind the Scenes")
+  coverImage  String // Cover image URL - displayed in circular avatar
+  description String? // Optional description
+  order       Int             @default(0) // Display order
+  active      Boolean         @default(true) // Show/hide on homepage
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  items       HighlightItem[] // Photos/videos in this highlight
+}
+
+// Highlight Items - Individual photos/videos in a highlight
+model HighlightItem {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  highlightId  String    @db.ObjectId
+  cloudinaryId String // Cloudinary asset ID
+  mediaType    String // "image" or "video"
+  mediaUrl     String // Full resolution URL
+  thumbnailUrl String // Thumbnail for videos or optimized image
+  title        String? // Optional caption/title
+  description  String?   @db.String // Optional longer description
+  width        Int?
+  height       Int?
+  duration     Float? // Video duration in seconds
+  order        Int       @default(0) // Order within highlight
+  createdAt    DateTime  @default(now())
+  highlight    Highlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+
+  @@index([highlightId])
 }
 
 // Guest Uploads - Photos uploaded by wedding guests via QR code

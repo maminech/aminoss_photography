@@ -13,6 +13,7 @@ import AlbumLightboxModal from '@/components/AlbumLightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
 import ThemeSwitcherModal from '@/components/ThemeSwitcherModal';
 import PublicPWAInstallPrompt from '@/components/PublicPWAInstallPrompt';
+import HighlightsRow from '@/components/HighlightsRow';
 import { MediaItem, Category } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
@@ -743,6 +744,13 @@ export default function HomePage() {
             </div>
             <span className="text-xs font-medium text-gray-900 dark:text-gray-100 max-w-[70px] truncate">Contact</span>
           </button>
+        </div>
+      </div>
+
+      {/* Highlights Row - Instagram Style Stories */}
+      <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900">
+        <div className="max-w-4xl mx-auto py-4">
+          <HighlightsRow />
         </div>
       </div>
 
