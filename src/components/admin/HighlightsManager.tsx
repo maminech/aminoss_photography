@@ -563,7 +563,7 @@ export default function HighlightsManager() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
+              className="fixed inset-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[60] overflow-hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">

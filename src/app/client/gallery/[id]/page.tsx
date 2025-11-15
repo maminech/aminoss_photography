@@ -722,6 +722,63 @@ export default function ClientGalleryPage() {
         )}
       </AnimatePresence>
 
+      {/* Floating Approve Selection Button */}
+      <AnimatePresence>
+        {selectedPhotos.size > 0 && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', duration: 0.5 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05, y: -4 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={async () => {
+                try {
+                  const res = await fetch(`/api/client/gallery/${gallery.id}/selection`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      selectedPhotoIds: Array.from(selectedPhotos)
+                    })
+                  });
+                  if (res.ok) {
+                    alert(`✅ ${selectedPhotos.size} photos approved! Your selection has been saved.`);
+                  }
+                } catch (error) {
+                  console.error('Error saving selection:', error);
+                  alert('Failed to save selection. Please try again.');
+                }
+              }}
+              className="group relative px-10 py-5 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all"
+            >
+              <div className="flex items-center gap-4">
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <FiCheck className="w-7 h-7" />
+                </motion.div>
+                <div className="flex flex-col items-start">
+                  <span className="tracking-wide">APPROVE SELECTION</span>
+                  <span className="text-sm font-normal opacity-90">{selectedPhotos.size} photo{selectedPhotos.size !== 1 ? 's' : ''} selected</span>
+                </div>
+                <motion.div
+                  className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <span className="text-2xl font-bold">{selectedPhotos.size}</span>
+                </motion.div>
+              </div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 opacity-0 group-hover:opacity-30 blur-xl transition-opacity" />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Rating Modal */}
       <AnimatePresence>
         {showRatingModal && (
