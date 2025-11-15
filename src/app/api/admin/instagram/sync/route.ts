@@ -255,16 +255,29 @@ export async function POST(req: Request) {
 
     // Also fetch Instagram Highlights (Stories) if available
     try {
+      console.log('🔍 Attempting to fetch Instagram highlights...');
+      
+      // Try the media_insights edge for highlights
       const highlightsResponse = await fetch(
         `https://graph.instagram.com/${userId}/stories?fields=id,name,cover_media{thumbnail_url}&access_token=${accessToken}`
       );
 
-      if (highlightsResponse.ok) {
-        const highlightsData = await highlightsResponse.json();
-        const highlights: InstagramHighlight[] = highlightsData.data || [];
+      console.log('Highlights API response status:', highlightsResponse.status);
+      
+      if (!highlightsResponse.ok) {
+        const errorData = await highlightsResponse.json();
+        console.log('Highlights API error:', JSON.stringify(errorData, null, 2));
+        throw new Error(`Highlights API returned ${highlightsResponse.status}: ${JSON.stringify(errorData)}`);
+      }
 
-        console.log(`📚 Found ${highlights.length} highlights`);
+      const highlightsData = await highlightsResponse.json();
+      console.log('Highlights API response:', JSON.stringify(highlightsData, null, 2));
+      
+      const highlights: InstagramHighlight[] = highlightsData.data || [];
 
+      console.log(`📚 Found ${highlights.length} highlights`);
+
+      if (highlights.length > 0) {
         // Sync each highlight
         for (let index = 0; index < highlights.length; index++) {
           const highlight = highlights[index];
@@ -334,8 +347,15 @@ export async function POST(req: Request) {
           }
         }
       }
-    } catch (highlightError) {
-      console.log('ℹ️ Stories/highlights not available or not supported');
+    } catch (highlightError: any) {
+      console.error('❌ Highlights sync error:', highlightError);
+      console.error('Error details:', highlightError.message);
+      console.log('\n⚠️ Instagram Highlights require:');
+      console.log('1. Instagram Business or Creator account');
+      console.log('2. Account must be connected to a Facebook Page');
+      console.log('3. Access token needs instagram_basic and instagram_manage_insights permissions');
+      console.log('4. Stories API is limited and may not be available for all accounts');
+      console.log('\nℹ️ Highlights sync failed but posts were synced successfully.');
     }
 
     // Update last sync time
