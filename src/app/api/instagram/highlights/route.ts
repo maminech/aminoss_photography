@@ -3,25 +3,26 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(req: Request) {
   try {
-    const highlights = await prisma.instagramHighlight.findMany({
+    // Fetch from the correct Highlight table (not InstagramHighlight)
+    const highlights = await prisma.highlight.findMany({
       where: { active: true },
       orderBy: { order: 'asc' },
       include: {
-        stories: {
+        items: {
           orderBy: { order: 'asc' },
         },
       },
     });
 
-    // Transform to match the current highlights structure
+    // Transform to match the stories viewer structure
     const formattedHighlights = highlights.map((highlight: any) => ({
       id: highlight.id,
-      name: highlight.name,
+      name: highlight.title, // Use 'title' from Highlight model
       coverImage: highlight.coverImage,
-      stories: highlight.stories.map((story: any) => ({
-        id: story.id,
-        image: story.mediaUrl,
-        title: story.mediaType === 'VIDEO' ? 'Video' : undefined,
+      stories: highlight.items.map((item: any) => ({
+        id: item.id,
+        image: item.mediaUrl,
+        title: item.title || (item.mediaType === 'VIDEO' ? 'Video' : undefined),
       })),
     }));
 
