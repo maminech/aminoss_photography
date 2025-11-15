@@ -22,6 +22,7 @@ export default function AlbumLightboxModal({
   const [postIndex, setPostIndex] = useState(currentPostIndex);
   const [imageIndexInPost, setImageIndexInPost] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-200, 0, 200], [0.5, 1, 0.5]);
 
@@ -29,6 +30,13 @@ export default function AlbumLightboxModal({
   const currentPostImages = currentPost?.albumImages || [currentPost];
   const currentImage = currentPostImages[imageIndexInPost];
   const isAlbum = currentPost?.albumImages && currentPost.albumImages.length > 1;
+
+  // Reset closing state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsClosing(false);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     setPostIndex(currentPostIndex);
@@ -40,9 +48,9 @@ export default function AlbumLightboxModal({
   }, [postIndex, imageIndexInPost]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      
       switch (e.key) {
         case 'Escape':
           onClose();
@@ -58,7 +66,7 @@ export default function AlbumLightboxModal({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, postIndex, imageIndexInPost, currentPostImages.length, posts.length]);
+  }, [isOpen, postIndex, imageIndexInPost, currentPostImages.length, posts.length, onClose]);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -99,6 +107,8 @@ export default function AlbumLightboxModal({
   };
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (!isOpen || isClosing) return; // Prevent actions if already closing
+    
     const threshold = 100;
     const velocity = info.velocity.x;
     const velocityY = info.velocity.y;
@@ -107,6 +117,8 @@ export default function AlbumLightboxModal({
 
     // Swipe down to close
     if (Math.abs(offsetY) > Math.abs(offset) && (offsetY > 150 || velocityY > 800)) {
+      x.set(0);
+      setIsClosing(true);
       onClose();
       return;
     }
@@ -130,7 +142,7 @@ export default function AlbumLightboxModal({
   const canGoPrevious = isAlbum && imageIndexInPost > 0 || postIndex > 0;
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -138,7 +150,13 @@ export default function AlbumLightboxModal({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed inset-0 z-[100] bg-black"
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isClosing) {
+              setIsClosing(true);
+              onClose();
+            }
+          }}
         >
           {/* Top Bar */}
           <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
@@ -157,8 +175,15 @@ export default function AlbumLightboxModal({
 
               {/* Right: Close button */}
               <button
-                onClick={onClose}
-                className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!isClosing) {
+                    setIsClosing(true);
+                    onClose();
+                  }
+                }}
+                disabled={isClosing}
+                className="p-2.5 sm:p-3 min-w-[44px] min-h-[44px] rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all active:scale-95 disabled:opacity-50"
                 aria-label="Close"
               >
                 <FiX className="w-6 h-6" />

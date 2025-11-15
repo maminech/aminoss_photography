@@ -937,7 +937,7 @@ export default function HomePage() {
           whileTap={{ scale: 0.9 }}
           onClick={handleRefresh}
           disabled={refreshing}
-          className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-2xl flex items-center justify-center backdrop-blur-sm disabled:opacity-50 hover:shadow-3xl transition-all"
+          className="fixed bottom-20 right-6 z-40 w-14 h-14 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-2xl flex items-center justify-center backdrop-blur-sm disabled:opacity-50 hover:shadow-3xl transition-all"
           title="Refresh content to see latest photos"
         >
           {refreshing ? (
@@ -989,7 +989,7 @@ export default function HomePage() {
               id: img.id,
               publicId: img.id,
               url: img.url,
-              thumbnailUrl: img.thumbnailUrl,
+              thumbnailUrl: img.thumbnailUrl || img.url,
               title: img.title || '',
               description: img.description || '',
               category: (currentPost.category || 'all') as Category,
@@ -1043,9 +1043,17 @@ export default function HomePage() {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 z-50 rounded-t-3xl shadow-2xl max-h-[85vh] overflow-hidden"
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, info) => {
+              if (info.offset.y > 150 || info.velocity.y > 500) {
+                setMenuOpen(false);
+              }
+            }}
           >
-            {/* Handle Bar */}
-            <div className="flex justify-center pt-3 pb-2">
+            {/* Handle Bar - Interactive */}
+            <div className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
               <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
             </div>
 
