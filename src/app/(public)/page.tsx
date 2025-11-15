@@ -442,7 +442,7 @@ export default function HomePage() {
       )}
 
       {/* Top Navigation Bar - Instagram Style */}
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 pb-2 flex justify-between items-center">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 pb-2 flex justify-between items-center backdrop-blur-sm bg-white/80 dark:bg-dark-900/80 sticky top-0 z-30">
         <motion.h1 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -457,7 +457,7 @@ export default function HomePage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
             onClick={() => setMenuOpen(true)}
-            className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-95 touch-manipulation group"
+            className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-90 touch-manipulation group min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Open Menu"
             title="Open Navigation Menu"
           >
@@ -729,11 +729,11 @@ export default function HomePage() {
       </div>
 
       {/* Tabs - Instagram Style */}
-      <div className="border-t border-gray-200 dark:border-gray-800 sticky top-0 bg-white dark:bg-dark-900 z-10">
+      <div className="border-t border-gray-200 dark:border-gray-800 sticky top-[60px] bg-white/95 dark:bg-dark-900/95 backdrop-blur-md z-20 shadow-sm">
         <div className="max-w-4xl mx-auto flex justify-center">
           <button
             onClick={() => setActiveTab('posts')}
-            className={`flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3.5 sm:py-4 border-t-2 transition min-h-[48px] ${
+            className={`flex items-center justify-center gap-1.5 px-8 sm:px-10 py-4 border-t-2 transition-all min-h-[52px] touch-manipulation active:scale-95 ${
               activeTab === 'posts'
                 ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white'
                 : 'border-transparent text-gray-400 dark:text-gray-500'
@@ -746,13 +746,13 @@ export default function HomePage() {
           </button>
           <button
             onClick={() => setActiveTab('videos')}
-            className={`flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3.5 sm:py-4 border-t-2 transition min-h-[48px] ${
+            className={`flex items-center justify-center gap-1.5 px-8 sm:px-10 py-4 border-t-2 transition-all min-h-[52px] touch-manipulation active:scale-95 ${
               activeTab === 'videos'
                 ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white'
                 : 'border-transparent text-gray-400 dark:text-gray-500'
             }`}
           >
-            <MdVideoLibrary className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <MdVideoLibrary className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
               VIDEOS
             </span>
@@ -828,19 +828,26 @@ export default function HomePage() {
                         delay: index * 0.05,
                         ease: [0.4, 0, 0.2, 1]
                       }}
-                      className="aspect-square relative group overflow-hidden bg-black shadow-sm"
+                      whileTap={{ scale: 0.95 }}
+                      className="aspect-square relative group overflow-hidden bg-black shadow-sm rounded-sm active:shadow-2xl transition-shadow touch-manipulation"
                     >
                       <video
                         src={video.url}
                         loop
                         muted
                         playsInline
-                        className="w-full h-full object-cover"
+                        preload="metadata"
+                        className="w-full h-full object-cover pointer-events-none"
                         onMouseEnter={(e) => e.currentTarget.play()}
                         onMouseLeave={(e) => {
                           e.currentTarget.pause();
                           e.currentTarget.currentTime = 0;
                         }}
+                      />
+                      
+                      {/* Tap overlay for mobile */}
+                      <div 
+                        className="absolute inset-0 cursor-pointer active:bg-white/10 transition-colors"
                         onClick={() => {
                           setCurrentVideo(video);
                           setVideoPlayerOpen(true);
@@ -848,7 +855,7 @@ export default function HomePage() {
                       />
                       
                       {video.title && (
-                        <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 bg-gradient-to-t from-black/80 to-transparent">
+                        <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none">
                           <p className="text-white text-xs xs:text-sm font-medium line-clamp-2 drop-shadow-lg">
                             {video.title}
                           </p>
@@ -870,9 +877,8 @@ export default function HomePage() {
                     delay: index * 0.05,
                     ease: [0.4, 0, 0.2, 1]
                   }}
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm hover:shadow-xl transition-shadow duration-300"
+                  className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm active:shadow-2xl transition-all duration-300 rounded-sm touch-manipulation"
                   onClick={() => openPostLightbox(post, 0)}
                 >
                   <Image
@@ -995,11 +1001,10 @@ export default function HomePage() {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1 }}
-          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleRefresh}
           disabled={refreshing}
-          className="fixed bottom-20 right-6 z-40 w-14 h-14 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-2xl flex items-center justify-center backdrop-blur-sm disabled:opacity-50 hover:shadow-3xl transition-all"
+          className="fixed bottom-20 right-6 z-40 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-2xl flex items-center justify-center backdrop-blur-sm disabled:opacity-50 active:shadow-3xl transition-all touch-manipulation"
           title="Refresh content to see latest photos"
         >
           {refreshing ? (
@@ -1080,14 +1085,14 @@ export default function HomePage() {
         />
       )}
 
-      {/* Video Player Modal - Instagram Style */}
+      {/* Video Player Modal - Instagram Style with Swipe Gestures */}
       {videoPlayerOpen && currentVideo && (
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black z-[100] flex items-center justify-center"
+          className="fixed inset-0 bg-black z-[100] flex items-center justify-center touch-none"
           onClick={() => {
             setVideoPlayerOpen(false);
             setCurrentVideo(null);
@@ -1103,23 +1108,32 @@ export default function HomePage() {
               setVideoPlayerOpen(false);
               setCurrentVideo(null);
             }}
-            className="absolute top-4 right-4 z-20 p-3 bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
+            className="absolute top-4 right-4 z-20 p-4 bg-white/10 backdrop-blur-md rounded-full text-white active:bg-white/30 transition-all duration-200 active:scale-95 touch-manipulation"
           >
             <FiX className="w-6 h-6" />
           </motion.button>
           
-          {/* Video container with smooth animation */}
+          {/* Video container with smooth animation and swipe to dismiss */}
           <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.85, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0, y: 50 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.85, opacity: 0, y: 50 }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.7 }}
+            onDragEnd={(e, info) => {
+              if (info.offset.y > 100 || info.velocity.y > 500) {
+                setVideoPlayerOpen(false);
+                setCurrentVideo(null);
+              }
+            }}
             transition={{ 
               type: "spring",
-              damping: 25,
-              stiffness: 300,
+              damping: 30,
+              stiffness: 350,
               duration: 0.3
             }}
-            className="relative max-w-full max-h-full flex items-center justify-center"
+            className="relative max-w-full max-h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
             onClick={(e) => e.stopPropagation()}
           >
             <video
@@ -1127,7 +1141,8 @@ export default function HomePage() {
               controls
               autoPlay
               playsInline
-              className="max-w-[95vw] max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl"
+              controlsList="nodownload"
+              className="max-w-[95vw] max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl touch-auto"
               style={{
                 objectFit: 'contain',
               }}

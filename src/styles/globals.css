@@ -78,7 +78,11 @@
   html {
     overflow-x: hidden;
     overscroll-behavior-y: none;
+    scroll-behavior: smooth;
     /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling for iOS */
+    -webkit-overflow-scrolling: touch;
     -webkit-text-size-adjust: 100%;
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -408,5 +412,45 @@ html {
 @supports not (backdrop-filter: blur(10px)) {
   .glass {
     @apply bg-white dark:bg-gray-900;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Optimize touch gestures */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Smooth momentum scrolling */
+  body, .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better spacing for mobile */
+  .mobile-padding {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  
+  /* Fix iOS Safari bottom bar */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+@layer utilities {
+  .smooth-interaction {
+    @apply transition-all duration-200 ease-out;
+  }
+  
+  .touch-action-none {
+    touch-action: none;
+  }
+  
+  .touch-action-pan-y {
+    touch-action: pan-y;
   }
 }
