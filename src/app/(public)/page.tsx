@@ -89,6 +89,7 @@ export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({});
+  const [activeTab, setActiveTab] = useState<'posts' | 'videos'>('posts');
   const [albumLightboxOpen, setAlbumLightboxOpen] = useState(false);
   const [videoPlayerOpen, setVideoPlayerOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<VideoItem | null>(null);
@@ -252,6 +253,7 @@ export default function HomePage() {
           width: vid.width,
           height: vid.height,
           isReel: vid.isReel,
+          createdAt: vid.createdAt,
           type: 'video',
         }));
         setVideos(fetchedVideos);
@@ -323,9 +325,10 @@ export default function HomePage() {
     setAlbumLightboxOpen(true);
   };
 
-  // Combine posts and videos into unified media array
-  const allMedia = [...posts.map(p => ({ ...p, type: 'post' as const })), ...videos.map(v => ({ ...v, type: 'video' as const }))]
-    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+  // Display media based on active tab
+  const displayMedia = activeTab === 'posts' 
+    ? posts.filter(p => p.coverImage) // Only show posts with images
+    : videos.filter(v => v.url && v.thumbnailUrl); // Only show videos with valid URLs
 
   // Instagram Stories highlights data - Fetch from database or use fallback
   const [highlights, setHighlights] = useState([
@@ -723,7 +726,39 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Instagram Grid - Unified Posts & Videos */}
+      {/* Tabs - Instagram Style */}
+      <div className="border-t border-gray-200 dark:border-gray-800 sticky top-0 bg-white dark:bg-dark-900 z-10">
+        <div className="max-w-4xl mx-auto flex justify-center">
+          <button
+            onClick={() => setActiveTab('posts')}
+            className={`flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3.5 sm:py-4 border-t-2 transition min-h-[48px] ${
+              activeTab === 'posts'
+                ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white'
+                : 'border-transparent text-gray-400 dark:text-gray-500'
+            }`}
+          >
+            <BsGrid3X3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
+              POSTS
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('videos')}
+            className={`flex items-center justify-center gap-1.5 px-6 sm:px-8 py-3.5 sm:py-4 border-t-2 transition min-h-[48px] ${
+              activeTab === 'videos'
+                ? 'border-gray-900 dark:border-white text-gray-900 dark:text-white'
+                : 'border-transparent text-gray-400 dark:text-gray-500'
+            }`}
+          >
+            <MdVideoLibrary className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
+              VIDEOS
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Instagram Grid */}
       <div className="max-w-4xl mx-auto">
         {loading ? (
           <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
@@ -731,7 +766,7 @@ export default function HomePage() {
               <div key={i} className="aspect-square bg-gray-200 dark:bg-dark-800 animate-pulse" />
             ))}
           </div>
-        ) : allMedia.length === 0 ? (
+        ) : displayMedia.length === 0 ? (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -743,10 +778,14 @@ export default function HomePage() {
               transition={{ delay: 0.2, type: "spring" }}
               className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-3 border-gray-200 dark:border-gray-700 mx-auto mb-6 flex items-center justify-center bg-gray-50 dark:bg-gray-800"
             >
-              <BsGrid3X3 className="w-7 h-7 sm:w-9 sm:h-9 text-gray-400 dark:text-gray-500" />
+              {activeTab === 'posts' ? (
+                <BsGrid3X3 className="w-7 h-7 sm:w-9 sm:h-9 text-gray-400 dark:text-gray-500" />
+              ) : (
+                <MdVideoLibrary className="w-7 h-7 sm:w-9 sm:h-9 text-gray-400 dark:text-gray-500" />
+              )}
             </motion.div>
             <h3 className="text-2xl sm:text-3xl font-light text-gray-900 dark:text-white mb-3">
-              No Content Yet
+              No {activeTab === 'posts' ? 'Posts' : 'Videos'} Yet
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm sm:text-base">
               Check back soon for amazing content!
@@ -770,10 +809,10 @@ export default function HomePage() {
           </motion.div>
         ) : (
           <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
-            {allMedia.map((item, index) => (
-              item.type === 'post' ? (
+            {activeTab === 'posts' ? (
+              posts.filter(p => p.coverImage).map((post, index) => (
                 <motion.div
-                  key={item.id}
+                  key={post.id}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ 
@@ -784,11 +823,11 @@ export default function HomePage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm hover:shadow-xl transition-shadow duration-300"
-                  onClick={() => openPostLightbox(item, 0)}
+                  onClick={() => openPostLightbox(post, 0)}
                 >
                   <Image
-                    src={item.coverImage}
-                    alt={item.title || 'Post'}
+                    src={post.coverImage}
+                    alt={post.title || 'Post'}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 33vw, 300px"
@@ -799,7 +838,7 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Instagram badge - top left */}
-                  {item.isInstagram && (
+                  {post.isInstagram && (
                     <motion.div
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
@@ -813,7 +852,7 @@ export default function HomePage() {
                   )}
 
                   {/* Album indicator (multiple images) - top right */}
-                  {item.imageCount > 1 && !item.isInstagram && (
+                  {post.imageCount > 1 && !post.isInstagram && (
                     <motion.div 
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -827,17 +866,19 @@ export default function HomePage() {
                   )}
 
                   {/* Title overlay on hover */}
-                  {item.title && (
+                  {post.title && (
                     <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       <p className="text-white text-xs xs:text-sm font-medium line-clamp-2 drop-shadow-lg">
-                        {item.title}
+                        {post.title}
                       </p>
                     </div>
                   )}
                 </motion.div>
-              ) : (
+              ))
+            ) : (
+              videos.filter(v => v.url && v.thumbnailUrl).map((video, index) => (
                 <motion.div
-                  key={item.id}
+                  key={video.id}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ 
@@ -849,13 +890,13 @@ export default function HomePage() {
                   whileTap={{ scale: 0.95 }}
                   className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm hover:shadow-xl transition-shadow duration-300"
                   onClick={() => {
-                    setCurrentVideo(item);
+                    setCurrentVideo(video);
                     setVideoPlayerOpen(true);
                   }}
                 >
                   <Image
-                    src={item.thumbnailUrl}
-                    alt={item.title || 'Video'}
+                    src={video.thumbnailUrl}
+                    alt={video.title || 'Video'}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 33vw, 300px"
@@ -883,16 +924,16 @@ export default function HomePage() {
                   </div>
 
                   {/* Title overlay */}
-                  {item.title && (
+                  {video.title && (
                     <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       <p className="text-white text-xs xs:text-sm font-medium line-clamp-2 drop-shadow-lg">
-                        {item.title}
+                        {video.title}
                       </p>
                     </div>
                   )}
                 </motion.div>
-              )
-            ))}
+              ))
+            )}
           </div>
         )}
       </div>
