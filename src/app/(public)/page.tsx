@@ -370,12 +370,17 @@ export default function HomePage() {
         
         if (response.ok) {
           const data = await response.json();
+          console.log('🎯 Highlights loaded:', data);
           if (data && data.length > 0) {
             setHighlights(data);
+          } else {
+            console.log('⚠️ No highlights found in response');
           }
+        } else {
+          console.error('❌ Highlights API returned error:', response.status);
         }
       } catch (error) {
-        console.error('Failed to load highlights:', error);
+        console.error('❌ Failed to load highlights:', error);
       } finally {
         setHighlightsLoading(false);
       }
