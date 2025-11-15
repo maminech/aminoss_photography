@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { FiPlay } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import CategoryFilter from '@/components/CategoryFilter';
 import GalleryGrid from '@/components/GalleryGrid';
@@ -49,7 +50,24 @@ interface GalleryImage {
   createdAt: string;
 }
 
-type GalleryItem = GalleryAlbum | GalleryImage;
+interface GalleryVideo {
+  type: 'video';
+  id: string;
+  cloudinaryId: string;
+  url: string;
+  thumbnailUrl: string;
+  title?: string;
+  description?: string;
+  category: string;
+  tags?: string[];
+  width?: number;
+  height?: number;
+  duration?: number;
+  format?: string;
+  createdAt: string;
+}
+
+type GalleryItem = GalleryAlbum | GalleryImage | GalleryVideo;
 
 export default function GalleryPage() {
   const { currentTheme } = useLayoutTheme();
@@ -70,16 +88,72 @@ export default function GalleryPage() {
       try {
         // For professional mode, load only admin-uploaded content with professionalMode flag
         // For simple mode, this gallery page is not used (Instagram feed on homepage)
-        const imageUrl = isProfessional 
-          ? '/api/admin/images?professionalMode=true'
-          : '/api/public/gallery';
         
-        const res = await fetch(imageUrl);
-        if (res.ok) {
-          const data: GalleryItem[] = await res.json();
-          setAllItems(data);
-          setFilteredItems(data);
+        if (isProfessional) {
+          // Load both photos and videos for professional mode
+          const [imagesRes, videosRes] = await Promise.all([
+            fetch('/api/admin/images?professionalMode=true'),
+            fetch('/api/videos?professionalMode=true')
+          ]);
+          
+          const allGalleryItems: GalleryItem[] = [];
+          
+          if (imagesRes.ok) {
+            const images = await imagesRes.json();
+            const mappedImages: GalleryImage[] = images.map((img: any) => ({
+              type: 'image',
+              id: img.id,
+              publicId: img.cloudinaryId,
+              url: img.url,
+              thumbnailUrl: img.thumbnailUrl,
+              title: img.title || 'Untitled',
+              description: img.description || '',
+              category: img.category,
+              width: img.width,
+              height: img.height,
+              format: img.format,
+              createdAt: img.createdAt,
+              tags: img.tags || [],
+            }));
+            allGalleryItems.push(...mappedImages);
+          }
+          
+          if (videosRes.ok) {
+            const videos = await videosRes.json();
+            const mappedVideos: GalleryVideo[] = videos.map((vid: any) => ({
+              type: 'video',
+              id: vid.id,
+              cloudinaryId: vid.cloudinaryId,
+              url: vid.url,
+              thumbnailUrl: vid.thumbnailUrl,
+              title: vid.title || 'Untitled',
+              description: vid.description || '',
+              category: vid.category,
+              width: vid.width,
+              height: vid.height,
+              duration: vid.duration,
+              format: vid.format,
+              createdAt: vid.createdAt,
+              tags: vid.tags || [],
+            }));
+            allGalleryItems.push(...mappedVideos);
+          }
+          
+          // Sort by date (most recent first)
+          allGalleryItems.sort((a, b) => 
+            new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+          );
+          
+          setAllItems(allGalleryItems);
+          setFilteredItems(allGalleryItems);
         } else {
+          // Simple mode - use public gallery API
+          const res = await fetch('/api/public/gallery');
+          if (res.ok) {
+            const data: GalleryItem[] = await res.json();
+            setAllItems(data);
+            setFilteredItems(data);
+          } else {
           // Fallback to old API
           const imgRes = await fetch('/api/admin/images');
           if (imgRes.ok) {
@@ -288,6 +362,45 @@ export default function GalleryPage() {
                           photoCount={item.photoCount}
                           onOpen={() => openAlbumLightbox(item)}
                         />
+                      </motion.div>
+                    );
+                  } else if (item.type === 'video') {
+                    return (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{ duration: 0.6, delay: index * 0.05 }}
+                        className="group relative aspect-square overflow-hidden bg-gray-200 cursor-pointer"
+                        onClick={() => {
+                          // Open video in new tab or modal
+                          window.open(item.url, '_blank');
+                        }}
+                      >
+                        <Image
+                          src={item.thumbnailUrl}
+                          alt={item.title || 'Video'}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        
+                        {/* Video Play Icon */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:bg-[#d4af37] transition-all duration-300 group-hover:scale-110">
+                            <svg className="w-8 h-8 text-gray-900 group-hover:text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                            </svg>
+                          </div>
+                        </div>
+                        
+                        {/* Video Badge */}
+                        <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 text-white text-xs font-medium rounded">
+                          VIDEO
+                        </div>
+                        
+                        {/* Hover Overlay */}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </motion.div>
                     );
                   } else {
