@@ -179,9 +179,9 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
         const packages = await response.json();
         console.log('📦 Loaded packages:', packages);
         
-        // Update item prices based on packageType and packageLevel
-        const updatedItems = invoice.items.map((item: any) => {
-          if (!item.packageType || !item.packageLevel || item.unitPrice > 0) {
+        // Update item prices and descriptions based on packageType and packageLevel
+        const updatedItems = invoice.items.map((item: any, index: number) => {
+          if (!item.packageType || !item.packageLevel) {
             return item;
           }
           
@@ -193,8 +193,68 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
           
           if (matchingPackage) {
             const price = matchingPackage.price || 0;
-            console.log(`✅ Found price for ${item.packageType} ${item.packageLevel}: ${price} DT`);
+            const packageName = matchingPackage.name || '';
+            const packageFeatures = matchingPackage.features || [];
             
+            console.log(`✅ Found package for ${item.packageType}: ${packageName} - ${price} DT`);
+            
+            // Extract event details from booking.events
+            const event = booking.events?.[index];
+            if (event) {
+              const eventTypeLabels: {[key: string]: string} = {
+                'wedding': 'Mariage',
+                'engagement': 'Fiançailles',
+                'henna': 'Henné',
+                'merwah': 'Merwah',
+                'studio': 'Studio',
+                'portrait': 'Portrait',
+                'fashion': 'Mode',
+                'event': 'Événement',
+                'commercial': 'Commercial',
+                'other': 'Autre'
+              };
+              
+              const timeSlotLabels: {[key: string]: string} = {
+                'morning': 'Matin',
+                'afternoon': 'Après-midi',
+                'evening': 'Soirée',
+                'all-day': 'Journée complète'
+              };
+              
+              const eventType = eventTypeLabels[event.eventType] || event.eventType;
+              const timeSlot = timeSlotLabels[event.timeSlot] || event.timeSlot;
+              const packageTypeLabel = item.packageType === 'aymen' ? 'Par Aymen' : 'Par Équipe';
+              const date = new Date(event.eventDate).toLocaleDateString('fr-FR', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+              });
+              
+              // Build detailed description
+              let description = `📸 Événement ${index + 1}: ${eventType}\n`;
+              description += `📦 Package: ${packageName} (${packageTypeLabel})\n`;
+              description += `📅 Date: ${date}\n`;
+              description += `⏰ Horaire: ${timeSlot}`;
+              
+              if (event.location) {
+                description += `\n📍 Lieu: ${event.location}`;
+              }
+              
+              // Add package features as bullet points
+              if (packageFeatures.length > 0) {
+                description += `\n\n✨ Inclus:\n${packageFeatures.map((f: string) => `  • ${f}`).join('\n')}`;
+              }
+              
+              return {
+                ...item,
+                description,
+                unitPrice: price,
+                total: price * item.quantity
+              };
+            }
+            
+            // Fallback if event details not available
             return {
               ...item,
               unitPrice: price,
@@ -599,15 +659,15 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                     <tr key={index} className="border-b border-gray-200 dark:border-gray-800">
                       <td className="py-3">
                         {isEditing ? (
-                          <input
-                            type="text"
+                          <textarea
                             value={item.description}
                             onChange={(e) => updateItem(index, 'description', e.target.value)}
-                            className="input-field text-sm w-full"
+                            className="textarea-field text-sm w-full"
+                            rows={6}
                             placeholder="Description du service"
                           />
                         ) : (
-                          <span className="text-sm">{item.description}</span>
+                          <div className="text-sm whitespace-pre-line">{item.description}</div>
                         )}
                       </td>
                       <td className="py-3 text-center">
