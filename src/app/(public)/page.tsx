@@ -93,6 +93,12 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'posts' | 'videos'>('posts');
   const [albumLightboxOpen, setAlbumLightboxOpen] = useState(false);
   const [videoPlayerOpen, setVideoPlayerOpen] = useState(false);
+  const [instagramStats, setInstagramStats] = useState({
+    followers_count: 0,
+    follows_count: 0,
+    media_count: 0,
+    configured: false
+  });
   const [currentVideo, setCurrentVideo] = useState<VideoItem | null>(null);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -164,6 +170,19 @@ export default function HomePage() {
       if (settingsRes.ok) {
         const data = await settingsRes.json();
         setSettings(data);
+      }
+
+      // Load Instagram stats (followers, following)
+      const statsRes = await fetch('/api/instagram/stats', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+      });
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setInstagramStats(statsData);
       }
 
       // Load posts with aggressive cache-busting
@@ -511,19 +530,29 @@ export default function HomePage() {
             <div className="flex gap-3 xs:gap-4 sm:gap-6 md:gap-10 mb-2 xs:mb-3 sm:mb-4 md:mb-5 text-xs xs:text-sm sm:text-base">
               <div className="flex-shrink-0">
                 <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
-                  {posts.length + videos.length}
+                  {instagramStats.configured && instagramStats.media_count > 0 
+                    ? instagramStats.media_count 
+                    : posts.length + videos.length}
                 </span>
                 <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> posts</span>
               </div>
               <div className="flex-shrink-0">
                 <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
-                  2.8k
+                  {instagramStats.configured && instagramStats.followers_count > 0
+                    ? instagramStats.followers_count >= 1000
+                      ? `${(instagramStats.followers_count / 1000).toFixed(1)}k`
+                      : instagramStats.followers_count
+                    : '2.8k'}
                 </span>
                 <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> followers</span>
               </div>
               <div className="flex-shrink-0">
                 <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
-                  312
+                  {instagramStats.configured && instagramStats.follows_count > 0
+                    ? instagramStats.follows_count >= 1000
+                      ? `${(instagramStats.follows_count / 1000).toFixed(1)}k`
+                      : instagramStats.follows_count
+                    : '312'}
                 </span>
                 <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> following</span>
               </div>
