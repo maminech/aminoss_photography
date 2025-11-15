@@ -294,7 +294,7 @@ export default function InstagramFeed({ images, videos = [], combinedMedia, onIm
                 </div>
               ) : (
                 <div 
-                  className="relative w-full bg-gray-100 dark:bg-dark-700 cursor-pointer"
+                  className="relative w-full bg-black cursor-pointer overflow-hidden"
                   style={{ 
                     aspectRatio: item.width && item.height 
                       ? `${item.width}/${item.height}` 
@@ -306,8 +306,12 @@ export default function InstagramFeed({ images, videos = [], combinedMedia, onIm
                     src={item.url}
                     alt={item.title}
                     fill
-                    className="object-contain bg-black dark:bg-dark-900"
+                    className="object-contain"
                     sizes="(max-width: 768px) 100vw, 672px"
+                    priority={index < 3}
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                    quality={90}
+                    unoptimized={item.url.includes('cloudinary')}
                   />
                 </div>
               )}

@@ -204,7 +204,7 @@ export default function HomePage() {
           id: instaPost.id,
           title: instaPost.caption ? instaPost.caption.substring(0, 50) : 'Instagram Post',
           description: instaPost.caption || '',
-          coverImage: instaPost.thumbnailUrl,
+          coverImage: instaPost.thumbnailUrl || instaPost.mediaUrl, // Use mediaUrl as fallback
           images: [{
             id: instaPost.id,
             url: instaPost.mediaUrl,
@@ -911,6 +911,9 @@ export default function HomePage() {
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 33vw, 300px"
                     priority={index < 6}
+                    loading={index < 6 ? 'eager' : 'lazy'}
+                    quality={85}
+                    unoptimized={post.coverImage.includes('cloudinary') || post.coverImage.includes('cdninstagram')}
                   />
                   
                   {/* Hover overlay with gradient */}
