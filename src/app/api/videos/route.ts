@@ -12,12 +12,22 @@ export async function GET(request: NextRequest) {
     const backgroundVideo = searchParams.get('backgroundVideo') === 'true';
     const limit = searchParams.get('limit');
     
+    // Build where clause - background videos don't need showInGallery check
+    const whereClause: any = {};
+    
+    if (backgroundVideo) {
+      // For background video, only check the backgroundVideo flag
+      whereClause.backgroundVideo = true;
+    } else {
+      // For regular videos, check showInGallery
+      whereClause.showInGallery = true;
+      if (homepage) {
+        whereClause.showOnHomepage = true;
+      }
+    }
+    
     const videos = await prisma.video.findMany({
-      where: {
-        showInGallery: true, // Only show videos marked to be displayed
-        ...(homepage && { showOnHomepage: true }), // Filter by homepage if requested
-        ...(backgroundVideo && { backgroundVideo: true }), // Filter for background video
-      },
+      where: whereClause,
       orderBy: [
         { order: 'asc' },
         { createdAt: 'desc' },
