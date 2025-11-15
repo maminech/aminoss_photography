@@ -9,16 +9,20 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const homepage = searchParams.get('homepage') === 'true';
+    const backgroundVideo = searchParams.get('backgroundVideo') === 'true';
+    const limit = searchParams.get('limit');
     
     const videos = await prisma.video.findMany({
       where: {
         showInGallery: true, // Only show videos marked to be displayed
         ...(homepage && { showOnHomepage: true }), // Filter by homepage if requested
+        ...(backgroundVideo && { backgroundVideo: true }), // Filter for background video
       },
       orderBy: [
         { order: 'asc' },
         { createdAt: 'desc' },
       ],
+      ...(limit && { take: parseInt(limit) }),
     });
 
     const response = NextResponse.json(videos);

@@ -128,6 +128,17 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Video ID required' }, { status: 400 });
     }
 
+    // If marking as background video, unmark all other videos first
+    if (updateData.backgroundVideo === true) {
+      await prisma.video.updateMany({
+        where: { 
+          id: { not: id },
+          backgroundVideo: true 
+        },
+        data: { backgroundVideo: false },
+      });
+    }
+
     const video = await prisma.video.update({
       where: { id },
       data: updateData,

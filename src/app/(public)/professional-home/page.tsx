@@ -59,8 +59,8 @@ export default function ProfessionalHomePage() {
   useEffect(() => {
     const loadBackgroundVideo = async () => {
       try {
-        // Fetch videos marked for homepage display
-        const res = await fetch('/api/videos?homepage=true&limit=1');
+        // Fetch the video specifically marked as background video
+        const res = await fetch('/api/videos?backgroundVideo=true&limit=1');
         if (res.ok) {
           const data = await res.json();
           if (data && data.length > 0 && data[0].url) {

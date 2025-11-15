@@ -18,6 +18,7 @@ interface VideoData {
   showOnHomepage: boolean;
   showInGallery: boolean;
   showInProfessionalMode?: boolean;
+  backgroundVideo?: boolean;
   order: number;
   width?: number;
   height?: number;
@@ -633,6 +634,7 @@ function EditVideoModal({
     featured: video.featured,
     showOnHomepage: video.showOnHomepage,
     showInGallery: video.showInGallery,
+    backgroundVideo: video.backgroundVideo || false,
     order: video.order,
   });
 
@@ -763,6 +765,22 @@ function EditVideoModal({
             />
             <label htmlFor="showInGallery" className="text-sm font-medium text-gray-700 dark:text-gray-300">
               🎥 Show in videos page
+            </label>
+          </div>
+
+          {/* Background Video */}
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="backgroundVideo"
+              checked={formData.backgroundVideo}
+              onChange={(e) =>
+                setFormData({ ...formData, backgroundVideo: e.target.checked })
+              }
+              className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+            />
+            <label htmlFor="backgroundVideo" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              🎬 Use as background video in professional mode hero section
             </label>
           </div>
 

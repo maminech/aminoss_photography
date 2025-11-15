@@ -118,6 +118,7 @@ model Video {
   showOnHomepage Boolean  @default(false) // Show in homepage video section
   showInGallery  Boolean  @default(true) // Show in videos page
   showInProfessionalMode Boolean @default(false) // Show in professional mode homepage
+  backgroundVideo Boolean @default(false) // Use as background video in professional mode hero section
   order          Int      @default(0) // Display order
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
