@@ -57,6 +57,8 @@ interface InvoiceEditorProps {
 export default function InvoiceEditor({ booking, existingInvoice, onClose, onSave }: InvoiceEditorProps) {
   const [isEditing, setIsEditing] = useState(!existingInvoice);
   const [isSaving, setIsSaving] = useState(false);
+  const [loadingPrices, setLoadingPrices] = useState(false);
+  
   const [invoice, setInvoice] = useState<Partial<Invoice>>(() => {
     if (existingInvoice) return existingInvoice;
     
@@ -68,6 +70,7 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
     });
     
     // Generate items from ALL events if available
+    // Initially set prices to 0, we'll fetch them from database
     const items: InvoiceItem[] = [];
     let subtotal = 0;
     
@@ -79,15 +82,18 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
         const packageInfo = packageType && packageLevel ? ` - ${packageType} ${packageLevel}` : '';
         const timeSlot = event.timeSlot || '';
         
-        // Try to get price from multiple sources
+        // Store package info for fetching price later
         const itemPrice = event.packagePrice || booking.packagePrice || 0;
         
         items.push({
           description: `Événement ${index + 1}: ${event.eventType}${packageInfo} - ${new Date(event.eventDate).toLocaleDateString('fr-FR')} (${timeSlot})`,
           quantity: 1,
           unitPrice: itemPrice,
-          total: itemPrice
-        });
+          total: itemPrice,
+          // Store metadata for fetching actual price
+          packageType: event.packageType,
+          packageLevel: event.packageLevel
+        } as any);
         subtotal += itemPrice;
       });
     } else {
@@ -150,6 +156,78 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
     return { subtotal, taxAmount, totalAmount };
   };
 
+  // Fetch package prices from database and update invoice
+  useEffect(() => {
+    const fetchPackagePrices = async () => {
+      if (!invoice.items || invoice.items.length === 0 || existingInvoice) return;
+      
+      // Check if any items need price lookup
+      const needsPriceLookup = invoice.items.some((item: any) => 
+        (item.packageType && item.packageLevel && item.unitPrice === 0)
+      );
+      
+      if (!needsPriceLookup) return;
+      
+      setLoadingPrices(true);
+      console.log('💰 Fetching package prices from database...');
+      
+      try {
+        // Fetch all active packages
+        const response = await fetch('/api/admin/packs?active=true');
+        if (!response.ok) throw new Error('Failed to fetch packages');
+        
+        const packages = await response.json();
+        console.log('📦 Loaded packages:', packages);
+        
+        // Update item prices based on packageType and packageLevel
+        const updatedItems = invoice.items.map((item: any) => {
+          if (!item.packageType || !item.packageLevel || item.unitPrice > 0) {
+            return item;
+          }
+          
+          // Find matching package
+          const matchingPackage = packages.find((pkg: any) => 
+            pkg.packageType === item.packageType && 
+            pkg.active === true
+          );
+          
+          if (matchingPackage) {
+            const price = matchingPackage.price || 0;
+            console.log(`✅ Found price for ${item.packageType} ${item.packageLevel}: ${price} DT`);
+            
+            return {
+              ...item,
+              unitPrice: price,
+              total: price * item.quantity
+            };
+          }
+          
+          console.warn(`⚠️ No matching package found for ${item.packageType} ${item.packageLevel}`);
+          return item;
+        });
+        
+        // Recalculate totals
+        const { subtotal, taxAmount, totalAmount } = calculateTotals(updatedItems, invoice.taxRate || 0, invoice.discount || 0);
+        
+        setInvoice(prev => ({
+          ...prev,
+          items: updatedItems,
+          subtotal,
+          taxAmount,
+          totalAmount
+        }));
+        
+        console.log('✨ Prices updated successfully');
+      } catch (error) {
+        console.error('❌ Error fetching package prices:', error);
+      } finally {
+        setLoadingPrices(false);
+      }
+    };
+    
+    fetchPackagePrices();
+  }, []); // Run once on mount
+  
   // Recalculate all item totals on mount to ensure consistency
   useEffect(() => {
     if (invoice.items && invoice.items.length > 0) {
@@ -174,7 +252,7 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
         }));
       }
     }
-  }, []); // Run once on mount
+  }, [invoice.items?.length]); // Run when items length changes
 
   const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
     const newItems = [...(invoice.items || [])];
@@ -327,6 +405,12 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
             {invoice.invoiceNumber && (
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 N° {invoice.invoiceNumber}
+              </p>
+            )}
+            {loadingPrices && (
+              <p className="text-sm text-primary mt-1 flex items-center gap-2">
+                <span className="animate-spin">⏳</span>
+                Chargement des prix...
               </p>
             )}
           </div>
