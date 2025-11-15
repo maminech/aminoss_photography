@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { v2 as cloudinary } from 'cloudinary';
+import { revalidatePath } from 'next/cache';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -191,6 +192,11 @@ export async function DELETE(req: NextRequest) {
     await prisma.image.delete({
       where: { id },
     });
+
+    // Revalidate all relevant paths to clear cache
+    revalidatePath('/');
+    revalidatePath('/api/public/posts');
+    revalidatePath('/gallery');
 
     return NextResponse.json({ 
       message: deleteFromCloudinary 

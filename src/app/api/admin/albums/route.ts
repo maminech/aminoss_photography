@@ -183,6 +183,11 @@ export async function DELETE(request: NextRequest) {
       where: { id },
     });
 
+    // Revalidate all relevant paths to clear cache
+    revalidatePath('/');
+    revalidatePath('/api/public/posts');
+    revalidatePath('/gallery');
+
     return NextResponse.json({ message: 'Album deleted successfully' });
   } catch (error) {
     console.error('Error deleting album:', error);

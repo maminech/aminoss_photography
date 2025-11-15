@@ -193,6 +193,11 @@ export async function DELETE(request: NextRequest) {
       where: { id },
     });
 
+    // Revalidate all relevant paths to clear cache
+    revalidatePath('/');
+    revalidatePath('/api/videos');
+    revalidatePath('/gallery');
+
     return NextResponse.json({ 
       message: deleteFromCloudinary 
         ? 'Video deleted from database and Cloudinary' 

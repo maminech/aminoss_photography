@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 // Get all Instagram posts for management
 export async function GET(req: Request) {
@@ -69,6 +70,11 @@ export async function DELETE(req: Request) {
     await prisma.instagramPost.delete({
       where: { id },
     });
+
+    // Revalidate all relevant paths to clear cache
+    revalidatePath('/');
+    revalidatePath('/api/instagram/posts');
+    revalidatePath('/gallery');
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
