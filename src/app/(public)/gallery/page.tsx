@@ -90,11 +90,8 @@ export default function GalleryPage() {
         // For simple mode, this gallery page is not used (Instagram feed on homepage)
         
         if (isProfessional) {
-          // Load both photos and videos for professional mode
-          const [imagesRes, videosRes] = await Promise.all([
-            fetch('/api/admin/images?professionalMode=true'),
-            fetch('/api/videos?professionalMode=true')
-          ]);
+          // Load ONLY photos for professional mode gallery (videos have separate page)
+          const imagesRes = await fetch('/api/admin/images?professionalMode=true');
           
           const allGalleryItems: GalleryItem[] = [];
           
@@ -116,27 +113,6 @@ export default function GalleryPage() {
               tags: img.tags || [],
             }));
             allGalleryItems.push(...mappedImages);
-          }
-          
-          if (videosRes.ok) {
-            const videos = await videosRes.json();
-            const mappedVideos: GalleryVideo[] = videos.map((vid: any) => ({
-              type: 'video',
-              id: vid.id,
-              cloudinaryId: vid.cloudinaryId,
-              url: vid.url,
-              thumbnailUrl: vid.thumbnailUrl,
-              title: vid.title || 'Untitled',
-              description: vid.description || '',
-              category: vid.category,
-              width: vid.width,
-              height: vid.height,
-              duration: vid.duration,
-              format: vid.format,
-              createdAt: vid.createdAt,
-              tags: vid.tags || [],
-            }));
-            allGalleryItems.push(...mappedVideos);
           }
           
           // Sort by date (most recent first)

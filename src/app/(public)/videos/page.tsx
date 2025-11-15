@@ -18,8 +18,11 @@ export default function VideosPage() {
   useEffect(() => {
     const loadVideos = async () => {
       try {
-        // Fetch videos from public API
-        const res = await fetch('/api/videos');
+        // Fetch videos from public API - professional mode gets only videos marked for professional mode
+        const apiUrl = isProfessional 
+          ? '/api/videos?professionalMode=true'
+          : '/api/videos';
+        const res = await fetch(apiUrl);
         if (res.ok) {
           const data = await res.json();
           
@@ -44,7 +47,7 @@ export default function VideosPage() {
       }
     };
     loadVideos();
-  }, []);
+  }, [isProfessional]);
 
   // Get unique categories
   const categories = ['all', ...Array.from(new Set(videos.map(v => v.category || 'general')))];
