@@ -327,8 +327,10 @@ export default function HomePage() {
 
   // Display media based on active tab
   const displayMedia = activeTab === 'posts' 
-    ? posts.filter(p => p.coverImage) // Only show posts with images
-    : videos.filter(v => v.url && v.thumbnailUrl); // Only show videos with valid URLs
+    ? [...posts.filter(p => p.coverImage), ...videos.filter(v => v.url && v.thumbnailUrl)].sort(
+        (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      ) // POSTS tab: Show both photos and videos together, sorted by date
+    : videos.filter(v => v.url && v.thumbnailUrl); // VIDEOS tab: Only show videos
 
   // Instagram Stories highlights data - Fetch from database or use fallback
   const [highlights, setHighlights] = useState([
@@ -810,7 +812,70 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
             {activeTab === 'posts' ? (
-              posts.filter(p => p.coverImage).map((post, index) => (
+              displayMedia.map((item, index) => {
+                // Check if this is a video or a post
+                const isVideo = 'url' in item && 'thumbnailUrl' in item && !('coverImage' in item);
+                
+                if (isVideo) {
+                  const video = item as VideoItem;
+                  return (
+                    <motion.div
+                      key={video.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        duration: 0.4,
+                        delay: index * 0.05,
+                        ease: [0.4, 0, 0.2, 1]
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="aspect-square relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-dark-800 shadow-sm hover:shadow-xl transition-shadow duration-300"
+                      onClick={() => {
+                        setCurrentVideo(video);
+                        setVideoPlayerOpen(true);
+                      }}
+                    >
+                      <Image
+                        src={video.thumbnailUrl}
+                        alt={video.title || 'Video'}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        sizes="(max-width: 768px) 33vw, 300px"
+                        priority={index < 6}
+                      />
+                      
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: index * 0.05 + 0.2 }}
+                        className="absolute top-2 xs:top-3 right-2 xs:right-3 z-10 bg-black/30 backdrop-blur-sm rounded-full p-1.5"
+                      >
+                        <MdVideoLibrary className="w-3 h-3 xs:w-4 xs:h-4 text-white" />
+                      </motion.div>
+
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="w-12 h-12 xs:w-14 xs:h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl">
+                          <div className="w-0 h-0 border-l-8 border-l-gray-900 border-y-6 border-y-transparent ml-1" />
+                        </div>
+                      </div>
+
+                      {video.title && (
+                        <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                          <p className="text-white text-xs xs:text-sm font-medium line-clamp-2 drop-shadow-lg">
+                            {video.title}
+                          </p>
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                }
+                
+                // It's a post
+                const post = item as Post;
+                return (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -874,7 +939,8 @@ export default function HomePage() {
                     </div>
                   )}
                 </motion.div>
-              ))
+                );
+              })
             ) : (
               videos.filter(v => v.url && v.thumbnailUrl).map((video, index) => (
                 <motion.div
@@ -1029,27 +1095,62 @@ export default function HomePage() {
         />
       )}
 
-      {/* Video Player Modal */}
+      {/* Video Player Modal - Instagram Style */}
       {videoPlayerOpen && currentVideo && (
-        <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
-          <button
-            onClick={() => {
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-black z-[100] flex items-center justify-center"
+          onClick={() => {
+            setVideoPlayerOpen(false);
+            setCurrentVideo(null);
+          }}
+        >
+          {/* Close button */}
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            onClick={(e) => {
+              e.stopPropagation();
               setVideoPlayerOpen(false);
               setCurrentVideo(null);
             }}
-            className="absolute top-4 right-4 z-10 p-3 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition"
+            className="absolute top-4 right-4 z-20 p-3 bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-white/20 transition-all duration-200 hover:scale-110 active:scale-95"
           >
             <FiX className="w-6 h-6" />
-          </button>
-          <video
-            src={currentVideo.url}
-            controls
-            autoPlay
-            className="max-w-full max-h-full"
+          </motion.button>
+          
+          {/* Video container with smooth animation */}
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.85, opacity: 0 }}
+            transition={{ 
+              type: "spring",
+              damping: 25,
+              stiffness: 300,
+              duration: 0.3
+            }}
+            className="relative max-w-full max-h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
           >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+            <video
+              src={currentVideo.url}
+              controls
+              autoPlay
+              playsInline
+              className="max-w-[95vw] max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl"
+              style={{
+                objectFit: 'contain',
+              }}
+            >
+              Your browser does not support the video tag.
+            </video>
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Theme Switcher Modal */}
