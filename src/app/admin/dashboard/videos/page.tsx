@@ -149,8 +149,8 @@ export default function AdminVideosPage() {
 
   // Select all filtered videos
   const selectAll = () => {
-    const filtered = filteredVideos();
-    const allIds = new Set(filtered.map(v => v.id));
+    const filtered = filteredVideos;
+    const allIds = new Set(filtered.map((v: VideoData) => v.id));
     setSelectedVideos(allIds);
   };
 
