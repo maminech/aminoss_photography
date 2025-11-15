@@ -242,7 +242,7 @@ export default function RemerciementsSection({
                         {(currentItem as ClientTestimonial).photoUrl && (
                           <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                             <Image
-                              src={(currentItem as ClientTestimonial).photoUrl}
+                              src={(currentItem as ClientTestimonial).photoUrl || '/placeholder-avatar.jpg'}
                               alt={(currentItem as ClientTestimonial).clientName}
                               fill
                               className="object-cover"

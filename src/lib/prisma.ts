@@ -5,7 +5,8 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-export const prisma = global.prisma || new PrismaClient();
+// Force type inference to include all models
+export const prisma = (global.prisma || new PrismaClient()) as PrismaClient;
 
 if (process.env.NODE_ENV !== 'production') {
   global.prisma = prisma;
