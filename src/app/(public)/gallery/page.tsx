@@ -154,28 +154,29 @@ export default function GalleryPage() {
             setAllItems(data);
             setFilteredItems(data);
           } else {
-          // Fallback to old API
-          const imgRes = await fetch('/api/admin/images');
-          if (imgRes.ok) {
-            const imgData = await imgRes.json();
-            const galleryImages = imgData.filter((img: any) => img.showInGallery !== false);
-            const mappedImages: GalleryImage[] = galleryImages.map((img: any) => ({
-              type: 'image',
-              id: img.id,
-              publicId: img.cloudinaryId,
-              url: img.url,
-              thumbnailUrl: img.thumbnailUrl,
-              title: img.title || 'Untitled',
-              description: img.description || '',
-              category: img.category,
-              width: img.width,
-              height: img.height,
-              format: img.format,
-              createdAt: img.createdAt,
-              tags: img.tags || [],
-            }));
-            setAllItems(mappedImages);
-            setFilteredItems(mappedImages);
+            // Fallback to old API
+            const imgRes = await fetch('/api/admin/images');
+            if (imgRes.ok) {
+              const imgData = await imgRes.json();
+              const galleryImages = imgData.filter((img: any) => img.showInGallery !== false);
+              const mappedImages: GalleryImage[] = galleryImages.map((img: any) => ({
+                type: 'image',
+                id: img.id,
+                publicId: img.cloudinaryId,
+                url: img.url,
+                thumbnailUrl: img.thumbnailUrl,
+                title: img.title || 'Untitled',
+                description: img.description || '',
+                category: img.category,
+                width: img.width,
+                height: img.height,
+                format: img.format,
+                createdAt: img.createdAt,
+                tags: img.tags || [],
+              }));
+              setAllItems(mappedImages);
+              setFilteredItems(mappedImages);
+            }
           }
         }
       } catch (error) {
@@ -185,7 +186,7 @@ export default function GalleryPage() {
       }
     };
     loadGallery();
-  }, []);
+  }, [isProfessional]);
 
   const handleCategoryChange = (category: Category) => {
     setActiveCategory(category);
