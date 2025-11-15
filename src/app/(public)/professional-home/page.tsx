@@ -59,17 +59,36 @@ export default function ProfessionalHomePage() {
   useEffect(() => {
     const loadBackgroundVideo = async () => {
       try {
+        console.log('Fetching background video...');
         // Fetch the video specifically marked as background video
-        const res = await fetch('/api/videos?backgroundVideo=true&limit=1');
+        const res = await fetch('/api/videos?backgroundVideo=true&limit=1', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        });
+        console.log('Background video response status:', res.status);
+        
         if (res.ok) {
           const data = await res.json();
+          console.log('Background video data:', data);
+          
           if (data && data.length > 0 && data[0].url) {
+            console.log('Setting background video:', data[0].url);
             setBackgroundVideo(data[0].url);
             setVideoPoster(data[0].thumbnailUrl || null);
+            setVideoLoading(false);
+          } else {
+            console.log('No background video found in response');
+            setVideoLoading(false);
           }
+        } else {
+          console.error('Failed to fetch background video:', res.status);
+          setVideoLoading(false);
         }
       } catch (error) {
         console.error('Error loading background video:', error);
+        setVideoLoading(false);
       }
     };
     loadBackgroundVideo();

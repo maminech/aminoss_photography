@@ -837,17 +837,14 @@ export default function HomePage() {
                         muted
                         playsInline
                         preload="metadata"
-                        className="w-full h-full object-cover pointer-events-none"
-                        onMouseEnter={(e) => e.currentTarget.play()}
+                        className="w-full h-full object-cover cursor-pointer"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.play().catch(() => {});
+                        }}
                         onMouseLeave={(e) => {
                           e.currentTarget.pause();
                           e.currentTarget.currentTime = 0;
                         }}
-                      />
-                      
-                      {/* Tap overlay for mobile */}
-                      <div 
-                        className="absolute inset-0 cursor-pointer active:bg-white/10 transition-colors"
                         onClick={() => {
                           setCurrentVideo(video);
                           setVideoPlayerOpen(true);
@@ -952,17 +949,14 @@ export default function HomePage() {
                     muted
                     playsInline
                     preload="metadata"
-                    className="w-full h-full object-cover pointer-events-none"
-                    onMouseEnter={(e) => e.currentTarget.play()}
+                    className="w-full h-full object-cover cursor-pointer"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.play().catch(() => {});
+                    }}
                     onMouseLeave={(e) => {
                       e.currentTarget.pause();
                       e.currentTarget.currentTime = 0;
                     }}
-                  />
-                  
-                  {/* Tap overlay for mobile */}
-                  <div 
-                    className="absolute inset-0 cursor-pointer active:bg-white/10 transition-colors"
                     onClick={() => {
                       setCurrentVideo(video);
                       setVideoPlayerOpen(true);
