@@ -156,12 +156,15 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
+      console.error('DELETE video: Unauthorized - no session');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const deleteFromCloudinary = searchParams.get('deleteFromCloudinary') === 'true';
+
+    console.log('DELETE video request:', { id, deleteFromCloudinary });
 
     if (!id) {
       return NextResponse.json({ error: 'Video ID required' }, { status: 400 });
@@ -173,15 +176,20 @@ export async function DELETE(request: NextRequest) {
     });
 
     if (!video) {
+      console.error('DELETE video: Video not found', id);
       return NextResponse.json({ error: 'Video not found' }, { status: 404 });
     }
 
+    console.log('Found video to delete:', { id: video.id, cloudinaryId: video.cloudinaryId });
+
     // Delete from Cloudinary if requested
-    if (deleteFromCloudinary) {
+    if (deleteFromCloudinary && video.cloudinaryId) {
       try {
-        await cloudinary.uploader.destroy(video.cloudinaryId, {
+        console.log('Deleting from Cloudinary:', video.cloudinaryId);
+        const result = await cloudinary.uploader.destroy(video.cloudinaryId, {
           resource_type: 'video',
         });
+        console.log('Cloudinary deletion result:', result);
       } catch (cloudinaryError) {
         console.error('Error deleting from Cloudinary:', cloudinaryError);
         // Continue with database deletion even if Cloudinary fails
@@ -189,22 +197,34 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete from database
+    console.log('Deleting from database:', id);
     await prisma.video.delete({
       where: { id },
     });
 
+    console.log('Video deleted successfully from database');
+
     // Revalidate all relevant paths to clear cache
-    revalidatePath('/');
-    revalidatePath('/api/videos');
-    revalidatePath('/gallery');
+    try {
+      revalidatePath('/');
+      revalidatePath('/api/videos');
+      revalidatePath('/gallery');
+      console.log('Cache revalidated');
+    } catch (revalidateError) {
+      console.error('Error revalidating cache:', revalidateError);
+    }
 
     return NextResponse.json({ 
       message: deleteFromCloudinary 
         ? 'Video deleted from database and Cloudinary' 
         : 'Video deleted from database only'
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error deleting video:', error);
-    return NextResponse.json({ error: 'Failed to delete video' }, { status: 500 });
+    console.error('Error stack:', error?.stack);
+    return NextResponse.json({ 
+      error: 'Failed to delete video',
+      details: error?.message || 'Unknown error'
+    }, { status: 500 });
   }
 }

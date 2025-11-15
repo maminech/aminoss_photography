@@ -192,16 +192,18 @@ export default function AdminVideosPage() {
         method: 'DELETE',
       });
 
+      const data = await res.json();
+      
       if (res.ok) {
-        const data = await res.json();
         alert(`✅ ${data.message}`);
         fetchVideos();
       } else {
-        alert('❌ Failed to delete video');
+        console.error('Delete video error:', data);
+        alert(`❌ Failed to delete video: ${data.error || 'Unknown error'}\n${data.details || ''}`);
       }
     } catch (error) {
       console.error('Error deleting video:', error);
-      alert('❌ Failed to delete video');
+      alert(`❌ Failed to delete video: ${error instanceof Error ? error.message : 'Network error'}`);
     }
   };
 
