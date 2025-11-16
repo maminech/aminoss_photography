@@ -418,7 +418,7 @@ export default function HighlightsManager() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl z-50 p-6"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl z-[60] p-6 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -563,7 +563,7 @@ export default function HighlightsManager() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[60] overflow-hidden flex flex-col"
+              className="fixed inset-4 md:inset-8 lg:inset-16 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[70] overflow-hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
@@ -595,6 +595,27 @@ export default function HighlightsManager() {
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-6">
+                {/* Instruction Banner */}
+                {editingHighlight.items.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="text-3xl">👇</div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 dark:text-white mb-1">
+                          Get Started!
+                        </h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          Click the button below to upload photos or videos. You can add multiple items, drag to reorder them, and they'll save automatically.
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                
                 {/* Upload Button */}
                 <div className="mb-6">
                   <CldUploadWidget
@@ -627,6 +648,12 @@ export default function HighlightsManager() {
                     }}
                     onSuccess={(result: any) => {
                       handleAddItem(editingHighlight.id, result.info);
+                      // Show success feedback
+                      const notification = document.createElement('div');
+                      notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
+                      notification.textContent = '✓ Item added successfully!';
+                      document.body.appendChild(notification);
+                      setTimeout(() => notification.remove(), 3000);
                     }}
                   >
                     {({ open }) => (
@@ -634,20 +661,22 @@ export default function HighlightsManager() {
                         whileHover={{ scale: 1.02, boxShadow: '0 20px 40px rgba(168, 85, 247, 0.4)' }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => open()}
-                        className="group relative w-full px-8 py-5 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all overflow-hidden"
+                        className="group relative w-full px-8 py-6 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white rounded-2xl font-bold text-xl shadow-xl hover:shadow-2xl transition-all overflow-hidden animate-pulse hover:animate-none"
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <div className="relative flex items-center justify-center gap-3">
+                        <div className="relative flex items-center justify-center gap-4">
                           <motion.div
                             animate={{ rotate: [0, 180, 360] }}
                             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                             className="opacity-0 group-hover:opacity-100"
                           >
-                            <FiPlus className="w-6 h-6" />
+                            <FiPlus className="w-7 h-7" />
                           </motion.div>
-                          <FiPlus className="w-6 h-6 group-hover:opacity-0" />
-                          <span>Add Photos or Videos</span>
-                          <span className="text-sm font-normal opacity-75">• Drag & Drop</span>
+                          <FiPlus className="w-7 h-7 group-hover:opacity-0" />
+                          <div className="flex flex-col items-start">
+                            <span>📸 Upload Photos or Videos</span>
+                            <span className="text-sm font-normal opacity-90">Click here or drag & drop files</span>
+                          </div>
                         </div>
                       </motion.button>
                     )}
