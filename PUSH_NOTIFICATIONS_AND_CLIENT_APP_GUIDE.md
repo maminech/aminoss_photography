@@ -28,7 +28,7 @@ Add these to your `.env.local` file (or Vercel environment variables):
 # Push Notifications
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=BKDG-Hkp-xhD_XqeVHzERHHZOJy7oMg6DIOo0JCbnaKofDDZizX1rWfn1Rpu0QgjMKAZRInfAJyFu2hiIgXpRds
 VAPID_PRIVATE_KEY=x_W7E_yf167eRHxyAICgGo1zGKy6o8tBTjvejHePeZA
-ADMIN_EMAIL=aminoss.photography@gmail.com
+ADMIN_EMAIL=innov8.tn@gmail.com
 ```
 
 **⚠️ IMPORTANT:** Keep `VAPID_PRIVATE_KEY` secret! Never commit it to Git.
@@ -36,7 +36,7 @@ ADMIN_EMAIL=aminoss.photography@gmail.com
 ### Step 2: Update Database Schema
 
 ```powershell
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 npx prisma db push
 ```
 
@@ -45,7 +45,7 @@ This adds the `PushSubscription` model to your database.
 ### Step 3: Deploy to Vercel
 
 ```powershell
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 vercel --prod
 ```
 
@@ -55,7 +55,7 @@ vercel --prod
 2. Add:
    - `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (Value from above)
    - `VAPID_PRIVATE_KEY` (Value from above)
-   - `ADMIN_EMAIL` = `aminoss.photography@gmail.com`
+   - `ADMIN_EMAIL` = `innov8.tn@gmail.com`
 3. Redeploy
 
 ---
@@ -158,11 +158,11 @@ fetch('/api/notifications/send', {
 Send them this message:
 
 ```
-📸 Your Aminoss Photography Client Portal is ready!
+📸 Your Innov8 Production Client Portal is ready!
 
 Install the app for easy access to your photos:
 
-1. Visit: https://aminoss.com/client/login
+1. Visit: https://Innov8.com/client/login
 2. Login with your email and password
 3. Tap "Install App" when prompted
 
@@ -173,7 +173,7 @@ Features:
 ✨ Works offline
 ✨ No app store needed
 
-Need help? Contact us at aminoss.photography@gmail.com
+Need help? Contact us at innov8.tn@gmail.com
 ```
 
 ---
@@ -353,7 +353,7 @@ model PushSubscription {
 - Try incognito mode (fresh session)
 
 **Contact:**
-- Email: aminoss.photography@gmail.com
+- Email: innov8.tn@gmail.com
 
 ---
 
@@ -371,3 +371,4 @@ model PushSubscription {
 3. Enable notifications on dashboard
 4. Share client app with clients
 5. Enjoy instant updates! 🚀
+

@@ -437,7 +437,7 @@
 ================================================================================
 
 🚀 DEPLOYED TO PRODUCTION
-   URL: https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+   URL: https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
    Date: November 9, 2025
    Status: LIVE ✅
 
@@ -558,3 +558,4 @@
                     CONFIDENCE LEVEL: HIGH ✅
            All Code Checked, Fixed, and Ready for Testing
 ================================================================================
+

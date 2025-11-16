@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Create default site settings
     await prisma.siteSettings.create({
       data: {
-        siteName: 'Aminoss Photography',
+        siteName: 'Innov8 Production',
         tagline: 'Capturing Moments, Creating Memories',
         location: 'Sousse, Tunisia',
         instagramUrl: 'https://www.instagram.com/ami_noss.photography',

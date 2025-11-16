@@ -9,7 +9,7 @@ export default function DownloadAppPage() {
   const handleDownload = () => {
     setDownloadStarted(true);
     // Replace this URL with your actual APK URL after upload
-    const apkUrl = '/downloads/aminoss-photography.apk'; // Or your hosting URL
+    const apkUrl = '/downloads/Innov8-photography.apk'; // Or your hosting URL
     window.location.href = apkUrl;
     
     setTimeout(() => setDownloadStarted(false), 3000);
@@ -28,7 +28,7 @@ export default function DownloadAppPage() {
             Download Our Mobile App
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Get the full Aminoss Photography experience on your Android device
+            Get the full Innov8 Production experience on your Android device
           </p>
         </motion.div>
 
@@ -54,7 +54,7 @@ export default function DownloadAppPage() {
                       >
                         <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
                       </svg>
-                      <h3 className="text-2xl font-bold">Aminoss</h3>
+                      <h3 className="text-2xl font-bold">Innov8</h3>
                       <p className="text-white/80">Photography</p>
                     </div>
                   </div>

@@ -122,7 +122,7 @@ After the build completes, you'll receive:
 - **Build ID** for tracking
 
 ### APK Details
-- **Package:** com.aminoss.admin
+- **Package:** com.Innov8.admin
 - **Version:** 1.0.0
 - **Size:** ~25-30 MB
 - **Min Android:** 5.0 (Lollipop) - Works on 99%+ devices
@@ -170,16 +170,16 @@ Once the APK is ready and installed:
 ```powershell
 # 1. Download APK from EAS build link
 # 2. Copy to your website
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 mkdir public\downloads -Force
-# Move APK to: public\downloads\aminoss-admin.apk
+# Move APK to: public\downloads\Innov8-admin.apk
 
 # 3. Deploy to Vercel
 vercel --prod
 ```
 
 **APK will be available at:**
-`https://your-domain.com/downloads/aminoss-admin.apk`
+`https://your-domain.com/downloads/Innov8-admin.apk`
 
 ### Option 2: Share EAS Link Directly
 - Use the download link from EAS
@@ -193,7 +193,7 @@ vercel --prod
 
 The app connects to your production API:
 ```
-Base URL: https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+Base URL: https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
 
 All API Endpoints Working:
 ✅ POST /api/auth/login
@@ -411,4 +411,5 @@ All API Endpoints Working:
 *Build started: November 10, 2025*
 *Status: Uploading to EAS servers...*
 *ETA: 5-10 minutes*
+
 

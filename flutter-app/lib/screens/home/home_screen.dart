@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Aminoss Photography'),
+        title: const Text('Innov8 Production'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),

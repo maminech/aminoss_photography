@@ -27,7 +27,7 @@ export default function DownloadAppPage() {
     setIsAndroid(/android/.test(userAgent));
 
     // Generate QR code
-    const appUrl = `${window.location.origin}/downloads/aminoss-photography.apk`;
+    const appUrl = `${window.location.origin}/downloads/Innov8-photography.apk`;
     QRCode.toDataURL(appUrl, { width: 200, margin: 2 })
       .then(setQrCodeUrl)
       .catch(console.error);
@@ -94,13 +94,13 @@ export default function DownloadAppPage() {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-              Experience Aminoss Photography in your pocket. Book sessions, browse galleries, and stay connected - all in one beautiful app.
+              Experience Innov8 Production in your pocket. Book sessions, browse galleries, and stay connected - all in one beautiful app.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               {isAndroid ? (
                 <motion.a
-                  href="/downloads/aminoss-photography.apk"
+                  href="/downloads/Innov8-photography.apk"
                   download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -267,7 +267,7 @@ export default function DownloadAppPage() {
               },
               {
                 question: 'Is it safe to install?',
-                answer: 'Absolutely! The app is built and maintained by Aminoss Photography. It\'s completely safe and secure.'
+                answer: 'Absolutely! The app is built and maintained by Innov8 Production. It\'s completely safe and secure.'
               },
               {
                 question: 'Why not on Play Store?',
@@ -317,7 +317,7 @@ export default function DownloadAppPage() {
               Download now and experience photography booking like never before
             </p>
             <motion.a
-              href="/downloads/aminoss-photography.apk"
+              href="/downloads/Innov8-photography.apk"
               download
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

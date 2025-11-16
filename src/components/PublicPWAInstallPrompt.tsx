@@ -77,7 +77,7 @@ export default function PublicPWAInstallPrompt() {
           `1. Tap the Share button (⬆️) at the bottom of Safari\n` +
           `2. Scroll down and tap "Add to Home Screen" 🏠\n` +
           `3. Tap "Add" in the top right\n` +
-          `4. Find the Aminoss icon on your home screen!\n\n` +
+          `4. Find the Innov8 icon on your home screen!\n\n` +
           `✨ You'll have instant access to our portfolio!`;
         
         alert(instructions);

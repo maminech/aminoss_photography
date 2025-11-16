@@ -7,8 +7,8 @@ import { FiInstagram, FiFacebook, FiYoutube, FiMail, FiHeart } from 'react-icons
 const socialLinks = [
   { icon: FiInstagram, href: 'https://www.instagram.com/ami_noss.photography', label: 'Instagram' },
   { icon: FiFacebook, href: 'https://www.facebook.com/mohamed.chalghoum.266885', label: 'Facebook' },
-  { icon: FiYoutube, href: 'https://youtube.com/@aminoss', label: 'YouTube' },
-  { icon: FiMail, href: 'mailto:aminoss.photography@gmail.com', label: 'Email' },
+  { icon: FiYoutube, href: 'https://youtube.com/@innov8', label: 'YouTube' },
+  { icon: FiMail, href: 'mailto:innov8.tn@gmail.com', label: 'Email' },
 ];
 
 export default function Footer() {
@@ -80,7 +80,7 @@ export default function Footer() {
             </div>
             <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500">
               📍 Sousse, Tunisia<br />
-              📧 aminoss.photography@gmail.com
+              📧 innov8.tn@gmail.com
             </p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-6 sm:pt-8 border-t border-gray-800 dark:border-gray-700 text-center text-xs sm:text-sm">
           <p className="flex items-center justify-center gap-1 flex-wrap">
-            © {currentYear} Aminoss Photography. Made with{' '}
+            © {currentYear} Innov8 Production. Made with{' '}
             <FiHeart className="text-red-500 w-3 h-3 sm:w-4 sm:h-4" /> in Tunisia.
           </p>
         </div>

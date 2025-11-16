@@ -1,7 +1,7 @@
 {
-  "name": "aminoss-admin-app",
+  "name": "Innov8-admin-app",
   "version": "1.0.0",
-  "description": "Aminoss Photography Admin Mobile App",
+  "description": "Innov8 Production Admin Mobile App",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -45,3 +45,4 @@
   },
   "private": true
 }
+

@@ -124,7 +124,7 @@ The Instagram Sync feature allows you to import photos from your Instagram accou
    - Click **"Next"**
 
 4. **Fill App Details**
-   - **Display Name**: `Aminoss Photography Portfolio` (or your business name)
+   - **Display Name**: `Innov8 Production Portfolio` (or your business name)
    - **App Contact Email**: Your email (e.g., `aminech990000@gmail.com`)
    - **Business Account** (optional): Skip for now
    - Click **"Create App"**
@@ -181,7 +181,7 @@ The Instagram Sync feature allows you to import photos from your Instagram accou
    
    **For Production (after deploying):**
    ```
-   https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos
+   https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos
    ```
    
    **For Local Development:**
@@ -225,7 +225,7 @@ The Instagram Sync feature allows you to import photos from your Instagram accou
 2. **Add Your Instagram Account**
    - Click **"Add Instagram Testers"** button
    - A popup will appear
-   - Type your Instagram username (e.g., `aminoss_photography`)
+   - Type your Instagram username (e.g., `Innov8_photography`)
    - Click on your username when it appears
    - Click **"Submit"**
 
@@ -249,7 +249,7 @@ The Instagram Sync feature allows you to import photos from your Instagram accou
 # Instagram Basic Display API
 INSTAGRAM_APP_ID="1234567890123456"
 INSTAGRAM_APP_SECRET="abc123def456ghi789jkl012mno345pqr678stu901"
-INSTAGRAM_REDIRECT_URI="https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos"
+INSTAGRAM_REDIRECT_URI="https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos"
 ```
 
 **Where to find each value:**
@@ -280,7 +280,7 @@ INSTAGRAM_REDIRECT_URI="https://aminossphotography-de89ue40o-aminech990000-6355s
 **Option B: Production (Vercel)**
 
 1. Go to your Vercel dashboard: https://vercel.com/
-2. Select your project: "aminoss photography"
+2. Select your project: "Innov8 Production"
 3. Go to **Settings** tab
 4. Click **Environment Variables** in left sidebar
 5. Add each variable:
@@ -466,7 +466,7 @@ The app requests these permissions:
 - **Check**: Browser console (F12) for errors
 - **Fix**: Verify Cloudinary credentials in `.env`:
   ```env
-  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="aminoss"
+  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="Innov8"
   CLOUDINARY_API_KEY="your_key"
   CLOUDINARY_API_SECRET="your_secret"
   ```
@@ -566,7 +566,7 @@ The app requests these permissions:
 echo "INSTAGRAM_REDIRECT_URI=\"http://localhost:3000/admin/dashboard/photos\""
 
 # Production (replace with your URL)
-echo "INSTAGRAM_REDIRECT_URI=\"https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos\""
+echo "INSTAGRAM_REDIRECT_URI=\"https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos\""
 ```
 
 ---
@@ -654,7 +654,7 @@ INSTAGRAM_REDIRECT_URI="https://your-domain.com/..."
 # ✅ CORRECT (real values)
 INSTAGRAM_APP_ID="123456789012345"
 INSTAGRAM_APP_SECRET="a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
-INSTAGRAM_REDIRECT_URI="https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos"
+INSTAGRAM_REDIRECT_URI="https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos"
 ```
 
 **Key Points:**
@@ -719,3 +719,4 @@ If you encounter issues:
 
 **Last Updated**: November 6, 2025  
 **Version**: 1.0
+

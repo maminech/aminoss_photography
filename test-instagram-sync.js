@@ -45,8 +45,8 @@ async function testSync() {
       if (firstPost.media_type === 'IMAGE') {
         const formData = new FormData();
         formData.append('file', firstPost.media_url);
-        formData.append('upload_preset', 'aminoss_portfolio');
-        formData.append('folder', 'aminoss_portfolio/instagram');
+        formData.append('upload_preset', 'innov8_portfolio');
+        formData.append('folder', 'innov8_portfolio/instagram');
         
         const uploadResponse = await fetch(
           'https://api.cloudinary.com/v1_1/dc67gl8fu/image/upload',
@@ -75,3 +75,4 @@ async function testSync() {
 }
 
 testSync();
+

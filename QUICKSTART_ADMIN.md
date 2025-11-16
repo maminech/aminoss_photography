@@ -18,7 +18,7 @@ Your portfolio now has a **professional admin CMS** that lets you:
 1. Sign up (FREE, no credit card)
 2. Create a FREE cluster (M0 tier)
 3. Create database user:
-   - Username: `aminoss`
+   - Username: `Innov8`
    - Password: (create one and save it!)
 4. Allow IP: Click "Allow access from anywhere"
 5. Get connection string:
@@ -28,7 +28,7 @@ Your portfolio now has a **professional admin CMS** that lets you:
 
 **Example connection string:**
 ```
-mongodb+srv://aminoss:YourPassword123@cluster0.abc12.mongodb.net/aminoss-portfolio?retryWrites=true&w=majority
+mongodb+srv://Innov8:YourPassword123@cluster0.abc12.mongodb.net/Innov8-portfolio?retryWrites=true&w=majority
 ```
 
 6. **Update `.env.local` file:**
@@ -160,7 +160,7 @@ You need to:
 - Try running `npx prisma db push` again
 
 ### Sync not working?
-- Photos must be in `aminoss-portfolio` folder in Cloudinary
+- Photos must be in `Innov8-portfolio` folder in Cloudinary
 - Check Cloudinary credentials in `.env.local`
 - Make sure you're logged in to admin
 
@@ -178,3 +178,4 @@ Your workflow is now:
 4. **No code changes needed!** 🚀
 
 **Start here:** http://localhost:3002/admin/setup
+

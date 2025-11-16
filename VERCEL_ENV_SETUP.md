@@ -6,7 +6,7 @@ Add these to your Vercel dashboard:
 
 ### Step 1: Go to Vercel
 1. Visit: https://vercel.com/
-2. Select project: "aminoss photography"
+2. Select project: "Innov8 Production"
 3. Go to **Settings** → **Environment Variables**
 
 ### Step 2: Add These Variables
@@ -23,7 +23,7 @@ Add these to your Vercel dashboard:
 
 **Variable 3:**
 - **Key**: `INSTAGRAM_REDIRECT_URI`
-- **Value**: `https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos`
+- **Value**: `https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos`
 - **Environments**: ✅ Production ✅ Preview
 
 **Variable 4 (for local development):**
@@ -39,7 +39,7 @@ Add these to your Vercel dashboard:
 2. Click **"Instagram"** in left sidebar → **"API setup with Instagram login"**
 3. Scroll to **"OAuth Redirect URIs"** section
 4. Click **"Add URI"**
-5. Add: `https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos`
+5. Add: `https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos`
 6. Also add for local testing: `http://localhost:3001/admin/dashboard/photos`
 7. Click **"Save Changes"**
 
@@ -99,3 +99,4 @@ git add .
 git commit -m "Instagram sync ready"
 git push
 ```
+

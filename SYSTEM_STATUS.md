@@ -30,7 +30,7 @@
 - **Location**: Sousse, Tunisia ✅
 - **Instagram**: [@ami_noss.photography](https://www.instagram.com/ami_noss.photography) ✅
 - **Facebook**: [Mohamed Chalghoum](https://www.facebook.com/mohamed.chalghoum.266885) ✅
-- **Email**: aminoss.photography@gmail.com ✅
+- **Email**: innov8.tn@gmail.com ✅
 
 ---
 
@@ -62,7 +62,7 @@
 
 **Required Folder Structure:**
 ```
-aminoss_photography/
+Innov8_photography/
 ├── weddings/     → Upload wedding photos here
 ├── portraits/    → Upload portrait photos here
 ├── travel/       → Upload travel photos here
@@ -108,7 +108,7 @@ Then deploy on [vercel.com](https://vercel.com)
 ## 🛠️ Troubleshooting
 
 ### If Photos Don't Load
-1. Check folder names match exactly: `aminoss_photography/weddings`
+1. Check folder names match exactly: `Innov8_photography/weddings`
 2. Verify credentials in `.env.local`
 3. Restart server: `Ctrl+C` then `npm run dev`
 
@@ -157,7 +157,7 @@ These are normal and don't affect functionality. They're just VS Code not recogn
 
 ## 🎉 Summary
 
-Your Aminoss Photography portfolio is **100% ready** and error-free!
+Your Innov8 Production portfolio is **100% ready** and error-free!
 
 ### What's Working:
 ✅ All pages compile and load  
@@ -183,3 +183,4 @@ Your Aminoss Photography portfolio is **100% ready** and error-free!
 ---
 
 *Last check: November 3, 2025 - All systems operational*
+

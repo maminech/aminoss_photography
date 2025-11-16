@@ -9,10 +9,10 @@
 ## 🚀 What's Now Live
 
 ### **Production URL:**
-https://aminossphotography-eezmwdb1y-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-eezmwdb1y-aminech990000-6355s-projects.vercel.app
 
 ### **Inspect Dashboard:**
-https://vercel.com/aminech990000-6355s-projects/aminoss.photography/2mFioJZEics9F1YNc2pDMi4dzNrU
+https://vercel.com/aminech990000-6355s-projects/innov8.tn/2mFioJZEics9F1YNc2pDMi4dzNrU
 
 ---
 
@@ -82,7 +82,7 @@ https://vercel.com/aminech990000-6355s-projects/aminoss.photography/2mFioJZEics9
 - **Services table:** Black header, alternating rows
 - **Summary:** Sous-total, Remise, Total, Acompte, Reste
 - **Conditions:** French + Arabic side-by-side
-- **Footer:** © 2025 Aminoss Photography - Made with ❤️ in Tunisia
+- **Footer:** © 2025 Innov8 Production - Made with ❤️ in Tunisia
 
 ---
 
@@ -268,7 +268,7 @@ Mobile app can be completed later when needed.
 Your platform is **LIVE** with the new invoice system!
 
 **Test it now:**
-1. Visit: https://aminossphotography-eezmwdb1y-aminech990000-6355s-projects.vercel.app
+1. Visit: https://Innov8photography-eezmwdb1y-aminech990000-6355s-projects.vercel.app
 2. Login to admin dashboard
 3. Go to Bookings
 4. Generate your first professional PDF invoice!
@@ -277,4 +277,5 @@ Your platform is **LIVE** with the new invoice system!
 
 **Deployment Complete!** 🎉📄✨
 
-*Built with care for Aminoss Photography - Capturing moments, creating invoices!*
+*Built with care for Innov8 Production - Capturing moments, creating invoices!*
+

@@ -12,7 +12,7 @@
 - ✅ 17 screens (ALL screens created!)
 - ✅ 2 widgets (Custom Button, Loading Indicator)
 - ✅ Android configuration complete
-- ✅ Package name: com.aminoss.photography
+- ✅ Package name: com.innov8.tn
 
 ---
 
@@ -30,7 +30,7 @@ flutter doctor
 
 ### Step 2: Install Dependencies
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 ```
 
@@ -45,7 +45,7 @@ flutter build apk --release
 
 ### Step 4: Distribute to Users
 1. Upload APK to your website (in `public/downloads/`)
-2. Share download link: `https://yoursite.com/downloads/aminoss-photography.apk`
+2. Share download link: `https://yoursite.com/downloads/Innov8-photography.apk`
 3. Users download and install directly on Android
 
 ---
@@ -120,7 +120,7 @@ Features:
 Edit `flutter-app/android/app/src/main/AndroidManifest.xml`:
 ```xml
 <application
-    android:label="Aminoss Photography"  <!-- Change this -->
+    android:label="Innov8 Production"  <!-- Change this -->
 ```
 
 ### Change App Icon:
@@ -177,9 +177,9 @@ flutter build apk --split-per-abi
 
 ### Option A: Host on Your Server
 1. Build APK: `flutter build apk --release`
-2. Rename: `app-release.apk` → `aminoss-photography.apk`
-3. Upload to: `public/downloads/aminoss-photography.apk`
-4. Share link: `https://yoursite.com/downloads/aminoss-photography.apk`
+2. Rename: `app-release.apk` → `Innov8-photography.apk`
+3. Upload to: `public/downloads/Innov8-photography.apk`
+4. Share link: `https://yoursite.com/downloads/Innov8-photography.apk`
 
 ### Option B: Use Google Drive
 1. Upload APK to Google Drive
@@ -228,7 +228,7 @@ Just say: **"Create the app download page"**
 
 ### 1. Build Now (5 mins)
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter build apk --release
 ```
@@ -271,7 +271,7 @@ Your APK is **safe** because:
 To make it extra official:
 1. Create a keystore
 2. Sign APK with your key
-3. Users see "Aminoss Photography" as developer
+3. Users see "Innov8 Production" as developer
 
 ---
 
@@ -298,7 +298,7 @@ Your Flutter app is **95% complete** and **ready to build**!
 
 You can build and distribute RIGHT NOW with:
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter build apk --release
 ```
@@ -308,4 +308,5 @@ flutter build apk --release
 2. Create website download page first
 3. Add app icon/splash screen first
 4. Test on phone first
+
 

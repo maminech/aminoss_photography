@@ -147,7 +147,7 @@ npx prisma db push
 - All existing ENV vars still valid
 
 ### Upload Presets
-- Using: `aminoss_portfolio` (already configured)
+- Using: `innov8_portfolio` (already configured)
 - No changes to Cloudinary settings needed
 
 ---
@@ -228,13 +228,13 @@ npm install  # Should have no new dependencies
 npx prisma generate
 npx prisma db push  # Apply schema changes
 npm run build
-pm2 restart aminoss-photography  # Or your process manager
+pm2 restart Innov8-photography  # Or your process manager
 ```
 
 #### 4. Verify Deployment
 ```bash
 # Check application logs
-pm2 logs aminoss-photography
+pm2 logs Innov8-photography
 
 # Test endpoints
 curl https://yoursite.com/api/admin/images?professionalMode=true
@@ -304,7 +304,7 @@ If issues arise during testing, document here:
 git revert HEAD
 git push origin main
 npm run build
-pm2 restart aminoss-photography
+pm2 restart Innov8-photography
 ```
 
 #### 2. Database Rollback (if needed)
@@ -386,7 +386,7 @@ If only UI issues:
 
 ### Technical Issues
 - Developer: [Your contact]
-- Repository: github.com/[username]/aminoss_photography
+- Repository: github.com/[username]/Innov8_photography
 - Branch: feature/adaptive-upgrade
 
 ### User Issues
@@ -474,3 +474,4 @@ _____________________________
 **Document Version:** 1.0  
 **Last Updated:** November 15, 2025  
 **Related Docs:** GALLERY_SEPARATION_COMPLETE.md, ADMIN_QUICK_GUIDE.md, TESTING_CHECKLIST.md
+

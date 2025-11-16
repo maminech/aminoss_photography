@@ -1,11 +1,11 @@
-# 🎯 START HERE - Aminoss Photography Deployment
+# 🎯 START HERE - Innov8 Production Deployment
 
 ```
 ╔═══════════════════════════════════════════════════════════════════╗
 ║                                                                   ║
 ║              👋 WELCOME TO YOUR DEPLOYMENT PACKAGE                ║
 ║                                                                   ║
-║   Everything you need to deploy the Aminoss Photography          ║
+║   Everything you need to deploy the Innov8 Production          ║
 ║   platform from Vercel to the client's production hosting        ║
 ║                                                                   ║
 ╚═══════════════════════════════════════════════════════════════════╝
@@ -386,3 +386,4 @@ Best for: Finding specific information quickly
 **Good luck with your deployment! 🎉**
 
 ---
+

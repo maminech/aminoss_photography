@@ -61,7 +61,7 @@ export default function NovoNavigation({ logo, items, ctaLabel, ctaHref }: NovoN
                     isScrolled ? 'text-[#1a1a1a]' : 'text-white'
                   }`}
                 >
-                  Aminoss
+                  Innov8
                 </span>
               )}
             </Link>

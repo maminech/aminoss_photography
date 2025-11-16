@@ -57,7 +57,7 @@ Provides:
 - `switchTheme()`: Function to change themes
 - `availableThemes`: List of available themes
 
-Uses localStorage key: `aminoss-layout-theme-preference`
+Uses localStorage key: `Innov8-layout-theme-preference`
 
 #### 3. Layout Components
 - **SimpleLayout**: Minimal wrapper, preserves existing design
@@ -416,4 +416,5 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ for Aminoss Photography Platform**
+**Built with ❤️ for Innov8 Production Platform**
+

@@ -516,7 +516,7 @@ Location: /packs or /packages
 ================================================================================
 
 🚀 PRODUCTION ENVIRONMENT
-✅ DEPLOYED TO: https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+✅ DEPLOYED TO: https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
 
 ⚠️ VERIFY ON PRODUCTION:
    [ ] All routes accessible
@@ -692,3 +692,4 @@ Ready for comprehensive testing! 🚀
 
 
 ================================================================================
+

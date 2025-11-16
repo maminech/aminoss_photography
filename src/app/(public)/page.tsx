@@ -573,7 +573,7 @@ export default function HomePage() {
             </motion.button>
           </Link>
           <a 
-            href="https://www.instagram.com/aminoss.photography" 
+            href="https://www.instagram.com/innov8_production" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex-shrink-0"
@@ -1189,7 +1189,7 @@ export default function HomePage() {
               </Link>
 
               <a 
-                href="https://www.instagram.com/aminoss.photography" 
+                href="https://www.instagram.com/innov8_production" 
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMenuOpen(false)} 
@@ -1202,7 +1202,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex-1">
                   <span className="text-lg font-semibold text-gray-900 dark:text-white block">Instagram</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Follow us @aminoss.photography</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Follow us @innov8_production</span>
                 </div>
               </a>
 
@@ -1272,3 +1272,4 @@ export default function HomePage() {
     </>
   );
 }
+

@@ -338,7 +338,7 @@ Image: scale 1.1 (background)
 ## 🚀 Deployment
 
 **Status**: ✅ Live in Production
-**URL**: https://aminossphotography-qav01v49h-aminech990000-6355s-projects.vercel.app
+**URL**: https://Innov8photography-qav01v49h-aminech990000-6355s-projects.vercel.app
 **Deploy Time**: 6 seconds ⚡
 
 ---
@@ -388,3 +388,4 @@ Image: scale 1.1 (background)
 **Content Freshness**: 🔄 Always Latest
 
 **Everything is now perfect!** ✨
+

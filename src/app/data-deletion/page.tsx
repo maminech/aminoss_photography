@@ -8,7 +8,7 @@ export default function DataDeletionPage() {
         
         <div className="prose prose-lg dark:prose-invert max-w-none">
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Aminoss Photography respects your privacy and your right to control your data.
+            Innov8 Production respects your privacy and your right to control your data.
           </p>
 
           <section className="mb-8">
@@ -21,8 +21,8 @@ export default function DataDeletionPage() {
             <ol className="list-decimal pl-6 text-gray-700 dark:text-gray-300 space-y-3">
               <li>
                 <strong>Send an email</strong> to{' '}
-                <a href="mailto:aminoss.photography@gmail.com" className="text-primary hover:underline">
-                  aminoss.photography@gmail.com
+                <a href="mailto:innov8.tn@gmail.com" className="text-primary hover:underline">
+                  innov8.tn@gmail.com
                 </a>
               </li>
               <li>
@@ -98,8 +98,8 @@ export default function DataDeletionPage() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               If you have any questions about data deletion or privacy, contact us at:{' '}
-              <a href="mailto:aminoss.photography@gmail.com" className="text-primary hover:underline">
-                aminoss.photography@gmail.com
+              <a href="mailto:innov8.tn@gmail.com" className="text-primary hover:underline">
+                innov8.tn@gmail.com
               </a>
             </p>
           </section>

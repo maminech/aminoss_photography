@@ -115,8 +115,8 @@ export async function POST(req: Request) {
                   try {
                     const formBody = new URLSearchParams({
                       file: child.media_url || '',
-                      upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio',
-                      folder: 'aminoss_portfolio/instagram',
+                      upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'innov8_portfolio',
+                      folder: 'innov8_portfolio/instagram',
                     });
 
                     const uploadResponse = await fetch(
@@ -190,8 +190,8 @@ export async function POST(req: Request) {
             // Use URLSearchParams for proper form encoding
             const formBody = new URLSearchParams({
               file: urlToUpload || '',
-              upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'aminoss_portfolio',
-              folder: 'aminoss_portfolio/instagram',
+              upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'innov8_portfolio',
+              folder: 'innov8_portfolio/instagram',
             });
 
             const uploadResponse = await fetch(

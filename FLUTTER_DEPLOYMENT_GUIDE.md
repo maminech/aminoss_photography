@@ -35,7 +35,7 @@ flutter doctor
 
 ```powershell
 # Navigate to Flutter app
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 
 # Get all dependencies
 flutter pub get
@@ -44,7 +44,7 @@ flutter pub get
 flutter build apk --release
 
 # Your APK will be at:
-# E:\aminoss photography\flutter-app\build\app\outputs\flutter-apk\app-release.apk
+# E:\Innov8 Production\flutter-app\build\app\outputs\flutter-apk\app-release.apk
 ```
 
 **Expected Size:** ~25-30 MB
@@ -57,14 +57,14 @@ flutter build apk --release
 
 ```powershell
 # 1. Create downloads folder in public
-mkdir "E:\aminoss photography\public\downloads"
+mkdir "E:\Innov8 Production\public\downloads"
 
 # 2. Copy APK to public folder
-Copy-Item "E:\aminoss photography\flutter-app\build\app\outputs\flutter-apk\app-release.apk" `
-  -Destination "E:\aminoss photography\public\downloads\aminoss-photography.apk"
+Copy-Item "E:\Innov8 Production\flutter-app\build\app\outputs\flutter-apk\app-release.apk" `
+  -Destination "E:\Innov8 Production\public\downloads\Innov8-photography.apk"
 
 # 3. Deploy to Vercel
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 vercel --prod
 ```
 
@@ -81,8 +81,8 @@ firebase login
 firebase init hosting
 
 # 4. Copy APK to public folder
-Copy-Item "E:\aminoss photography\flutter-app\build\app\outputs\flutter-apk\app-release.apk" `
-  -Destination "E:\aminoss photography\public\downloads\aminoss-photography.apk"
+Copy-Item "E:\Innov8 Production\flutter-app\build\app\outputs\flutter-apk\app-release.apk" `
+  -Destination "E:\Innov8 Production\public\downloads\Innov8-photography.apk"
 
 # 5. Deploy
 firebase deploy --only hosting
@@ -107,7 +107,7 @@ Edit the download page to use your APK URL:
 
 ```typescript
 // Line 8 - Change this:
-const apkUrl = '/downloads/aminoss-photography.apk'; // Vercel/Firebase
+const apkUrl = '/downloads/Innov8-photography.apk'; // Vercel/Firebase
 
 // OR use Google Drive link:
 const apkUrl = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID';
@@ -118,7 +118,7 @@ const apkUrl = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID';
 ## 🎉 STEP 4: DEPLOY WEBSITE
 
 ```powershell
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 
 # Add changes
 git add .
@@ -268,7 +268,7 @@ flutter doctor
 
 **"Gradle build failed"**
 ```powershell
-cd "E:\aminoss photography\flutter-app\android"
+cd "E:\Innov8 Production\flutter-app\android"
 ./gradlew clean
 cd ..
 flutter clean
@@ -356,3 +356,4 @@ No more "Share button" confusion - just direct download and install! 🚀
 ---
 
 **Need Help?** Just ask! 💪
+

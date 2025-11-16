@@ -109,7 +109,7 @@ export async function GET() {
 ## 🧪 Testing
 
 ### **Test Scenario 1: Unauthenticated User**
-1. Visit `https://aminossphotography.vercel.app/packs` without login
+1. Visit `https://Innov8photography.vercel.app/packs` without login
 2. ✅ Expected: Redirected to homepage (`/`)
 3. ✅ Expected: API returns 401 Unauthorized
 
@@ -128,7 +128,7 @@ export async function GET() {
 ### **Test Scenario 4: Direct API Access**
 ```bash
 # Without authentication
-curl https://aminossphotography.vercel.app/api/packs
+curl https://Innov8photography.vercel.app/api/packs
 # ✅ Expected: {"error": "Unauthorized. Admin access required."}
 ```
 
@@ -154,7 +154,7 @@ curl https://aminossphotography.vercel.app/api/packs
 
 ## 🚀 Deployment
 
-**Production URL**: https://aminossphotography.vercel.app  
+**Production URL**: https://Innov8photography.vercel.app  
 **Deployment ID**: `DRwQdGL9466hpmyDurXAnELuDcih`  
 **Status**: ✅ Successfully deployed
 
@@ -295,3 +295,4 @@ if (!session || session.user?.role?.toLowerCase() !== 'admin') {
 **Security Fix Deployed**: ✅ January 14, 2025  
 **Verified By**: GitHub Copilot  
 **Status**: PRODUCTION READY
+

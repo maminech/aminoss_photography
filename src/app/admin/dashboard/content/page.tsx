@@ -241,7 +241,7 @@ export default function AdminContentPage() {
                   readOnly
                 />
                 <CldUploadWidget
-                  uploadPreset="aminoss_portfolio"
+                  uploadPreset="innov8_portfolio"
                   options={{
                     folder: 'content/about',
                     resourceType: 'image',
@@ -419,7 +419,7 @@ export default function AdminContentPage() {
                   readOnly
                 />
                 <CldUploadWidget
-                  uploadPreset="aminoss_portfolio"
+                  uploadPreset="innov8_portfolio"
                   options={{
                     folder: 'content/hero',
                     resourceType: 'image',

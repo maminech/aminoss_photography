@@ -4,7 +4,7 @@
 
 1. Build your Flutter app:
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter build apk --release
 ```
 
@@ -15,22 +15,23 @@ flutter-app/build/app/outputs/flutter-apk/app-release.apk
 
 3. Copy the APK to this directory and rename it:
 ```powershell
-Copy-Item "E:\aminoss photography\flutter-app\build\app\outputs\flutter-apk\app-release.apk" -Destination "E:\aminoss photography\public\downloads\aminoss-photography.apk"
+Copy-Item "E:\Innov8 Production\flutter-app\build\app\outputs\flutter-apk\app-release.apk" -Destination "E:\Innov8 Production\public\downloads\Innov8-photography.apk"
 ```
 
 4. Deploy to Vercel:
 ```powershell
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 vercel --prod
 ```
 
 5. Your app will be downloadable at:
 ```
-https://yoursite.com/downloads/aminoss-photography.apk
+https://yoursite.com/downloads/Innov8-photography.apk
 ```
 
 ## APK Details
 - Size: ~15-20 MB
-- Package: com.aminoss.photography
+- Package: com.innov8.tn
 - Min Android: 5.0 (API 21)
 - Target Android: 14 (API 34)
+

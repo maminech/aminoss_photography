@@ -1,6 +1,6 @@
 # Cloudinary Setup Guide
 
-This guide will help you set up Cloudinary for the Aminoss Photography portfolio.
+This guide will help you set up Cloudinary for the Innov8 Production portfolio.
 
 ## 📝 Step 1: Create Account
 
@@ -30,7 +30,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 Create these folders in Cloudinary:
 
 ```
-aminoss_photography/
+Innov8_photography/
 ├── weddings/
 ├── portraits/
 ├── travel/
@@ -41,7 +41,7 @@ aminoss_photography/
 **How to create folders:**
 1. Go to **Media Library**
 2. Click **"Create folder"**
-3. Name it `aminoss_photography`
+3. Name it `Innov8_photography`
 4. Create subfolders for each category
 
 ## 📤 Step 4: Upload Images
@@ -49,7 +49,7 @@ aminoss_photography/
 ### Upload via Web Interface
 
 1. Go to **Media Library**
-2. Select folder (e.g., `aminoss_photography/weddings`)
+2. Select folder (e.g., `Innov8_photography/weddings`)
 3. Click **"Upload"**
 4. Select your images
 5. Wait for upload to complete
@@ -108,7 +108,7 @@ Add metadata to images:
 
 ### For Videos
 
-1. Go to `aminoss_photography/videos` folder
+1. Go to `Innov8_photography/videos` folder
 2. Click **"Upload"**
 3. Select video files
 4. Cloudinary will process them
@@ -168,7 +168,7 @@ Free Plan Limits:
 ## 🎨 Sample Folder Structure Example
 
 ```
-aminoss_photography/
+Innov8_photography/
 ├── weddings/
 │   ├── wedding_001.jpg [tagged: featured]
 │   ├── wedding_002.jpg
@@ -261,3 +261,4 @@ Before going live:
 **Your Cloudinary setup is complete! 🎉**
 
 Now your photos will load fast, look great, and scale automatically!
+

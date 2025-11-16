@@ -4,12 +4,12 @@
 
 **Production URL:**
 ```
-https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app
 ```
 
 **Vercel Dashboard:**
 ```
-https://vercel.com/aminech990000-6355s-projects/aminoss.photography
+https://vercel.com/aminech990000-6355s-projects/innov8.tn
 ```
 
 ---
@@ -21,7 +21,7 @@ Your site is deployed but needs environment variables to function properly.
 ### Step 1: Go to Environment Variables Settings
 Click this link:
 ```
-https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/environment-variables
+https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/environment-variables
 ```
 
 ### Step 2: Add Each Variable
@@ -30,7 +30,7 @@ Click "Add New" and enter these one by one:
 
 #### 1. DATABASE_URL
 ```
-Value: mongodb+srv://aminoss:Aminoss2001@aminoss.lyu8e0q.mongodb.net/aminoss-portfolio
+Value: mongodb+srv://Innov8:Innov82001@innov8.lyu8e0q.mongodb.net/Innov8-portfolio
 Environment: Production, Preview, Development
 ```
 
@@ -42,7 +42,7 @@ Environment: Production, Preview, Development
 
 #### 3. NEXTAUTH_URL
 ```
-Value: https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app
+Value: https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app
 Environment: Production
 ```
 
@@ -66,7 +66,7 @@ Environment: Production, Preview, Development
 
 #### 7. EMAIL_USER
 ```
-Value: aminoss.photography@gmail.com
+Value: innov8.tn@gmail.com
 Environment: Production, Preview, Development
 ```
 
@@ -111,29 +111,29 @@ Once you've added environment variables and whitelisted IPs:
 
 1. **Homepage:**
    ```
-   https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app
+   https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app
    ```
 
 2. **Admin Login:**
    ```
-   https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app/admin/login
+   https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app/admin/login
    ```
-   - Email: aminoss.photography@gmail.com
+   - Email: innov8.tn@gmail.com
    - Password: Hunter990000
 
 3. **Client Login:**
    ```
-   https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app/client/login
+   https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app/client/login
    ```
 
 4. **Packages:**
    ```
-   https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app/packs
+   https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app/packs
    ```
 
 5. **Gallery:**
    ```
-   https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app/gallery
+   https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app/gallery
    ```
 
 ---
@@ -147,9 +147,9 @@ If you don't have one, buy from:
 - Google Domains
 
 ### Step 2: Add to Vercel
-1. Go to: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/domains
+1. Go to: https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/domains
 2. Click "Add Domain"
-3. Enter your domain (e.g., aminoss.photography)
+3. Enter your domain (e.g., innov8.tn)
 4. Follow DNS configuration instructions
 
 ### Step 3: Update NEXTAUTH_URL
@@ -288,4 +288,5 @@ Your photography platform is now deployed to production on Vercel!
 **Deployed:** November 4, 2025  
 **Platform:** Vercel  
 **Status:** Live (needs environment variables)  
-**Your URL:** https://aminossphotography-525jwdejs-aminech990000-6355s-projects.vercel.app
+**Your URL:** https://Innov8photography-525jwdejs-aminech990000-6355s-projects.vercel.app
+

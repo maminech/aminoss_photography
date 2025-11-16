@@ -4,7 +4,7 @@
 
 ### Step 1: Login to Expo
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas login
 ```
 - **If you don't have an Expo account:**
@@ -34,7 +34,7 @@ If you want to test immediately without building:
 
 ### Step 1: Start Dev Server
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm start
 ```
 
@@ -60,7 +60,7 @@ I'll create a simple script for you:
 
 ```powershell
 # Save this as build-app.ps1
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 
 Write-Host "🚀 Starting build process..." -ForegroundColor Green
 Write-Host "📱 This will create an Android APK file" -ForegroundColor Cyan
@@ -88,7 +88,7 @@ Write-Host "✅ Build complete! Check output above for download link" -Foregroun
 
 ### 1. Login Once (1 minute):
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas login
 ```
 
@@ -116,17 +116,17 @@ https://expo.dev/artifacts/eas/abc-123-xyz.apk
 ```powershell
 # 1. Download APK from Expo link
 # 2. Create folder
-mkdir "e:\aminoss photography\public\downloads"
+mkdir "e:\Innov8 Production\public\downloads"
 
 # 3. Place APK there
-# Rename to: aminoss-admin.apk
+# Rename to: Innov8-admin.apk
 
 # 4. Deploy
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 vercel --prod
 
 # 5. Link will be:
-# https://your-domain.com/downloads/aminoss-admin.apk
+# https://your-domain.com/downloads/Innov8-admin.apk
 ```
 
 ### Option B: Google Drive
@@ -198,10 +198,10 @@ const handleDownload = () => {
 
 ### Or Host on Vercel:
 1. Download APK
-2. Place in `public/downloads/aminoss-admin.apk`
+2. Place in `public/downloads/Innov8-admin.apk`
 3. Update download handler:
 ```typescript
-window.location.href = '/downloads/aminoss-admin.apk';
+window.location.href = '/downloads/Innov8-admin.apk';
 ```
 4. Deploy: `vercel --prod`
 
@@ -212,7 +212,7 @@ window.location.href = '/downloads/aminoss-admin.apk';
 Run these 2 commands:
 
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas login
 eas build --platform android --profile preview
 ```
@@ -231,3 +231,4 @@ eas build --platform android --profile preview
 5. 🌐 Share link or host on Vercel
 
 **Your app is ready to build - just need to run the commands!**
+

@@ -8,7 +8,7 @@
 - **Tech**: Cloudinary integration with automatic optimization
   - Max resolution: 1920x1080
   - Auto quality adjustment
-  - Stored in folder: `aminoss_photography/remerciements`
+  - Stored in folder: `Innov8_photography/remerciements`
 
 ### 2. **Client Testimonial Submission** ✅
 - **New Page**: `/testimonials` - Beautiful public form
@@ -158,7 +158,7 @@ Body: { approved: true, active: true }
 
 **Status**: ✅ DEPLOYED TO PRODUCTION
 
-**URL**: https://aminossphotography-gexg18xye-aminech990000-6355s-projects.vercel.app
+**URL**: https://Innov8photography-gexg18xye-aminech990000-6355s-projects.vercel.app
 
 **Pages**:
 - `/testimonials` - Client submission form (4.29 kB)
@@ -195,3 +195,4 @@ Body: { approved: true, active: true }
 ---
 
 **Everything is beautiful, everything works perfectly!** ✨🎉
+

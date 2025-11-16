@@ -50,7 +50,7 @@
 
 ## 🚀 Production Deployment ✅
 
-**Live URL**: https://aminossphotography-626kdh6xa-aminech990000-6355s-projects.vercel.app
+**Live URL**: https://Innov8photography-626kdh6xa-aminech990000-6355s-projects.vercel.app
 
 **Build Status**:
 ```
@@ -290,7 +290,7 @@ npm run dev
 5. Test on mobile breakpoints
 
 # Production testing
-Visit: https://aminossphotography-626kdh6xa-aminech990000-6355s-projects.vercel.app
+Visit: https://Innov8photography-626kdh6xa-aminech990000-6355s-projects.vercel.app
 ```
 
 ---
@@ -447,9 +447,10 @@ You now have a **production-ready, multi-theme photography platform** with:
 
 ---
 
-**Platform URL**: https://aminossphotography-626kdh6xa-aminech990000-6355s-projects.vercel.app  
+**Platform URL**: https://Innov8photography-626kdh6xa-aminech990000-6355s-projects.vercel.app  
 **Documentation**: See MULTI_THEME_GUIDE.md and GIT_BRANCHING_GUIDE.md  
 **Status**: ✅ PRODUCTION READY  
 **Themes**: 2/∞ (Simple, Professional) - Add more anytime!
 
 🎨 **Happy theming!** 🎨
+

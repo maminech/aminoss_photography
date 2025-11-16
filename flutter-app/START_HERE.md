@@ -7,7 +7,7 @@
 ## 🚀 FASTEST WAY TO BUILD (ONE COMMAND)
 
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 .\build-and-deploy.ps1
 ```
 
@@ -37,7 +37,7 @@ All guides are in the `flutter-app/` directory:
 
 ### Option 1: Automated Build (Easiest) ⭐
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 .\build-and-deploy.ps1
 ```
 **Time:** 5 minutes
@@ -45,7 +45,7 @@ cd "E:\aminoss photography\flutter-app"
 
 ### Option 2: Manual Build
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter build apk --release
 ```
@@ -53,7 +53,7 @@ flutter build apk --release
 
 ### Option 3: Test First
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter run
 ```
 **Requires:** Android phone connected via USB
@@ -66,12 +66,12 @@ flutter run
 
 1. **APK is copied to:**
    ```
-   E:\aminoss photography\public\downloads\aminoss-photography.apk
+   E:\Innov8 Production\public\downloads\Innov8-photography.apk
    ```
 
 2. **Deploy to Vercel:**
    ```powershell
-   cd "E:\aminoss photography"
+   cd "E:\Innov8 Production"
    vercel --prod
    ```
 
@@ -129,7 +129,7 @@ flutter run
 
 ## 📊 SPECIFICATIONS
 
-**Package:** com.aminoss.photography
+**Package:** com.innov8.tn
 **Size:** ~15-20 MB
 **Min Android:** 5.0 (95%+ devices)
 **Target Android:** 14 (Latest)
@@ -156,7 +156,7 @@ It's completely safe and professional!
 
 **If you have Flutter installed:**
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 .\build-and-deploy.ps1
 ```
 
@@ -173,7 +173,7 @@ cd "E:\aminoss photography\flutter-app"
 
 Just run:
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 .\build-and-deploy.ps1
 ```
 
@@ -185,3 +185,4 @@ Your app will be ready in 5 minutes! 🚀
 - BUILD_NOW.md - Build instructions
 - COMPLETION_SUMMARY.md - Full details
 - SETUP_GUIDE.md - Setup help
+

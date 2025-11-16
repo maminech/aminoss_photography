@@ -80,7 +80,7 @@
 3. Wait 10 seconds
 4. Orange banner appears: "Install Our App"
 5. Tap **"Install App"**
-6. Browser shows: "Add Aminoss Photography to Home screen?"
+6. Browser shows: "Add Innov8 Production to Home screen?"
 7. Tap **"Add"** or **"Install"**
 8. Icon appears on home screen!
 
@@ -99,7 +99,7 @@
 2. Visit: `https://your-domain.com/admin/dashboard`
 3. Purple banner: "Install Admin App"
 4. Tap **"Install App"**
-5. Browser: "Add Aminoss Admin to Home screen?"
+5. Browser: "Add Innov8 Admin to Home screen?"
 6. Tap **"Install"**
 7. Admin icon on home screen!
 
@@ -108,7 +108,7 @@
 2. Go to Dashboard
 3. See "Enable Notifications" card (purple bell)
 4. Tap **"Enable Notifications"**
-5. Browser asks: "Allow aminoss.com to send notifications?"
+5. Browser asks: "Allow Innov8.com to send notifications?"
 6. Tap **"Allow"**
 7. Done! You'll get instant alerts!
 
@@ -295,13 +295,13 @@
 📸 Install Our Photography App!
 
 iPhone:
-1. Open Safari → aminoss.com
+1. Open Safari → Innov8.com
 2. Tap "Install App" (orange button)
 3. Tap Share (⬆️) → Add to Home Screen
 4. Done! 🎉
 
 Android:
-1. Open Chrome → aminoss.com
+1. Open Chrome → Innov8.com
 2. Tap "Install App" (orange button)
 3. Tap "Install"
 4. Done! 🎉
@@ -406,7 +406,7 @@ You'll get instant alerts! 🔔
 
 **Status:** ✅ DEPLOYED
 
-**Production URL:** https://aminossphotography-ghg3riq6m-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-ghg3riq6m-aminech990000-6355s-projects.vercel.app
 
 **What's Live:**
 - ✅ Public PWA (iPhone + Android)
@@ -462,3 +462,4 @@ You'll get instant alerts! 🔔
 **🎉 Your apps are now truly cross-platform!**
 
 Test them on your iPhone and Android devices right now! 📱✨
+

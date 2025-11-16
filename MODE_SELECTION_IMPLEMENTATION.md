@@ -2,7 +2,7 @@
 
 ## 🎉 Successfully Implemented!
 
-**Production URL**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app
 
 ## ✨ What Was Created
 
@@ -273,9 +273,9 @@ Edit the content in `/mode-selection/page.tsx`:
 
 ## 🚀 Deployment Info
 
-**Live URL**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app
+**Live URL**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app
 
-**Vercel Inspect**: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/DEoeHtRkruMBNJZ4kTXDF2xSqXVE
+**Vercel Inspect**: https://vercel.com/aminech990000-6355s-projects/innov8.tn/DEoeHtRkruMBNJZ4kTXDF2xSqXVE
 
 **Branch**: feature/adaptive-upgrade
 
@@ -350,11 +350,11 @@ Expected improvements:
 
 ## 🔗 Quick Links
 
-- **Production Site**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app
-- **Mode Selection**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app/mode-selection
-- **Professional Mode**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app/gallery
-- **Simple Mode**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app/
-- **Admin Panel**: https://aminossphotography-2plytsbsy-aminech990000-6355s-projects.vercel.app/admin/login
+- **Production Site**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app
+- **Mode Selection**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app/mode-selection
+- **Professional Mode**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app/gallery
+- **Simple Mode**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app/
+- **Admin Panel**: https://Innov8photography-2plytsbsy-aminech990000-6355s-projects.vercel.app/admin/login
 
 ---
 
@@ -370,3 +370,4 @@ You now have a **stunning, professional landing page** that:
 - ✅ Has smooth, engaging animations
 
 **Test it now by clearing your browser data and visiting the site!** 🚀
+

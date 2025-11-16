@@ -106,13 +106,13 @@
 ### 1. Environment Setup
 ```bash
 # Copy these to production environment
-DATABASE_URL="mongodb+srv://aminoss:..."
+DATABASE_URL="mongodb+srv://Innov8:..."
 NEXTAUTH_SECRET="your-secret-key"
 NEXTAUTH_URL="https://yourdomain.com"
 CLOUDINARY_CLOUD_NAME="dc67gl8fu"
 CLOUDINARY_API_KEY="your-key"
 CLOUDINARY_API_SECRET="your-secret"
-EMAIL_USER="aminoss.photography@gmail.com"
+EMAIL_USER="innov8.tn@gmail.com"
 EMAIL_PASS="rkspmzpugjmijvad"
 ```
 
@@ -122,7 +122,7 @@ EMAIL_PASS="rkspmzpugjmijvad"
 - [ ] Test database access
 
 ### 3. Cloudinary
-- [ ] Verify upload preset: `aminoss_portfolio`
+- [ ] Verify upload preset: `innov8_portfolio`
 - [ ] Ensure unsigned uploads enabled
 - [ ] Test image upload from production
 
@@ -207,7 +207,7 @@ Your platform is:
 npm run dev
 
 # Run as background job
-Start-Job -ScriptBlock { cd 'E:\aminoss photography'; npm run dev }
+Start-Job -ScriptBlock { cd 'E:\Innov8 Production'; npm run dev }
 
 # Test Prisma models
 node test-prisma-models.js
@@ -242,3 +242,4 @@ foreach ($page in $pages) {
 **Last Updated:** November 4, 2025  
 **Ready for:** Immediate Production Deployment  
 **Confidence Level:** 💯%
+

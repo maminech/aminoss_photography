@@ -57,7 +57,7 @@ class _ContactScreenState extends State<ContactScreen> {
             _buildContactCard(
               icon: Icons.email,
               title: 'Email',
-              value: 'contact@aminossphotography.com',
+              value: 'contact@innov8.tn',
               onTap: () {
                 // TODO: Open email
               },

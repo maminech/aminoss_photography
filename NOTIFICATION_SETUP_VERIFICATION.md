@@ -84,7 +84,7 @@ vercel --prod
 **Cause**: HTTPS required (or localhost)
 
 **Fix**: Ensure you're on:
-- Production: `https://aminossphotography.vercel.app`
+- Production: `https://Innov8photography.vercel.app`
 - Local: `http://localhost:3000`
 
 ### Issue 3: "Failed to save subscription"
@@ -108,7 +108,7 @@ vercel --prod
 ### Option 1: Manual Test via API
 ```bash
 # Send test notification
-curl -X POST https://aminossphotography.vercel.app/api/notifications/send \
+curl -X POST https://Innov8photography.vercel.app/api/notifications/send \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Test Notification",
@@ -212,3 +212,4 @@ All subscriptions stored with:
 
 **Last Updated**: Ready for production verification
 **Support**: Check browser console for detailed error messages
+

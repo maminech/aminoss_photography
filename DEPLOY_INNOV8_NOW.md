@@ -18,7 +18,7 @@ Your application is already live on Vercel. Now connect your domain:
    ```
 
 2. **Select Your Project:**
-   - Find: `aminoss_photography` or `aminossphotography`
+   - Find: `Innov8_photography` or `Innov8photography`
 
 3. **Add Domain:**
    - Settings → Domains → Add Domain
@@ -265,7 +265,7 @@ Once all tests pass:
 
 ## 🎉 CONGRATULATIONS!
 
-Your Aminoss Photography Platform is now live at:
+Your Innov8 Production Platform is now live at:
 # 🌐 https://innov8.tn
 
 **Features Now Live:**
@@ -293,3 +293,4 @@ Your Aminoss Photography Platform is now live at:
 ---
 
 **🚀 Happy Deploying!**
+

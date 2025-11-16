@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       // Email to photographer
       const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER || 'aminoss.photography@gmail.com',
+        to: process.env.EMAIL_USER || 'innov8.tn@gmail.com',
         subject: subject || `New Contact Form Submission from ${name}`,
         html: `
           <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
             
             <hr style="border: 1px solid #eee; margin-top: 30px;">
             <p style="color: #666; font-size: 12px;">
-              This email was sent from the contact form on Aminoss Photography website.
+              This email was sent from the contact form on Innov8 Production website.
             </p>
           </div>
         `,
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       const confirmationMailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Thank you for contacting Aminoss Photography',
+        subject: 'Thank you for contacting Innov8 Production',
         html: `
           <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
             <h2 style="color: #c67548;">Thank You for Reaching Out!</h2>
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
             
             <p>Hi ${name},</p>
             
-            <p>Thank you for contacting Aminoss Photography. I've received your message and will get back to you as soon as possible, usually within 24 hours.</p>
+            <p>Thank you for contacting Innov8 Production. I've received your message and will get back to you as soon as possible, usually within 24 hours.</p>
             
             <h3 style="color: #333; margin-top: 20px;">Your Message:</h3>
             <p style="background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
@@ -124,13 +124,13 @@ export async function POST(request: NextRequest) {
             
             <p style="margin-top: 30px;">
               Best regards,<br>
-              <strong>Aminoss</strong><br>
+              <strong>Innov8</strong><br>
               <span style="color: #666;">Professional Photographer</span>
             </p>
             
             <hr style="border: 1px solid #eee; margin-top: 30px;">
             <p style="color: #666; font-size: 12px;">
-              📧 aminoss.photography@gmail.com<br>
+              📧 innov8.tn@gmail.com<br>
               📍 Tunis, Tunisia
             </p>
           </div>

@@ -12,7 +12,7 @@ interface LayoutThemeContextType {
 
 const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = 'aminoss-layout-theme-preference';
+const THEME_STORAGE_KEY = 'Innov8-layout-theme-preference';
 
 interface LayoutThemeProviderProps {
   children: ReactNode;

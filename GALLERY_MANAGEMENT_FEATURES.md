@@ -173,7 +173,7 @@ All admin pages now have complete dark mode support:
 
 ## 🔗 Production URL
 
-**Live Site:** https://aminossphotography-5e60taeha-aminech990000-6355s-projects.vercel.app
+**Live Site:** https://Innov8photography-5e60taeha-aminech990000-6355s-projects.vercel.app
 
 ## 📝 Technical Notes
 
@@ -210,3 +210,4 @@ All admin pages now have complete dark mode support:
 **Deployed:** $(Get-Date)
 **Git Commit:** a0e3dda
 **Status:** ✅ Production Ready
+

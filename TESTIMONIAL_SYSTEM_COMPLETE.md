@@ -4,8 +4,8 @@
 Successfully implemented a complete testimonial/rating system where clients can rate their experience from their dashboard, and approved testimonials are displayed publicly in the "Remerciements" section.
 
 **Deployment**: ✅ **LIVE IN PRODUCTION**
-- **Inspect**: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/BK7bztrFh3KGQpMJdPDnxuMHNVJU
-- **Production URL**: https://aminossphotography-78vsrkcq9-aminech990000-6355s-projects.vercel.app
+- **Inspect**: https://vercel.com/aminech990000-6355s-projects/innov8.tn/BK7bztrFh3KGQpMJdPDnxuMHNVJU
+- **Production URL**: https://Innov8photography-78vsrkcq9-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -237,7 +237,7 @@ model Testimonial {
 2. They log into client dashboard
 3. Click "Rate Experience" card
 4. Select 5 stars ⭐⭐⭐⭐⭐
-5. Write: "Absolutely amazing! Aminoss captured every special moment perfectly. Professional, friendly, and the photos are breathtaking!"
+5. Write: "Absolutely amazing! Innov8 captured every special moment perfectly. Professional, friendly, and the photos are breathtaking!"
 6. Submit testimonial
 7. [After admin approval] → Appears on homepage with featured badge
 
@@ -370,7 +370,7 @@ For any issues or questions:
 ---
 
 ## 📄 License & Credits
-Built for Aminoss Photography Platform
+Built for Innov8 Production Platform
 Implementation Date: 2025
 Technologies: Next.js, React, Prisma, MongoDB, Vercel
 
@@ -378,3 +378,4 @@ Technologies: Next.js, React, Prisma, MongoDB, Vercel
 
 ## 🎊 Conclusion
 The testimonial system is now **FULLY OPERATIONAL** in production! Clients can rate their experience from their dashboard, and approved testimonials will be beautifully displayed on the homepage alongside existing remerciements. The system is secure, scalable, and ready for use! 🚀⭐✨
+

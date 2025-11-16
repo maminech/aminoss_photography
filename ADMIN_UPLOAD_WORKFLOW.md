@@ -73,7 +73,7 @@ The admin panel now uses a consistent direct upload workflow across all pages, e
 ## Cloudinary Folder Structure
 
 ```
-aminoss_portfolio/
+innov8_portfolio/
 ├── portfolio/           # Main website photos (Photos page)
 ├── content/             # Website content images
 │   ├── hero/           # Homepage hero backgrounds
@@ -129,7 +129,7 @@ aminoss_portfolio/
 ## Technical Details
 
 ### Upload Preset
-- **Name:** `aminoss_portfolio`
+- **Name:** `innov8_portfolio`
 - **Type:** Unsigned (client-side upload)
 - **Settings:** Configured in Cloudinary dashboard
 
@@ -167,7 +167,7 @@ Response:
 
 ```tsx
 <CldUploadWidget
-  uploadPreset="aminoss_portfolio"
+  uploadPreset="innov8_portfolio"
   options={{
     folder: 'portfolio',          // Auto-organize
     resourceType: 'image',        // or 'video'
@@ -220,7 +220,7 @@ Response:
 ### Common Issues
 
 **Upload not working?**
-- Check Cloudinary upload preset: `aminoss_portfolio`
+- Check Cloudinary upload preset: `innov8_portfolio`
 - Verify unsigned upload enabled
 - Check browser console for errors
 
@@ -245,4 +245,5 @@ Response:
 ---
 **Version:** 1.0.0  
 **Last Updated:** 2025  
-**Author:** Aminoss Photography Development Team
+**Author:** Innov8 Production Development Team
+

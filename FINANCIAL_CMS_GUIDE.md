@@ -415,5 +415,6 @@ The system is designed to be extensible. You can:
 
 ---
 
-**Built with ❤️ for Aminoss Photography**  
+**Built with ❤️ for Innov8 Production**  
 Smart Financial CMS - Because your business deserves better than spreadsheets! 💰📊
+

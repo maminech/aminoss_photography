@@ -1,6 +1,6 @@
 {
-  "name": "Aminoss Photography - Professional Portfolio",
-  "short_name": "Aminoss",
+  "name": "Innov8 Production - Professional Portfolio",
+  "short_name": "Innov8",
   "description": "Professional Photography & Videography - Weddings, Portraits, Fashion, Events. Browse stunning galleries, book sessions, and connect with us instantly.",
   "start_url": "/?source=pwa",
   "display": "standalone",
@@ -83,3 +83,4 @@
     }
   }
 }
+

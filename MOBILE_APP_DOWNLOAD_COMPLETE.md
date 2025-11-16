@@ -4,7 +4,7 @@
 
 ### 1. Download Page Created
 **Location:** `/admin/mobile-app`
-**URL:** https://aminossphotography-3o670p90q-aminech990000-6355s-projects.vercel.app/admin/mobile-app
+**URL:** https://Innov8photography-3o670p90q-aminech990000-6355s-projects.vercel.app/admin/mobile-app
 
 **Features:**
 - 📱 Beautiful mobile app download page
@@ -128,7 +128,7 @@ Action on Web → Saved to Database → Visible on Mobile
 
 **API Base URL:**
 ```
-https://aminossphotography-3o670p90q-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-3o670p90q-aminech990000-6355s-projects.vercel.app
 ```
 
 **Authentication Flow:**
@@ -165,7 +165,7 @@ https://aminossphotography-3o670p90q-aminech990000-6355s-projects.vercel.app
 npm install -g eas-cli
 
 # 2. Navigate and build
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas build --platform android --profile preview
 
 # 3. Wait 5-10 minutes, get download link
@@ -195,17 +195,17 @@ Scan QR code or copy link to download
 ### Option 1: Host on Vercel (Recommended)
 
 1. **Download APK** from Expo build link
-2. **Create folder:** `e:\aminoss photography\public\downloads\`
-3. **Place APK:** Save as `aminoss-admin.apk`
+2. **Create folder:** `e:\Innov8 Production\public\downloads\`
+3. **Place APK:** Save as `Innov8-admin.apk`
 4. **Update download page:**
    ```typescript
    // In src/app/admin/mobile-app/page.tsx
-   const APK_URL = '/downloads/aminoss-admin.apk';
+   const APK_URL = '/downloads/Innov8-admin.apk';
    ```
 5. **Deploy:** `vercel --prod`
 6. **Done!** APK accessible at:
    ```
-   https://your-domain.com/downloads/aminoss-admin.apk
+   https://your-domain.com/downloads/Innov8-admin.apk
    ```
 
 ### Option 2: Use Expo Link (Temporary)
@@ -281,7 +281,7 @@ Scan QR code or copy link to download
 
 1. **Build APK:**
    ```powershell
-   cd "e:\aminoss photography\mobile-admin-app"
+   cd "e:\Innov8 Production\mobile-admin-app"
    eas login
    eas build --platform android --profile preview
    ```
@@ -299,7 +299,7 @@ Scan QR code or copy link to download
 4. **Update Download Page:**
    ```typescript
    // Update handleDownload function with real URL
-   window.location.href = '/downloads/aminoss-admin.apk';
+   window.location.href = '/downloads/Innov8-admin.apk';
    ```
 
 5. **Test:**
@@ -387,7 +387,7 @@ Scan QR code or copy link to download
 ## 🚀 To Build Now:
 
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm install -g eas-cli
 eas login
 eas build --platform android --profile preview
@@ -425,3 +425,4 @@ eas build --platform android --profile preview
 **The mobile app WILL work flawlessly on any Android device!**
 
 It's already connected to your production database via the API. Just build the APK and admins can start using it! 📱🎉
+

@@ -1,9 +1,9 @@
-// Service Worker for Aminoss Admin PWA
+// Service Worker for Innov8 Admin PWA
 // Works on Android, iOS Safari 11.3+, Chrome, Firefox, Edge
 // Version: 2.0 - Professional Enhanced Edition
-const CACHE_NAME = 'aminoss-admin-v3';
-const RUNTIME_CACHE = 'aminoss-admin-runtime-v3';
-const API_CACHE = 'aminoss-admin-api-v3';
+const CACHE_NAME = 'Innov8-admin-v3';
+const RUNTIME_CACHE = 'Innov8-admin-runtime-v3';
+const API_CACHE = 'Innov8-admin-api-v3';
 
 const urlsToCache = [
   '/admin/dashboard',
@@ -100,7 +100,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (!currentCaches.includes(cacheName) && cacheName.startsWith('aminoss-admin')) {
+          if (!currentCaches.includes(cacheName) && cacheName.startsWith('Innov8-admin')) {
             console.log('🗑️ Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
@@ -213,3 +213,4 @@ self.addEventListener('notificationclick', (event) => {
 self.addEventListener('notificationclose', (event) => {
   console.log('🔕 Notification closed:', event.notification.tag);
 });
+

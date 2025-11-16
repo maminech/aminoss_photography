@@ -53,7 +53,7 @@ export default function BookingSettingsPage() {
       
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'aminoss_portfolio');
+      formData.append('upload_preset', 'innov8_portfolio');
       formData.append('folder', 'packages');
 
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dc67gl8fu';

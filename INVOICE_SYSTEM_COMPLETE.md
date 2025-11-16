@@ -2,7 +2,7 @@
 
 ## 🎉 Overview
 
-A fully functional invoice generation system has been integrated into the Aminoss Photography platform, matching your exact design specifications with French/Arabic bilingual support.
+A fully functional invoice generation system has been integrated into the Innov8 Production platform, matching your exact design specifications with French/Arabic bilingual support.
 
 ---
 
@@ -17,8 +17,8 @@ A fully functional invoice generation system has been integrated into the Aminos
   - ✅ Professional services table with alternating row colors
   - ✅ Payment summary with acompte, payé, reste à payer
   - ✅ Bilingual conditions générales (French + Arabic side-by-side)
-  - ✅ Company branding: Aminoss Photography / Innov8 Production
-  - ✅ Footer: © 2025 Aminoss Photography – Made with ❤️ in Tunisia
+  - ✅ Company branding: Innov8 Production / Innov8 Production
+  - ✅ Footer: © 2025 Innov8 Production – Made with ❤️ in Tunisia
   - ✅ Fixed width ≈ 800px, A4 page size
   - ✅ **NO TVA** (as per client feedback)
 
@@ -427,9 +427,9 @@ Loads Google Fonts directly into PDF.
 ### PDF Layout Preview:
 ```
 ┌─────────────────────────────────────────────────────┐
-│ AMINOSS PHOTOGRAPHY              FACTURE            │
+│ Innov8 Production              FACTURE            │
 │ Innov8 Production                INV-2025-001       │
-│ contact@aminoss.com              10/11/2025         │
+│ contact@innov8.com              10/11/2025         │
 ├─────────────────────────────────────────────────────┤
 │ ┌──────────────────┐  ┌──────────────────┐         │
 │ │ CLIENT           │  │ ÉVÉNEMENT         │         │
@@ -453,7 +453,7 @@ Loads Google Fonts directly into PDF.
 │ • L'acompte est...    │  • العربون غير...           │
 │ • Le solde doit...    │  • يجب دفع...               │
 ├─────────────────────────────────────────────────────┤
-│ © 2025 Aminoss Photography - Made with ❤ in Tunisia│
+│ © 2025 Innov8 Production - Made with ❤ in Tunisia│
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -503,4 +503,5 @@ Loads Google Fonts directly into PDF.
 The invoice system is **production-ready** and matches your exact specifications. Test it by creating an invoice from any booking in the admin dashboard!
 
 **Enjoy your professional invoice system!** 🚀📄✨
+
 

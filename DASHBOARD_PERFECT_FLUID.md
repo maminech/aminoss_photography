@@ -231,7 +231,7 @@ All features accessible via sidebar:
 
 ## 🚀 Deployment Status
 
-**Production URL**: https://aminossphotography-r8yuld7qr-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-r8yuld7qr-aminech990000-6355s-projects.vercel.app
 
 **Deployed Features**:
 - ✅ Optimized dashboard layout
@@ -290,7 +290,7 @@ All features accessible via sidebar:
 
 2. **Verify VAPID Keys in Vercel**
    ```bash
-   # Go to: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/environment-variables
+   # Go to: https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/environment-variables
    
    # Add:
    NEXT_PUBLIC_VAPID_PUBLIC_KEY=BKDG-Hkp-xhD_XqeVHzERHHZOJy7oMg6DIOo0JCbnaKofDDZizX1rWfn1Rpu0QgjMKAZRInfAJyFu2hiIgXpRds
@@ -337,5 +337,6 @@ All features accessible via sidebar:
 ---
 
 **Status**: ✅ Ready for use
-**Deploy URL**: https://aminossphotography-r8yuld7qr-aminech990000-6355s-projects.vercel.app
+**Deploy URL**: https://Innov8photography-r8yuld7qr-aminech990000-6355s-projects.vercel.app
 **Last Updated**: Just now
+

@@ -12,7 +12,7 @@ cloudinary.config({
  */
 export async function getImagesByCategory(category: Category, limit: number = 50): Promise<MediaItem[]> {
   try {
-    const folderPath = category === 'all' ? 'aminoss_photography' : `aminoss_photography/${category}`;
+    const folderPath = category === 'all' ? 'Innov8_photography' : `Innov8_photography/${category}`;
     
     const result = await cloudinary.api.resources({
       type: 'upload',
@@ -37,7 +37,7 @@ export async function getVideos(limit: number = 30): Promise<VideoItem[]> {
   try {
     const result = await cloudinary.api.resources({
       type: 'upload',
-      prefix: 'aminoss_photography/videos',
+      prefix: 'Innov8_photography/videos',
       max_results: limit,
       resource_type: 'video',
       context: true,

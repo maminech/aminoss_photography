@@ -115,7 +115,7 @@ git pull origin feature/adaptive-upgrade
 npx prisma generate
 npx prisma db push
 npm run build
-pm2 restart aminoss-photography
+pm2 restart Innov8-photography
 ```
 
 ---
@@ -140,3 +140,4 @@ pm2 restart aminoss-photography
 **Date:** November 15, 2025
 
 🎊 **Congratulations on your new gallery system!** 🎊
+

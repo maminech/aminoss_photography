@@ -79,7 +79,7 @@ export default function NovoShowcasePage() {
     <div className="novo-showcase">
       {/* Hero Section */}
       <NovoHeroSection
-        title="Aminoss Photography"
+        title="Innov8 Production"
         subtitle="Where Every Moment Becomes Art"
         backgroundImage="/images/hero-bg.jpg"
         height="full"
@@ -100,7 +100,7 @@ export default function NovoShowcasePage() {
       <NovoSplitScreen
         imagePosition="left"
         imageSrc="/images/about.jpg"
-        imageAlt="About Aminoss Photography"
+        imageAlt="About Innov8 Production"
         title="Capturing Moments That Last Forever"
         subtitle="About Us"
         description="With over a decade of experience in professional photography, we specialize in creating stunning visual stories that capture the essence of every moment. Our passion for perfection and attention to detail ensures that each photograph is a masterpiece."

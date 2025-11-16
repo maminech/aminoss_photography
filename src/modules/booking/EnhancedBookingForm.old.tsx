@@ -322,7 +322,7 @@ ${eventsText}
 ${formData.message || 'Pas de message additionnel'}
 
 ---
-Envoyé depuis aminossphotography.com
+Envoyé depuis Innov8photography.com
     `.trim();
 
     // Replace with your WhatsApp number

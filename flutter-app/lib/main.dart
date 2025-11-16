@@ -45,11 +45,11 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   
-  runApp(const AminossPhotographyApp());
+  runApp(const Innov8ProductionApp());
 }
 
-class AminossPhotographyApp extends StatelessWidget {
-  const AminossPhotographyApp({super.key});
+class Innov8ProductionApp extends StatelessWidget {
+  const Innov8ProductionApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class AminossPhotographyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return GetMaterialApp(
-            title: 'Aminoss Photography',
+            title: 'Innov8 Production',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

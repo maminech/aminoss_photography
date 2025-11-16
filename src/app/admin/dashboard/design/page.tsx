@@ -91,7 +91,7 @@ export default function AdminDesignPage() {
   // Export color palette
   const exportPalette = () => {
     const paletteData = {
-      name: "Aminoss Photography Color Palette",
+      name: "Innov8 Production Color Palette",
       colors: {
         primary: design.primaryColor,
         secondary: design.secondaryColor,

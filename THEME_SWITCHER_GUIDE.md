@@ -282,7 +282,7 @@ ESC - Close modal
 
 **Storage**:
 ```
-Key: "aminoss-layout-theme-preference"
+Key: "Innov8-layout-theme-preference"
 Value: "simple" or "professional"
 Location: Browser localStorage
 Expiry: Never (until manually cleared)
@@ -424,3 +424,4 @@ White background → White background
 **Your Choice**: Saved forever (or until you change it)
 
 ✨ **Enjoy your personalized photography platform!** ✨
+

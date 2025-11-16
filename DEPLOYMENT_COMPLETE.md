@@ -4,21 +4,21 @@ Your photography portfolio has been successfully deployed to Vercel!
 
 ## 🌐 Live URLs
 
-- **Production**: https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app
-- **Vercel Dashboard**: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/HkD515B86SRfuRetQCgznC4czkBd
+- **Production**: https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app
+- **Vercel Dashboard**: https://vercel.com/aminech990000-6355s-projects/innov8.tn/HkD515B86SRfuRetQCgznC4czkBd
 
 ## ⚙️ CRITICAL: Environment Variables Setup
 
 You MUST configure these environment variables in Vercel Dashboard:
 
 ### 1. Go to Vercel Dashboard
-https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/environment-variables
+https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/environment-variables
 
 ### 2. Add ALL these environment variables:
 
 #### Database
 ```
-DATABASE_URL=mongodb+srv://elbenzphotography_db_user:Hunter99@aminoss.lyu8e0q.mongodb.net/aminoss-portfolio?retryWrites=true&w=majority&appName=aminoss
+DATABASE_URL=mongodb+srv://elbenzphotography_db_user:Hunter99@innov8.lyu8e0q.mongodb.net/Innov8-portfolio?retryWrites=true&w=majority&appName=Innov8
 ```
 
 #### Cloudinary
@@ -30,13 +30,13 @@ CLOUDINARY_API_SECRET=f_SeAN8rKq8JURrq-78eGfqKBQk
 
 #### NextAuth
 ```
-NEXTAUTH_URL=https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app
+NEXTAUTH_URL=https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app
 NEXTAUTH_SECRET=8d2ca8c0846fb144e1785a1fdef6b1be92addab367ac0f535a69d3e03ad329c1
 ```
 
 #### Email (Contact Form)
 ```
-EMAIL_USER=aminoss.photography@gmail.com
+EMAIL_USER=innov8.tn@gmail.com
 EMAIL_PASS=rkspmzpugjmijvad
 ```
 
@@ -44,14 +44,14 @@ EMAIL_PASS=rkspmzpugjmijvad
 ```
 INSTAGRAM_APP_ID=1078938860859241
 INSTAGRAM_APP_SECRET=771d11a282fbae7e546ae17456d3b772
-INSTAGRAM_REDIRECT_URI=https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos
+INSTAGRAM_REDIRECT_URI=https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos
 ```
 
 ### 3. Update Facebook App Redirect URI
 
 Go to your Facebook App settings and add this redirect URI:
 ```
-https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos
+https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/admin/dashboard/photos
 ```
 
 ### 4. After Adding Variables
@@ -65,16 +65,16 @@ After you add all environment variables:
 ## 🧪 Testing Your Live Site
 
 ### Test the Homepage
-https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app
 
 ### Test Admin Login
-https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/admin/login
+https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/admin/login
 
 ### Test Gallery
-https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/gallery
+https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/gallery
 
 ### Test Contact Form
-https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/contact
+https://Innov8photography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/contact
 
 ## 🎨 What's Deployed
 
@@ -106,9 +106,9 @@ https://aminossphotography-ifmzmzonq-aminech990000-6355s-projects.vercel.app/con
 
 ## 📱 Custom Domain Setup (Optional)
 
-To add a custom domain (e.g., aminossphotography.com):
+To add a custom domain (e.g., Innov8photography.com):
 
-1. Go to: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/domains
+1. Go to: https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/domains
 2. Click "Add Domain"
 3. Enter your domain name
 4. Follow DNS configuration instructions
@@ -177,3 +177,4 @@ Go to Vercel dashboard → Deployments → Click a previous deployment → Promo
 
 **Deployed on:** November 6, 2025
 **Commit:** 387cd53 - "Add bulk actions, Instagram sync, gallery enhancements, and admin UI improvements"
+

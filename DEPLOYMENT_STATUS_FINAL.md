@@ -7,8 +7,8 @@
 **Branch:** feature/adaptive-upgrade  
 **Environment:** Production  
 
-**Production URL:** https://aminossphotography-5h43m15rd-aminech990000-6355s-projects.vercel.app  
-**Vercel Dashboard:** https://vercel.com/aminech990000-6355s-projects/aminoss.photography
+**Production URL:** https://Innov8photography-5h43m15rd-aminech990000-6355s-projects.vercel.app  
+**Vercel Dashboard:** https://vercel.com/aminech990000-6355s-projects/innov8.tn
 
 ---
 
@@ -179,12 +179,12 @@
 **Returns:**
 ```json
 {
-  "email": "aminoss.photography@gmail.com",
+  "email": "innov8.tn@gmail.com",
   "phone": "+216 94 124 796",
   "whatsappNumber": "21694124796",
   "instagramUrl": "https://www.instagram.com/ami_noss.photography",
   "facebookUrl": "https://www.facebook.com/mohamed.chalghoum.266885",
-  "youtubeUrl": "https://youtube.com/@aminoss",
+  "youtubeUrl": "https://youtube.com/@innov8",
   "location": "Sousse, Tunisia"
 }
 ```
@@ -218,13 +218,13 @@
 ## 🚀 DEPLOYMENT URLS
 
 **Primary:**
-- https://aminossphotography-5h43m15rd-aminech990000-6355s-projects.vercel.app
+- https://Innov8photography-5h43m15rd-aminech990000-6355s-projects.vercel.app
 
 **Admin Panel:**
-- https://aminossphotography-5h43m15rd-aminech990000-6355s-projects.vercel.app/admin/dashboard
+- https://Innov8photography-5h43m15rd-aminech990000-6355s-projects.vercel.app/admin/dashboard
 
 **Client Portal:**
-- https://aminossphotography-5h43m15rd-aminech990000-6355s-projects.vercel.app/client/login
+- https://Innov8photography-5h43m15rd-aminech990000-6355s-projects.vercel.app/client/login
 
 ---
 
@@ -275,3 +275,4 @@ The platform is fully functional with all client feedback implemented. No runtim
 **Last Updated:** November 10, 2025  
 **Version:** Client Feedback Round 2  
 **Status:** ✅ PRODUCTION READY
+

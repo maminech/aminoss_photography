@@ -13,7 +13,7 @@ async function uploadLogo() {
     
     const result = await cloudinary.uploader.upload('path_to_logo.png', {
       folder: 'branding',
-      public_id: 'aminoss-logo',
+      public_id: 'Innov8-logo',
       overwrite: true,
       transformation: [
         { quality: 'auto:best' },
@@ -24,13 +24,13 @@ async function uploadLogo() {
     console.log('✅ Logo uploaded successfully!');
     console.log('URL:', result.secure_url);
     console.log('\nOptimized URLs:');
-    console.log('Dark BG:', cloudinary.url('branding/aminoss-logo', {
+    console.log('Dark BG:', cloudinary.url('branding/Innov8-logo', {
       transformation: [
         { quality: 'auto', fetch_format: 'auto' },
         { height: 50 }
       ]
     }));
-    console.log('Light BG:', cloudinary.url('branding/aminoss-logo', {
+    console.log('Light BG:', cloudinary.url('branding/Innov8-logo', {
       transformation: [
         { quality: 'auto', fetch_format: 'auto' },
         { height: 50 },
@@ -44,3 +44,4 @@ async function uploadLogo() {
 }
 
 uploadLogo();
+

@@ -20,7 +20,7 @@ export default function MobileAppDownloadPage() {
             <Smartphone className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Aminoss Admin Mobile App
+            Innov8 Admin Mobile App
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Install as a Progressive Web App - Works on ANY device (Android, iOS, Desktop)

@@ -6,7 +6,7 @@ The video upload was failing because the **upload preset environment variable** 
 ## What I Fixed
 
 ### 1. ✅ Added Missing Environment Variable
-Added `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=aminoss_portfolio` to:
+Added `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=innov8_portfolio` to:
 - `.env.local` (for local development)
 - `.env.production` (for production builds)
 
@@ -16,7 +16,7 @@ You need to verify your Cloudinary upload preset supports videos:
 #### Steps to Configure:
 1. Go to [Cloudinary Console](https://console.cloudinary.com/)
 2. Navigate to **Settings** → **Upload** → **Upload presets**
-3. Find or create preset: `aminoss_portfolio`
+3. Find or create preset: `innov8_portfolio`
 4. Configure these settings:
 
 ```
@@ -31,11 +31,11 @@ You need to verify your Cloudinary upload preset supports videos:
 You need to add this to Vercel:
 
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Select your project: `aminoss-photography`
+2. Select your project: `Innov8-photography`
 3. Go to **Settings** → **Environment Variables**
 4. Add new variable:
    - **Name**: `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`
-   - **Value**: `aminoss_portfolio`
+   - **Value**: `innov8_portfolio`
    - **Environments**: ✅ Production, ✅ Preview, ✅ Development
 5. Click **Save**
 
@@ -133,3 +133,4 @@ npm run dev
 ---
 
 **Status**: ✅ Local fix applied - Needs Vercel update + restart
+

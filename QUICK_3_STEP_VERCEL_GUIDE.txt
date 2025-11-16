@@ -10,8 +10,8 @@ STEP 1: ADD DOMAIN (2 minutes)
 
 In the Vercel dashboard that just opened:
 
-1. Find and click your project: "aminoss_photography"
-   (Or look for "aminossphotography" - it might be without underscore)
+1. Find and click your project: "Innov8_photography"
+   (Or look for "Innov8photography" - it might be without underscore)
 
 2. Click "Settings" at the top
 
@@ -147,7 +147,7 @@ EXPECTED RESULTS
 
 After DNS propagates and you visit https://innov8.tn you should see:
 
-✓ Your Aminoss Photography homepage
+✓ Your Innov8 Production homepage
 ✓ Green lock icon (SSL certificate - automatic from Vercel)
 ✓ Fast loading (Vercel's global CDN)
 ✓ All features working
@@ -161,10 +161,10 @@ TROUBLESHOOTING
 
 Issue: Can't find my project in Vercel
 Solution: Check these names:
-- aminoss_photography
-- aminossphotography
-- aminoss-photography
-Or search for "aminoss" in the dashboard
+- Innov8_photography
+- Innov8photography
+- Innov8-photography
+Or search for "Innov8" in the dashboard
 
 Issue: Domain already exists
 Solution: That's fine! It was already added. Just proceed to Step 2.
@@ -237,17 +237,18 @@ If you need help:
 3. SSL Check: https://www.ssllabs.com/ssltest/analyze.html?d=innov8.tn
 
 Contact:
-- Business: aminoss.photography@gmail.com
+- Business: innov8.tn@gmail.com
 - Vercel Support: https://vercel.com/support
 
 ================================================================================
 SUCCESS! 🎉
 ================================================================================
 
-Once DNS propagates, your Aminoss Photography Platform will be live at:
+Once DNS propagates, your Innov8 Production Platform will be live at:
 
 🌐 https://innov8.tn
 
 Congratulations on your deployment!
 
 ================================================================================
+

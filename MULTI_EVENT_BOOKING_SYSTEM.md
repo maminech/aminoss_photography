@@ -201,7 +201,7 @@ model Booking {
 ## 🚀 Deployment
 
 - **Build Status**: ✅ Success (110 pages generated)
-- **Production URL**: https://aminossphotography-f1ezg2gbd-aminech990000-6355s-projects.vercel.app
+- **Production URL**: https://Innov8photography-f1ezg2gbd-aminech990000-6355s-projects.vercel.app
 - **Deploy Time**: 7 seconds
 - **Database**: MongoDB (schema updated and synced)
 - **Prisma Client**: Regenerated successfully
@@ -291,3 +291,4 @@ The system tracks:
 **Database**: MongoDB + Prisma
 
 🎉 **The multi-event quote request system is now fully operational!**
+

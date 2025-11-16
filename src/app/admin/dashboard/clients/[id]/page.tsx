@@ -604,7 +604,7 @@ export default function ClientDetailPage() {
 
               <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-dark-700/50">
                 <CldUploadWidget
-                  uploadPreset="aminoss_portfolio"
+                  uploadPreset="innov8_portfolio"
                   onSuccess={handleUploadSuccess}
                   options={{
                     multiple: true,

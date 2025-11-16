@@ -107,7 +107,7 @@ model Invoice {
 **Invoice Layout:**
 ```
 ┌─────────────────────────────────────────┐
-│ AMINOSS PHOTOGRAPHY                     │
+│ Innov8 Production                     │
 │ Photographe Professionnel               │
 │ Tel: +216 94 124 796                    │
 │─────────────────────────────────────────│
@@ -141,7 +141,7 @@ model Invoice {
 │ Paiement dû dans les 30 jours...       │
 │                                         │
 │ Merci pour votre confiance!            │
-│ AMINOSS PHOTOGRAPHY                     │
+│ Innov8 Production                     │
 └─────────────────────────────────────────┘
 ```
 
@@ -271,10 +271,10 @@ model Invoice {
 ### Company Branding
 Currently hardcoded in `InvoiceEditor.tsx`:
 ```typescript
-<h1>AMINOSS PHOTOGRAPHY</h1>
+<h1>Innov8 Production</h1>
 <p>Photographe Professionnel</p>
 <p>Tel: +216 94 124 796</p>
-<p>Email: contact@aminossphotography.com</p>
+<p>Email: contact@innov8photography.com</p>
 ```
 
 **To customize:**
@@ -466,4 +466,5 @@ remaining = totalAmount - paidAmount
 **Status:** ✅ Ready for deployment  
 **Dependencies:** jsPDF, html2canvas  
 **Database:** MongoDB with Prisma
+
 

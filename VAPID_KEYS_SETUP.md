@@ -10,7 +10,7 @@ NEXT_PUBLIC_VAPID_PUBLIC_KEY=BKDG-Hkp-xhD_XqeVHzERHHZOJy7oMg6DIOo0JCbnaKofDDZizX
 
 ## Where to Add in Vercel
 
-1. Go to: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/environment-variables
+1. Go to: https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/environment-variables
 
 2. Click "Add New"
 
@@ -43,3 +43,4 @@ After enabling, trigger a notification by:
 - Guest uploads photos
 
 You should get a push notification with custom icon and sound!
+

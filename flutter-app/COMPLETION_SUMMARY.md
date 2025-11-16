@@ -62,7 +62,7 @@
 - ✅ App Bar - Custom app bars
 
 ### Android Configuration (100%)
-- ✅ Package name: com.aminoss.photography
+- ✅ Package name: com.innov8.tn
 - ✅ Min SDK: 21 (Android 5.0)
 - ✅ Target SDK: 34 (Android 14)
 - ✅ Build configuration complete
@@ -83,7 +83,7 @@
 ### Step 1: Build the APK (5 minutes)
 ```powershell
 # Navigate to Flutter app
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 
 # Install dependencies
 flutter pub get
@@ -98,20 +98,20 @@ flutter build apk --release
 ### Step 2: Upload APK to Website
 ```powershell
 # Copy APK to public folder
-Copy-Item "E:\aminoss photography\flutter-app\build\app\outputs\flutter-apk\app-release.apk" -Destination "E:\aminoss photography\public\downloads\aminoss-photography.apk"
+Copy-Item "E:\Innov8 Production\flutter-app\build\app\outputs\flutter-apk\app-release.apk" -Destination "E:\Innov8 Production\public\downloads\Innov8-photography.apk"
 ```
 
 ### Step 3: Deploy to Vercel
 ```powershell
 # Deploy to production
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 vercel --prod
 ```
 
 ### Step 4: Share with Users
 Users can now download your app from:
 ```
-https://aminossphotography-...vercel.app/download-app
+https://Innov8photography-...vercel.app/download-app
 ```
 
 ---
@@ -175,7 +175,7 @@ static const String baseUrl = 'https://your-api.com';
 
 ## 📏 APP SPECIFICATIONS
 
-**Package Name:** com.aminoss.photography
+**Package Name:** com.innov8.tn
 **Version:** 1.0.0
 **Size:** ~15-20 MB (APK)
 **Min Android:** 5.0 (95%+ device coverage)
@@ -207,7 +207,7 @@ static const String baseUrl = 'https://your-api.com';
 - Tell users it's the official app
 - Distribute only from your website
 - Add verification instructions
-- Users see "Aminoss Photography" as developer
+- Users see "Innov8 Production" as developer
 
 ---
 
@@ -215,7 +215,7 @@ static const String baseUrl = 'https://your-api.com';
 
 ### Option A: Build Now (Recommended)
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter build apk --release
 ```
@@ -224,7 +224,7 @@ flutter build apk --release
 
 ### Option B: Test First
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter run
 ```
 **Requirement:** Android phone connected via USB
@@ -290,13 +290,13 @@ Your Flutter app is **COMPLETE** and **READY TO BUILD**!
 
 **Quick Start:**
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter build apk --release
 ```
 
 **Download Page Ready:**
-https://aminossphotography-...vercel.app/download-app
+https://Innov8photography-...vercel.app/download-app
 
 **Need Help?**
 - Read: `BUILD_NOW.md` for detailed instructions
@@ -314,3 +314,4 @@ Just tell me:
 4. **"I'm ready to deploy"** - I'll walk you through deployment
 
 **Your app is ready! What would you like to do? 🚀**
+

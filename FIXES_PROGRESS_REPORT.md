@@ -2,7 +2,7 @@
 
 ## ✅ Phase 1: COMPLETE & DEPLOYED
 
-**Deployment URL**: https://aminossphotography-8qqn0zo4u-aminech990000-6355s-projects.vercel.app
+**Deployment URL**: https://Innov8photography-8qqn0zo4u-aminech990000-6355s-projects.vercel.app
 **Date**: November 9, 2025
 
 ---
@@ -169,3 +169,4 @@ if (body.paymentStatus === 'paid' && !body.items) {
 
 **Last Updated**: November 9, 2025
 **Status**: Phase 1 Complete, Phase 2 Starting
+

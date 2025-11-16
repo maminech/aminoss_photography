@@ -1,4 +1,4 @@
-# 🎉 PROJECT COMPLETE - Aminoss Photography Portfolio
+# 🎉 PROJECT COMPLETE - Innov8 Production Portfolio
 
 ## ✅ What Has Been Created
 
@@ -64,7 +64,7 @@ A **complete, production-ready photography portfolio** website featuring:
 ### 📁 Files Created (30+ Files)
 
 ```
-aminoss-photography/
+Innov8-photography/
 ├── src/
 │   ├── app/
 │   │   ├── api/contact/route.ts       ✅ Contact form API
@@ -141,7 +141,7 @@ To use your own photos:
 1. Create account at [cloudinary.com](https://cloudinary.com) (free)
 2. Get your credentials from dashboard
 3. Update `.env.local` with your credentials
-4. Create folders: `aminoss_photography/weddings`, etc.
+4. Create folders: `Innov8_photography/weddings`, etc.
 5. Upload your photos
 6. Restart dev server
 
@@ -388,3 +388,4 @@ Your professional photography portfolio is **100% complete** and ready to use!
 ---
 
 *Built with ❤️ using Next.js, TypeScript, TailwindCSS, and Framer Motion*
+

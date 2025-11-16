@@ -153,7 +153,7 @@ const handleClose = () => {
 
 ### Vercel Deployment
 Changes are now deploying to production at:
-- https://aminossphotography.vercel.app
+- https://Innov8photography.vercel.app
 
 **Auto-deployment triggered** via GitHub integration.
 
@@ -210,3 +210,4 @@ Changes are now deploying to production at:
 
 *Last Updated: December 2024*
 *Status: All fixes deployed and ready for testing*
+

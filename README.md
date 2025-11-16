@@ -1,8 +1,8 @@
-# 📸 Aminoss Photography Portfolio
+# 📸 Innov8 Production Portfolio
 
 A professional, production-ready photography portfolio website built with **Next.js 14**, **TailwindCSS**, and **Framer Motion**. Features an Instagram-style gallery, video reels, contact form, and Cloudinary integration.
 
-![Aminoss Photography](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![Innov8 Production](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)
 
@@ -22,7 +22,7 @@ A professional, production-ready photography portfolio website built with **Next
 ## 🏗️ Project Structure
 
 ```
-aminoss-photography/
+Innov8-photography/
 ├── src/
 │   ├── app/
 │   │   ├── api/
@@ -94,7 +94,7 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
 # Email Configuration
-EMAIL_USER=aminoss.photography@gmail.com
+EMAIL_USER=innov8.tn@gmail.com
 EMAIL_PASS=your_app_password
 
 # Optional: Google Analytics
@@ -131,7 +131,7 @@ To enable the contact form, you need to set up Gmail App Password:
 Create folders in Cloudinary with this structure:
 
 ```
-aminoss_photography/
+Innov8_photography/
 ├── weddings/
 ├── portraits/
 ├── travel/
@@ -301,16 +301,16 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-**Aminoss**
-- Website: [aminoss-photography.com](https://aminoss-photography.com)
+**Innov8**
+- Website: [Innov8-photography.com](https://Innov8-photography.com)
 - Instagram: [@ami_noss.photography](https://www.instagram.com/ami_noss.photography)
 - Facebook: [Mohamed Chalghoum](https://www.facebook.com/mohamed.chalghoum.266885)
 - Location: Sousse, Tunisia
-- Email: aminoss.photography@gmail.com
+- Email: innov8.tn@gmail.com
 
 ## 🤝 Support
 
-For support, email aminoss.photography@gmail.com or open an issue in the repository.
+For support, email innov8.tn@gmail.com or open an issue in the repository.
 
 ## 🎯 Roadmap
 
@@ -324,3 +324,4 @@ For support, email aminoss.photography@gmail.com or open an issue in the reposit
 ---
 
 **Made with ❤️ in Tunisia**
+

@@ -373,4 +373,5 @@ The solution is production-ready, tested, and deployed. Clients can now successf
 ---
 
 *Last Updated: December 2024*
-*Deployment: vercel.com/aminech990000-6355s-projects/aminoss.photography*
+*Deployment: vercel.com/aminech990000-6355s-projects/innov8.tn*
+

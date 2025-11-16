@@ -2,7 +2,7 @@
 
 ## ✅ Deployment Status
 
-**Production URL**: https://aminossphotography-k8wvsydt6-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-k8wvsydt6-aminech990000-6355s-projects.vercel.app
 **Build Status**: ✅ Successful (Gallery: 156 KB)
 **Deployment Date**: November 12, 2025
 
@@ -486,3 +486,4 @@ The system is **fluid, intuitive, and professional** - exactly as requested! �
 **Last Updated**: November 12, 2025  
 **Status**: ✅ Production Ready  
 **Version**: 1.0.0
+

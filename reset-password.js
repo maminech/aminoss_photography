@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function resetPassword() {
   try {
-    const email = 'aminoss.photography@gmail.com';
+    const email = 'innov8.tn@gmail.com';
     const newPassword = 'Hunter990000';
 
     // Check if user exists
@@ -47,3 +47,4 @@ async function resetPassword() {
 }
 
 resetPassword();
+

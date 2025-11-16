@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Aminoss Admin",
-    "slug": "aminoss-admin-app",
+    "name": "Innov8 Admin",
+    "slug": "Innov8-admin-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
@@ -10,10 +10,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aminoss.admin"
+      "bundleIdentifier": "com.Innov8.admin"
     },
     "android": {
-      "package": "com.aminoss.admin",
+      "package": "com.Innov8.admin",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#8B5CF6"
@@ -31,3 +31,4 @@
     }
   }
 }
+

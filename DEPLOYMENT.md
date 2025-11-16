@@ -1,4 +1,4 @@
-# Deployment Guide - Aminoss Photography
+# Deployment Guide - Innov8 Production
 
 ## 🚀 Quick Deploy to Vercel
 
@@ -11,9 +11,9 @@
 ```bash
 git init
 git add .
-git commit -m "Initial commit: Aminoss Photography Portfolio"
+git commit -m "Initial commit: Innov8 Production Portfolio"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/aminoss-photography.git
+git remote add origin https://github.com/YOUR_USERNAME/Innov8-photography.git
 git push -u origin main
 ```
 
@@ -35,14 +35,14 @@ In Vercel dashboard, go to **Settings** → **Environment Variables** and add:
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-EMAIL_USER=aminoss.photography@gmail.com
+EMAIL_USER=innov8.tn@gmail.com
 EMAIL_PASS=your_gmail_app_password
 ```
 
 ### Step 4: Custom Domain (Optional)
 
 1. In Vercel dashboard, go to **Settings** → **Domains**
-2. Add your custom domain (e.g., `aminoss-photography.com`)
+2. Add your custom domain (e.g., `Innov8-photography.com`)
 3. Update DNS records:
    - **A Record**: Point to Vercel's IP
    - **CNAME**: Point `www` to `cname.vercel-dns.com`
@@ -172,7 +172,7 @@ git push
 **Error**: 404 on images
 - **Fix**: Check Cloudinary credentials
 - **Fix**: Make sure folder structure is correct
-- **Fix**: Images must be in `aminoss_photography/` folder
+- **Fix**: Images must be in `Innov8_photography/` folder
 
 ### Slow Loading
 
@@ -213,3 +213,4 @@ Your portfolio is now live! Share it:
 ---
 
 **Good luck with your photography business! 📸**
+

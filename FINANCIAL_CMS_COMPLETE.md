@@ -4,7 +4,7 @@
 
 Complete financial management system integrated into the Admin Dashboard with Google Calendar OAuth, Expense Management, Salary Management, and comprehensive navigation.
 
-**Deployment URL:** https://aminossphotography-f5msl9u3c-aminech990000-6355s-projects.vercel.app
+**Deployment URL:** https://Innov8photography-f5msl9u3c-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -303,7 +303,7 @@ src/
 
 **Status:** ✅ Successfully deployed to production
 
-**Production URL:** https://aminossphotography-f5msl9u3c-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-f5msl9u3c-aminech990000-6355s-projects.vercel.app
 
 **Command Used:**
 ```bash
@@ -642,4 +642,5 @@ If you encounter any issues:
 
 **🎉 Financial CMS Complete! All requested features implemented and deployed.**
 
-**Production URL:** https://aminossphotography-f5msl9u3c-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-f5msl9u3c-aminech990000-6355s-projects.vercel.app
+

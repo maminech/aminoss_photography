@@ -79,9 +79,9 @@ class NotificationService {
     String? payload,
   }) async {
     const androidDetails = AndroidNotificationDetails(
-      'aminoss_channel',
-      'Aminoss Photography',
-      channelDescription: 'Notifications from Aminoss Photography',
+      'innov8_channel',
+      'Innov8 Production',
+      channelDescription: 'Notifications from Innov8 Production',
       importance: Importance.high,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',

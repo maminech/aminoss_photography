@@ -236,7 +236,7 @@ GOOGLE_REDIRECT_URI=https://yoursite.com/api/admin/google-calendar/callback
 ## 🚀 Deployment Status
 
 **Build:** In Progress...  
-**URL:** Will be ready at `https://aminossphotography.vercel.app`
+**URL:** Will be ready at `https://Innov8photography.vercel.app`
 
 **What's Deployed:**
 - ✅ Google Calendar API routes
@@ -400,7 +400,7 @@ model SiteSettings {
 ---
 
 **Deployment:** In Progress...  
-**Production URL:** https://aminossphotography.vercel.app  
+**Production URL:** https://Innov8photography.vercel.app  
 **Status:** Building and deploying now 🚀
 
 **To finish the financial CMS, I need to create:**
@@ -409,3 +409,4 @@ model SiteSettings {
 3. Add Cloudinary upload for receipts
 
 Should I continue with these remaining features once the build completes? 🎯
+

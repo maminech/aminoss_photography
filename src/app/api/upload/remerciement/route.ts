@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const result = await new Promise<any>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          folder: 'aminoss_photography/remerciements',
+          folder: 'Innov8_photography/remerciements',
           resource_type: 'auto',
           transformation: [
             { width: 1920, height: 1080, crop: 'limit', quality: 'auto:good' },

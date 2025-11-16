@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide - Aminoss Photography
+# 🚀 Quick Start Guide - Innov8 Production
 
 Follow these steps to get your portfolio running in **5 minutes**!
 
@@ -24,7 +24,7 @@ CLOUDINARY_API_KEY=your_key_here
 CLOUDINARY_API_SECRET=your_secret_here
 
 # Email Configuration
-EMAIL_USER=aminoss.photography@gmail.com
+EMAIL_USER=innov8.tn@gmail.com
 EMAIL_PASS=your_app_password_here
 ```
 
@@ -55,7 +55,7 @@ You should see the portfolio with sample images!
    - Get your credentials from dashboard
 
 2. **Upload Your Photos**
-   - Create folders: `aminoss_photography/weddings`, `aminoss_photography/portraits`, etc.
+   - Create folders: `Innov8_photography/weddings`, `Innov8_photography/portraits`, etc.
    - Upload your best photos
    - See detailed guide: `CLOUDINARY_SETUP.md`
 
@@ -210,7 +210,7 @@ npm install --save-dev @types/node @types/react
 
 - Check documentation files
 - Open issue on GitHub
-- Email: aminoss.photography@gmail.com
+- Email: innov8.tn@gmail.com
 
 ---
 
@@ -219,3 +219,4 @@ npm install --save-dev @types/node @types/react
 Your portfolio is ready to go. Just add your photos and deploy!
 
 **Happy showcasing! 📸**
+

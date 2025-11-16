@@ -1,13 +1,13 @@
 ═══════════════════════════════════════════════════════════════════════════════
-  AMINOSS PHOTOGRAPHY PLATFORM - COMPLETE SUMMARY
+  Innov8 Production PLATFORM - COMPLETE SUMMARY
 ═══════════════════════════════════════════════════════════════════════════════
 
-Platform Name:    Innov8 Production (Aminoss Photography)
+Platform Name:    Innov8 Production (Innov8 Production)
 Owner:            Aymen Ben Ammar
 Location:         Moknine, Sousse, Tunisia
 Type:             Full-stack Photography Business Management System
 Status:           ✅ PRODUCTION-READY & DEPLOYED
-Repository:       github.com/maminech/aminoss_photography
+Repository:       github.com/maminech/Innov8_photography
 Branch:           feature/adaptive-upgrade
 Date:             November 14, 2025
 
@@ -574,3 +574,4 @@ Generated: November 14, 2025
 Platform Version: 2.0 (Adaptive Upgrade)
 Developer: Aymen Ben Ammar
 ═══════════════════════════════════════════════════════════════════════════════
+

@@ -12,7 +12,7 @@ The mobile app is currently **source code**. It needs to be compiled into an APK
 
 ### Step 1: Open PowerShell and Login (1 minute)
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas login
 ```
 
@@ -39,7 +39,7 @@ After build completes, you'll see:
 I created a script that does everything:
 
 ```powershell
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 .\build-mobile-app.ps1
 ```
 
@@ -62,11 +62,11 @@ This will:
 ```powershell
 # Download APK from Expo link
 # Then:
-mkdir "e:\aminoss photography\public\downloads"
-# Place APK as: aminoss-admin.apk
-cd "e:\aminoss photography"
+mkdir "e:\Innov8 Production\public\downloads"
+# Place APK as: Innov8-admin.apk
+cd "e:\Innov8 Production"
 vercel --prod
-# Link: https://your-domain.com/downloads/aminoss-admin.apk
+# Link: https://your-domain.com/downloads/Innov8-admin.apk
 ```
 
 ### Option 3: Google Drive
@@ -116,7 +116,7 @@ Right now we have the recipe, but need to cook it first!
 
 ### 2. Open PowerShell
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 ```
 
 ### 3. Login
@@ -159,7 +159,7 @@ Scan QR code: [QR CODE]
 Want to test immediately? Use development mode:
 
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm start
 ```
 
@@ -178,12 +178,12 @@ Then:
 
 ```powershell
 # One command to rule them all:
-cd "e:\aminoss photography\mobile-admin-app" ; eas login ; eas build --platform android --profile preview
+cd "e:\Innov8 Production\mobile-admin-app" ; eas login ; eas build --platform android --profile preview
 ```
 
 **Or use my script:**
 ```powershell
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 .\build-mobile-app.ps1
 ```
 
@@ -209,15 +209,16 @@ cd "e:\aminoss photography"
 
 **Run this in PowerShell:**
 ```powershell
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 .\build-mobile-app.ps1
 ```
 
 **Or these commands:**
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas login
 eas build --platform android --profile preview
 ```
 
 **You'll have your download link in ~10 minutes!** ⏰✨
+

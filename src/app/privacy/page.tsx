@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
           </p>
 
           <p className="text-gray-700 dark:text-gray-300 mb-6">
-            Aminoss Photography ("we", "our", "us") operates aminossphotography.vercel.app. This page informs you of our policies regarding the collection, use, and disclosure of personal data.
+            Innov8 Production ("we", "our", "us") operates Innov8photography.vercel.app. This page informs you of our policies regarding the collection, use, and disclosure of personal data.
           </p>
 
           <section className="mb-8">
@@ -100,8 +100,8 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               If you have any questions about this Privacy Policy, please contact us at:{' '}
-              <a href="mailto:aminoss.photography@gmail.com" className="text-primary hover:underline">
-                aminoss.photography@gmail.com
+              <a href="mailto:innov8.tn@gmail.com" className="text-primary hover:underline">
+                innov8.tn@gmail.com
               </a>
             </p>
           </section>

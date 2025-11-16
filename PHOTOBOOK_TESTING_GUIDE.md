@@ -5,7 +5,7 @@
 ### Test as Client
 
 1. **Login**
-   - Go to: `https://aminossphotography.vercel.app/client/login`
+   - Go to: `https://Innov8photography.vercel.app/client/login`
    - Use client credentials
 
 2. **Navigate to Photobooks**
@@ -44,7 +44,7 @@
 ### Test as Admin
 
 1. **Login**
-   - Go to: `https://aminossphotography.vercel.app/admin/login`
+   - Go to: `https://Innov8photography.vercel.app/admin/login`
    - Use admin credentials
 
 2. **Navigate to Photobooks**
@@ -198,7 +198,7 @@ await prisma.photobook.findMany({
 
 ### Test Submit Endpoint Directly:
 ```bash
-curl -X POST https://aminossphotography.vercel.app/api/client/photobook/submit \
+curl -X POST https://Innov8photography.vercel.app/api/client/photobook/submit \
   -H "Content-Type: application/json" \
   -H "Cookie: client-token=..." \
   -d '{
@@ -327,3 +327,4 @@ vercel --prod --force
 
 *Last Updated: December 2024*
 *Version: 1.0*
+

@@ -42,7 +42,7 @@ export default function ProfessionalLayout({ children }: ProfessionalLayoutProps
       {/* Novo Enhanced Preloader */}
       <NovoPreloaderEnhanced
         type="words"
-        staticWord="AMINOSS"
+        staticWord="Innov8"
         dynamicWords={['Photography', 'Moments', 'Memories', 'Stories', 'Beauty']}
         onComplete={() => setShowContent(true)}
       />

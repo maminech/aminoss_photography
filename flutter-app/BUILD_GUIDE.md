@@ -69,7 +69,7 @@
 
 ### Step 2: Install Dependencies
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 ```
 
@@ -109,7 +109,7 @@ I'll create a download page for your Next.js site where users can download the A
 
 ### 1. Build the APK:
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter build apk --release
 ```
@@ -166,3 +166,4 @@ Your Flutter app is **100% complete** and ready to build!
 3. Both? ✅
 
 Just say what you need!
+

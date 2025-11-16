@@ -61,7 +61,7 @@
 ### Step 1: Configure Database
 Ensure your `.env` file has the MongoDB connection string:
 ```env
-DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/aminoss_photography"
+DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/Innov8_photography"
 ```
 
 ### Step 2: Push Schema to Database
@@ -263,3 +263,4 @@ You now have a complete contact message management system integrated into your a
 - Secure and private
 
 Your photography portfolio now has enterprise-level contact management! 📸✉️
+

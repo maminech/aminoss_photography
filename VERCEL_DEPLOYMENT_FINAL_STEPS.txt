@@ -11,7 +11,7 @@ STEP 1: ADD DOMAIN TO VERCEL (3 minutes)
 1. Open your browser and go to:
    https://vercel.com/dashboard
 
-2. Find your project: "aminoss_photography" or "aminossphotography"
+2. Find your project: "Innov8_photography" or "Innov8photography"
    Click on it
 
 3. Click "Settings" (top menu)
@@ -215,7 +215,7 @@ _________________________________________________________________
 SUCCESS!
 ================================================================================
 
-Once DNS propagates and all tests pass, your Aminoss Photography Platform
+Once DNS propagates and all tests pass, your Innov8 Production Platform
 will be live at https://innov8.tn
 
 Benefits of Vercel deployment:
@@ -230,3 +230,4 @@ Benefits of Vercel deployment:
 No server management needed!
 
 ================================================================================
+

@@ -154,7 +154,7 @@ Service worker specifically excludes `/admin` and `/client/dashboard` URLs.
 
 **Status:** ✅ DEPLOYED
 
-**Production URL:** https://aminossphotography-ocd91c667-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-ocd91c667-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -184,7 +184,7 @@ Install it for:
 ✨ Works offline
 ✨ No app store needed
 
-Visit aminoss.com and tap "Install App"
+Visit Innov8.com and tap "Install App"
 
 That simple! 🎉
 
@@ -195,7 +195,7 @@ That simple! 🎉
 ```
 Swipe up to install our app! 📸
 
-[Link: aminoss.com]
+[Link: Innov8.com]
 
 One-tap access to our portfolio
 Book sessions instantly
@@ -234,7 +234,7 @@ Just visit and tap "Install App"!
 - Cache fallback (offline support)
 - Excludes admin/API routes
 - Auto-cleanup old caches
-- Version: `aminoss-public-v1`
+- Version: `Innov8-public-v1`
 
 ---
 
@@ -276,3 +276,4 @@ Just visit and tap "Install App"!
 **🎉 Congratulations! Your website is now an installable app!**
 
 Anyone can now add your photography portfolio to their home screen with one tap! 📸✨
+

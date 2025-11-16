@@ -55,7 +55,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             <Ionicons name="camera" size={60} color={COLORS.primary} />
           </View>
-          <Text style={styles.title}>Aminoss Admin</Text>
+          <Text style={styles.title}>Innov8 Admin</Text>
           <Text style={styles.subtitle}>Photography Management</Text>
         </View>
 

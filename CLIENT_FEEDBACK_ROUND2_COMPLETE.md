@@ -83,7 +83,7 @@ All client feedback items have been successfully implemented:
 
 **Changes:**
 - Modified `handleSubmit` function to open WhatsApp after successful form submission
-- Pre-fills message with: "Salut Aminoss, [Name] vous a contacté.\n\nEmail: [Email]\nTéléphone: [Phone]\n\nMessage:\n[Message]"
+- Pre-fills message with: "Salut Innov8, [Name] vous a contacté.\n\nEmail: [Email]\nTéléphone: [Phone]\n\nMessage:\n[Message]"
 - Uses `window.open()` with wa.me link: `https://wa.me/21694124796?text=${encodedMessage}`
 - Opens in new tab (_blank)
 
@@ -297,3 +297,4 @@ After successful deployment:
 **Database Models Updated:** 1
 
 **Status:** ✅ **READY FOR DEPLOYMENT**
+

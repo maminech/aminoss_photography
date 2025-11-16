@@ -32,7 +32,7 @@ Your portfolio now has a **professional admin dashboard** where you can:
 
 4. **Create Database User:**
    - Go to "Database Access" → "Add New Database User"
-   - Username: `aminoss`
+   - Username: `Innov8`
    - Password: Create a strong password (save it!)
    - Database User Privileges: "Atlas admin"
    - Click "Add User"
@@ -46,7 +46,7 @@ Your portfolio now has a **professional admin dashboard** where you can:
    - Go to "Database" → Click "Connect"
    - Choose "Connect your application"
    - Copy the connection string
-   - It looks like: `mongodb+srv://aminoss:<password>@cluster0.xxxxx.mongodb.net/...`
+   - It looks like: `mongodb+srv://Innov8:<password>@cluster0.xxxxx.mongodb.net/...`
 
 7. **Update `.env.local`:**
    - Replace `<password>` with your database password
@@ -54,7 +54,7 @@ Your portfolio now has a **professional admin dashboard** where you can:
 
 Example:
 ```env
-DATABASE_URL="mongodb+srv://aminoss:MyPassword123@cluster0.abc123.mongodb.net/aminoss-portfolio?retryWrites=true&w=majority"
+DATABASE_URL="mongodb+srv://Innov8:MyPassword123@cluster0.abc123.mongodb.net/Innov8-portfolio?retryWrites=true&w=majority"
 ```
 
 ---
@@ -252,7 +252,7 @@ When ready to deploy to Vercel:
 
 ### Issue: Sync not working
 **Solution:** Make sure:
-- Photos are in the correct Cloudinary folder: `aminoss-portfolio`
+- Photos are in the correct Cloudinary folder: `Innov8-portfolio`
 - Cloudinary credentials are correct in `.env.local`
 - You're logged in to admin dashboard
 
@@ -274,3 +274,4 @@ Your photography portfolio is now a **fully-functional CMS** with:
 - ✅ Database-driven content
 
 **No more manual updates! Upload → Sync → Done! 🚀**
+

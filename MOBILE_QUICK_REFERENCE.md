@@ -2,7 +2,7 @@
 
 ## 🎉 Status: COMPLETE & DEPLOYED ✅
 
-**Production URL**: https://aminossphotography-m6uh62b8l-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-m6uh62b8l-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -92,7 +92,7 @@ Already deployed! But for future updates:
 
 ```powershell
 # Deploy to production
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 vercel --prod
 ```
 
@@ -138,3 +138,4 @@ vercel --prod
 **Last Updated**: ${new Date().toLocaleDateString()}
 **Deployment**: ✅ Complete
 **Status**: ✅ Production Ready
+

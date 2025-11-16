@@ -3,11 +3,11 @@
 ## 🌐 Live Production URLs
 
 ### Primary Domain
-**https://aminossphotography.vercel.app** ✅ LIVE (HTTP 200)
+**https://Innov8photography.vercel.app** ✅ LIVE (HTTP 200)
 
 ### Secondary Domains
-- https://aminossphotography-aminech990000-6355s-projects.vercel.app
-- https://aminossphotography-kcd6zi56w-aminech990000-6355s-projects.vercel.app (latest deployment)
+- https://Innov8photography-aminech990000-6355s-projects.vercel.app
+- https://Innov8photography-kcd6zi56w-aminech990000-6355s-projects.vercel.app (latest deployment)
 
 ---
 
@@ -22,7 +22,7 @@
 - ✅ Approve/Reject/Pending status management
 - ✅ Automatic calendar sync on approval
 
-**Admin Panel:** `https://aminossphotography.vercel.app/admin/bookings-tracking`
+**Admin Panel:** `https://Innov8photography.vercel.app/admin/bookings-tracking`
 
 ### 2. **Guest Upload System**
 - ✅ QR code generation with production URLs (no more localhost!)
@@ -136,7 +136,7 @@ To enable photobooth prints, set these in admin panel:
 ### Test These Features in Production:
 
 #### Booking System
-- [ ] Visit https://aminossphotography.vercel.app/booking
+- [ ] Visit https://Innov8photography.vercel.app/booking
 - [ ] Submit booking WITHOUT email → Should work
 - [ ] Submit multiple bookings with same name → Should create separate records
 - [ ] After submit → Should redirect to WhatsApp (+216 94 124 796)
@@ -193,12 +193,12 @@ To enable photobooth prints, set these in admin panel:
 ## 📞 Support Information
 
 **Production URLs:**
-- Main Site: https://aminossphotography.vercel.app
-- Admin Panel: https://aminossphotography.vercel.app/admin
-- Booking Form: https://aminossphotography.vercel.app/booking
+- Main Site: https://Innov8photography.vercel.app
+- Admin Panel: https://Innov8photography.vercel.app/admin
+- Booking Form: https://Innov8photography.vercel.app/booking
 
 **Vercel Dashboard:**
-- Inspect Deployments: https://vercel.com/aminech990000-6355s-projects/aminoss.photography
+- Inspect Deployments: https://vercel.com/aminech990000-6355s-projects/innov8.tn
 
 **WhatsApp Business:**
 - Number: +216 94 124 796
@@ -224,3 +224,4 @@ To enable photobooth prints, set these in admin panel:
 *Last Updated: November 9, 2025*
 *Deployment ID: kcd6zi56w*
 *Status: ● Ready (Healthy)*
+

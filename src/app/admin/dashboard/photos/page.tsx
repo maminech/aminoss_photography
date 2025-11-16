@@ -385,7 +385,7 @@ export default function AdminPhotosPage() {
               
               {/* Upload Photos Button */}
               <CldUploadWidget
-                uploadPreset="aminoss_portfolio"
+                uploadPreset="innov8_portfolio"
                 options={{
                   folder: 'portfolio',
                   resourceType: 'image',

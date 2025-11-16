@@ -160,7 +160,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="text-lg font-playfair font-bold text-[#1a1a1a] mb-1">Email</h3>
                       <a href={`mailto:${contactSettings.email}`} className="text-gray-700 font-lato hover:text-[#d4af37] transition-colors">
-                        {contactSettings.email || 'aminoss.photography@gmail.com'}
+                        {contactSettings.email || 'innov8.tn@gmail.com'}
                       </a>
                     </div>
                   </div>
@@ -471,7 +471,7 @@ export default function ContactPage() {
                       href={`mailto:${contactSettings.email}`}
                       className="text-sm sm:text-base text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors break-all"
                     >
-                      {contactSettings.email || 'aminoss.photography@gmail.com'}
+                      {contactSettings.email || 'innov8.tn@gmail.com'}
                     </a>
                   </div>
                 </div>

@@ -7,7 +7,7 @@ import webpush from 'web-push';
 // Configure web-push with VAPID keys (you'll need to generate these)
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
-    'mailto:' + (process.env.ADMIN_EMAIL || 'admin@aminoss.com'),
+    'mailto:' + (process.env.ADMIN_EMAIL || 'admin@innov8.com'),
     process.env.VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
   );

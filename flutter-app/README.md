@@ -1,8 +1,8 @@
-# 🎨 Aminoss Photography - Professional Flutter App
+# 🎨 Innov8 Production - Professional Flutter App
 
 ## ✨ Complete Native Mobile Application for iOS & Android
 
-This is a **production-ready** Flutter application for Aminoss Photography platform.
+This is a **production-ready** Flutter application for Innov8 Production platform.
 
 ---
 
@@ -58,7 +58,7 @@ flutter doctor
 
 ```powershell
 # Navigate to flutter app folder
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 
 # Install dependencies
 flutter pub get
@@ -191,18 +191,18 @@ flutter-app/
 ### **Step 1: Create Firebase Project**
 1. Go to https://console.firebase.google.com
 2. Click "Add project"
-3. Name it "Aminoss Photography"
+3. Name it "Innov8 Production"
 4. Enable Google Analytics (optional)
 
 ### **Step 2: Add Android App**
 1. Click "Add app" → Android
-2. Package name: `com.aminoss.photography`
+2. Package name: `com.innov8.tn`
 3. Download `google-services.json`
 4. Place in: `android/app/google-services.json`
 
 ### **Step 3: Add iOS App**
 1. Click "Add app" → iOS
-2. Bundle ID: `com.aminoss.photography`
+2. Bundle ID: `com.innov8.tn`
 3. Download `GoogleService-Info.plist`
 4. Place in: `ios/Runner/GoogleService-Info.plist`
 
@@ -240,7 +240,7 @@ Then open Xcode and submit to App Store
 
 The app is **already connected** to your production API:
 ```
-https://aminossphotography-kbggtnzg3-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-kbggtnzg3-aminech990000-6355s-projects.vercel.app
 ```
 
 **Endpoints Used:**
@@ -395,7 +395,7 @@ https://aminossphotography-kbggtnzg3-aminech990000-6355s-projects.vercel.app
 4. Open app
 
 **Option 2: Play Store (After Publishing)**
-1. Search "Aminoss Photography"
+1. Search "Innov8 Production"
 2. Tap Install
 3. Open app
 
@@ -407,7 +407,7 @@ https://aminossphotography-kbggtnzg3-aminech990000-6355s-projects.vercel.app
 4. Open app
 
 **Option 2: App Store (After Publishing)**
-1. Search "Aminoss Photography"
+1. Search "Innov8 Production"
 2. Tap Get
 3. Open app
 
@@ -628,4 +628,5 @@ Your Flutter app is **production-ready** with:
 
 ---
 
-**Built with ❤️ for Aminoss Photography**
+**Built with ❤️ for Innov8 Production**
+

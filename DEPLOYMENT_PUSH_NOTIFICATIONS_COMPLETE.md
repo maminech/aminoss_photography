@@ -2,7 +2,7 @@
 
 ## ✅ Successfully Deployed
 
-**Production URL:** https://aminossphotography-r1snpbdkv-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-r1snpbdkv-aminech990000-6355s-projects.vercel.app
 
 **Deployment Time:** November 9, 2025
 
@@ -30,7 +30,7 @@
 
 ### Step 1: Add Environment Variables to Vercel
 
-Go to: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/environment-variables
+Go to: https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/environment-variables
 
 Add these 3 variables:
 
@@ -46,7 +46,7 @@ Add these 3 variables:
 
 3. **ADMIN_EMAIL**
    ```
-   aminoss.photography@gmail.com
+   innov8.tn@gmail.com
    ```
 
 **Environment:** Production
@@ -55,7 +55,7 @@ Add these 3 variables:
 
 After adding the variables:
 ```powershell
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 vercel --prod
 ```
 
@@ -67,7 +67,7 @@ The `PushSubscription` model needs to be added to your MongoDB database:
 
 ```powershell
 # On your local machine
-cd "e:\aminoss photography"
+cd "e:\Innov8 Production"
 npx prisma db push
 ```
 
@@ -131,11 +131,11 @@ Login → Tap Share (⬆️) → "Add to Home Screen" → "Add"
 ### Message Template for Clients:
 
 ```
-📸 Your Aminoss Photography Client Portal is ready!
+📸 Your Innov8 Production Client Portal is ready!
 
 Install the app for easy access to your photos:
 
-1. Visit: https://aminoss.com/client/login
+1. Visit: https://Innov8.com/client/login
 2. Login with your email: [their-email]
 3. Password: [their-password]
 4. Tap "Install App" when you see the orange banner
@@ -147,7 +147,7 @@ Features:
 ✨ Upload photos as wedding guest (QR code)
 ✨ Works offline
 
-Questions? Contact us: aminoss.photography@gmail.com
+Questions? Contact us: innov8.tn@gmail.com
 ```
 
 ---
@@ -281,11 +281,11 @@ navigator.serviceWorker.getRegistration().then(reg => {
 
 ## 🔗 Important Links
 
-- **Production Site:** https://aminossphotography-r1snpbdkv-aminech990000-6355s-projects.vercel.app
+- **Production Site:** https://Innov8photography-r1snpbdkv-aminech990000-6355s-projects.vercel.app
 - **Admin Dashboard:** /admin/dashboard
 - **Client Portal:** /client/login
-- **Vercel Dashboard:** https://vercel.com/aminech990000-6355s-projects/aminoss.photography
-- **Add Environment Variables:** https://vercel.com/aminech990000-6355s-projects/aminoss.photography/settings/environment-variables
+- **Vercel Dashboard:** https://vercel.com/aminech990000-6355s-projects/innov8.tn
+- **Add Environment Variables:** https://vercel.com/aminech990000-6355s-projects/innov8.tn/settings/environment-variables
 
 ---
 
@@ -305,6 +305,7 @@ See: `PUSH_NOTIFICATIONS_AND_CLIENT_APP_GUIDE.md`
 - Check console for errors
 - Verify VAPID keys in Vercel
 - Test in incognito mode
-- Contact: aminoss.photography@gmail.com
+- Contact: innov8.tn@gmail.com
 
 🎉 **Congratulations! Your platform now has push notifications and a client PWA app!**
+

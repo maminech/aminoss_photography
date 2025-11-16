@@ -228,7 +228,7 @@ interface NovoHeroSectionProps {
 import NovoHeroSection from '@/components/professional/NovoHeroSection';
 
 <NovoHeroSection
-  title="Aminoss Photography"
+  title="Innov8 Production"
   subtitle="Where Every Moment Becomes Art"
   backgroundImage="/hero.jpg"
   height="full"
@@ -769,3 +769,4 @@ For issues or questions:
 ## Credits
 
 Components inspired by the Novo WordPress premium theme, rebuilt with modern React/Next.js architecture and Framer Motion animations.
+

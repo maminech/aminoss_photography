@@ -313,7 +313,7 @@ curl -H "Cookie: clientId=abc123" \
 
 ## 🚀 Deployment Status
 
-**Production URL**: https://aminossphotography-asxcrknpe-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-asxcrknpe-aminech990000-6355s-projects.vercel.app
 
 **Deployment**: ✅ **SUCCESSFUL**
 
@@ -484,4 +484,5 @@ If you encounter issues:
 
 **🎉 All requested features are now live in production!**
 
-**Production URL**: https://aminossphotography-asxcrknpe-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-asxcrknpe-aminech990000-6355s-projects.vercel.app
+

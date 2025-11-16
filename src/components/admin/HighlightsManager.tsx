@@ -508,7 +508,7 @@ export default function HighlightsManager() {
                     </motion.div>
                   ) : (
                     <CldUploadWidget
-                      uploadPreset="aminoss_portfolio"
+                      uploadPreset="innov8_portfolio"
                       options={{
                         maxFiles: 1,
                         resourceType: 'image',
@@ -647,7 +647,7 @@ export default function HighlightsManager() {
                 {/* Upload Button */}
                 <div className="mb-6">
                   <CldUploadWidget
-                    uploadPreset="aminoss_portfolio"
+                    uploadPreset="innov8_portfolio"
                     options={{
                       multiple: true,
                       maxFiles: 10,

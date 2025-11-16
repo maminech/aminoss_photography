@@ -64,7 +64,7 @@ An installable mobile app for your clients to view their photos, create photoboo
 📸 Your photo gallery is ready!
 
 Install our app:
-1. Visit: https://aminoss.com/client/login
+1. Visit: https://Innov8.com/client/login
 2. Login with: [their-email]
 3. Tap "Install App"
 
@@ -76,7 +76,7 @@ Access your photos anytime! 📱✨
 ## 🚀 Status
 
 **Deployment:** ✅ COMPLETE  
-**Production URL:** https://aminossphotography-r1snpbdkv-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-r1snpbdkv-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -100,7 +100,7 @@ Add 3 variables:
 
 3. **ADMIN_EMAIL**
    ```
-   aminoss.photography@gmail.com
+   innov8.tn@gmail.com
    ```
 
 Then redeploy:
@@ -264,7 +264,7 @@ await sendPushNotification({
 - Check browser console for errors
 - Verify VAPID keys in Vercel environment
 - Try incognito mode (fresh session)
-- Contact: aminoss.photography@gmail.com
+- Contact: innov8.tn@gmail.com
 
 ---
 
@@ -297,3 +297,4 @@ await sendPushNotification({
 **Deployment Status:** ✅ COMPLETE
 
 **🎉 Your platform now has push notifications and a professional client app!**
+

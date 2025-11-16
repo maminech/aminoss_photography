@@ -1,12 +1,12 @@
 ================================================================================
-                    AMINOSS PHOTOGRAPHY PLATFORM
+                    Innov8 Production PLATFORM
                       Complete Features Guide
                           November 2025
 ================================================================================
 
 📸 WHAT IS THIS PLATFORM?
 --------------------------------------------------------------------------------
-A complete photography business management system for Aminoss Photography.
+A complete photography business management system for Innov8 Production.
 It handles everything from showcasing work to managing clients, bookings,
 invoices, and delivering photos to clients.
 
@@ -20,12 +20,12 @@ invoices, and delivering photos to clients.
 
 2. ADMIN (Photographer/Business Owner)
    - Full control of website, content, and business operations
-   - Access: aminossphotography.vercel.app/admin
+   - Access: Innov8photography.vercel.app/admin
 
 3. CLIENTS
    - People who booked photography services
    - Can view and download their event photos
-   - Access: aminossphotography.vercel.app/client/login
+   - Access: Innov8photography.vercel.app/client/login
 
 
 ================================================================================
@@ -343,7 +343,7 @@ ACCESS: /client/gallery/[id]/guest-uploads
 
 🔍 HOW TO TEST AS ADMIN:
 ------------------------
-1. Go to: aminossphotography.vercel.app/admin
+1. Go to: Innov8photography.vercel.app/admin
 2. Login with admin credentials
 3. TEST QUICK ACTIONS:
    - Click "Create Invoice" button
@@ -367,7 +367,7 @@ ACCESS: /client/gallery/[id]/guest-uploads
 
 🔍 HOW TO TEST AS CLIENT:
 -------------------------
-1. Go to: aminossphotography.vercel.app/client/login
+1. Go to: Innov8photography.vercel.app/client/login
 2. Login with client credentials
 3. TEST QUICK ACTIONS:
    - Click "My Galleries" card
@@ -404,7 +404,7 @@ ACCESS: /client/gallery/[id]/guest-uploads
 
 🔍 HOW TO TEST PUBLIC SITE:
 ---------------------------
-1. Go to: aminossphotography.vercel.app
+1. Go to: Innov8photography.vercel.app
 2. Browse galleries
 3. View packages (check TND currency)
 4. Test contact form
@@ -507,13 +507,13 @@ Previous currency (MAD - Moroccan Dirham) has been replaced.
 ================================================================================
 
 🌐 MAIN WEBSITE
-   https://aminossphotography.vercel.app
+   https://Innov8photography.vercel.app
 
 🔐 ADMIN LOGIN
-   https://aminossphotography.vercel.app/admin
+   https://Innov8photography.vercel.app/admin
 
 👤 CLIENT LOGIN
-   https://aminossphotography.vercel.app/client/login
+   https://Innov8photography.vercel.app/client/login
 
 📸 INSTAGRAM
    [Your Instagram handle]
@@ -590,3 +590,4 @@ ALL FEATURES ARE LIVE AND WORKING! 🎉
                     Questions? Need Help?
                     Contact the photographer
 ================================================================================
+

@@ -14,7 +14,7 @@ This guide will help you connect your Instagram account to automatically sync hi
 2. Click **"My Apps"** → **"Create App"**
 3. Choose **"Business"** as the app type
 4. Fill in the app details:
-   - **App Name**: "Aminoss Photography Portfolio"
+   - **App Name**: "Innov8 Production Portfolio"
    - **App Contact Email**: Your email
 5. Click **"Create App"**
 
@@ -214,3 +214,4 @@ Having issues? Here's what to check:
 If you encounter issues not covered here, check the browser console (F12) for detailed error messages, or contact support.
 
 **Happy Syncing! 📸✨**
+

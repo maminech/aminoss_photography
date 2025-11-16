@@ -1,7 +1,7 @@
 # Authentication & Dark/Light Mode Improvements
 
 ## Deployment Information
-**Production URL**: https://aminossphotography-9ud17v5c5-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-9ud17v5c5-aminech990000-6355s-projects.vercel.app
 **Deployed**: January 2025
 **Build Status**: ✅ Successful
 
@@ -250,3 +250,4 @@ toastOptions={{
 
 **Completed**: January 2025  
 **Status**: ✅ All improvements implemented and deployed
+

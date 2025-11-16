@@ -116,8 +116,8 @@ A **Progressive Web App (PWA)** version of your public photography website that 
 ### PWA Manifest:
 ```json
 {
-  "name": "Aminoss Photography",
-  "short_name": "Aminoss",
+  "name": "Innov8 Production",
+  "short_name": "Innov8",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#c67548",
@@ -130,7 +130,7 @@ A **Progressive Web App (PWA)** version of your public photography website that 
 - **Network-first** for public pages (always fresh content)
 - **Cache fallback** when offline
 - **Excludes** admin/API routes
-- **Cache version:** `aminoss-public-v1`
+- **Cache version:** `Innov8-public-v1`
 
 ### Cached Pages:
 1. `/` - Homepage
@@ -172,10 +172,10 @@ A **Progressive Web App (PWA)** version of your public photography website that 
 
 ### Android Chrome:
 ```
-1. Visit aminoss.com
+1. Visit Innov8.com
 2. Orange banner appears: "Install Our App"
 3. Tap "Install App"
-4. Browser shows: "Add Aminoss Photography to Home screen?"
+4. Browser shows: "Add Innov8 Production to Home screen?"
 5. Tap "Add"
 6. Icon appears on home screen
 7. Open app → Full-screen experience
@@ -183,7 +183,7 @@ A **Progressive Web App (PWA)** version of your public photography website that 
 
 ### iPhone Safari:
 ```
-1. Visit aminoss.com
+1. Visit Innov8.com
 2. Orange banner appears: "Install Our App"
 3. Tap "Install App"
 4. Alert shows: "Tap Share (⬆️) → Add to Home Screen"
@@ -194,10 +194,10 @@ A **Progressive Web App (PWA)** version of your public photography website that 
 
 ### Desktop Chrome/Edge:
 ```
-1. Visit aminoss.com
+1. Visit Innov8.com
 2. Install icon (⊕) appears in address bar
 3. Click install icon
-4. Dialog: "Install Aminoss Photography?"
+4. Dialog: "Install Innov8 Production?"
 5. Click "Install"
 6. App opens in separate window
 7. Pin to taskbar for easy access
@@ -271,7 +271,7 @@ A **Progressive Web App (PWA)** version of your public photography website that 
 **Message Template:**
 
 ```
-📸 Aminoss Photography App is Here!
+📸 Innov8 Production App is Here!
 
 Install our app for easy access to:
 • Browse our latest work
@@ -280,14 +280,14 @@ Install our app for easy access to:
 • Contact us instantly
 
 Install now:
-1. Visit: aminoss.com
+1. Visit: Innov8.com
 2. Tap "Install App" (orange button)
 3. Enjoy! 📱
 
 Works on iPhone, Android, and Desktop
 No app store needed • Free • Instant updates
 
-#AminossPhotography #PhotographyApp
+#Innov8Photography #PhotographyApp
 ```
 
 ---
@@ -306,7 +306,7 @@ Install it for:
 ✨ Works offline
 ✨ No app store needed
 
-Just visit aminoss.com and tap "Install App"
+Just visit Innov8.com and tap "Install App"
 
 That's it! 🎉
 
@@ -316,7 +316,7 @@ That's it! 🎉
 ### Instagram Story:
 ```
 Swipe up to install our app! 📸
-[Link: aminoss.com]
+[Link: Innov8.com]
 
 Quick access to our portfolio
 Book sessions in seconds
@@ -374,7 +374,7 @@ Track PWA usage in Google Analytics:
 
 **Status:** ✅ DEPLOYED
 
-**Production URL:** https://aminossphotography-ocd91c667-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-ocd91c667-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -389,6 +389,7 @@ Track PWA usage in Google Analytics:
 
 ---
 
-**Made with ❤️ for Aminoss Photography**
+**Made with ❤️ for Innov8 Production**
 
 **Your website is now an app. How cool is that?!** 🎉
+

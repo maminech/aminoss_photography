@@ -8,8 +8,8 @@ async function testCloudinaryUpload() {
   try {
     const formBody = new URLSearchParams({
       file: testImageUrl,
-      upload_preset: 'aminoss_portfolio',
-      folder: 'aminoss_portfolio/instagram',
+      upload_preset: 'innov8_portfolio',
+      folder: 'innov8_portfolio/instagram',
     });
 
     console.log('\nForm body:', formBody.toString().substring(0, 150) + '...');
@@ -41,3 +41,4 @@ async function testCloudinaryUpload() {
 }
 
 testCloudinaryUpload();
+

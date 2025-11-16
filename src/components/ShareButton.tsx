@@ -12,7 +12,7 @@ interface ShareButtonProps {
 
 export default function ShareButton({
   url = typeof window !== 'undefined' ? window.location.href : '',
-  title = 'Aminoss Photography',
+  title = 'Innov8 Production',
   text = 'Check out this amazing photography portfolio!',
   className = ''
 }: ShareButtonProps) {

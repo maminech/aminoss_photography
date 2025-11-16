@@ -80,7 +80,7 @@ export async function POST(req: Request) {
           
           const urlToUpload = isVideo ? post.thumbnailUrl : post.mediaUrl;
           const uploadResult = await cloudinary.uploader.upload(urlToUpload || '', {
-            folder: 'aminoss_portfolio/instagram',
+            folder: 'innov8_portfolio/instagram',
             resource_type: 'image',
             transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
           });

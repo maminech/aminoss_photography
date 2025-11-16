@@ -1,4 +1,4 @@
-# Aminoss Photography Platform - Complete Implementation Summary
+# Innov8 Production Platform - Complete Implementation Summary
 
 ## ✅ COMPLETED IMPLEMENTATIONS
 
@@ -47,8 +47,8 @@
 - ✅ SSL/HTTPS enabled
 
 **URLs:**
-- **Production:** https://aminossphotography-22pfzgzq7-aminech990000-6355s-projects.vercel.app
-- **Admin:** /admin/login (aminoss.photography@gmail.com / Hunter990000)
+- **Production:** https://Innov8photography-22pfzgzq7-aminech990000-6355s-projects.vercel.app
+- **Admin:** /admin/login (innov8.tn@gmail.com / Hunter990000)
 - **Client:** /client/login (credentials sent via email)
 
 ---
@@ -135,7 +135,7 @@ NEXTAUTH_URL=https://your-domain.vercel.app
 CLOUDINARY_CLOUD_NAME=dc67gl8fu
 CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
-EMAIL_USER=aminoss.photography@gmail.com
+EMAIL_USER=innov8.tn@gmail.com
 EMAIL_PASS=rkspmzpugjmijvad
 ```
 
@@ -239,17 +239,17 @@ src/app/page-instagram.tsx  # Reference design provided
 ## 📞 SUPPORT & CREDENTIALS
 
 **Admin Access:**
-- Email: aminoss.photography@gmail.com
+- Email: innov8.tn@gmail.com
 - Password: Hunter990000
 - Panel: https://your-domain.vercel.app/admin/dashboard
 
 **Database:**
-- MongoDB Atlas: aminoss.lyu8e0q.mongodb.net
-- Database: aminoss-portfolio
+- MongoDB Atlas: Innov8.lyu8e0q.mongodb.net
+- Database: Innov8-portfolio
 
 **Deployment:**
 - Vercel Dashboard: vercel.com/dashboard
-- Project: aminoss.photography
+- Project: innov8.tn
 
 **Email Service:**
 - Gmail SMTP
@@ -268,3 +268,4 @@ Your photography platform is **100% functional** and **production-ready** with:
 
 **The only thing missing is YOUR content!** 
 Upload photos, create packages, and start sharing your amazing photography! 📸
+

@@ -1,12 +1,12 @@
-# 📱 Aminoss Admin Mobile App
+# 📱 Innov8 Admin Mobile App
 
-Beautiful cross-platform mobile admin application for Aminoss Photography platform.
+Beautiful cross-platform mobile admin application for Innov8 Production platform.
 
 ## 🚀 Quick Start
 
 ```powershell
 # Navigate to project
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 
 # Start development server
 npm start
@@ -97,7 +97,7 @@ npm run ios
 
 Connects to production API:
 ```
-https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
 ```
 
 All actions are real-time and sync with the web platform.
@@ -105,7 +105,7 @@ All actions are real-time and sync with the web platform.
 ## 🔑 Login
 
 Use your admin credentials:
-- Email: admin@aminoss.com
+- Email: admin@innov8.com
 - Password: [Your admin password]
 
 ## 📁 Project Structure
@@ -157,3 +157,4 @@ The app is functional and ready for testing on Android devices or emulators.
 ✅ TND currency display
 ✅ Pull-to-refresh
 ✅ Status filtering
+

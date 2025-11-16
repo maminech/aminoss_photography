@@ -1,10 +1,10 @@
-# 🚀 QUICK START - Aminoss Admin Mobile App
+# 🚀 QUICK START - Innov8 Admin Mobile App
 
 ## Run the App (3 Simple Steps)
 
 ### 1️⃣ Start Development Server
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm start
 ```
 
@@ -21,7 +21,7 @@ npm run android
 3. App will load on your phone
 
 ### 3️⃣ Login
-- **Email**: admin@aminoss.com
+- **Email**: admin@innov8.com
 - **Password**: Your admin password
 
 ---
@@ -151,3 +151,4 @@ npm start -- --clear
 The core admin features are functional. Start the app and test invoice/booking management!
 
 **Any issues? Check the SETUP_GUIDE.md for detailed instructions.**
+

@@ -209,7 +209,7 @@ Spacing: 16-24px between elements
 
 ### Current Status
 - ✅ Deployed to Vercel
-- ✅ Live URL: https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app
+- ✅ Live URL: https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app
 - ✅ All features working
 - ⚠️ Instagram sync needs API keys (optional)
 
@@ -228,7 +228,7 @@ vercel --prod
 DATABASE_URL="mongodb+srv://..."
 NEXTAUTH_URL="your-url"
 NEXTAUTH_SECRET="your-secret"
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="aminoss"
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="Innov8"
 CLOUDINARY_API_KEY="your-key"
 CLOUDINARY_API_SECRET="your-secret"
 ```
@@ -434,7 +434,7 @@ Your photography platform is **100% complete and production-ready**!
 **Version:** 1.0  
 **Date:** November 6, 2025  
 **Status:** ✅ Production Ready  
-**URL:** https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app
+**URL:** https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -448,3 +448,4 @@ For questions about:
 - **Contact**: aminech990000@gmail.com
 
 **Happy photographing! 📸✨**
+

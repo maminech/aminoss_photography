@@ -2,7 +2,7 @@
 
 ## 📱 Project Overview
 
-**Android Admin Application** for Aminoss Photography Platform
+**Android Admin Application** for Innov8 Production Platform
 - **Framework**: React Native with Expo (Cross-platform: Android + iOS)
 - **Progress**: ~30% Complete (Core features functional)
 - **Status**: READY FOR TESTING ✅
@@ -23,8 +23,8 @@
   - Chart Kit for future visualizations
 
 ✅ **app.json** - Expo configuration
-  - App name: "Aminoss Admin"
-  - Package: com.aminoss.admin
+  - App name: "Innov8 Admin"
+  - Package: com.Innov8.admin
   - Android permissions: Camera, Storage, Notifications
   - Purple splash screen (#8B5CF6)
   - Portrait orientation
@@ -145,7 +145,7 @@
 ✅ **Beautiful Login UI**:
   - Gradient background (subtle purple)
   - Camera icon (60px) in elevated circular container
-  - "Aminoss Admin" branding (32px bold)
+  - "Innov8 Admin" branding (32px bold)
   - "Photography Management" subtitle
   - Email input with mail icon
   - Password input with lock icon + show/hide toggle
@@ -433,7 +433,7 @@ mobile-admin-app/
 
 ### Step 1: Start Development Server
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm start
 ```
 
@@ -449,7 +449,7 @@ npm run android
 3. App will load on your device
 
 ### Step 3: Login
-- Email: admin@aminoss.com (or your admin email)
+- Email: admin@innov8.com (or your admin email)
 - Password: Your admin password
 - The app connects to production API
 
@@ -493,7 +493,7 @@ npm run android
 - Secure logout
 
 ### API Communication
-- Production API: https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+- Production API: https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
 - Request timeout: 30 seconds
 - Auto-retry on network errors
 - 401 handling (redirects to login)
@@ -724,7 +724,7 @@ npm run android
 ## 🚀 QUICK START COMMAND
 
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app" ; npm start
+cd "e:\Innov8 Production\mobile-admin-app" ; npm start
 ```
 
 Then scan QR code with Expo Go app or run `npm run android` for emulator.
@@ -733,7 +733,7 @@ Then scan QR code with Expo Go app or run `npm run android` for emulator.
 
 ## 📞 CONCLUSION
 
-A beautiful, functional mobile admin application has been created for the Aminoss Photography platform. The core features (invoice and booking management) are complete and ready for testing. The remaining screens can be built following the same patterns established in the existing code.
+A beautiful, functional mobile admin application has been created for the Innov8 Production platform. The core features (invoice and booking management) are complete and ready for testing. The remaining screens can be built following the same patterns established in the existing code.
 
 **Estimated completion: 30% complete, 4-5 hours remaining for full app**
 
@@ -745,3 +745,4 @@ The app provides:
 - ✅ Comprehensive documentation
 
 **READY TO TEST!** 🎉📱✨
+

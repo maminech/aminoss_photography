@@ -11,8 +11,8 @@
 ## 🚀 Deployment Details
 
 ### Production URLs
-- **Primary**: https://aminossphotography-6uq9m9pga-aminech990000-6355s-projects.vercel.app
-- **Inspect**: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/DJU5uNgDeirHu9HVU7YyoHJmXNVu
+- **Primary**: https://Innov8photography-6uq9m9pga-aminech990000-6355s-projects.vercel.app
+- **Inspect**: https://vercel.com/aminech990000-6355s-projects/innov8.tn/DJU5uNgDeirHu9HVU7YyoHJmXNVu
 
 ### Build Statistics
 - **Total Pages**: 121 static pages generated
@@ -309,10 +309,11 @@ Future improvements could include:
 
 ## 🔗 Quick Access Links
 
-- **Admin Albums Page**: https://aminossphotography-6uq9m9pga-aminech990000-6355s-projects.vercel.app/admin/dashboard/albums
-- **Admin Dashboard**: https://aminossphotography-6uq9m9pga-aminech990000-6355s-projects.vercel.app/admin/dashboard
-- **Deployment Inspector**: https://vercel.com/aminech990000-6355s-projects/aminoss.photography/DJU5uNgDeirHu9HVU7YyoHJmXNVu
+- **Admin Albums Page**: https://Innov8photography-6uq9m9pga-aminech990000-6355s-projects.vercel.app/admin/dashboard/albums
+- **Admin Dashboard**: https://Innov8photography-6uq9m9pga-aminech990000-6355s-projects.vercel.app/admin/dashboard
+- **Deployment Inspector**: https://vercel.com/aminech990000-6355s-projects/innov8.tn/DJU5uNgDeirHu9HVU7YyoHJmXNVu
 
 ---
 
 **🎉 Enjoy your new Instagram-style album system!**
+

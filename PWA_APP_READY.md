@@ -9,10 +9,10 @@ Your admin dashboard is now a **Progressive Web App (PWA)** that works on ANY de
 ## 📱 LIVE NOW - INSTALL LINK
 
 **Go here to install:**
-https://aminossphotography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/mobile-app
+https://Innov8photography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/mobile-app
 
 Or visit your admin dashboard:
-https://aminossphotography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
+https://Innov8photography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
 
 **You'll see an "Install App" popup at the bottom!**
 
@@ -138,10 +138,10 @@ User visits /admin/dashboard
 
 **Simple Instructions:**
 
-> **Install Aminoss Admin App:**
+> **Install Innov8 Admin App:**
 > 
 > 1. Open this link on your phone:
->    https://aminossphotography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
+>    https://Innov8photography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
 > 
 > 2. Tap the purple "Install App" button
 > 
@@ -246,10 +246,10 @@ src/
 ## 🔗 Important Links
 
 **Install Page:**
-https://aminossphotography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/mobile-app
+https://Innov8photography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/mobile-app
 
 **Admin Dashboard (with install prompt):**
-https://aminossphotography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
+https://Innov8photography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
 
 **Download Button Location:**
 Admin Dashboard → Quick Actions → "📱 Mobile App" button
@@ -275,8 +275,9 @@ Admin Dashboard → Quick Actions → "📱 Mobile App" button
 
 **Right now:**
 1. Open your phone
-2. Go to: https://aminossphotography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
+2. Go to: https://Innov8photography-3c4r7sjwc-aminech990000-6355s-projects.vercel.app/admin/dashboard
 3. Tap the purple "Install App" button
 4. Done!
 
 **That's it! No builds, no failures, no complexity!** 🚀
+

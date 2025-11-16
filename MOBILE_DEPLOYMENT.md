@@ -3,7 +3,7 @@
 ## 🎉 Deployment Successful!
 
 **Deployed**: ${new Date().toLocaleString()}
-**Production URL**: https://aminossphotography-m6uh62b8l-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-m6uh62b8l-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -283,4 +283,5 @@ The platform is **production-ready** for mobile devices. All critical issues hav
 
 **Deployment Date**: ${new Date().toLocaleDateString()}
 **Status**: ✅ **DEPLOYED & MOBILE-READY**
-**URL**: https://aminossphotography-m6uh62b8l-aminech990000-6355s-projects.vercel.app
+**URL**: https://Innov8photography-m6uh62b8l-aminech990000-6355s-projects.vercel.app
+

@@ -21,7 +21,7 @@
 
 ```powershell
 # Create backup directory
-mkdir "E:\aminoss photography\backup_innov8_old_website"
+mkdir "E:\Innov8 Production\backup_innov8_old_website"
 ```
 
 **✅ Backup complete when folder size > 0 MB**
@@ -43,7 +43,7 @@ INSTAGRAM_REDIRECT_URI=https://[ACTUAL-DOMAIN].com/admin/dashboard/photos
 ## PHASE 3: BUILD (15 min)
 
 ```powershell
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 
 # Clean install
 rm -r node_modules -Force -ErrorAction SilentlyContinue
@@ -239,3 +239,4 @@ node -e "const {MongoClient}=require('mongodb');new MongoClient(process.env.DATA
 ---
 
 **QUICK TIP**: If stuck or hosting doesn't support Node.js, use Option B (Vercel + Custom Domain) - it's 10 minutes and works perfectly! 🚀
+

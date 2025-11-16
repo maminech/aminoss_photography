@@ -3,8 +3,8 @@
 ## 🎉 Deployment Status: **SUCCESS**
 
 **Deployed on:** January 9, 2025  
-**Production URL:** https://aminossphotography.vercel.app  
-**Latest Build:** https://aminossphotography-28dthbr1h-aminech990000-6355s-projects.vercel.app  
+**Production URL:** https://Innov8photography.vercel.app  
+**Latest Build:** https://Innov8photography-28dthbr1h-aminech990000-6355s-projects.vercel.app  
 **Build Status:** ● Ready (1m build time)
 
 ---
@@ -35,7 +35,7 @@
 
 ### **Financial Dashboard** (`/admin/finances`)
 
-**Live Now:** https://aminossphotography.vercel.app/admin/finances
+**Live Now:** https://Innov8photography.vercel.app/admin/finances
 
 **What You Can Do:**
 1. **View Complete Financial Overview**
@@ -65,7 +65,7 @@
 
 ### **Invoice Management** (`/admin/invoices`)
 
-**Live Now:** https://aminossphotography.vercel.app/admin/invoices
+**Live Now:** https://Innov8photography.vercel.app/admin/invoices
 
 **What You Can Do:**
 1. **View All Invoices**
@@ -532,7 +532,8 @@ Your photography portfolio now has a **complete, smart financial management syst
 ---
 
 **Deployment Completed:** ✅ January 9, 2025  
-**Production URL:** https://aminossphotography.vercel.app  
+**Production URL:** https://Innov8photography.vercel.app  
 **Status:** All Systems Operational ● Ready
 
 **Next:** Let me know if you'd like me to build the Expense and Salary management UI pages, or if you want to test the current system first! 🎯
+

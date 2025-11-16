@@ -14,7 +14,7 @@ interface NovoPreloaderEnhancedProps {
 
 export default function NovoPreloaderEnhanced({
   type = 'words',
-  staticWord = 'AMINOSS',
+  staticWord = 'Innov8',
   dynamicWords = ['Photography', 'Moments', 'Memories', 'Stories', 'Beauty'],
   imageSrc,
   onComplete

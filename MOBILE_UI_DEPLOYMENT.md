@@ -2,7 +2,7 @@
 
 ## 🎉 Successfully Deployed!
 
-**Production URL**: https://aminossphotography-191frqq6l-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-191frqq6l-aminech990000-6355s-projects.vercel.app
 
 **Deployment Time**: Just now  
 **Build Status**: ✅ Successful (0 errors)  
@@ -190,8 +190,8 @@ Test these on your phone:
 
 ## 🔗 Quick Links
 
-- **Production Site**: https://aminossphotography-191frqq6l-aminech990000-6355s-projects.vercel.app
-- **Admin Panel**: https://aminossphotography-191frqq6l-aminech990000-6355s-projects.vercel.app/admin/login
+- **Production Site**: https://Innov8photography-191frqq6l-aminech990000-6355s-projects.vercel.app
+- **Admin Panel**: https://Innov8photography-191frqq6l-aminech990000-6355s-projects.vercel.app/admin/login
 - **Admin Credentials**: admin@admin.com / admin123
 
 ---
@@ -208,4 +208,5 @@ Test these on your phone:
 
 **Status**: 🟢 **READY FOR PRODUCTION**  
 **Quality**: ⭐⭐⭐⭐⭐ **5-STAR MOBILE EXPERIENCE**
+
 

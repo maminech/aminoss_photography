@@ -1,4 +1,4 @@
-# 📸 CAHIER DE CHARGE - AMINOSS PHOTOGRAPHY PLATFORM
+# 📸 CAHIER DE CHARGE - Innov8 Production PLATFORM
 
 **Plateforme Complète de Gestion de Photographie Professionnelle**
 
@@ -63,7 +63,7 @@ Plateforme web complète pour photographe professionnel permettant la gestion de
 **Composants:**
 - **En-tête de profil:**
   - Photo de profil circulaire (150px)
-  - Nom d'utilisateur (aminoss_photography)
+  - Nom d'utilisateur (Innov8_photography)
   - Statistiques en temps réel:
     - Nombre de posts
     - 2,847 followers (affichage)
@@ -915,7 +915,7 @@ Plateforme web complète pour photographe professionnel permettant la gestion de
 - Cloud name
 - API key
 - API secret
-- Upload preset: "aminoss_preset"
+- Upload preset: "Innov8_preset"
 
 **Photos:**
 - Transformation automatique
@@ -1626,13 +1626,13 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="[random-secret]"
 
 # Cloudinary
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="aminoss"
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="Innov8"
 CLOUDINARY_API_KEY="[api-key]"
 CLOUDINARY_API_SECRET="[api-secret]"
 
 # Email (optionnel)
 EMAIL_SERVER="smtp://..."
-EMAIL_FROM="noreply@aminoss.com"
+EMAIL_FROM="noreply@innov8.com"
 ```
 
 ---
@@ -1900,7 +1900,7 @@ Client notified
 
 ## 🏆 CONCLUSION
 
-**AMINOSS PHOTOGRAPHY** est une plateforme complète, moderne et professionnelle qui offre:
+**Innov8 Production** est une plateforme complète, moderne et professionnelle qui offre:
 
 ✨ **Interface publique magnifique** (Instagram-style)
 ✨ **Gestion admin puissante** (tout-en-un)
@@ -1917,7 +1917,7 @@ Client notified
 **Version:** 1.0  
 **Dernière mise à jour:** November 6, 2025  
 **Status:** ✅ Production Ready  
-**URL:** https://aminossphotography-de89ue40o-aminech990000-6355s-projects.vercel.app
+**URL:** https://Innov8photography-de89ue40o-aminech990000-6355s-projects.vercel.app
 
 ---
 
@@ -1932,3 +1932,4 @@ Pour toute question ou assistance:
 ---
 
 **🎉 PLATEFORME 100% OPÉRATIONNELLE ET DÉPLOYÉE 🎉**
+

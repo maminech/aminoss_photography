@@ -39,12 +39,12 @@
 Install our app for easy access:
 
 Android/Desktop:
-→ Visit: https://aminoss.com/client/login
+→ Visit: https://Innov8.com/client/login
 → Login with your email
 → Tap "Install App" (orange button)
 
 iPhone:
-→ Visit: https://aminoss.com/client/login
+→ Visit: https://Innov8.com/client/login
 → Login
 → Tap Share (⬆️) → "Add to Home Screen"
 
@@ -66,12 +66,12 @@ Features: View galleries • Download photos • Create photobooks
    
    VAPID_PRIVATE_KEY = x_W7E_yf167eRHxyAICgGo1zGKy6o8tBTjvejHePeZA
    
-   ADMIN_EMAIL = aminoss.photography@gmail.com
+   ADMIN_EMAIL = innov8.tn@gmail.com
    ```
 
 3. Redeploy:
    ```powershell
-   cd "e:\aminoss photography"
+   cd "e:\Innov8 Production"
    vercel --prod
    ```
 
@@ -191,7 +191,7 @@ Features: View galleries • Download photos • Create photobooks
 - `NEW_FEATURES_SUMMARY.md` - Feature overview
 
 **Contact:**
-- Email: aminoss.photography@gmail.com
+- Email: innov8.tn@gmail.com
 
 ---
 
@@ -229,3 +229,4 @@ Features: View galleries • Download photos • Create photobooks
 **Version:** 1.0
 
 🎉 **Enjoy your new push notifications and client app!**
+

@@ -53,7 +53,7 @@ flutter doctor
 
 ### Step 2: Install Dependencies
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 ```
 
@@ -247,7 +247,7 @@ I'll generate everything in a few messages!
 
 **1. Test Current Progress:**
 ```powershell
-cd "E:\aminoss photography\flutter-app"
+cd "E:\Innov8 Production\flutter-app"
 flutter pub get
 flutter run
 ```
@@ -313,4 +313,5 @@ I'll help you run the current 70% complete app
 I'll help you find and set up a template
 
 **What would you like to do?** 🎯
+
 

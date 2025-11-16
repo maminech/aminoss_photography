@@ -108,7 +108,7 @@ Your platform **already uses Cloudinary** for all photo and video uploads, ensur
 ### File: `src/app/admin/dashboard/galleries/[id]/page.tsx`
 ```typescript
 <CldUploadWidget
-  uploadPreset="aminoss_portfolio"
+  uploadPreset="innov8_portfolio"
   onSuccess={handleUploadSuccess}
   options={{
     multiple: true,
@@ -157,12 +157,12 @@ Your platform **already uses Cloudinary** for all photo and video uploads, ensur
 
 ## 🔧 Cloudinary Configuration
 
-**Upload Preset:** `aminoss_portfolio`
+**Upload Preset:** `innov8_portfolio`
 
 ### Settings:
 ```javascript
 {
-  folder: 'aminoss_photography', // Optional organization
+  folder: 'Innov8_photography', // Optional organization
   resourceType: 'auto',          // Auto-detect image/video
   quality: 'auto:best',          // Best quality with optimization
   fetchFormat: 'auto',           // Auto format selection (WebP, etc.)
@@ -322,3 +322,4 @@ All photos and videos use Cloudinary which:
 **Last Verified:** November 5, 2025
 **Status:** ✅ Production Ready
 **Quality Level:** Maximum (Full Resolution Originals)
+

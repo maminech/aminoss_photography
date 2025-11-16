@@ -1,9 +1,9 @@
-// Service Worker for Aminoss Photography PWA
+// Service Worker for Innov8 Production PWA
 // Works on Android, iOS Safari 11.3+, Chrome, Firefox, Edge
 // Version: 2.0 - Professional Enhanced Edition
-const CACHE_NAME = 'aminoss-public-v2';
-const RUNTIME_CACHE = 'aminoss-runtime-v2';
-const IMAGE_CACHE = 'aminoss-images-v2';
+const CACHE_NAME = 'Innov8-public-v2';
+const RUNTIME_CACHE = 'Innov8-runtime-v2';
+const IMAGE_CACHE = 'Innov8-images-v2';
 
 const urlsToCache = [
   '/',
@@ -125,7 +125,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (!currentCaches.includes(cacheName) && cacheName.startsWith('aminoss-')) {
+          if (!currentCaches.includes(cacheName) && cacheName.startsWith('Innov8-')) {
             console.log('🗑️ Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
@@ -160,3 +160,4 @@ async function syncBookings() {
   // Sync any pending bookings when back online
   console.log('📤 Syncing pending bookings...');
 }
+

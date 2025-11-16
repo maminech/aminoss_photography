@@ -330,4 +330,5 @@ Categorize by type for easy management.
 
 **Updated:** November 5, 2025  
 **Status:** ✅ Production Ready  
-**Deployment:** https://aminossphotography-o0r8z6z62-aminech990000-6355s-projects.vercel.app
+**Deployment:** https://Innov8photography-o0r8z6z62-aminech990000-6355s-projects.vercel.app
+

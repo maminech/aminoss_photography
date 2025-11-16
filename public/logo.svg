@@ -1,4 +1,4 @@
-<!-- Enhanced Aminoss Photography Logo -->
+<!-- Enhanced Innov8 Production Logo -->
 <svg width="400" height="120" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -14,23 +14,23 @@
     </filter>
   </defs>
   
-  <!-- Signature-style "Aminoss" text -->
+  <!-- Signature-style "Innov8" text -->
   <text x="20" y="70" 
         font-family="'Brush Script MT', 'Lucida Handwriting', cursive" 
         font-size="60" 
         fill="url(#logoGradient)"
         filter="url(#glow)"
         style="font-style: italic; font-weight: 400;">
-    Aminoss
+    Innov8
   </text>
   
-  <!-- "Photography" subtitle -->
+  <!-- "Production" subtitle -->
   <text x="22" y="95" 
         font-family="'Poppins', sans-serif" 
         font-size="16" 
         fill="#6B7280"
         letter-spacing="3"
         style="font-weight: 300;">
-    PHOTOGRAPHY
+    PRODUCTION
   </text>
 </svg>

@@ -118,7 +118,7 @@
 
    **Usage**:
    ```powershell
-   cd "E:\aminoss photography"
+   cd "E:\Innov8 Production"
    .\deploy-to-production.ps1
    ```
 
@@ -503,3 +503,4 @@ You have access to:
 **Quick Start**: EXECUTIVE_SUMMARY.md → DEPLOYMENT_SUMMARY.md → Choose path → Deploy!
 
 ---
+

@@ -4,7 +4,7 @@ import webpush from 'web-push';
 // Configure VAPID keys
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
-    'mailto:' + (process.env.ADMIN_EMAIL || 'aminoss.photography@gmail.com'),
+    'mailto:' + (process.env.ADMIN_EMAIL || 'innov8.tn@gmail.com'),
     process.env.VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
   );

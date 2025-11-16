@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-const VERIFY_TOKEN = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || 'aminoss_instagram_webhook_2025_secure';
+const VERIFY_TOKEN = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || 'Innov8_instagram_webhook_2025_secure';
 
 // Webhook verification (GET request from Facebook)
 export async function GET(req: NextRequest) {

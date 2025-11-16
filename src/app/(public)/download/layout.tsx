@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Download App | Aminoss Photography',
-  description: 'Download the Aminoss Photography mobile app for Android. Browse galleries, book sessions, and get instant notifications.',
-  keywords: 'aminoss photography app, download, android, mobile app, photography app',
+  title: 'Download App | Innov8 Production',
+  description: 'Download the Innov8 Production mobile app for Android. Browse galleries, book sessions, and get instant notifications.',
+  keywords: 'Innov8 Production app, download, android, mobile app, photography app',
 };
 
 export default function DownloadLayout({

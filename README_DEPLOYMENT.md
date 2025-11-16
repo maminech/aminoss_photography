@@ -1,4 +1,4 @@
-# 📸 Aminoss Photography Platform - Production Deployment Package
+# 📸 Innov8 Production Platform - Production Deployment Package
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -113,7 +113,7 @@ Cost:        FREE (Vercel hobby tier)
 ### Step 1: Run Deployment Script
 ```powershell
 # Navigate to project
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 
 # Run automated deployment script
 .\deploy-to-production.ps1
@@ -536,7 +536,7 @@ After successful deployment:
 
 **Document Version**: 1.0  
 **Created**: November 12, 2025  
-**Project**: Aminoss Photography Platform  
+**Project**: Innov8 Production Platform  
 **Status**: PRODUCTION READY ✅  
 
 **Total Deployment Time**: 15 minutes (Hybrid) to 3 hours (Full Node.js)  
@@ -546,3 +546,4 @@ After successful deployment:
 ---
 
 **END OF README**
+

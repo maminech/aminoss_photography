@@ -43,7 +43,7 @@ export default function NovoPageTransitionEnhanced() {
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
             >
-              AMINOSS
+              Innov8
             </motion.h1>
             <motion.div
               initial={{ width: 0 }}

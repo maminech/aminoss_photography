@@ -22,12 +22,12 @@ Use this checklist to track your progress in setting up and customizing your por
 - [ ] Copied Cloud Name, API Key, API Secret
 
 ### Folder Structure
-- [ ] Created `aminoss_photography/` root folder
-- [ ] Created `aminoss_photography/weddings/` folder
-- [ ] Created `aminoss_photography/portraits/` folder
-- [ ] Created `aminoss_photography/travel/` folder
-- [ ] Created `aminoss_photography/fashion/` folder
-- [ ] Created `aminoss_photography/videos/` folder
+- [ ] Created `Innov8_photography/` root folder
+- [ ] Created `Innov8_photography/weddings/` folder
+- [ ] Created `Innov8_photography/portraits/` folder
+- [ ] Created `Innov8_photography/travel/` folder
+- [ ] Created `Innov8_photography/fashion/` folder
+- [ ] Created `Innov8_photography/videos/` folder
 
 ### Image Upload
 - [ ] Uploaded at least 5-10 photos per category
@@ -324,3 +324,4 @@ Use this space for any notes, issues, or reminders:
 **🎉 Once everything is checked, your portfolio is ready to showcase your work!**
 
 **📸 Good luck with your photography business!**
+

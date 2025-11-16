@@ -121,21 +121,21 @@
 
 ```powershell
 # Create backup directory locally
-mkdir "E:\aminoss photography\backup_innov8_old_website"
-cd "E:\aminoss photography\backup_innov8_old_website"
+mkdir "E:\Innov8 Production\backup_innov8_old_website"
+cd "E:\Innov8 Production\backup_innov8_old_website"
 ```
 
 **Via FTP Client**:
 1. Navigate to `/public_html/` (or root directory)
 2. Select all files
 3. Right-click → Download
-4. Save to: `E:\aminoss photography\backup_innov8_old_website\`
+4. Save to: `E:\Innov8 Production\backup_innov8_old_website\`
 5. Wait for completion (may take 10-30 minutes)
 
 **Verify Backup**:
 ```powershell
 # List downloaded files
-Get-ChildItem "E:\aminoss photography\backup_innov8_old_website" -Recurse
+Get-ChildItem "E:\Innov8 Production\backup_innov8_old_website" -Recurse
 ```
 
 #### 1.3 Document Current Configuration
@@ -172,7 +172,7 @@ No changes needed - `next.config.js` is already production-ready.
 #### 2.3 Test MongoDB Connection
 
 ```powershell
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 
 # Test database connection
 node -e "const { MongoClient } = require('mongodb'); const client = new MongoClient(process.env.DATABASE_URL); client.connect().then(() => { console.log('✅ MongoDB Connected'); client.close(); }).catch(err => console.error('❌ Error:', err));"
@@ -185,7 +185,7 @@ node -e "const { MongoClient } = require('mongodb'); const client = new MongoCli
 #### 3.1 Install Dependencies
 
 ```powershell
-cd "E:\aminoss photography"
+cd "E:\Innov8 Production"
 
 # Clean install
 Remove-Item node_modules -Recurse -Force -ErrorAction SilentlyContinue
@@ -754,7 +754,7 @@ crontab -e
 ### Service Accounts
 - **MongoDB Atlas**: https://cloud.mongodb.com
 - **Cloudinary**: https://cloudinary.com/console
-- **Gmail (SMTP)**: aminoss.photography@gmail.com
+- **Gmail (SMTP)**: innov8.tn@gmail.com
 - **Instagram Business**: [Account Name]
 
 ### Emergency Contacts
@@ -799,7 +799,7 @@ DEPLOYMENT MODE:
 
 BACKUP STATUS:
 - Old Site Backup: ✅ Completed
-- Backup Location: E:\aminoss photography\backup_innov8_old_website\
+- Backup Location: E:\Innov8 Production\backup_innov8_old_website\
 - Backup Size: [Size] MB
 - Backup Date: [Date]
 
@@ -958,8 +958,9 @@ Print this and check off as you complete each step:
 
 **Document Version**: 1.0
 **Last Updated**: November 12, 2025
-**Maintained By**: Aminoss Photography Development Team
+**Maintained By**: Innov8 Production Development Team
 
 ---
 
 **END OF DEPLOYMENT GUIDE**
+

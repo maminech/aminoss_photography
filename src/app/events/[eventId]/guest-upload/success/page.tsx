@@ -156,7 +156,7 @@ export default function SuccessPage() {
         >
           <span>Made with</span>
           <FiHeart className="w-3 h-3 text-pink-500" fill="currentColor" />
-          <span>by Aminoss Photography</span>
+          <span>by Innov8 Production</span>
         </motion.div>
       </motion.div>
     </div>

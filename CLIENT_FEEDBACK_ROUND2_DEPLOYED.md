@@ -6,8 +6,8 @@
 
 ## 🚀 Production Deployment
 
-**Deployment URL:** https://aminossphotography-5h43m15rd-aminech990000-6355s-projects.vercel.app  
-**Vercel Inspect:** https://vercel.com/aminech990000-6355s-projects/aminoss.photography/9NBro3LfmzoJh1AdP1toQ5tbQow3  
+**Deployment URL:** https://Innov8photography-5h43m15rd-aminech990000-6355s-projects.vercel.app  
+**Vercel Inspect:** https://vercel.com/aminech990000-6355s-projects/innov8.tn/9NBro3LfmzoJh1AdP1toQ5tbQow3  
 **Build Status:** ✅ SUCCESS  
 **Deployment Time:** 17 seconds  
 
@@ -87,7 +87,7 @@
 
 **Changes:**
 - Modified `handleSubmit` function to open WhatsApp after successful submission
-- Message format: "Salut Aminoss, [Name] vous a contacté.\nEmail: [email]\nTéléphone: [phone]\nMessage: [message]"
+- Message format: "Salut Innov8, [Name] vous a contacté.\nEmail: [email]\nTéléphone: [phone]\nMessage: [message]"
 - Opens in new tab: `window.open('https://wa.me/21694124796?text=...')`
 
 **Result:** After sending contact form, WhatsApp automatically opens with pre-filled message
@@ -253,6 +253,7 @@ If any issues are discovered:
 
 **All 8 client feedback requests have been successfully implemented, tested, and deployed to production.**
 
-**Production URL:** https://aminossphotography-5h43m15rd-aminech990000-6355s-projects.vercel.app
+**Production URL:** https://Innov8photography-5h43m15rd-aminech990000-6355s-projects.vercel.app
 
 **Status:** ✅ READY FOR CLIENT REVIEW
+

@@ -6,13 +6,13 @@ You'll need to add these environment variables to Vercel:
 
 ### Required Variables:
 ```
-DATABASE_URL=mongodb+srv://aminoss:Aminoss2001@aminoss.lyu8e0q.mongodb.net/aminoss-portfolio
+DATABASE_URL=mongodb+srv://Innov8:Innov82001@innov8.lyu8e0q.mongodb.net/Innov8-portfolio
 NEXTAUTH_SECRET=your-secret-key-here
 NEXTAUTH_URL=https://your-domain.vercel.app
 CLOUDINARY_CLOUD_NAME=dc67gl8fu
 CLOUDINARY_API_KEY=your-cloudinary-api-key
 CLOUDINARY_API_SECRET=your-cloudinary-api-secret
-EMAIL_USER=aminoss.photography@gmail.com
+EMAIL_USER=innov8.tn@gmail.com
 EMAIL_PASS=rkspmzpugjmijvad
 ```
 
@@ -27,7 +27,7 @@ Follow the prompts:
 1. Set up and deploy? **Yes**
 2. Which scope? Select your account
 3. Link to existing project? **No**
-4. Project name? **aminoss-photography** (or your preferred name)
+4. Project name? **Innov8-photography** (or your preferred name)
 5. Directory? **./** (press Enter)
 6. Override settings? **No**
 
@@ -56,7 +56,7 @@ vercel env add EMAIL_PASS
 ## Step 4: Update NEXTAUTH_URL
 
 After your first deployment, update NEXTAUTH_URL:
-1. Note your deployment URL (e.g., https://aminoss-photography.vercel.app)
+1. Note your deployment URL (e.g., https://Innov8-photography.vercel.app)
 2. Go to Settings → Environment Variables
 3. Update NEXTAUTH_URL to your actual domain
 4. Redeploy: `vercel --prod`
@@ -80,7 +80,7 @@ This will deploy to your production domain!
 ## Step 7: Add Custom Domain (Optional)
 
 1. Go to Vercel Dashboard → Your Project → Settings → Domains
-2. Add your custom domain (e.g., aminoss.photography)
+2. Add your custom domain (e.g., innov8.tn)
 3. Update DNS records as instructed by Vercel
 4. Update NEXTAUTH_URL to your custom domain
 
@@ -139,3 +139,4 @@ If you encounter issues:
 ---
 
 **Ready to deploy? Run: `vercel`**
+

@@ -140,7 +140,7 @@ All links now correct and tested!
 
 ## 🚀 Deployment Status
 
-**Production URL**: https://aminossphotography-mxgerih0i-aminech990000-6355s-projects.vercel.app
+**Production URL**: https://Innov8photography-mxgerih0i-aminech990000-6355s-projects.vercel.app
 
 **Deployed Changes**:
 - ✅ Leads links fixed (dashboard stat card + quick action + sidebar)
@@ -226,5 +226,6 @@ All links now correct and tested!
 ---
 
 **Status**: ✅ All critical issues resolved
-**Deploy URL**: https://aminossphotography-mxgerih0i-aminech990000-6355s-projects.vercel.app
+**Deploy URL**: https://Innov8photography-mxgerih0i-aminech990000-6355s-projects.vercel.app
 **Testing**: Ready for verification
+

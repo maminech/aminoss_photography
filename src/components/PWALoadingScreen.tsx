@@ -69,7 +69,7 @@ export default function PWALoadingScreen({ isPublic = true }: PWALoadingScreenPr
           )}
         </div>
         <h1 className="text-white text-3xl font-bold mb-2">
-          {isPublic ? 'Aminoss Photography' : 'Admin Dashboard'}
+          {isPublic ? 'Innov8 Production' : 'Admin Dashboard'}
         </h1>
         <div className="flex gap-2 justify-center">
           <div className="w-2 h-2 bg-white/80 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>

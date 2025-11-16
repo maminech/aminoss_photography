@@ -227,7 +227,7 @@ export default function InstagramFeed({ images, videos = [], combinedMedia, onIm
                   </div>
                   <div>
                     <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">
-                      Aminoss Photography
+                      Innov8 Production
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {itemIsVideo ? (isReelFormat ? 'Reel' : 'Video') : (item.category || 'Photography')}
@@ -362,7 +362,7 @@ export default function InstagramFeed({ images, videos = [], combinedMedia, onIm
 
                 {/* Caption */}
                 <div className="text-sm text-gray-900 dark:text-gray-100">
-                  <span className="font-semibold mr-2">Aminoss Photography</span>
+                  <span className="font-semibold mr-2">Innov8 Production</span>
                   <span className="text-gray-700 dark:text-gray-300">
                     {item.title || 'Beautiful moment captured'}
                   </span>

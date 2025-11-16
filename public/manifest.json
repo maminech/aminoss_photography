@@ -1,7 +1,7 @@
 {
-  "name": "Aminoss Admin Dashboard - Photography Business Manager",
+  "name": "Innov8 Admin Dashboard - Photography Business Manager",
   "short_name": "Admin",
-  "description": "Professional admin dashboard for Aminoss Photography. Manage invoices, bookings, clients, messages, and business operations with real-time push notifications.",
+  "description": "Professional admin dashboard for Innov8 Production. Manage invoices, bookings, clients, messages, and business operations with real-time push notifications.",
   "start_url": "/admin/dashboard?source=pwa",
   "display": "standalone",
   "background_color": "#8B5CF6",
@@ -74,3 +74,4 @@
     }
   ]
 }
+

@@ -1,7 +1,7 @@
-# Aminoss Admin Mobile App - Setup Guide
+# Innov8 Admin Mobile App - Setup Guide
 
 ## 📱 Overview
-Cross-platform (Android & iOS) mobile admin application for Aminoss Photography platform.
+Cross-platform (Android & iOS) mobile admin application for Innov8 Production platform.
 Built with React Native + Expo for modern, native performance.
 
 ## 🎯 Features Implemented
@@ -51,7 +51,7 @@ Built with React Native + Expo for modern, native performance.
 
 ### Step 1: Install Dependencies
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm install
 ```
 
@@ -81,8 +81,8 @@ npm run android
 Or scan the QR code with Expo Go app on your physical Android device.
 
 ### Step 4: Login Credentials
-- URL: https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
-- Email: admin@aminoss.com (or your admin email)
+- URL: https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+- Email: admin@innov8.com (or your admin email)
 - Password: Your admin password
 
 ## 📐 Project Structure
@@ -136,7 +136,7 @@ mobile-admin-app/
 
 The app connects to the production API:
 ```
-https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
 ```
 
 ### Implemented Endpoints
@@ -256,7 +256,7 @@ eas build --platform android --profile production
    - [ ] Pull-to-refresh works
 
 ### Test Credentials
-- Admin email: admin@aminoss.com
+- Admin email: admin@innov8.com
 - Password: [Your admin password]
 
 ## 🐛 Known Issues
@@ -301,3 +301,4 @@ For issues or questions:
 - Export functionality
 
 **Ready for Testing!** The core admin features (invoices and bookings management) are complete and functional.
+

@@ -20,7 +20,7 @@ npm install -g eas-cli
 
 ### Step 2: Login to Expo
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas login
 ```
 
@@ -63,9 +63,9 @@ Example:
 ## 🔗 How to Make It Available to Admins
 
 ### Option 1: Host on Vercel (Recommended)
-1. Create a folder: `e:\aminoss photography\public\downloads\`
-2. Place the APK file there: `aminoss-admin.apk`
-3. Update the download page to point to: `/downloads/aminoss-admin.apk`
+1. Create a folder: `e:\Innov8 Production\public\downloads\`
+2. Place the APK file there: `Innov8-admin.apk`
+3. Update the download page to point to: `/downloads/Innov8-admin.apk`
 4. Deploy to Vercel - APK will be publicly accessible
 
 ### Option 2: Use Expo's Download Link
@@ -99,7 +99,7 @@ Example:
 ### API Integration:
 ```typescript
 // The app connects to your production API
-Base URL: https://aminossphotography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
+Base URL: https://Innov8photography-pzcspo5w5-aminech990000-6355s-projects.vercel.app
 
 // All endpoints work:
 ✅ POST /api/auth/login
@@ -159,7 +159,7 @@ Mobile App → API Request → Next.js API → Prisma → MongoDB → Response �
 ### Full Build Process:
 ```powershell
 # 1. Navigate to mobile app folder
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 
 # 2. Install EAS CLI (if not already installed)
 npm install -g eas-cli
@@ -185,7 +185,7 @@ vercel --prod
 For testing during development:
 
 ```powershell
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 npm start
 ```
 
@@ -311,7 +311,7 @@ Valid until: December 9, 2025
 
 ```powershell
 npm install -g eas-cli
-cd "e:\aminoss photography\mobile-admin-app"
+cd "e:\Innov8 Production\mobile-admin-app"
 eas build --platform android --profile preview
 ```
 
@@ -331,3 +331,4 @@ The download button is already added to your admin dashboard at:
 `/admin/mobile-app`
 
 **Ready to build!** 📱✨
+
