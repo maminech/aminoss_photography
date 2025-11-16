@@ -230,13 +230,24 @@ export default function AdminPhotobooksPage() {
   return (
     <div className="p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Photobook Management
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Review, approve, and manage client photobook orders
-        </p>
+      <div className="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Photobook Management
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Review, approve, and manage client photobook orders
+          </p>
+        </div>
+        <motion.a
+          href="/client/photobooks"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
+        >
+          <FiBook className="w-5 h-5" />
+          Create New Photobook
+        </motion.a>
       </div>
 
       {/* NEW: Polotno Photobook Designs Section */}
