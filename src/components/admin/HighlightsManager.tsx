@@ -680,12 +680,18 @@ export default function HighlightsManager() {
                       try {
                         // Add the item to the highlight
                         await handleAddItem(editingHighlight.id, result.info);
+                        console.log('✅ Item added to database');
+                        
+                        // Small delay to ensure database commit
+                        await new Promise(resolve => setTimeout(resolve, 300));
                         
                         // Refresh all highlights
                         await fetchHighlights();
+                        console.log('✅ Highlights list refreshed');
                         
                         // Fetch the updated highlight specifically for the modal
-                        const response = await fetch('/api/admin/highlights', {
+                        const timestamp = Date.now();
+                        const response = await fetch(`/api/admin/highlights?t=${timestamp}`, {
                           cache: 'no-store',
                           headers: {
                             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -693,34 +699,42 @@ export default function HighlightsManager() {
                           },
                         });
                         
-                        if (response.ok) {
-                          const allHighlights = await response.json();
-                          const updatedHighlight = allHighlights.find((h: Highlight) => h.id === editingHighlight.id);
-                          
-                          if (updatedHighlight) {
-                            console.log('✅ Updated highlight with items:', updatedHighlight.items.length);
-                            setEditingHighlight(updatedHighlight);
-                            
-                            // Show success feedback only after successful refresh
-                            const notification = document.createElement('div');
-                            notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
-                            notification.textContent = '✓ Item added successfully!';
-                            document.body.appendChild(notification);
-                            setTimeout(() => notification.remove(), 3000);
-                          } else {
-                            throw new Error('Updated highlight not found');
-                          }
-                        } else {
-                          throw new Error(`Refresh failed: ${response.status}`);
+                        if (!response.ok) {
+                          throw new Error(`Fetch failed: ${response.status}`);
                         }
+                        
+                        const allHighlights = await response.json();
+                        console.log('✅ Fetched highlights:', allHighlights.length);
+                        
+                        const updatedHighlight = allHighlights.find((h: Highlight) => h.id === editingHighlight.id);
+                        
+                        if (!updatedHighlight) {
+                          console.error('❌ Updated highlight not found in response');
+                          throw new Error('Updated highlight not found');
+                        }
+                        
+                        console.log('✅ Found updated highlight with', updatedHighlight.items.length, 'items');
+                        setEditingHighlight(updatedHighlight);
+                        
+                        // Show success feedback
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
+                        notification.textContent = '✓ Item added successfully!';
+                        document.body.appendChild(notification);
+                        setTimeout(() => notification.remove(), 3000);
                       } catch (error) {
                         console.error('❌ Upload handling error:', error);
-                        // Show error notification
+                        console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
+                        
+                        // Show error notification with more details
                         const notification = document.createElement('div');
-                        notification.className = 'fixed top-20 right-6 z-[100] bg-red-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold';
-                        notification.textContent = '⚠️ Upload succeeded but refresh failed. Please close and reopen the highlight.';
+                        notification.className = 'fixed top-20 right-6 z-[100] bg-orange-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold max-w-md';
+                        notification.innerHTML = `
+                          <div class="font-bold mb-1">⚠️ Upload succeeded!</div>
+                          <div class="text-sm">Refresh had an issue. Close and reopen this highlight to see your new item.</div>
+                        `;
                         document.body.appendChild(notification);
-                        setTimeout(() => notification.remove(), 5000);
+                        setTimeout(() => notification.remove(), 6000);
                       }
                     }}
                   >
