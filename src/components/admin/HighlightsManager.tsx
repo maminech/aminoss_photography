@@ -131,7 +131,7 @@ export default function HighlightsManager() {
   };
 
   // Add item to highlight
-  const handleAddItem = async (highlightId: string, uploadResult: any) => {
+  const handleAddItem = async (highlightId: string, uploadResult: any): Promise<void> => {
     const isVideo = uploadResult.resource_type === 'video';
     
     try {
@@ -153,18 +153,17 @@ export default function HighlightsManager() {
 
       if (res.ok) {
         const newItem = await res.json();
-        setHighlights(highlights.map(h => {
-          if (h.id === highlightId) {
-            return { ...h, items: [...h.items, newItem] };
-          }
-          return h;
-        }));
         
-        if (editingHighlight) {
-          setEditingHighlight({
-            ...editingHighlight,
-            items: [...editingHighlight.items, newItem]
-          });
+        // Refresh the entire highlights list
+        await fetchHighlights();
+        
+        // Update editing highlight if it's currently open
+        if (editingHighlight && editingHighlight.id === highlightId) {
+          const updatedHighlight = await fetch('/api/admin/highlights').then(r => r.json());
+          const refreshed = updatedHighlight.find((h: Highlight) => h.id === highlightId);
+          if (refreshed) {
+            setEditingHighlight(refreshed);
+          }
         }
       }
     } catch (error) {
@@ -183,18 +182,16 @@ export default function HighlightsManager() {
       });
 
       if (res.ok) {
-        setHighlights(highlights.map(h => {
-          if (h.id === highlightId) {
-            return { ...h, items: h.items.filter(item => item.id !== itemId) };
-          }
-          return h;
-        }));
+        // Refresh the entire highlights list
+        await fetchHighlights();
         
-        if (editingHighlight) {
-          setEditingHighlight({
-            ...editingHighlight,
-            items: editingHighlight.items.filter(item => item.id !== itemId)
-          });
+        // Update editing highlight if it's currently open
+        if (editingHighlight && editingHighlight.id === highlightId) {
+          const updatedHighlight = await fetch('/api/admin/highlights').then(r => r.json());
+          const refreshed = updatedHighlight.find((h: Highlight) => h.id === highlightId);
+          if (refreshed) {
+            setEditingHighlight(refreshed);
+          }
         }
       }
     } catch (error) {
@@ -418,7 +415,8 @@ export default function HighlightsManager() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl z-[60] p-6 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+              className="fixed top-4 left-4 right-4 bottom-4 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl z-[60] flex flex-col max-h-[calc(100vh-2rem)]"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -432,6 +430,7 @@ export default function HighlightsManager() {
                 </button>
               </div>
 
+              <div className="flex-1 overflow-y-auto px-6 pb-6">
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -527,17 +526,22 @@ export default function HighlightsManager() {
                   )}
                 </div>
 
-                <div className="flex gap-3 pt-4">
+              </div>
+              </div>
+              
+              {/* Fixed Footer */}
+              <div className="border-t border-gray-200 dark:border-gray-700 p-6 bg-white dark:bg-gray-800">
+                <div className="flex gap-3">
                   <button
                     onClick={() => setShowCreateModal(false)}
-                    className="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    className="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors touch-manipulation active:scale-95"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreateHighlight}
                     disabled={!newHighlightTitle || !newHighlightCover}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation active:scale-95"
                   >
                     Create Highlight
                   </button>
@@ -563,7 +567,8 @@ export default function HighlightsManager() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-4 md:inset-8 lg:inset-16 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[70] overflow-hidden flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-2 sm:inset-4 md:inset-8 lg:inset-16 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[70] overflow-hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
@@ -646,8 +651,10 @@ export default function HighlightsManager() {
                         }
                       }
                     }}
-                    onSuccess={(result: any) => {
-                      handleAddItem(editingHighlight.id, result.info);
+                    onSuccess={async (result: any) => {
+                      await handleAddItem(editingHighlight.id, result.info);
+                      // Refresh the highlight data
+                      await fetchHighlights();
                       // Show success feedback
                       const notification = document.createElement('div');
                       notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
@@ -753,8 +760,13 @@ export default function HighlightsManager() {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => handleDeleteItem(item.id, editingHighlight.id)}
-                            className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex-shrink-0"
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              await handleDeleteItem(item.id, editingHighlight.id);
+                              await fetchHighlights();
+                            }}
+                            className="p-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors flex-shrink-0 touch-manipulation active:bg-red-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
                           >
                             <FiTrash2 className="w-5 h-5" />
                           </motion.button>
