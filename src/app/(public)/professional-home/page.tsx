@@ -480,27 +480,6 @@ export default function ProfessionalHomePage() {
                 <FiChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
             </motion.div>
-            
-            <motion.button
-              onClick={async () => {
-                try {
-                  setIsTransitioning(true);
-                  await new Promise(resolve => setTimeout(resolve, 300));
-                  switchTheme('simple');
-                  router.push('/');
-                } catch (error) {
-                  console.error('Error switching theme:', error);
-                  setIsTransitioning(false);
-                }
-              }}
-              disabled={isTransitioning}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-lato text-xs sm:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 inline-flex items-center justify-center gap-2 touch-manipulation disabled:opacity-50"
-            >
-              <FiGrid className="w-4 h-4" />
-              {isTransitioning ? 'Switching...' : 'Switch to Simple Mode'}
-            </motion.button>
           </div>
           </div>
         </motion.div>
