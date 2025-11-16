@@ -134,41 +134,45 @@ export default function HighlightsManager() {
   const handleAddItem = async (highlightId: string, uploadResult: any): Promise<void> => {
     const isVideo = uploadResult.resource_type === 'video';
     
+    console.log('🔄 Adding item to highlight:', highlightId);
+    console.log('📦 Upload result:', {
+      cloudinaryId: uploadResult.public_id,
+      mediaType: isVideo ? 'video' : 'image',
+      url: uploadResult.secure_url,
+    });
+    
     try {
+      const payload = {
+        highlightId,
+        cloudinaryId: uploadResult.public_id,
+        mediaType: isVideo ? 'video' : 'image',
+        mediaUrl: uploadResult.secure_url,
+        thumbnailUrl: isVideo ? uploadResult.thumbnail_url : uploadResult.secure_url,
+        width: uploadResult.width,
+        height: uploadResult.height,
+        duration: uploadResult.duration || null,
+        order: editingHighlight?.items.length || 0
+      };
+      
+      console.log('📨 Sending payload:', payload);
+      
       const res = await fetch('/api/admin/highlights/items', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          highlightId,
-          cloudinaryId: uploadResult.public_id,
-          mediaType: isVideo ? 'video' : 'image',
-          mediaUrl: uploadResult.secure_url,
-          thumbnailUrl: isVideo ? uploadResult.thumbnail_url : uploadResult.secure_url,
-          width: uploadResult.width,
-          height: uploadResult.height,
-          duration: uploadResult.duration || null,
-          order: editingHighlight?.items.length || 0
-        })
+        body: JSON.stringify(payload)
       });
 
-      if (res.ok) {
-        const newItem = await res.json();
-        
-        // Refresh the entire highlights list
-        await fetchHighlights();
-        
-        // Update editing highlight if it's currently open
-        if (editingHighlight && editingHighlight.id === highlightId) {
-          const updatedHighlight = await fetch('/api/admin/highlights').then(r => r.json());
-          const refreshed = updatedHighlight.find((h: Highlight) => h.id === highlightId);
-          if (refreshed) {
-            setEditingHighlight(refreshed);
-          }
-        }
+      if (!res.ok) {
+        const errorData = await res.text();
+        console.error('❌ API error response:', errorData);
+        throw new Error(`API returned ${res.status}: ${errorData}`);
       }
+      
+      const newItem = await res.json();
+      console.log('✅ Item created successfully:', newItem);
     } catch (error) {
-      console.error('Error adding item:', error);
-      alert('Failed to add item');
+      console.error('❌ Error adding item:', error);
+      throw error; // Re-throw to handle in the caller
     }
   };
 
@@ -176,26 +180,45 @@ export default function HighlightsManager() {
   const handleDeleteItem = async (itemId: string, highlightId: string) => {
     if (!confirm('Delete this item?')) return;
 
+    console.log('🗑️ Deleting item:', itemId);
+
     try {
       const res = await fetch(`/api/admin/highlights/items?id=${itemId}`, {
         method: 'DELETE'
       });
 
-      if (res.ok) {
-        // Refresh the entire highlights list
-        await fetchHighlights();
+      if (!res.ok) {
+        const errorData = await res.text();
+        console.error('❌ Delete API error:', errorData);
+        throw new Error(`Failed to delete: ${res.status}`);
+      }
+
+      console.log('✅ Item deleted successfully');
+
+      // Refresh the entire highlights list
+      await fetchHighlights();
+      
+      // Update editing highlight if it's currently open
+      if (editingHighlight && editingHighlight.id === highlightId) {
+        const response = await fetch('/api/admin/highlights', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+        });
         
-        // Update editing highlight if it's currently open
-        if (editingHighlight && editingHighlight.id === highlightId) {
-          const updatedHighlight = await fetch('/api/admin/highlights').then(r => r.json());
-          const refreshed = updatedHighlight.find((h: Highlight) => h.id === highlightId);
+        if (response.ok) {
+          const updatedHighlights = await response.json();
+          const refreshed = updatedHighlights.find((h: Highlight) => h.id === highlightId);
           if (refreshed) {
+            console.log('✅ Updated highlight after delete, items:', refreshed.items.length);
             setEditingHighlight(refreshed);
           }
         }
       }
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error('❌ Error deleting item:', error);
       alert('Failed to delete item');
     }
   };
@@ -652,15 +675,44 @@ export default function HighlightsManager() {
                       }
                     }}
                     onSuccess={async (result: any) => {
-                      await handleAddItem(editingHighlight.id, result.info);
-                      // Refresh the highlight data
-                      await fetchHighlights();
-                      // Show success feedback
-                      const notification = document.createElement('div');
-                      notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
-                      notification.textContent = '✓ Item added successfully!';
-                      document.body.appendChild(notification);
-                      setTimeout(() => notification.remove(), 3000);
+                      console.log('📤 Upload success:', result.info);
+                      
+                      try {
+                        // Add the item to the highlight
+                        await handleAddItem(editingHighlight.id, result.info);
+                        
+                        // Refresh all highlights
+                        await fetchHighlights();
+                        
+                        // Fetch the updated highlight specifically for the modal
+                        const response = await fetch('/api/admin/highlights', {
+                          cache: 'no-store',
+                          headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                          },
+                        });
+                        
+                        if (response.ok) {
+                          const allHighlights = await response.json();
+                          const updatedHighlight = allHighlights.find((h: Highlight) => h.id === editingHighlight.id);
+                          
+                          if (updatedHighlight) {
+                            console.log('✅ Updated highlight with items:', updatedHighlight.items.length);
+                            setEditingHighlight(updatedHighlight);
+                          }
+                        }
+                        
+                        // Show success feedback
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
+                        notification.textContent = '✓ Item added successfully!';
+                        document.body.appendChild(notification);
+                        setTimeout(() => notification.remove(), 3000);
+                      } catch (error) {
+                        console.error('❌ Upload handling error:', error);
+                        alert('Upload succeeded but failed to refresh. Please close and reopen the highlight.');
+                      }
                     }}
                   >
                     {({ open }) => (
