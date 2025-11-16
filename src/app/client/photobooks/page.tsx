@@ -31,6 +31,8 @@ export default function ClientPhotobooksPage() {
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [galleries, setGalleries] = useState<any[]>([]);
+  const [showGallerySelector, setShowGallerySelector] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -53,6 +55,13 @@ export default function ClientPhotobooksPage() {
       if (photobooksRes.ok) {
         const photobooksData = await photobooksRes.json();
         setPhotobooks(photobooksData.photobooks || []);
+      }
+
+      // Fetch galleries for photobook creation
+      const galleriesRes = await fetch('/api/client/galleries');
+      if (galleriesRes.ok) {
+        const galleriesData = await galleriesRes.json();
+        setGalleries(galleriesData);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -192,14 +201,27 @@ export default function ClientPhotobooksPage() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6"
         >
-          <h2 className="text-5xl font-bold text-white mb-4 tracking-tight">
-            Your Photobook Collection
-          </h2>
-          <p className="text-xl text-gray-400">
-            Create, edit, and manage your beautiful custom photobooks
-          </p>
+          <div>
+            <h2 className="text-5xl font-bold text-white mb-4 tracking-tight">
+              Your Photobook Collection
+            </h2>
+            <p className="text-xl text-gray-400">
+              Create, edit, and manage your beautiful custom photobooks
+            </p>
+          </div>
+          {photobooks.length > 0 && galleries.length > 0 && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowGallerySelector(true)}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold whitespace-nowrap"
+            >
+              <FiPlus className="w-5 h-5" />
+              Create New Photobook
+            </motion.button>
+          )}
         </motion.div>
 
         {photobooks.length === 0 ? (
@@ -223,13 +245,14 @@ export default function ClientPhotobooksPage() {
                 Transform your precious memories into a beautiful printed photobook. 
                 Select photos from your galleries and create something unforgettable.
               </p>
-              <Link
-                href="/client/dashboard"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold"
+              <button
+                onClick={() => setShowGallerySelector(true)}
+                disabled={galleries.length === 0}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FiPlus className="w-5 h-5" />
-                Go to Dashboard to Select Photos
-              </Link>
+                {galleries.length === 0 ? 'No Galleries Available' : 'Create Your First Photobook'}
+              </button>
             </div>
           </motion.div>
         ) : (
@@ -380,6 +403,170 @@ export default function ClientPhotobooksPage() {
           </motion.div>
         )}
       </main>
+
+      {/* Gallery Selector Modal */}
+      <AnimatePresence>
+        {showGallerySelector && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowGallerySelector(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-800 rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/10"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-white">
+                  Select a Gallery
+                </h3>
+                <button
+                  onClick={() => setShowGallerySelector(false)}
+                  className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition"
+                >
+                  <FiArrowLeft className="w-6 h-6" />
+                </button>
+              </div>
+              <p className="text-gray-400 mb-6">
+                Choose a gallery to create your photobook from:
+              </p>
+              {galleries.length === 0 ? (
+                <div className="text-center py-12">
+                  <FiBook className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No galleries available yet</p>
+                  <Link
+                    href="/client/dashboard"
+                    className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:shadow-lg transition"
+                  >
+                    <FiArrowLeft className="w-4 h-4" />
+                    Go to Dashboard
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {galleries.map((gallery) => (
+                    <Link
+                      key={gallery.id}
+                      href={`/client/photobook?galleryId=${gallery.id}`}
+                      className="group relative bg-gray-700/50 rounded-xl overflow-hidden border border-white/10 hover:border-pink-500/50 transition-all"
+                    >
+                      <div className="relative aspect-video bg-gray-900">
+                        {gallery.coverImage ? (
+                          <Image
+                            src={gallery.coverImage}
+                            alt={gallery.name}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <FiBook className="w-12 h-12 text-gray-600" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <h4 className="font-semibold text-white mb-1 group-hover:text-pink-400 transition">
+                          {gallery.name}
+                        </h4>
+                        <p className="text-sm text-gray-400">
+                          {gallery._count?.photos || 0} photos
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Gallery Selector Modal */}
+      <AnimatePresence>
+        {showGallerySelector && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowGallerySelector(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-800 rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-white/10"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-white">
+                  Select a Gallery
+                </h3>
+                <button
+                  onClick={() => setShowGallerySelector(false)}
+                  className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition"
+                >
+                  <FiArrowLeft className="w-6 h-6" />
+                </button>
+              </div>
+              <p className="text-gray-400 mb-6">
+                Choose a gallery to create your photobook from:
+              </p>
+              {galleries.length === 0 ? (
+                <div className="text-center py-12">
+                  <FiBook className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No galleries available yet</p>
+                  <Link
+                    href="/client/dashboard"
+                    className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:shadow-lg transition"
+                  >
+                    <FiArrowLeft className="w-4 h-4" />
+                    Go to Dashboard
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {galleries.map((gallery) => (
+                    <Link
+                      key={gallery.id}
+                      href={`/client/photobook?galleryId=${gallery.id}`}
+                      className="group relative bg-gray-700/50 rounded-xl overflow-hidden border border-white/10 hover:border-pink-500/50 transition-all"
+                    >
+                      <div className="relative aspect-video bg-gray-900">
+                        {gallery.coverImage ? (
+                          <Image
+                            src={gallery.coverImage}
+                            alt={gallery.name}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <FiBook className="w-12 h-12 text-gray-600" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <h4 className="font-semibold text-white mb-1 group-hover:text-pink-400 transition">
+                          {gallery.name}
+                        </h4>
+                        <p className="text-sm text-gray-400">
+                          {gallery._count?.photos || 0} photos
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Delete Confirmation Modal */}
       <AnimatePresence>

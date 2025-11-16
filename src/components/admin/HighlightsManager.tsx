@@ -700,18 +700,27 @@ export default function HighlightsManager() {
                           if (updatedHighlight) {
                             console.log('✅ Updated highlight with items:', updatedHighlight.items.length);
                             setEditingHighlight(updatedHighlight);
+                            
+                            // Show success feedback only after successful refresh
+                            const notification = document.createElement('div');
+                            notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
+                            notification.textContent = '✓ Item added successfully!';
+                            document.body.appendChild(notification);
+                            setTimeout(() => notification.remove(), 3000);
+                          } else {
+                            throw new Error('Updated highlight not found');
                           }
+                        } else {
+                          throw new Error(`Refresh failed: ${response.status}`);
                         }
-                        
-                        // Show success feedback
-                        const notification = document.createElement('div');
-                        notification.className = 'fixed top-20 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-bounce';
-                        notification.textContent = '✓ Item added successfully!';
-                        document.body.appendChild(notification);
-                        setTimeout(() => notification.remove(), 3000);
                       } catch (error) {
                         console.error('❌ Upload handling error:', error);
-                        alert('Upload succeeded but failed to refresh. Please close and reopen the highlight.');
+                        // Show error notification
+                        const notification = document.createElement('div');
+                        notification.className = 'fixed top-20 right-6 z-[100] bg-red-500 text-white px-6 py-4 rounded-xl shadow-2xl font-semibold';
+                        notification.textContent = '⚠️ Upload succeeded but refresh failed. Please close and reopen the highlight.';
+                        document.body.appendChild(notification);
+                        setTimeout(() => notification.remove(), 5000);
                       }
                     }}
                   >
