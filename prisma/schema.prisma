@@ -253,6 +253,8 @@ model ClientGallery {
   brideName          String? // Bride's name for print template
   groomName          String? // Groom's name for print template
   photoboothMessage  String? // Custom message for print (e.g., "Thank you for celebrating with us!")
+  selectedPhotos     String[] @default([]) // IDs of photos selected by client
+  selectionApprovedAt DateTime? // When client approved their selection
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
   client             Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
