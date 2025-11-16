@@ -51,17 +51,31 @@ export default function ClientPhotobooksPage() {
       }
 
       // Fetch photobooks
-      const photobooksRes = await fetch('/api/client/photobooks');
-      if (photobooksRes.ok) {
-        const photobooksData = await photobooksRes.json();
-        setPhotobooks(photobooksData.photobooks || []);
+      try {
+        const photobooksRes = await fetch('/api/client/photobooks');
+        if (photobooksRes.ok) {
+          const photobooksData = await photobooksRes.json();
+          setPhotobooks(photobooksData.photobooks || []);
+        } else {
+          console.error('Failed to fetch photobooks:', photobooksRes.status);
+        }
+      } catch (err) {
+        console.error('Error fetching photobooks:', err);
+        // Continue even if photobooks fail
       }
 
       // Fetch galleries for photobook creation
-      const galleriesRes = await fetch('/api/client/galleries');
-      if (galleriesRes.ok) {
-        const galleriesData = await galleriesRes.json();
-        setGalleries(galleriesData);
+      try {
+        const galleriesRes = await fetch('/api/client/galleries');
+        if (galleriesRes.ok) {
+          const galleriesData = await galleriesRes.json();
+          setGalleries(galleriesData);
+        } else {
+          console.error('Failed to fetch galleries:', galleriesRes.status);
+        }
+      } catch (err) {
+        console.error('Error fetching galleries:', err);
+        // Continue even if galleries fail
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -211,7 +225,7 @@ export default function ClientPhotobooksPage() {
               Create, edit, and manage your beautiful custom photobooks
             </p>
           </div>
-          {photobooks.length > 0 && galleries.length > 0 && (
+          {!loading && photobooks.length > 0 && galleries.length > 0 && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -246,12 +260,16 @@ export default function ClientPhotobooksPage() {
                 Select photos from your galleries and create something unforgettable.
               </p>
               <button
-                onClick={() => setShowGallerySelector(true)}
-                disabled={galleries.length === 0}
+                onClick={() => {
+                  if (galleries.length > 0) {
+                    setShowGallerySelector(true);
+                  }
+                }}
+                disabled={loading || galleries.length === 0}
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FiPlus className="w-5 h-5" />
-                {galleries.length === 0 ? 'No Galleries Available' : 'Create Your First Photobook'}
+                {loading ? 'Loading...' : galleries.length === 0 ? 'No Galleries Available' : 'Create Your First Photobook'}
               </button>
             </div>
           </motion.div>
