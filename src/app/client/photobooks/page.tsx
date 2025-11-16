@@ -228,7 +228,7 @@ export default function ClientPhotobooksPage() {
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold"
               >
                 <FiPlus className="w-5 h-5" />
-                Create Your First Photobook
+                Go to Dashboard to Select Photos
               </Link>
             </div>
           </motion.div>

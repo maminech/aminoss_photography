@@ -534,7 +534,7 @@ export default function ClientGalleryPage() {
                     transition={{ delay: index * 0.02 }}
                     className={`relative aspect-square bg-gray-200 dark:bg-dark-700 rounded-lg overflow-hidden group transition-all ${
                       isSelected
-                        ? 'ring-4 ring-green-500 shadow-xl shadow-green-500/20'
+                        ? 'ring-4 ring-green-500 shadow-xl shadow-green-500/30'
                         : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
                     }`}
                   >
@@ -564,9 +564,9 @@ export default function ClientGalleryPage() {
                         e.stopPropagation();
                         togglePhotoSelection(photo.id);
                       }}
-                      className={`absolute top-2 right-2 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all z-10 touch-manipulation ${
+                      className={`absolute top-2 right-2 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all z-10 touch-manipulation shadow-lg ${
                         isSelected
-                          ? 'bg-primary text-white scale-100'
+                          ? 'bg-green-500 text-white scale-110 shadow-green-500/50'
                           : 'bg-white/90 dark:bg-dark-800/90 text-gray-400 scale-90 group-hover:scale-100'
                       }`}
                     >
@@ -642,9 +642,9 @@ export default function ClientGalleryPage() {
                       e.stopPropagation();
                       togglePhotoSelection(currentPhoto.id);
                     }}
-                    className={`p-2 md:p-2.5 rounded-full backdrop-blur-sm transition touch-manipulation ${
+                    className={`p-2 md:p-2.5 rounded-full backdrop-blur-sm transition touch-manipulation shadow-lg ${
                       selectedPhotos.has(currentPhoto.id)
-                        ? 'bg-primary text-white'
+                        ? 'bg-green-500 text-white shadow-green-500/50'
                         : 'bg-white/10 text-white hover:bg-white/20'
                     }`}
                   >
@@ -733,7 +733,7 @@ export default function ClientGalleryPage() {
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
           >
             <motion.button
-              whileHover={{ scale: 1.05, y: -4 }}
+              whileHover={{ scale: 1.08, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={async () => {
                 try {
@@ -762,28 +762,25 @@ export default function ClientGalleryPage() {
                   alert('Failed to save selection. Please try again.');
                 }
               }}
-              className="group relative px-10 py-5 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all"
+              className="group relative px-6 py-3 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white rounded-full font-semibold text-sm shadow-xl hover:shadow-green-500/60 transition-all"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <motion.div
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <FiCheck className="w-7 h-7" />
+                  <FiCheck className="w-5 h-5" />
                 </motion.div>
-                <div className="flex flex-col items-start">
-                  <span className="tracking-wide">APPROVE SELECTION</span>
-                  <span className="text-sm font-normal opacity-90">{selectedPhotos.size} photo{selectedPhotos.size !== 1 ? 's' : ''} selected</span>
-                </div>
+                <span className="font-semibold">Approve Selection</span>
                 <motion.div
-                  className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
-                  animate={{ scale: [1, 1.2, 1] }}
+                  className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center"
+                  animate={{ scale: [1, 1.15, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <span className="text-2xl font-bold">{selectedPhotos.size}</span>
+                  <span className="text-xs font-bold">{selectedPhotos.size}</span>
                 </motion.div>
               </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 opacity-0 group-hover:opacity-30 blur-xl transition-opacity" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 opacity-0 group-hover:opacity-40 blur-lg transition-opacity" />
             </motion.button>
           </motion.div>
         )}
