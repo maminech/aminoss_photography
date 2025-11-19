@@ -209,7 +209,8 @@ export default function ClientDetailPage() {
       return;
     }
 
-    // Show name input modal first
+    // Reset names and show name input modal
+    setBrideGroomNames({ brideName: '', groomName: '' });
     setNameModalOpen(true);
   };
 

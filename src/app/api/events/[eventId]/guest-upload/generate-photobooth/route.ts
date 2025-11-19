@@ -70,92 +70,41 @@ export async function POST(
     // Bottom message
     const bottomMessage = gallery.photoboothMessage || photo.uploaderName || 'Thank you for celebrating with us!';
 
-    // Create enhanced photobooth print using Cloudinary transformations
-    // Strategy: Resize photo first, add white border, then overlay text
-    const transformations = {
-      transformation: [
-        // Step 1: Resize the photo to fit in the center
-        { 
-          width: 1000, 
-          height: 1200, 
-          crop: 'fill', 
-          gravity: 'auto:faces', 
-          quality: 'auto:best',
-        },
-        
-        // Step 2: Add white borders (200px top, 100px sides, 180px bottom)
-        { 
-          border: '200px_100px_180px_100px_solid_rgb:ffffff',
-        },
-        
-        // Step 3: Add all text overlays
-        {
-          overlay: 'text:Arial_50:♥',
-          gravity: 'north',
-          y: 15,
-          color: 'ff69b4',
-        },
-        {
-          overlay: `text:Pacifico_68_bold:${encodeURIComponent(coupleNames)}`,
-          gravity: 'north',
-          y: 75,
-          color: '1a1a1a',
-        },
-        {
-          overlay: `text:Lato_38:${encodeURIComponent(eventDate)}`,
-          gravity: 'north',
-          y: 150,
-          color: '555555',
-        },
-        {
-          overlay: 'text:Arial_24:━━━━━━━━━━━━━━━━',
-          gravity: 'south',
-          y: 145,
-          color: 'ff69b4',
-        },
-        {
-          overlay: `text:Lato_30:${encodeURIComponent(guestMessage.substring(0, 80))}`,
-          gravity: 'south',
-          y: 100,
-          color: '333333',
-        },
-        {
-          overlay: `text:Lato_26:${encodeURIComponent(`With love from ${bottomMessage.substring(0, 25)}`)}`,
-          gravity: 'south',
-          y: 60,
-          color: '666666',
-        },
-        {
-          overlay: 'text:Arial_28:❤ ❤ ❤',
-          gravity: 'south',
-          y: 20,
-          color: 'ff69b4',
-        },
-        
-        // Step 4: Add shadow effect
-        {
-          effect: 'shadow:40'
-        },
-        
-        // Step 5: Final resize to print size (4x6 at 300 DPI)
-        { 
-          width: 1200, 
-          height: 1800, 
-          crop: 'pad', 
-          background: 'white',
-          quality: 100
-        },
-      ]
-    };
-
-    // Generate the URL with transformations
+    // Build Cloudinary URL manually for better control
+    // Using direct URL construction instead of SDK to ensure transformations work correctly
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx';
+    
+    // URL encode text overlays
+    const encodedCoupleNames = encodeURIComponent(coupleNames).replace(/%20/g, '%20');
+    const encodedEventDate = encodeURIComponent(eventDate).replace(/%20/g, '%20');
+    const encodedGuestMessage = encodeURIComponent(guestMessage.substring(0, 80)).replace(/%20/g, '%20');
+    const encodedBottomMessage = encodeURIComponent(`With love from ${bottomMessage.substring(0, 25)}`).replace(/%20/g, '%20');
+    
+    // Build transformation string
+    const transformations = [
+      // Step 1: Resize the photo to center area
+      'c_fill,g_auto:faces,h_1200,w_1000,q_auto:best',
+      // Step 2: Add white borders
+      'bo_200px_100px_180px_100px_solid_rgb:ffffff',
+      // Step 3: Add top text overlays
+      `l_text:Arial_50:♥,g_north,y_15,co_rgb:ff69b4`,
+      `l_text:Pacifico_68_bold:${encodedCoupleNames},g_north,y_75,co_rgb:1a1a1a`,
+      `l_text:Lato_38:${encodedEventDate},g_north,y_150,co_rgb:555555`,
+      // Step 4: Add bottom text overlays
+      'l_text:Arial_24:━━━━━━━━━━━━━━━━,g_south,y_145,co_rgb:ff69b4',
+      `l_text:Lato_30:${encodedGuestMessage},g_south,y_100,co_rgb:333333`,
+      `l_text:Lato_26:${encodedBottomMessage},g_south,y_60,co_rgb:666666`,
+      'l_text:Arial_28:❤ ❤ ❤,g_south,y_20,co_rgb:ff69b4',
+      // Step 5: Add shadow
+      'e_shadow:40',
+      // Step 6: Final sizing
+      'c_pad,w_1200,h_1800,b_rgb:ffffff,q_100',
+    ].join('/');
+    
     console.log('🖼️ Generating photobooth URL for cloudinaryId:', photo.cloudinaryId);
     
-    const photoboothUrl = cloudinary.url(photo.cloudinaryId, {
-      ...transformations,
-      fetch_format: 'jpg',
-      quality: 'auto:best',
-    });
+    // Construct the full URL
+    const photoboothUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${transformations}/f_jpg/${photo.cloudinaryId}`;
 
     console.log('✅ Photobooth URL generated:', photoboothUrl);
 
