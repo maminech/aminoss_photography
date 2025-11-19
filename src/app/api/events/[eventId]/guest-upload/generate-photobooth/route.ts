@@ -71,129 +71,88 @@ export async function POST(
     const bottomMessage = gallery.photoboothMessage || photo.uploaderName || 'Thank you for celebrating with us!';
 
     // Create enhanced photobooth print using Cloudinary transformations
-    // Strategy: Create photo with large white borders, then position text in the border areas
-    const transformations = [
-      // 1. Resize the photo to core size (leaving room for text borders)
-      { 
-        width: 1000, 
-        height: 1200, 
-        crop: 'fill', 
-        gravity: 'auto:faces', 
-        quality: 'auto:best',
-        fetch_format: 'auto'
-      },
-      
-      // 2. Add large white borders: 200px top, 180px bottom, 100px sides
-      // This creates white space for text placement
-      { 
-        border: '200px_100px_180px_100px_solid_rgb:ffffff',
-      },
-      
-      // 3. Add heart decoration at very top of white border
-      {
-        overlay: {
-          font_family: 'Arial',
-          font_size: 50,
-          text: '♥',
+    // Strategy: Resize photo first, add white border, then overlay text
+    const transformations = {
+      transformation: [
+        // Step 1: Resize the photo to fit in the center
+        { 
+          width: 1000, 
+          height: 1200, 
+          crop: 'fill', 
+          gravity: 'auto:faces', 
+          quality: 'auto:best',
         },
-        gravity: 'north',
-        y: 15,
-        color: '#ff69b4',
-      },
-      
-      // 4. Add couple names in top white border
-      {
-        overlay: {
-          font_family: 'Pacifico',
-          font_size: 68,
-          font_weight: 'bold',
-          text: coupleNames,
+        
+        // Step 2: Add white borders (200px top, 100px sides, 180px bottom)
+        { 
+          border: '200px_100px_180px_100px_solid_rgb:ffffff',
         },
-        gravity: 'north',
-        y: 75,
-        color: '#1a1a1a',
-      },
-      
-      // 5. Add wedding date in top white border
-      {
-        overlay: {
-          font_family: 'Lato',
-          font_size: 38,
-          text: eventDate,
+        
+        // Step 3: Add all text overlays
+        {
+          overlay: 'text:Arial_50:♥',
+          gravity: 'north',
+          y: 15,
+          color: 'ff69b4',
         },
-        gravity: 'north',
-        y: 150,
-        color: '#555555',
-      },
-      
-      // 6. Add decorative line in bottom white border
-      {
-        overlay: {
-          font_family: 'Arial',
-          font_size: 24,
-          text: '━━━━━━━━━━━━━━━━',
+        {
+          overlay: `text:Pacifico_68_bold:${encodeURIComponent(coupleNames)}`,
+          gravity: 'north',
+          y: 75,
+          color: '1a1a1a',
         },
-        gravity: 'south',
-        y: 145,
-        color: '#ff69b4',
-      },
-      
-      // 7. Add guest message in bottom white border
-      {
-        overlay: {
-          font_family: 'Lato',
-          font_size: 30,
-          text: guestMessage.substring(0, 80), // Limit length
+        {
+          overlay: `text:Lato_38:${encodeURIComponent(eventDate)}`,
+          gravity: 'north',
+          y: 150,
+          color: '555555',
         },
-        gravity: 'south',
-        y: 100,
-        color: '#333333',
-      },
-      
-      // 8. Add "With love from" text in bottom white border
-      {
-        overlay: {
-          font_family: 'Lato',
-          font_size: 26,
-          text: `With love from ${bottomMessage.substring(0, 25)}`,
+        {
+          overlay: 'text:Arial_24:━━━━━━━━━━━━━━━━',
+          gravity: 'south',
+          y: 145,
+          color: 'ff69b4',
         },
-        gravity: 'south',
-        y: 60,
-        color: '#666666',
-      },
-      
-      // 9. Add small hearts decoration at bottom of white border
-      {
-        overlay: {
-          font_family: 'Arial',
-          font_size: 28,
-          text: '❤ ❤ ❤',
+        {
+          overlay: `text:Lato_30:${encodeURIComponent(guestMessage.substring(0, 80))}`,
+          gravity: 'south',
+          y: 100,
+          color: '333333',
         },
-        gravity: 'south',
-        y: 20,
-        color: '#ff69b4',
-      },
-      
-      // 10. Add subtle shadow effect
-      {
-        effect: 'shadow:40'
-      },
-      
-      // 11. Final resize to standard print size (4x6 inches at 300 DPI = 1200x1800px)
-      { 
-        width: 1200, 
-        height: 1800, 
-        crop: 'pad', 
-        background: 'white',
-        quality: 100
-      },
-    ];
+        {
+          overlay: `text:Lato_26:${encodeURIComponent(`With love from ${bottomMessage.substring(0, 25)}`)}`,
+          gravity: 'south',
+          y: 60,
+          color: '666666',
+        },
+        {
+          overlay: 'text:Arial_28:❤ ❤ ❤',
+          gravity: 'south',
+          y: 20,
+          color: 'ff69b4',
+        },
+        
+        // Step 4: Add shadow effect
+        {
+          effect: 'shadow:40'
+        },
+        
+        // Step 5: Final resize to print size (4x6 at 300 DPI)
+        { 
+          width: 1200, 
+          height: 1800, 
+          crop: 'pad', 
+          background: 'white',
+          quality: 100
+        },
+      ]
+    };
 
     // Generate the URL with transformations
     console.log('🖼️ Generating photobooth URL for cloudinaryId:', photo.cloudinaryId);
     
     const photoboothUrl = cloudinary.url(photo.cloudinaryId, {
-      transformation: transformations,
+      ...transformations,
       fetch_format: 'jpg',
       quality: 'auto:best',
     });
