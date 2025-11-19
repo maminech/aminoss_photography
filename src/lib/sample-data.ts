@@ -3,14 +3,14 @@ import { MediaItem, VideoItem, Category } from '@/types';
 // Sample data - Replace these with your actual Cloudinary URLs
 // Format: https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/YOUR_IMAGE_PATH
 
-const CLOUDINARY_BASE = 'https://res.cloudinary.com/dc67gl8fu/image/upload';
+const CLOUDINARY_BASE = 'https://res.cloudinary.com/dm22wlmpx/image/upload';
 
 export const sampleImages: MediaItem[] = [
   {
     id: '1',
     publicId: '099_dsnltg',
-    url: 'https://res.cloudinary.com/dc67gl8fu/image/upload/v1762140287/099_dsnltg.jpg',
-    thumbnailUrl: 'https://res.cloudinary.com/dc67gl8fu/image/upload/w_800,h_800,c_fill,q_auto,f_auto/v1762140287/099_dsnltg.jpg',
+    url: 'https://res.cloudinary.com/dm22wlmpx/image/upload/v1762140287/099_dsnltg.jpg',
+    thumbnailUrl: 'https://res.cloudinary.com/dm22wlmpx/image/upload/w_800,h_800,c_fill,q_auto,f_auto/v1762140287/099_dsnltg.jpg',
     title: 'Innov8 Production',
     description: 'Professional photography by Innov8',
     category: 'portraits',
@@ -23,8 +23,8 @@ export const sampleImages: MediaItem[] = [
   {
     id: '2',
     publicId: '105_pzgmgt',
-    url: 'https://res.cloudinary.com/dc67gl8fu/image/upload/v1762140283/105_pzgmgt.jpg',
-    thumbnailUrl: 'https://res.cloudinary.com/dc67gl8fu/image/upload/w_800,h_800,c_fill,q_auto,f_auto/v1762140283/105_pzgmgt.jpg',
+    url: 'https://res.cloudinary.com/dm22wlmpx/image/upload/v1762140283/105_pzgmgt.jpg',
+    thumbnailUrl: 'https://res.cloudinary.com/dm22wlmpx/image/upload/w_800,h_800,c_fill,q_auto,f_auto/v1762140283/105_pzgmgt.jpg',
     title: 'Innov8 Production',
     description: 'Professional photography by Innov8',
     category: 'fashion',
@@ -37,8 +37,8 @@ export const sampleImages: MediaItem[] = [
   {
     id: '3',
     publicId: '089_jdagpy',
-    url: 'https://res.cloudinary.com/dc67gl8fu/image/upload/v1762140280/089_jdagpy.jpg',
-    thumbnailUrl: 'https://res.cloudinary.com/dc67gl8fu/image/upload/w_800,h_800,c_fill,q_auto,f_auto/v1762140280/089_jdagpy.jpg',
+    url: 'https://res.cloudinary.com/dm22wlmpx/image/upload/v1762140280/089_jdagpy.jpg',
+    thumbnailUrl: 'https://res.cloudinary.com/dm22wlmpx/image/upload/w_800,h_800,c_fill,q_auto,f_auto/v1762140280/089_jdagpy.jpg',
     title: 'Innov8 Production',
     description: 'Professional photography by Innov8',
     category: 'weddings',

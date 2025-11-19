@@ -90,7 +90,7 @@ export default function AdminLayout({
         {/* Main Content */}
         <div className="lg:pl-64">
           {/* Mobile Menu Button */}
-          <div className="lg:hidden fixed top-4 left-4 z-40">
+          <div className="lg:hidden fixed top-20 left-4 z-50">
             <button
               onClick={() => setSidebarOpen(true)}
               className="p-3 bg-white dark:bg-dark-800 rounded-lg shadow-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700"

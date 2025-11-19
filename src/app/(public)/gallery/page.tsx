@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { FiPlay } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import CategoryFilter from '@/components/CategoryFilter';
 import GalleryGrid from '@/components/GalleryGrid';
 import LightboxModal from '@/components/LightboxModal';
@@ -71,11 +72,8 @@ type GalleryItem = GalleryAlbum | GalleryImage | GalleryVideo;
 
 export default function GalleryPage() {
   const { currentTheme } = useLayoutTheme();
+  const { t } = useLanguage();
   const [allItems, setAllItems] = useState<GalleryItem[]>([]);
-  const [filteredItems, setFilteredItems] = useState<GalleryItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState<Category>('all');
-  const [sortBy, setSortBy] = useState<'date' | 'title'>('date');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [albumLightboxOpen, setAlbumLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -121,14 +119,12 @@ export default function GalleryPage() {
           );
           
           setAllItems(allGalleryItems);
-          setFilteredItems(allGalleryItems);
         } else {
           // Simple mode - use public gallery API
           const res = await fetch('/api/public/gallery');
           if (res.ok) {
             const data: GalleryItem[] = await res.json();
             setAllItems(data);
-            setFilteredItems(data);
           } else {
             // Fallback to old API
             const imgRes = await fetch('/api/admin/images');
@@ -151,7 +147,6 @@ export default function GalleryPage() {
                 tags: img.tags || [],
               }));
               setAllItems(mappedImages);
-              setFilteredItems(mappedImages);
             }
           }
         }
@@ -163,41 +158,6 @@ export default function GalleryPage() {
     };
     loadGallery();
   }, [isProfessional]);
-
-  const handleCategoryChange = (category: Category) => {
-    setActiveCategory(category);
-    const filtered = category === 'all' 
-      ? allItems 
-      : allItems.filter(item => item.category === category);
-    setFilteredItems(sortItems(filtered));
-  };
-
-  const sortItems = (items: GalleryItem[]) => {
-    const sorted = [...items].sort((a, b) => {
-      if (sortBy === 'date') {
-        const dateA = new Date(a.createdAt || 0).getTime();
-        const dateB = new Date(b.createdAt || 0).getTime();
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-      } else {
-        const titleA = (a.type === 'album' ? a.title : a.title)?.toLowerCase() || '';
-        const titleB = (b.type === 'album' ? b.title : b.title)?.toLowerCase() || '';
-        return sortOrder === 'asc' 
-          ? titleA.localeCompare(titleB)
-          : titleB.localeCompare(titleA);
-      }
-    });
-    return sorted;
-  };
-
-  const handleSortChange = (newSortBy: 'date' | 'title') => {
-    if (sortBy === newSortBy) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(newSortBy);
-      setSortOrder('desc');
-    }
-    setFilteredItems(sortItems(filteredItems));
-  };
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -211,17 +171,17 @@ export default function GalleryPage() {
 
   const nextImage = () => {
     // Get only standalone images for lightbox navigation
-    const standaloneImages = filteredItems.filter(item => item.type === 'image') as GalleryImage[];
+    const standaloneImages = allItems.filter(item => item.type === 'image') as GalleryImage[];
     setCurrentImageIndex((prev) => (prev + 1) % standaloneImages.length);
   };
 
   const previousImage = () => {
-    const standaloneImages = filteredItems.filter(item => item.type === 'image') as GalleryImage[];
+    const standaloneImages = allItems.filter(item => item.type === 'image') as GalleryImage[];
     setCurrentImageIndex((prev) => (prev - 1 + standaloneImages.length) % standaloneImages.length);
   };
 
-  // Convert filtered items to MediaItems for lightbox (only standalone images)
-  const standaloneImages: MediaItem[] = filteredItems
+  // Convert all items to MediaItems for lightbox (only standalone images)
+  const standaloneImages: MediaItem[] = allItems
     .filter(item => item.type === 'image')
     .map(item => item as GalleryImage)
     .map(img => ({
@@ -243,175 +203,254 @@ export default function GalleryPage() {
   if (isProfessional) {
     return (
       <div className="novo-gallery-page bg-white dark:bg-gray-900 min-h-screen">
-        <NavigationButton variant="both" />
+        <div className="fixed top-6 left-6 z-[9999]">
+          <NavigationButton variant="both" />
+        </div>
         {/* Novo Header Section */}
-        <section className="py-24 md:py-32 bg-white dark:bg-gray-900">
-          <div className="container mx-auto px-6">
+        <section className="relative py-20 md:py-28 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-gray-900 dark:via-gray-800/20 dark:to-gray-900 overflow-hidden">
+          {/* Floating Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 90, 0],
+                opacity: [0.03, 0.08, 0.03],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-gradient-to-br from-[#d4af37]/20 to-transparent rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{
+                scale: [1, 1.3, 1],
+                rotate: [0, -90, 0],
+                opacity: [0.03, 0.08, 0.03],
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 5
+              }}
+              className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-gradient-to-tr from-[#d4af37]/20 to-transparent rounded-full blur-3xl"
+            />
+          </div>
+
+          <div className="container mx-auto px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center mb-16"
+              className="text-center"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
-                Gallery
-              </h1>
+              {/* Elegant Title */}
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-5xl md:text-6xl lg:text-7xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-6"
+              >
+                {t('gallery.title')}
+              </motion.h1>
               
+              {/* Animated Golden Line */}
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '60px' }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="h-[1px] bg-[#d4af37] mx-auto mb-12"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: '80px', opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="h-[2px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mb-8"
               />
 
-              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto mb-12">
-                Explore my curated collection of photography across different styles and moments
-              </p>
+              {/* Elegant Subtitle */}
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 font-lato leading-relaxed max-w-3xl mx-auto mb-4"
+              >
+                {t('gallery.subtitle')}
+              </motion.p>
 
-              {/* Novo Category Filter */}
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
-                {['all', 'portraits', 'weddings', 'events', 'nature', 'fashion'].map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => handleCategoryChange(category as Category)}
-                    className={`px-6 py-2 font-lato font-medium text-sm uppercase tracking-[0.2em] transition-all duration-300 ${
-                      activeCategory === category
-                        ? 'text-[#d4af37] border-b-2 border-[#d4af37]'
-                        : 'text-gray-600 hover:text-[#1a1a1a] dark:text-gray-100'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-
-              {/* Sort Controls - Novo Style */}
-              <div className="flex items-center justify-center gap-4 text-sm">
-                <span className="text-gray-600 font-lato">Sort by:</span>
-                <button
-                  onClick={() => handleSortChange('date')}
-                  className={`px-4 py-2 font-lato font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 ${
-                    sortBy === 'date'
-                      ? 'text-[#d4af37]'
-                      : 'text-gray-600 hover:text-[#1a1a1a] dark:text-gray-100'
-                  }`}
-                >
-                  Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
-                </button>
-                <button
-                  onClick={() => handleSortChange('title')}
-                  className={`px-4 py-2 font-lato font-medium text-xs uppercase tracking-[0.2em] transition-all duration-300 ${
-                    sortBy === 'title'
-                      ? 'text-[#d4af37]'
-                      : 'text-gray-600 hover:text-[#1a1a1a] dark:text-gray-100'
-                  }`}
-                >
-                  Title {sortBy === 'title' && (sortOrder === 'desc' ? '↓' : '↑')}
-                </button>
-                <span className="text-gray-500 font-lato">
-                  ({filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'})
+              {/* Photo Count Badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="inline-flex items-center gap-2 px-6 py-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-[#d4af37]/20 rounded-full"
+              >
+                <div className="w-2 h-2 rounded-full bg-[#d4af37] animate-pulse" />
+                <span className="text-sm font-lato text-gray-700 dark:text-gray-300">
+                  {allItems.length} {allItems.length === 1 ? t('gallery.item') : t('gallery.items')}
                 </span>
-              </div>
+              </motion.div>
             </motion.div>
+          </div>
+        </section>
 
-            {/* Novo Gallery Grid */}
+        {/* Gallery Content Section */}
+        <section className="py-16 md:py-20 bg-white dark:bg-gray-900">
+          <div className="container mx-auto px-6">
+
+            {/* Enhanced Gallery Grid */}
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                 {[...Array(9)].map((_, i) => (
-                  <div key={i} className="aspect-square bg-gray-200 animate-pulse" />
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 animate-pulse rounded-lg"
+                  />
                 ))}
               </div>
-            ) : filteredItems.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                {filteredItems.map((item, index) => {
+            ) : allItems.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                {allItems.map((item, index) => {
                   if (item.type === 'album') {
                     return (
                       <motion.div
                         key={item.id}
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{ duration: 0.6, delay: index * 0.05 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ 
+                          duration: 0.7, 
+                          delay: index * 0.08,
+                          ease: [0.25, 0.1, 0.25, 1]
+                        }}
+                        className="group"
                       >
-                        <AlbumCarousel
-                          photos={item.photos}
-                          coverImage={item.coverImage}
-                          photoCount={item.photoCount}
-                          onOpen={() => openAlbumLightbox(item)}
-                        />
+                        <motion.div
+                          whileHover={{ y: -8 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                        >
+                          <AlbumCarousel
+                            photos={item.photos}
+                            coverImage={item.coverImage}
+                            photoCount={item.photoCount}
+                            onOpen={() => openAlbumLightbox(item)}
+                          />
+                        </motion.div>
                       </motion.div>
                     );
                   } else if (item.type === 'video') {
                     return (
                       <motion.div
                         key={item.id}
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{ duration: 0.6, delay: index * 0.05 }}
-                        className="group relative aspect-square overflow-hidden bg-gray-200 cursor-pointer"
-                        onClick={() => {
-                          // Open video in new tab or modal
-                          window.open(item.url, '_blank');
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ 
+                          duration: 0.7, 
+                          delay: index * 0.08,
+                          ease: [0.25, 0.1, 0.25, 1]
                         }}
                       >
-                        <Image
-                          src={item.thumbnailUrl}
-                          alt={item.title || 'Video'}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        
-                        {/* Video Play Icon */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:bg-[#d4af37] transition-all duration-300 group-hover:scale-110">
-                            <svg className="w-8 h-8 text-gray-900 group-hover:text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                            </svg>
+                        <motion.div
+                          whileHover={{ y: -8, scale: 1.02 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          className="group relative aspect-square overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 cursor-pointer rounded-lg shadow-lg hover:shadow-2xl"
+                          onClick={() => window.open(item.url, '_blank')}
+                        >
+                          <Image
+                            src={item.thumbnailUrl}
+                            alt={item.title || 'Video'}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          
+                          {/* Video Play Icon */}
+                          <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <motion.div
+                              whileHover={{ scale: 1.2, rotate: 360 }}
+                              transition={{ duration: 0.6 }}
+                              className="w-20 h-20 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center group-hover:bg-[#d4af37] transition-all duration-500 shadow-2xl"
+                            >
+                              <svg className="w-10 h-10 text-gray-900 group-hover:text-white ml-1 transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                              </svg>
+                            </motion.div>
                           </div>
-                        </div>
-                        
-                        {/* Video Badge */}
-                        <div className="absolute top-3 right-3 px-2 py-1 bg-black/70 text-white text-xs font-medium rounded">
-                          VIDEO
-                        </div>
-                        
-                        {/* Hover Overlay */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          
+                          {/* Video Badge */}
+                          <div className="absolute top-4 right-4 px-3 py-1.5 bg-black/80 backdrop-blur-sm text-white text-xs font-medium rounded-full border border-white/20">
+                            {t('nav.videos').toUpperCase()}
+                          </div>
+                          
+                          {/* Enhanced Hover Overlay */}
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"
+                          />
+                        </motion.div>
                       </motion.div>
                     );
                   } else {
-                    const imageIndex = filteredItems
+                    const imageIndex = allItems
                       .slice(0, index)
                       .filter(i => i.type === 'image').length;
                     return (
                       <motion.div
                         key={item.id}
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{ duration: 0.6, delay: index * 0.05 }}
-                        onClick={() => openLightbox(imageIndex)}
-                        className="group relative aspect-square overflow-hidden bg-gray-200 cursor-pointer"
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ 
+                          duration: 0.7, 
+                          delay: index * 0.08,
+                          ease: [0.25, 0.1, 0.25, 1]
+                        }}
                       >
-                        <Image
-                          src={item.thumbnailUrl || item.url}
-                          alt={item.title || `Photo ${imageIndex + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        
-                        {/* Hover Overlay - Clean without text */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <motion.div
+                          whileHover={{ y: -8, scale: 1.02 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          onClick={() => openLightbox(imageIndex)}
+                          className="group relative aspect-square overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 cursor-pointer rounded-lg shadow-lg hover:shadow-2xl"
+                        >
+                          <Image
+                            src={item.thumbnailUrl || item.url}
+                            alt={item.title || `Photo ${imageIndex + 1}`}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          
+                          {/* Elegant Hover Overlay */}
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+                          />
+
+                          {/* Subtle Corner Accent */}
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0 }}
+                            whileHover={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute top-4 right-4 w-8 h-8"
+                          >
+                            <div className="w-full h-full border-t-2 border-r-2 border-[#d4af37] rounded-tr-lg" />
+                          </motion.div>
+                        </motion.div>
                       </motion.div>
                     );
                   }
                 })}
               </div>
             ) : (
-              <div className="text-center py-16">
-                <p className="text-gray-500 font-lato text-lg">No content found in this category.</p>
-              </div>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20"
+              >
+                <p className="text-gray-500 dark:text-gray-400 font-lato text-lg">{t('gallery.noContent')}</p>
+              </motion.div>
             )}
           </div>
         </section>
@@ -462,7 +501,9 @@ export default function GalleryPage() {
   // Simple Theme Layout (existing)
   return (
     <div className="min-h-screen py-16 sm:py-20 md:py-24 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8">
-      <NavigationButton variant="both" />
+      <div className="fixed top-6 left-6 z-[9999]">
+        <NavigationButton variant="both" />
+      </div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -194,12 +194,36 @@ export default function MessagesPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
       {/* Header */}
-      <header className="glass-nav bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
-        <div className="px-6 py-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Contact Messages</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Manage and respond to customer inquiries
-          </p>
+      <header className="glass-nav bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm">
+        <div className="px-6 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <FiMail className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Contact Messages</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Manage and respond to customer inquiries
+                </p>
+              </div>
+            </div>
+            {/* Quick Stats */}
+            <div className="hidden md:flex items-center space-x-4">
+              <div className="text-center px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{counts.unread}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Unread</div>
+              </div>
+              <div className="text-center px-4 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">{counts.replied}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Replied</div>
+              </div>
+              <div className="text-center px-4 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{counts.total}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Total</div>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -233,15 +257,29 @@ export default function MessagesPage() {
       <div className="p-6">
         {filteredMessages.length === 0 ? (
           <div className="glass-card text-center py-16">
-            <FiMail className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              No messages {activeFilter !== 'all' && `in ${activeFilter}`}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', duration: 0.6 }}
+            >
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FiMail className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+              </div>
+            </motion.div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              {activeFilter === 'unread' ? '✅ All Caught Up!' : '📬 No Messages Yet'}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
               {activeFilter === 'unread' 
-                ? 'All caught up! No new messages.'
-                : 'Messages will appear here when customers contact you.'}
+                ? 'Great job! You\'ve read all your messages. New ones will appear here.'
+                : 'Messages from your website contact form will appear here. Check back later!'}
             </p>
+            {activeFilter === 'all' && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg text-sm text-blue-700 dark:text-blue-300">
+                <span>💡</span>
+                <span>Messages are sent from your contact page</span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

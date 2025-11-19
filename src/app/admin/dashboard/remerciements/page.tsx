@@ -1,10 +1,10 @@
-import RemerciementsManagerTab from '@/modules/admin/RemerciementsManagerTab';
+import TestimonialsManagerTab from '@/modules/admin/TestimonialsManagerTab';
 
 export const metadata = {
-  title: 'Remerciements Manager - Admin Dashboard',
-  description: 'Manage thank you messages and testimonials',
+  title: 'Testimonials Manager - Admin Dashboard',
+  description: 'Manage client testimonials and reviews',
 };
 
-export default function RemerciementsPage() {
-  return <RemerciementsManagerTab />;
+export default function TestimonialsPage() {
+  return <TestimonialsManagerTab />;
 }

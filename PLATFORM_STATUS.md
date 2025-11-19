@@ -108,7 +108,7 @@ Copy to your hosting platform:
 DATABASE_URL="mongodb+srv://Innov8:..."
 NEXTAUTH_SECRET="your-secret-key"
 NEXTAUTH_URL="https://yourdomain.com"
-CLOUDINARY_CLOUD_NAME="dc67gl8fu"
+CLOUDINARY_CLOUD_NAME="dm22wlmpx"
 CLOUDINARY_API_KEY="your-key"
 CLOUDINARY_API_SECRET="your-secret"
 EMAIL_USER="innov8.tn@gmail.com"

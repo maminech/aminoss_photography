@@ -173,7 +173,7 @@ export default function AdminPacksPage() {
     setImageUploading(true);
 
     try {
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dc67gl8fu';
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx';
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', 'innov8_portfolio');

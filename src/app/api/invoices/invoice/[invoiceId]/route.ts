@@ -46,6 +46,8 @@ export async function PATCH(
     const { invoiceId } = params;
     const body = await req.json();
 
+    console.log('📝 Updating invoice:', invoiceId, 'with data:', body);
+
     // Calculate totals if items changed
     let updateData: any = { ...body };
     
@@ -62,32 +64,54 @@ export async function PATCH(
       }
     }
     
-    if (body.items) {
-      const subtotal = body.items.reduce((sum: number, item: any) => sum + item.total, 0);
-      const taxAmount = subtotal * (body.taxRate || 0) / 100;
-      const totalAmount = subtotal + taxAmount - (body.discount || 0);
+    // Recalculate totals if items exist
+    if (body.items && Array.isArray(body.items)) {
+      const subtotal = body.items.reduce((sum: number, item: any) => {
+        const itemTotal = Number(item.total) || 0;
+        return sum + itemTotal;
+      }, 0);
+      const taxAmount = subtotal * (Number(body.taxRate) || 0) / 100;
+      const totalAmount = subtotal + taxAmount - (Number(body.discount) || 0);
       
       updateData.subtotal = subtotal;
       updateData.taxAmount = taxAmount;
       updateData.totalAmount = totalAmount;
-      
-      // Update payment status
-      if (body.paidAmount !== undefined) {
-        if (body.paidAmount >= totalAmount) {
-          updateData.paymentStatus = 'paid';
-        } else if (body.paidAmount > 0) {
-          updateData.paymentStatus = 'partial';
-        } else {
-          updateData.paymentStatus = 'unpaid';
-        }
-      }
+    }
+    
+    // Always update payment status based on paidAmount and totalAmount
+    const finalTotal = updateData.totalAmount || body.totalAmount || 0;
+    const finalPaid = Number(updateData.paidAmount) || 0;
+    
+    if (finalPaid >= finalTotal && finalTotal > 0) {
+      updateData.paymentStatus = 'paid';
+    } else if (finalPaid > 0) {
+      updateData.paymentStatus = 'partial';
+    } else {
+      updateData.paymentStatus = 'unpaid';
     }
 
     // Convert date strings to Date objects
-    if (updateData.issueDate) updateData.issueDate = new Date(updateData.issueDate);
-    if (updateData.dueDate) updateData.dueDate = new Date(updateData.dueDate);
-    if (updateData.paymentDate) updateData.paymentDate = new Date(updateData.paymentDate);
-    if (updateData.eventDate) updateData.eventDate = new Date(updateData.eventDate);
+    if (updateData.issueDate) {
+      updateData.issueDate = new Date(updateData.issueDate);
+    }
+    if (updateData.dueDate) {
+      updateData.dueDate = new Date(updateData.dueDate);
+    }
+    if (updateData.paymentDate) {
+      updateData.paymentDate = new Date(updateData.paymentDate);
+    }
+    if (updateData.eventDate) {
+      updateData.eventDate = new Date(updateData.eventDate);
+    }
+
+    // Remove undefined values to avoid Prisma errors
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    console.log('💾 Final update data:', updateData);
 
     const invoice = await (prisma as any).invoice.update({
       where: { id: invoiceId },
@@ -97,6 +121,7 @@ export async function PATCH(
       }
     });
 
+    console.log('✅ Invoice updated successfully');
     return NextResponse.json(invoice);
   } catch (error) {
     console.error('Error updating invoice:', error);

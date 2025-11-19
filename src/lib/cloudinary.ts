@@ -1,10 +1,11 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { MediaItem, VideoItem, Category, CloudinaryResource } from '@/types';
 
+// NEW Cloudinary Account Configuration
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx',
+  api_key: process.env.CLOUDINARY_API_KEY || '816775898924348',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'mbU--NngMju5dzFgvO_LExO7nnc',
 });
 
 /**
@@ -12,7 +13,7 @@ cloudinary.config({
  */
 export async function getImagesByCategory(category: Category, limit: number = 50): Promise<MediaItem[]> {
   try {
-    const folderPath = category === 'all' ? 'Innov8_photography' : `Innov8_photography/${category}`;
+    const folderPath = category === 'all' ? 'innov8_portfolio/photos' : `innov8_portfolio/photos/${category}`;
     
     const result = await cloudinary.api.resources({
       type: 'upload',
@@ -37,7 +38,7 @@ export async function getVideos(limit: number = 30): Promise<VideoItem[]> {
   try {
     const result = await cloudinary.api.resources({
       type: 'upload',
-      prefix: 'Innov8_photography/videos',
+      prefix: 'innov8_portfolio/videos',
       max_results: limit,
       resource_type: 'video',
       context: true,

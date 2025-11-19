@@ -14,6 +14,13 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
+    // Get bride and groom names from request body
+    const { brideName, groomName } = await req.json();
+    
+    if (!brideName || !groomName) {
+      return NextResponse.json({ error: 'Bride and groom names are required' }, { status: 400 });
+    }
+    
     // Get the base URL from request headers (works in production and local)
     const host = req.headers.get('host') || '';
     const protocol = host.includes('localhost') ? 'http' : 'https';
@@ -32,18 +39,20 @@ export async function POST(
       errorCorrectionLevel: 'H',
     });
     
-    // Update gallery with QR code
+    // Update gallery with QR code and names
     await prisma.clientGallery.update({
       where: { id: params.eventId },
       data: { 
         qrCodeUrl: qrCodeDataURL,
         guestUploadEnabled: true, // Enable guest uploads when generating QR
+        brideName,
+        groomName,
       },
     });
     
     return NextResponse.json({
       success: true,
-      qrCodeUrl: qrCodeDataURL,
+      qrCodeDataURL,
       uploadUrl,
     });
     

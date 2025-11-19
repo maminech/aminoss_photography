@@ -12,13 +12,11 @@ export default function GlobalOptionsButton() {
   const pathname = usePathname();
   const { currentTheme } = useLayoutTheme();
 
-  // Hide on homepage when in simple mode (has its own menu with theme switcher)
-  const isSimpleHomepage = pathname === '/' && currentTheme === 'simple';
+  // Only show on home pages (simple mode homepage and professional-home)
+  const isHomepage = pathname === '/' || pathname === '/professional-home';
   
-  // Hide on professional-home page (has its own theme switcher button)
-  const isProfessionalHomepage = pathname === '/professional-home';
-
-  if (isSimpleHomepage || isProfessionalHomepage) {
+  // Hide on all pages except home pages
+  if (!isHomepage) {
     return null;
   }
 
@@ -29,7 +27,7 @@ export default function GlobalOptionsButton() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-6 right-4 sm:right-6 z-40 p-3 sm:p-4 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 touch-manipulation"
+        className="fixed bottom-20 right-4 sm:right-6 z-40 p-3 sm:p-4 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 touch-manipulation"
         aria-label="Open options"
         title="Options"
       >

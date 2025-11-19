@@ -258,7 +258,7 @@ Your photography platform has been thoroughly tested and is **100% ready for pro
 ✓ DATABASE_URL (MongoDB Atlas)
 ✓ NEXTAUTH_SECRET (JWT signing)
 ✓ NEXTAUTH_URL (production URL)
-✓ CLOUDINARY_CLOUD_NAME (dc67gl8fu)
+✓ CLOUDINARY_CLOUD_NAME (dm22wlmpx)
 ✓ CLOUDINARY_API_KEY
 ✓ CLOUDINARY_API_SECRET
 ✓ EMAIL_USER (Gmail)

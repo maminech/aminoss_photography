@@ -60,7 +60,7 @@ export async function PATCH(req: NextRequest) {
 
 ### 4. ⚠️ Cloudinary 404 Error - CHECK YOUR IMAGES
 **Error:** `Failed to load resource: the server responded with a status of 404`
-**URL:** `res.cloudinary.com/dc67gl8fu/image/upload/v1762139422/014_n2zijo.jpg`
+**URL:** `res.cloudinary.com/dm22wlmpx/image/upload/v1762139422/014_n2zijo.jpg`
 
 **Cause:** The image `014_n2zijo.jpg` doesn't exist in your Cloudinary account or the URL is incorrect.
 

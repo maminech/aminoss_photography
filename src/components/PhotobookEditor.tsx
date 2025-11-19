@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { useState, useEffect, DragEvent, useRef, TouchEvent } from 'react';
+import { motion, AnimatePresence, Reorder, useDragControls, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 import {
   FiX,
@@ -16,7 +16,11 @@ import {
   FiSave,
   FiSend,
   FiBook,
-  FiImage
+  FiImage,
+  FiRotateCw,
+  FiZoomIn,
+  FiMove,
+  FiMaximize2
 } from 'react-icons/fi';
 
 interface Photo {
@@ -107,6 +111,22 @@ export default function PhotobookEditor({
   const [notes, setNotes] = useState('');
   const [photobookId, setPhotobookId] = useState<string | null>(null);
   const [creatingPhotobook, setCreatingPhotobook] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [draggedPhotoData, setDraggedPhotoData] = useState<Photo | null>(null);
+
+  // Detect mobile on mount with improved detection
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < 768;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      setIsMobile(isTouchDevice || isSmallScreen || isIOS);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Load existing photobook if any
@@ -203,8 +223,26 @@ export default function PhotobookEditor({
 
   const changeLayout = (pageIndex: number, newLayout: string) => {
     const updatedPages = [...pages];
+    const oldPhotos = updatedPages[pageIndex].photos;
+    const newTemplate = LAYOUT_TEMPLATES[newLayout as keyof typeof LAYOUT_TEMPLATES];
+    
     updatedPages[pageIndex].layoutType = newLayout;
-    updatedPages[pageIndex].photos = []; // Clear photos when changing layout
+    
+    // Try to preserve photos if new layout has enough slots
+    if (oldPhotos.length <= newTemplate.slots) {
+      updatedPages[pageIndex].photos = oldPhotos;
+    } else {
+      // Return excess photos to available photos
+      const excessPhotos = oldPhotos.slice(newTemplate.slots);
+      excessPhotos.forEach(photo => {
+        const originalPhoto = selectedPhotos.find(p => p.id === photo.photoId);
+        if (originalPhoto && !availablePhotos.find(p => p.id === originalPhoto.id)) {
+          setAvailablePhotos(prev => [...prev, originalPhoto]);
+        }
+      });
+      updatedPages[pageIndex].photos = oldPhotos.slice(0, newTemplate.slots);
+    }
+    
     setPages(updatedPages);
   };
 
@@ -243,6 +281,53 @@ export default function PhotobookEditor({
     if (originalPhoto) {
       setAvailablePhotos([...availablePhotos, originalPhoto]);
     }
+  };
+
+  const swapPhotosInPage = (pageIndex: number, fromSlot: number, toSlot: number) => {
+    const updatedPages = [...pages];
+    const photos = updatedPages[pageIndex].photos;
+    
+    // If both slots have photos, swap them
+    if (photos[fromSlot] && photos[toSlot]) {
+      [photos[fromSlot], photos[toSlot]] = [photos[toSlot], photos[fromSlot]];
+    } 
+    // If only source has photo, move it to target
+    else if (photos[fromSlot]) {
+      photos[toSlot] = photos[fromSlot];
+      photos[fromSlot] = null as any;
+      // Clean up null values
+      updatedPages[pageIndex].photos = photos.filter(p => p);
+    }
+    
+    setPages(updatedPages);
+  };
+
+  const dropPhotoOnPage = (pageIndex: number, slotIndex: number, photo: Photo) => {
+    const updatedPages = [...pages];
+    const page = updatedPages[pageIndex];
+    
+    // If slot already has a photo, replace it
+    if (page.photos[slotIndex]) {
+      const replacedPhoto = page.photos[slotIndex];
+      const originalPhoto = selectedPhotos.find(p => p.id === replacedPhoto.photoId);
+      if (originalPhoto) {
+        setAvailablePhotos(prev => [...prev, originalPhoto]);
+      }
+    }
+    
+    // Add new photo to slot
+    page.photos[slotIndex] = {
+      photoId: photo.id,
+      url: photo.url,
+      position: slotIndex,
+      rotation: 0,
+      zoom: 1
+    };
+    
+    setPages(updatedPages);
+    
+    // Remove from available photos
+    setAvailablePhotos(prev => prev.filter(p => p.id !== photo.id));
   };
 
   const autoFillPages = () => {
@@ -314,6 +399,13 @@ export default function PhotobookEditor({
 
     setSubmitting(true);
     try {
+      console.log('Submitting photobook:', {
+        photobookId,
+        title,
+        pagesCount: pages.length,
+        hasNotes: !!notes
+      });
+
       const res = await fetch('/api/client/photobook/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -325,11 +417,17 @@ export default function PhotobookEditor({
         })
       });
 
+      const data = await res.json();
+      console.log('Submit response:', { ok: res.ok, status: res.status, data });
+
       if (res.ok) {
         alert('🎉 Photobook submitted successfully! We will review it and get back to you.');
         onComplete();
+      } else {
+        alert(`Error: ${data.error || 'Failed to submit photobook'}`);
       }
     } catch (error) {
+      console.error('Submit error:', error);
       alert('Error submitting photobook');
     } finally {
       setSubmitting(false);
@@ -353,31 +451,32 @@ export default function PhotobookEditor({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="fixed inset-4 md:inset-8 bg-white dark:bg-dark-800 rounded-xl shadow-2xl overflow-hidden flex flex-col"
+          className="fixed inset-1 sm:inset-2 md:inset-4 bg-white dark:bg-dark-800 rounded-lg md:rounded-xl shadow-2xl overflow-hidden flex flex-col h-[calc(100vh-0.5rem)] sm:h-[calc(100vh-1rem)] md:h-[calc(100vh-2rem)]"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary/10 to-purple-500/10">
-            <div className="flex items-center gap-3">
-              <FiBook className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {step === 'format' && 'Choose Photobook Format'}
-                  {step === 'design' && 'Design Your Photobook'}
+          <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary/10 to-purple-500/10 flex-shrink-0">
+            <div className="flex items-center gap-2 md:gap-3 min-w-0">
+              <FiBook className="w-5 h-5 md:w-8 md:h-8 text-primary flex-shrink-0" />
+              <div className="min-w-0">
+                <h2 className="text-base sm:text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">
+                  {step === 'format' && 'Choose Format'}
+                  {step === 'design' && 'Design Photobook'}
                   {step === 'review' && 'Review & Submit'}
                 </h2>
-                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {step === 'format' && 'Select the size for your photobook'}
-                  {step === 'design' && `${pages.length} pages • ${availablePhotos.length} photos remaining`}
-                  {step === 'review' && 'Final check before submission'}
+                <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-0.5 md:mt-1 truncate">
+                  {step === 'format' && 'Select your size'}
+                  {step === 'design' && `${pages.length} pages • ${availablePhotos.length} remaining`}
+                  {step === 'review' && 'Final check'}
                 </p>
               </div>
             </div>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition active:scale-95"
+              className="p-1.5 md:p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition active:scale-95 touch-manipulation flex-shrink-0"
             >
-              <FiX className="w-6 h-6 text-gray-600 dark:text-gray-400" />
-            </button>
+              <FiX className="w-5 h-5 md:w-6 md:h-6 text-gray-600 dark:text-gray-400" />
+            </motion.button>
           </div>
 
           {/* Content */}
@@ -530,31 +629,46 @@ export default function PhotobookEditor({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-1 grid md:grid-cols-[300px_1fr_250px] gap-4 overflow-hidden">
+                  <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[280px_1fr_240px] gap-2 md:gap-4 overflow-hidden">
                     {/* Page List (Mobile: Hidden, Desktop: Sidebar) */}
-                    <div className="hidden md:block overflow-y-auto bg-gray-50 dark:bg-dark-700 rounded-xl p-4">
+                    <div className="hidden lg:block overflow-y-auto bg-gray-50 dark:bg-dark-700 rounded-lg md:rounded-xl p-3 md:p-4">
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Pages ({pages.length})</h3>
                       <div className="space-y-2">
                         {pages.map((page, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentPageIndex(index)}
-                            className={`w-full text-left p-3 rounded-lg transition ${
-                              currentPageIndex === index
-                                ? 'bg-primary text-white'
-                                : 'bg-white dark:bg-dark-600 hover:bg-gray-100 dark:hover:bg-dark-500'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium">Page {page.pageNumber}</span>
-                              <span className="text-xs opacity-75">
-                                {page.photos.length}/{LAYOUT_TEMPLATES[page.layoutType as keyof typeof LAYOUT_TEMPLATES].slots}
-                              </span>
-                            </div>
-                            <div className="text-xs opacity-75 mt-1">
-                              {LAYOUT_TEMPLATES[page.layoutType as keyof typeof LAYOUT_TEMPLATES].name}
-                            </div>
-                          </button>
+                          <div key={index} className="relative group">
+                            <button
+                              onClick={() => setCurrentPageIndex(index)}
+                              className={`w-full text-left p-3 rounded-lg transition ${
+                                currentPageIndex === index
+                                  ? 'bg-primary text-white'
+                                  : 'bg-white dark:bg-dark-600 hover:bg-gray-100 dark:hover:bg-dark-500'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">Page {page.pageNumber}</span>
+                                <span className="text-xs opacity-75">
+                                  {page.photos.length}/{LAYOUT_TEMPLATES[page.layoutType as keyof typeof LAYOUT_TEMPLATES].slots}
+                                </span>
+                              </div>
+                              <div className="text-xs opacity-75 mt-1">
+                                {LAYOUT_TEMPLATES[page.layoutType as keyof typeof LAYOUT_TEMPLATES].name}
+                              </div>
+                            </button>
+                            {pages.length > 1 && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (confirm(`Delete page ${page.pageNumber}?`)) {
+                                    deletePage(index);
+                                  }
+                                }}
+                                className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-all shadow-lg z-10"
+                                title="Delete this page"
+                              >
+                                <FiTrash2 className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -570,7 +684,22 @@ export default function PhotobookEditor({
                         >
                           <FiChevronLeft className="w-5 h-5" />
                         </button>
-                        <span className="font-medium">Page {currentPageIndex + 1} of {pages.length}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Page {currentPageIndex + 1} of {pages.length}</span>
+                          {pages.length > 1 && (
+                            <button
+                              onClick={() => {
+                                if (confirm(`Delete page ${currentPageIndex + 1}?`)) {
+                                  deletePage(currentPageIndex);
+                                }
+                              }}
+                              className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition"
+                              title="Delete this page"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
                         <button
                           onClick={() => setCurrentPageIndex(Math.min(pages.length - 1, currentPageIndex + 1))}
                           disabled={currentPageIndex === pages.length - 1}
@@ -616,6 +745,8 @@ export default function PhotobookEditor({
                                 page={currentPage}
                                 template={currentTemplate!}
                                 onRemovePhoto={(photoIndex) => removePhotoFromPage(currentPageIndex, photoIndex)}
+                                onSwapPhotos={(fromIndex, toIndex) => swapPhotosInPage(currentPageIndex, fromIndex, toIndex)}
+                                onDropPhoto={(slotIndex, photo) => dropPhotoOnPage(currentPageIndex, slotIndex, photo)}
                               />
                             </div>
                           </div>
@@ -634,29 +765,49 @@ export default function PhotobookEditor({
                       )}
                     </div>
 
-                    {/* Available Photos */}
-                    <div className="overflow-y-auto bg-gray-50 dark:bg-dark-700 rounded-xl p-4">
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                    {/* Available Photos - Draggable */}
+                    <div className="overflow-y-auto bg-gray-50 dark:bg-dark-700 rounded-lg md:rounded-xl p-3 md:p-4 max-h-[30vh] lg:max-h-full">
+                      <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 md:mb-3">
                         Available Photos ({availablePhotos.length})
                       </h3>
-                      <div className="grid grid-cols-2 gap-2">
+                      <p className="text-[10px] md:text-xs text-gray-600 dark:text-gray-400 mb-2 md:mb-3">
+                        💡 Drag or tap to add photos
+                      </p>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-2 gap-1.5 md:gap-2">
                         {availablePhotos.map((photo) => (
-                          <button
+                          <motion.div
                             key={photo.id}
+                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ scale: 1.05 }}
+                            draggable={!isMobile}
+                            onDragStart={(e) => {
+                              e.dataTransfer.effectAllowed = 'copy';
+                              e.dataTransfer.setData('photo', JSON.stringify(photo));
+                            }}
                             onClick={() => currentPage && addPhotoToPage(currentPageIndex, photo)}
-                            className="relative aspect-square bg-gray-200 dark:bg-dark-600 rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition active:scale-95"
+                            className="relative aspect-square bg-gray-200 dark:bg-dark-600 rounded overflow-hidden hover:ring-2 hover:ring-primary transition-all cursor-pointer touch-manipulation shadow-sm hover:shadow-md"
                           >
                             <Image
                               src={photo.thumbnailUrl}
                               alt={`Photo ${photo.photoNumber}`}
                               fill
-                              className="object-cover"
-                              sizes="150px"
+                              className="object-cover pointer-events-none select-none"
+                              sizes="(max-width: 640px) 30vw, (max-width: 1024px) 25vw, 150px"
                             />
-                            <div className="absolute top-1 left-1 bg-black/70 text-white px-1.5 py-0.5 rounded text-xs">
+                            <div className="absolute top-0.5 left-0.5 md:top-1 md:left-1 bg-black/70 text-white px-1 md:px-1.5 py-0.5 rounded text-[9px] md:text-xs font-medium">
                               #{photo.photoNumber}
                             </div>
-                          </button>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 active:opacity-100 transition-opacity flex items-center justify-center">
+                              <motion.div 
+                                initial={{ scale: 0 }}
+                                whileHover={{ scale: 1 }}
+                                className="text-white text-[10px] md:text-xs bg-primary/90 px-2 py-1 rounded backdrop-blur-sm font-medium flex items-center gap-1"
+                              >
+                                <FiPlus className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                                <span className="hidden sm:inline">Add</span>
+                              </motion.div>
+                            </div>
+                          </motion.div>
                         ))}
                       </div>
                       {availablePhotos.length === 0 && (
@@ -769,16 +920,30 @@ export default function PhotobookEditor({
   );
 }
 
-// Page Canvas Component
+// Enhanced Page Canvas Component with Mobile Support
 function PhotobookPageCanvas({
   page,
   template,
-  onRemovePhoto
+  onRemovePhoto,
+  onSwapPhotos,
+  onDropPhoto
 }: {
   page: PhotobookPage;
   template: typeof LAYOUT_TEMPLATES[keyof typeof LAYOUT_TEMPLATES];
   onRemovePhoto: (photoIndex: number) => void;
+  onSwapPhotos: (fromIndex: number, toIndex: number) => void;
+  onDropPhoto: (slotIndex: number, photo: Photo) => void;
 }) {
+  const [draggedSlot, setDraggedSlot] = useState<number | null>(null);
+  const [dragOverSlot, setDragOverSlot] = useState<number | null>(null);
+  const [touchDraggedSlot, setTouchDraggedSlot] = useState<number | null>(null);
+  const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile('ontouchstart' in window);
+  }, []);
+
   const getGridClass = () => {
     switch (page.layoutType) {
       case 'full':
@@ -798,35 +963,179 @@ function PhotobookPageCanvas({
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, slotIndex: number) => {
+    if (page.photos[slotIndex]) {
+      setDraggedSlot(slotIndex);
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('slotIndex', slotIndex.toString());
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent, slotIndex: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverSlot(slotIndex);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverSlot(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, toSlotIndex: number) => {
+    e.preventDefault();
+    setDragOverSlot(null);
+    
+    // Check if dropping from available photos list
+    const photoData = e.dataTransfer.getData('photo');
+    if (photoData) {
+      try {
+        const photo = JSON.parse(photoData);
+        onDropPhoto(toSlotIndex, photo);
+        return;
+      } catch (err) {
+        console.error('Error parsing photo data:', err);
+      }
+    }
+    
+    // Otherwise, swapping within page
+    const fromSlotIndex = parseInt(e.dataTransfer.getData('slotIndex'));
+    if (!isNaN(fromSlotIndex) && fromSlotIndex !== toSlotIndex) {
+      onSwapPhotos(fromSlotIndex, toSlotIndex);
+    }
+    setDraggedSlot(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedSlot(null);
+    setDragOverSlot(null);
+  };
+
+  // Mobile touch handlers
+  const handleTouchStart = (e: React.TouchEvent, slotIndex: number) => {
+    if (!page.photos[slotIndex]) return;
+    
+    const touch = e.touches[0];
+    setTouchStartPos({ x: touch.clientX, y: touch.clientY });
+    setTouchDraggedSlot(slotIndex);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchDraggedSlot === null || !touchStartPos) return;
+    
+    const touch = e.touches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartPos.x);
+    const deltaY = Math.abs(touch.clientY - touchStartPos.y);
+    
+    // If moved more than 10px, it's a drag
+    if (deltaX > 10 || deltaY > 10) {
+      e.preventDefault();
+      
+      // Find slot under touch point
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      const slotElement = element?.closest('[data-slot-index]');
+      if (slotElement) {
+        const targetIndex = parseInt(slotElement.getAttribute('data-slot-index') || '-1');
+        if (targetIndex >= 0 && targetIndex !== touchDraggedSlot) {
+          setDragOverSlot(targetIndex);
+        }
+      }
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchDraggedSlot === null) return;
+    
+    if (dragOverSlot !== null && dragOverSlot !== touchDraggedSlot) {
+      // Check if dropping a photo from available list
+      const touch = e.changedTouches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      const slotElement = element?.closest('[data-slot-index]');
+      
+      if (slotElement) {
+        const targetIndex = parseInt(slotElement.getAttribute('data-slot-index') || '-1');
+        if (targetIndex >= 0) {
+          onSwapPhotos(touchDraggedSlot, targetIndex);
+        }
+      }
+    }
+    
+    setTouchDraggedSlot(null);
+    setTouchStartPos(null);
+    setDragOverSlot(null);
+  };
+
   return (
-    <div className={`w-full h-full grid ${getGridClass()} gap-1 p-2`}>
+    <div className={`w-full h-full grid ${getGridClass()} gap-0.5 md:gap-1 p-1 md:p-2`}>
       {Array.from({ length: template.slots }).map((_, index) => {
         const photo = page.photos[index];
+        const isDragging = draggedSlot === index || touchDraggedSlot === index;
+        const isDragOver = dragOverSlot === index;
         
         return (
-          <div key={index} className="relative bg-gray-100 dark:bg-dark-700 rounded overflow-hidden group">
+          <motion.div 
+            key={index}
+            data-slot-index={index}
+            layout
+            animate={{
+              scale: isDragging ? 0.95 : isDragOver ? 1.05 : 1,
+              opacity: isDragging ? 0.5 : 1
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className={`relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-700 dark:to-dark-600 rounded overflow-hidden group touch-manipulation ${
+              isDragOver ? 'ring-2 md:ring-4 ring-primary ring-opacity-70' : ''
+            } ${!photo ? 'border-2 border-dashed border-gray-300 dark:border-gray-600' : ''}`}
+            draggable={!!photo}
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            onTouchStart={(e) => handleTouchStart(e, index)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {photo ? (
               <>
                 <Image
                   src={photo.url}
                   alt={`Photo ${index + 1}`}
                   fill
-                  className="object-cover"
-                  sizes="400px"
+                  className="object-cover pointer-events-none select-none"
+                  sizes="(max-width: 768px) 50vw, 400px"
+                  priority={index === 0}
                 />
-                <button
-                  onClick={() => onRemovePhoto(index)}
-                  className="absolute top-1 right-1 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition active:scale-95"
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity flex items-end justify-center pb-2">
+                  <div className="flex items-center gap-1 md:gap-2">
+                    <div className="text-white text-[10px] md:text-xs bg-black/70 px-1.5 md:px-2 py-0.5 md:py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                      <FiMove className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                      <span className="hidden md:inline">Drag to move</span>
+                      <span className="md:hidden">Move</span>
+                    </div>
+                  </div>
+                </div>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemovePhoto(index);
+                  }}
+                  className="absolute top-0.5 md:top-1 right-0.5 md:right-1 p-1 md:p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all active:scale-95 shadow-lg z-10 touch-manipulation"
                 >
-                  <FiX className="w-3 h-3" />
-                </button>
+                  <FiX className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                </motion.button>
               </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                Empty
-              </div>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full h-full flex flex-col items-center justify-center text-gray-400"
+              >
+                <FiImage className="w-6 h-6 md:w-8 md:h-8 mb-1 md:mb-2 opacity-30" />
+                <div className="text-[10px] md:text-xs font-medium">Drop photo here</div>
+                <div className="text-[8px] md:text-[10px] opacity-60 mt-0.5">or click to add</div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         );
       })}
     </div>

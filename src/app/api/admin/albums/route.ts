@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
     
     const userRole = session.user?.role?.toLowerCase();
-    if (userRole !== 'admin') {
+    if (!userRole || userRole.toLowerCase() !== 'admin') {
       console.error('Album POST - User is not admin. Role:', session.user?.role);
       return NextResponse.json({ error: 'Unauthorized. Admin access required.' }, { status: 401 });
     }

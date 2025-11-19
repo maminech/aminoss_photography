@@ -636,7 +636,7 @@ pm2 logs
 2. Verify `next.config.js` has image domains
 3. Test Cloudinary API:
    ```bash
-   curl https://res.cloudinary.com/dc67gl8fu/image/list.json
+   curl https://res.cloudinary.com/dm22wlmpx/image/list.json
    ```
 
 ### Issue: Admin Login Fails

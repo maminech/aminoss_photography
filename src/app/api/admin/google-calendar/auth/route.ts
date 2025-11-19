@@ -14,8 +14,8 @@ export async function GET() {
     }
 
     // Check if Google Calendar credentials are configured
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI?.trim();
 
     console.log('Google Calendar auth check:', {
       hasClientId: !!clientId,

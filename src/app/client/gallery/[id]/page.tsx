@@ -234,8 +234,52 @@ export default function ClientGalleryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
+        {/* Header Skeleton */}
+        <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm">
+          <div className="px-4 md:px-6 py-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center space-x-3 md:space-x-4">
+                <div className="w-10 h-10 bg-gray-200 dark:bg-dark-700 rounded-lg animate-pulse" />
+                <div>
+                  <div className="h-6 w-48 bg-gray-200 dark:bg-dark-700 rounded animate-pulse mb-2" />
+                  <div className="h-4 w-64 bg-gray-200 dark:bg-dark-700 rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="h-10 w-32 bg-gray-200 dark:bg-dark-700 rounded-lg animate-pulse" />
+                <div className="h-10 w-24 bg-gray-200 dark:bg-dark-700 rounded-lg animate-pulse" />
+                <div className="h-10 w-28 bg-gray-200 dark:bg-dark-700 rounded-lg animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Skeleton */}
+        <main className="p-3 md:p-6 pb-24">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 md:p-5 mb-4 md:mb-6 shadow-sm">
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-10 h-10 bg-blue-200 dark:bg-blue-800 rounded-lg animate-pulse flex-shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="h-5 w-64 bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
+                <div className="space-y-2">
+                  <div className="h-4 w-full bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
+                  <div className="h-4 w-full bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
+                  <div className="h-4 w-3/4 bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
+            {[...Array(18)].map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square bg-gray-200 dark:bg-dark-700 rounded-lg animate-pulse"
+              />
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
@@ -304,15 +348,44 @@ export default function ClientGalleryPage() {
                 </button>
               )}
 
-              <button
+              <motion.button
                 onClick={saveSelections}
                 disabled={saving}
-                className="flex items-center gap-2 px-3 md:px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-sm md:text-base font-semibold"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-sm md:text-base font-bold shadow-lg hover:shadow-2xl disabled:hover:scale-100 group overflow-hidden"
               >
-                <FiCheckCircle className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="hidden md:inline">{saving ? 'Saving...' : 'Approve'}</span>
-                <span className="md:hidden">✓</span>
-              </button>
+                {/* Glowing effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300" />
+                
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                
+                <div className="relative flex items-center gap-2">
+                  {saving ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                      <span className="hidden md:inline">Saving...</span>
+                      <span className="md:hidden">...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FiCheckCircle className="w-5 h-5 md:w-6 md:h-6 drop-shadow-lg" />
+                      <span className="hidden md:inline drop-shadow-lg">Approve Selection</span>
+                      <span className="md:hidden drop-shadow-lg">Approve</span>
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="w-2 h-2 bg-white rounded-full absolute -top-0.5 -right-0.5 shadow-lg"
+                      />
+                    </>
+                  )}
+                </div>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -449,31 +522,7 @@ export default function ClientGalleryPage() {
         </DndProvider>
       )}
 
-      {/* Floating Photobook Button */}
-      {selectedPhotos.size > 0 && (
-        <motion.button
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => {
-            if (selectedPhotos.size === 0) {
-              alert('Please select at least one photo to create a photobook');
-              return;
-            }
-            setPhotobookEditorOpen(true);
-          }}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all touch-manipulation font-bold text-base md:text-lg"
-        >
-          <FiBook className="w-6 h-6" />
-          <span className="hidden sm:inline">Create Photobook</span>
-          <span className="sm:inline md:hidden">Photobook</span>
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 text-purple-900 rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
-            {selectedPhotos.size}
-          </div>
-        </motion.button>
-      )}
+
 
       {/* Main Content */}
       <main className="p-3 md:p-6 pb-24">
@@ -487,55 +536,82 @@ export default function ClientGalleryPage() {
           </div>
         ) : (
           <>
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 md:p-5 mb-4 md:mb-6 shadow-sm">
-              <div className="flex items-start gap-3 md:gap-4">
-                <div className="p-2 bg-blue-600 rounded-lg">
-                  <FiAlertCircle className="w-5 h-5 text-white flex-shrink-0" />
-                </div>
-                <div className="text-sm md:text-base text-blue-900 dark:text-blue-100">
-                  <p className="font-bold mb-2 text-lg">📸 How to Create Your Photobook:</p>
-                  <ul className="space-y-2 text-blue-800 dark:text-blue-200">
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-600 font-bold">1.</span>
-                      <span>Click the checkmark on photos you want in your photobook</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-600 font-bold">2.</span>
-                      <span>See the purple "Create Photobook" button appear at bottom-right</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-600 font-bold">3.</span>
-                      <span>Click it to design your beautiful photobook!</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-600 font-bold">4.</span>
-                      <span>Don't forget to "Approve Selection" to save your choices</span>
-                    </li>
-                    {gallery.allowDownload && (
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 font-bold">•</span>
-                        <span>Download individual photos or all selected at once</span>
-                      </li>
-                    )}
-                  </ul>
+            {/* Beautiful Welcome Message */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-900/30 dark:via-pink-900/30 dark:to-blue-900/30 rounded-3xl p-6 md:p-8 mb-6 shadow-lg border border-purple-100 dark:border-purple-800/50"
+            >
+              {/* Decorative Elements */}
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-blue-400/20 to-purple-400/20 rounded-full blur-3xl" />
+              
+              <div className="relative z-10">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring" }}
+                  className="inline-flex items-center gap-3 mb-4"
+                >
+                  <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg">
+                    <FiImage className="w-6 h-6 text-white" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                    Your Beautiful Gallery
+                  </h2>
+                </motion.div>
+                
+                <p className="text-gray-700 dark:text-gray-300 text-base md:text-lg leading-relaxed mb-4">
+                  Select your favorite moments by clicking the checkmark ✓ on each photo. 
+                  {gallery.allowDownload && ' Download them individually or all at once. '}
+                  Save your selections anytime using the <span className="font-semibold text-purple-600 dark:text-purple-400">Approve</span> button above.
+                </p>
+                
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-purple-200 dark:border-purple-700">
+                    <span className="text-2xl">📸</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {gallery.photos.length} Photos
+                    </span>
+                  </div>
+                  {gallery.allowDownload && (
+                    <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-green-200 dark:border-green-700">
+                      <span className="text-2xl">⬇️</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Download Enabled
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-blue-200 dark:border-blue-700">
+                    <span className="text-2xl">❤️</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Enjoy!
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
               {gallery.photos.map((photo, index) => {
                 const isSelected = selectedPhotos.has(photo.id);
                 
                 return (
                   <motion.div
                     key={photo.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.02 }}
-                    className={`relative aspect-square bg-gray-200 dark:bg-dark-700 rounded-lg overflow-hidden group transition-all ${
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ 
+                      delay: index * 0.03,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 15
+                    }}
+                    whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                    className={`relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-700 dark:to-dark-600 rounded-2xl overflow-hidden group transition-all duration-300 ${
                       isSelected
-                        ? 'ring-4 ring-green-500 shadow-xl shadow-green-500/30'
-                        : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
+                        ? 'ring-4 ring-purple-500 shadow-2xl shadow-purple-500/40 scale-[0.98]'
+                        : 'hover:ring-2 hover:ring-purple-300 dark:hover:ring-purple-600 hover:shadow-xl'
                     }`}
                   >
                     {/* Image */}
@@ -554,50 +630,66 @@ export default function ClientGalleryPage() {
                     </div>
                     
                     {/* Photo Number Badge */}
-                    <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded text-xs font-semibold z-10">
+                    <div className="absolute top-3 left-3 bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-bold z-10 shadow-lg">
                       #{photo.photoNumber}
                     </div>
 
                     {/* Selection Button */}
-                    <button
+                    <motion.button
                       onClick={(e) => {
                         e.stopPropagation();
                         togglePhotoSelection(photo.id);
                       }}
-                      className={`absolute top-2 right-2 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all z-10 touch-manipulation shadow-lg ${
+                      whileHover={{ scale: 1.15, rotate: 5 }}
+                      whileTap={{ scale: 0.9 }}
+                      className={`absolute top-3 right-3 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all z-10 touch-manipulation shadow-lg backdrop-blur-md ${
                         isSelected
-                          ? 'bg-green-500 text-white scale-110 shadow-green-500/50'
-                          : 'bg-white/90 dark:bg-dark-800/90 text-gray-400 scale-90 group-hover:scale-100'
+                          ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white scale-110 shadow-purple-500/60'
+                          : 'bg-white/80 dark:bg-dark-800/80 text-gray-400 hover:text-purple-500 scale-95 group-hover:scale-100 hover:bg-white dark:hover:bg-dark-800'
                       }`}
                     >
-                      <FiCheck className="w-4 h-4 md:w-5 md:h-5" />
-                    </button>
+                      <FiCheck className={`w-5 h-5 md:w-6 md:h-6 transition-transform ${isSelected ? 'scale-100' : 'scale-75'}`} />
+                    </motion.button>
 
                     {/* Hover Actions */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 md:p-3">
-                      <div className="flex items-center justify-between">
-                        <button
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileHover={{ opacity: 1, y: 0 }}
+                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 p-3 md:p-4"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <motion.button
                           onClick={() => openLightbox(index)}
-                          className="p-1.5 md:p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg transition touch-manipulation"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="p-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-xl transition shadow-lg border border-white/20"
                           title="View full size"
                         >
-                          <FiMaximize2 className="w-4 h-4" />
-                        </button>
+                          <FiMaximize2 className="w-5 h-5" />
+                        </motion.button>
                         {gallery.allowDownload && (
-                          <button
+                          <motion.button
                             onClick={() => downloadPhoto(photo.url, photo.photoNumber)}
-                            className="p-1.5 md:p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg transition touch-manipulation"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="p-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-xl transition shadow-lg border border-white/20"
                             title="Download"
                           >
-                            <FiDownload className="w-4 h-4" />
-                          </button>
+                            <FiDownload className="w-5 h-5" />
+                          </motion.button>
                         )}
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* Selection Overlay */}
                     {isSelected && (
-                      <div className="absolute inset-0 bg-primary/20 pointer-events-none" />
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="absolute inset-0 bg-gradient-to-br from-purple-500/30 via-pink-500/20 to-blue-500/30 pointer-events-none"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-purple-900/40 to-transparent" />
+                      </motion.div>
                     )}
                   </motion.div>
                 );
@@ -722,69 +814,7 @@ export default function ClientGalleryPage() {
         )}
       </AnimatePresence>
 
-      {/* Floating Approve Selection Button */}
-      <AnimatePresence>
-        {selectedPhotos.size > 0 && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', duration: 0.5 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
-          >
-            <motion.button
-              whileHover={{ scale: 1.08, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={async () => {
-                try {
-                  const selectionArray = Array.from(selectedPhotos);
-                  console.log('Approving selection:', selectionArray);
-                  
-                  const res = await fetch(`/api/client/gallery/${gallery.id}/selection`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      selectedPhotoIds: selectionArray
-                    })
-                  });
-                  
-                  const data = await res.json();
-                  
-                  if (res.ok) {
-                    alert(`✅ ${selectedPhotos.size} photos approved! Your selection has been saved.`);
-                    console.log('Selection saved successfully:', data);
-                  } else {
-                    console.error('API error:', data);
-                    alert(`Failed to save: ${data.error || 'Unknown error'}`);
-                  }
-                } catch (error) {
-                  console.error('Error saving selection:', error);
-                  alert('Failed to save selection. Please try again.');
-                }
-              }}
-              className="group relative px-6 py-3 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white rounded-full font-semibold text-sm shadow-xl hover:shadow-green-500/60 transition-all"
-            >
-              <div className="flex items-center gap-2">
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <FiCheck className="w-5 h-5" />
-                </motion.div>
-                <span className="font-semibold">Approve Selection</span>
-                <motion.div
-                  className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center"
-                  animate={{ scale: [1, 1.15, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <span className="text-xs font-bold">{selectedPhotos.size}</span>
-                </motion.div>
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 opacity-0 group-hover:opacity-40 blur-lg transition-opacity" />
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* Rating Modal */}
       <AnimatePresence>

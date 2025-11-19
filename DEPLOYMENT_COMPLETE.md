@@ -23,7 +23,7 @@ DATABASE_URL=mongodb+srv://elbenzphotography_db_user:Hunter99@innov8.lyu8e0q.mon
 
 #### Cloudinary
 ```
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=dc67gl8fu
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=dm22wlmpx
 CLOUDINARY_API_KEY=218436176578554
 CLOUDINARY_API_SECRET=f_SeAN8rKq8JURrq-78eGfqKBQk
 ```

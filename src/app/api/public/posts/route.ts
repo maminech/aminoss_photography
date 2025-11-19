@@ -1,13 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { albumQueries, CACHE_DURATION } from '@/lib/db-optimization';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = CACHE_DURATION.SHORT; // Cache for 1 minute instead of 0
 
 /**
  * GET /api/public/posts
  * Fetch Instagram-style posts (albums) for the homepage
  * Each post can contain multiple images
+ * 
+ * Performance optimizations:
+ * - Cached queries with 1-minute revalidation
+ * - Selective field loading
+ * - Optimized database queries
  */
 export async function GET(request: Request) {
   try {
@@ -15,7 +21,30 @@ export async function GET(request: Request) {
     const homepage = searchParams.get('homepage') === 'true';
     const limit = parseInt(searchParams.get('limit') || '20');
 
-    // Fetch albums that should be shown - with fresh data
+    // Use optimized cached query for homepage
+    if (homepage) {
+      const albums = await albumQueries.getHomepageAlbums(limit);
+      const posts = albums.map((album) => ({
+        id: album.id,
+        type: 'post' as const,
+        title: album.title,
+        description: album.description,
+        category: album.category,
+        coverImage: album.coverImageUrl || album.images[0]?.thumbnailUrl || '',
+        imageCount: album.images.length,
+        images: album.images,
+        createdAt: album.createdAt,
+        featured: album.featured,
+      }));
+      
+      return NextResponse.json(posts, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+        },
+      });
+    }
+
+    // Fetch albums that should be shown
     const albums = await prisma.album.findMany({
       where: homepage
         ? { 
@@ -75,17 +104,13 @@ export async function GET(request: Request) {
         featured: album.featured,
       }));
 
-    const response = NextResponse.json(posts);
-    
-    // Aggressive cache prevention
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, s-maxage=0, proxy-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
-    response.headers.set('Surrogate-Control', 'no-store');
-    response.headers.set('CDN-Cache-Control', 'no-store');
-    response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
-    
-    return response;
+    // Enable smart caching for better performance
+    return NextResponse.json(posts, {
+      headers: {
+        // Cache for 60 seconds, serve stale for 120 seconds while revalidating
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      },
+    });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json(

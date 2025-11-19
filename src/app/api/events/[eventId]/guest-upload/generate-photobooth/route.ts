@@ -4,9 +4,9 @@ import { v2 as cloudinary } from 'cloudinary';
 
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx',
+  api_key: process.env.CLOUDINARY_API_KEY || '816775898924348',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'mbU--NngMju5dzFgvO_LExO7nnc',
 });
 
 /**
@@ -23,6 +23,7 @@ export async function POST(
   { params }: { params: { eventId: string } }
 ) {
   try {
+    console.log('🎨 Photobooth generation started for event:', params.eventId);
     const { photoId } = await req.json();
 
     if (!photoId) {
@@ -70,97 +71,98 @@ export async function POST(
     const bottomMessage = gallery.photoboothMessage || photo.uploaderName || 'Thank you for celebrating with us!';
 
     // Create enhanced photobooth print using Cloudinary transformations
+    // Strategy: Create photo with large white borders, then position text in the border areas
     const transformations = [
-      // 1. Resize the photo to fit in a 4x6 print area with optimal quality
+      // 1. Resize the photo to core size (leaving room for text borders)
       { 
         width: 1000, 
-        height: 1300, 
+        height: 1200, 
         crop: 'fill', 
         gravity: 'auto:faces', 
         quality: 'auto:best',
         fetch_format: 'auto'
       },
       
-      // 2. Add elegant white border with shadow effect
+      // 2. Add large white borders: 200px top, 180px bottom, 100px sides
+      // This creates white space for text placement
       { 
-        border: '80px_solid_rgb:ffffff',
-        effect: 'shadow:50'
+        border: '200px_100px_180px_100px_solid_rgb:ffffff',
       },
       
-      // 3. Add decorative top border/frame
+      // 3. Add heart decoration at very top of white border
+      {
+        overlay: {
+          font_family: 'Arial',
+          font_size: 50,
+          text: '♥',
+        },
+        gravity: 'north',
+        y: 15,
+        color: '#ff69b4',
+      },
+      
+      // 4. Add couple names in top white border
       {
         overlay: {
           font_family: 'Pacifico',
-          font_size: 72,
+          font_size: 68,
           font_weight: 'bold',
           text: coupleNames,
         },
         gravity: 'north',
-        y: 25,
+        y: 75,
         color: '#1a1a1a',
       },
       
-      // 4. Add heart decoration above names
-      {
-        overlay: {
-          font_family: 'Arial',
-          font_size: 48,
-          text: '♥',
-        },
-        gravity: 'north',
-        y: 5,
-        color: '#ff69b4',
-      },
-      
-      // 5. Add wedding date with elegant styling
+      // 5. Add wedding date in top white border
       {
         overlay: {
           font_family: 'Lato',
-          font_size: 40,
+          font_size: 38,
           text: eventDate,
         },
         gravity: 'north',
-        y: 105,
+        y: 150,
         color: '#555555',
       },
       
-      // 6. Add decorative line under date
+      // 6. Add decorative line in bottom white border
       {
         overlay: {
           font_family: 'Arial',
           font_size: 24,
           text: '━━━━━━━━━━━━━━━━',
         },
-        gravity: 'north',
-        y: 150,
+        gravity: 'south',
+        y: 145,
         color: '#ff69b4',
       },
       
-      // 7. Add guest message in the middle-bottom area
+      // 7. Add guest message in bottom white border
       {
         overlay: {
           font_family: 'Lato',
-          font_size: 32,
-          text: guestMessage.substring(0, 100), // Limit length
+          font_size: 30,
+          text: guestMessage.substring(0, 80), // Limit length
         },
         gravity: 'south',
-        y: 120,
+        y: 100,
         color: '#333333',
       },
       
-      // 8. Add "With love from" text
+      // 8. Add "With love from" text in bottom white border
       {
         overlay: {
           font_family: 'Lato',
-          font_size: 28,
-          text: `With love from ${bottomMessage.substring(0, 30)}`,
+          font_size: 26,
+          text: `With love from ${bottomMessage.substring(0, 25)}`,
         },
         gravity: 'south',
-        y: 70,
+        y: 60,
         color: '#666666',
       },
       
-      // 9. Add small hearts decoration at bottom
+      // 9. Add small hearts decoration at bottom of white border
       {
         overlay: {
           font_family: 'Arial',
@@ -168,11 +170,16 @@ export async function POST(
           text: '❤ ❤ ❤',
         },
         gravity: 'south',
-        y: 25,
+        y: 20,
         color: '#ff69b4',
       },
       
-      // 10. Final resize to standard print size (4x6 inches at 300 DPI = 1200x1800px)
+      // 10. Add subtle shadow effect
+      {
+        effect: 'shadow:40'
+      },
+      
+      // 11. Final resize to standard print size (4x6 inches at 300 DPI = 1200x1800px)
       { 
         width: 1200, 
         height: 1800, 
@@ -183,11 +190,15 @@ export async function POST(
     ];
 
     // Generate the URL with transformations
+    console.log('🖼️ Generating photobooth URL for cloudinaryId:', photo.cloudinaryId);
+    
     const photoboothUrl = cloudinary.url(photo.cloudinaryId, {
       transformation: transformations,
       fetch_format: 'jpg',
       quality: 'auto:best',
     });
+
+    console.log('✅ Photobooth URL generated:', photoboothUrl);
 
     // Update the photo record with the photobooth print URL
     await prisma.guestUpload.update({
@@ -197,6 +208,8 @@ export async function POST(
       } as any, // Type assertion until Prisma client is regenerated
     });
 
+    console.log('💾 Database updated with photobooth URL');
+
     return NextResponse.json({
       success: true,
       photoboothPrintUrl: photoboothUrl,
@@ -205,7 +218,12 @@ export async function POST(
     });
 
   } catch (error: any) {
-    console.error('Photobooth generation error:', error);
+    console.error('❌ Photobooth generation error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
     return NextResponse.json(
       { error: 'Failed to generate photobooth print', details: error.message },
       { status: 500 }

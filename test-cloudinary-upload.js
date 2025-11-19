@@ -15,7 +15,7 @@ async function testCloudinaryUpload() {
     console.log('\nForm body:', formBody.toString().substring(0, 150) + '...');
 
     const uploadResponse = await fetch(
-      'https://api.cloudinary.com/v1_1/dc67gl8fu/image/upload',
+      'https://api.cloudinary.com/v1_1/dm22wlmpx/image/upload',
       {
         method: 'POST',
         headers: {

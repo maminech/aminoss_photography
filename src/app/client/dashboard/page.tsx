@@ -184,8 +184,66 @@ export default function ClientDashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hero Welcome Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-gradient-to-br from-primary/10 via-purple-50 to-pink-50 dark:from-primary/20 dark:via-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8 mb-8 border-2 border-primary/20 dark:border-primary/30 shadow-xl relative overflow-hidden"
+        >
+          {/* Decorative background */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/20 to-purple-300/20 dark:from-primary/10 dark:to-purple-500/10 rounded-full blur-3xl -z-0"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+                  Welcome back, {client?.name}! 🎉
+                </h1>
+                <p className="text-lg text-gray-600 dark:text-gray-400">
+                  Your beautiful memories are ready to view and download
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+              <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div className="text-3xl font-bold text-primary mb-1">{galleries.length}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Galleries</div>
+              </div>
+              <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div className="text-3xl font-bold text-green-600 mb-1">
+                  {galleries.reduce((acc, g) => acc + g._count.photos, 0)}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Total Photos</div>
+              </div>
+              <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div className="text-3xl font-bold text-blue-600 mb-1">
+                  {galleries.filter(g => !g.expiresAt || new Date(g.expiresAt) > new Date()).length}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Active</div>
+              </div>
+              <div className="bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div className="text-3xl font-bold text-purple-600 mb-1">
+                  {galleries.filter(g => isExpiringSoon(g.expiresAt)).length}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Expiring Soon</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Link
             href="#galleries"
             onClick={(e) => {
@@ -272,14 +330,30 @@ export default function ClientDashboardPage() {
               </div>
             </div>
           </button>
-        </div>
+          </div>
+        </motion.div>
 
-        <div className="mb-8" id="galleries-section">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Your Galleries</h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            View and download your professional photos
-          </p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-8"
+          id="galleries-section"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <FiImage className="w-5 h-5 text-white" />
+                </div>
+                Your Galleries
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 ml-13">
+                View and download your professional photos
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         {galleries.length === 0 ? (
           <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">

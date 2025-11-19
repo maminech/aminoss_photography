@@ -74,6 +74,20 @@ const defaultPackages: PackageType[] = [
   },
 ];
 
+// Phone validation rules by country
+const phoneValidationRules: { [key: string]: { digits: number; format: string } } = {
+  '+216': { digits: 8, format: 'XX XXX XXX (8 digits)' },
+  '+213': { digits: 9, format: 'XXX XXX XXX (9 digits)' },
+  '+212': { digits: 9, format: 'XXX XXX XXX (9 digits)' },
+  '+33': { digits: 9, format: 'X XX XX XX XX (9 digits)' },
+  '+49': { digits: 10, format: 'XXX XXXXXXX (10-11 digits)' },
+  '+39': { digits: 10, format: 'XXX XXX XXXX (10 digits)' },
+  '+1': { digits: 10, format: 'XXX XXX XXXX (10 digits)' },
+  '+44': { digits: 10, format: 'XXXX XXX XXX (10 digits)' },
+  '+971': { digits: 9, format: 'XX XXX XXXX (9 digits)' },
+  '+966': { digits: 9, format: 'XX XXX XXXX (9 digits)' },
+};
+
 // Country codes list
 const countryCodes = [
   { code: '+216', country: 'Tunisia 🇹🇳', flag: '🇹🇳' },
@@ -97,6 +111,7 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [hasViewedPackages, setHasViewedPackages] = useState(false);
   const [countryCode, setCountryCode] = useState('+216');
+  const [phoneError, setPhoneError] = useState('');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
   const [expandedPackageLevel, setExpandedPackageLevel] = useState<string | null>(null);
@@ -312,6 +327,21 @@ export default function EnhancedBookingForm({ prefilledPackage, prefilledPrice }
       return;
     }
 
+    // Validate that date is not in the past
+    const selectedDate = new Date(currentEvent.eventDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    
+    if (selectedDate < today) {
+      setStatus('error');
+      setErrorMessage('La date de l\'événement ne peut pas être dans le passé. Veuillez choisir une date future.');
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 4000);
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       events: [...prev.events, currentEvent],
@@ -454,6 +484,19 @@ Envoyé depuis innov8production.com
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Validate phone number based on country
+  const validatePhone = (phone: string, code: string): boolean => {
+    const digits = phone.replace(/\s/g, '').length;
+    const rule = phoneValidationRules[code];
+    
+    if (!rule) return digits >= 8; // Default minimum
+    
+    // Allow some flexibility for certain countries (like Germany with 10-11 digits)
+    if (code === '+49') return digits >= 10 && digits <= 11;
+    
+    return digits === rule.digits;
+  };
+
   const handleStepOneConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -466,6 +509,21 @@ Envoyé depuis innov8production.com
       }, 3000);
       return;
     }
+
+    // Validate phone number
+    if (!validatePhone(formData.phone, countryCode)) {
+      const rule = phoneValidationRules[countryCode];
+      setStatus('error');
+      setErrorMessage(`Numéro invalide. Format attendu: ${rule.format}`);
+      setPhoneError(`Format attendu: ${rule.format}`);
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 5000);
+      return;
+    }
+
+    setPhoneError('');
 
     // Combine country code with phone number
     const fullPhone = `${countryCode} ${formData.phone.trim()}`;
@@ -600,14 +658,54 @@ Envoyé depuis innov8production.com
                     // Remove any non-digit characters except spaces
                     const cleaned = e.target.value.replace(/[^\d\s]/g, '');
                     handleInputChange('phone', cleaned);
+                    
+                    // Clear error when user types
+                    if (phoneError) setPhoneError('');
+                    
+                    // Real-time validation feedback
+                    if (cleaned.length > 0) {
+                      const digits = cleaned.replace(/\s/g, '').length;
+                      const rule = phoneValidationRules[countryCode];
+                      if (rule && digits > rule.digits && countryCode !== '+49') {
+                        setPhoneError(`Maximum ${rule.digits} chiffres`);
+                      }
+                    }
                   }}
-                  className="input-field text-lg py-4 flex-1"
-                  placeholder="XX XXX XXX"
+                  className={`input-field text-lg py-4 flex-1 transition-all ${
+                    phoneError 
+                      ? 'border-red-500 dark:border-red-500 focus:ring-red-500' 
+                      : formData.phone && validatePhone(formData.phone, countryCode)
+                      ? 'border-green-500 dark:border-green-500'
+                      : ''
+                  }`}
+                  placeholder={phoneValidationRules[countryCode]?.format || "XX XXX XXX"}
                 />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Numéro complet: {countryCode} {formData.phone}
-              </p>
+              <div className="flex items-start justify-between gap-2 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Numéro complet: {countryCode} {formData.phone}
+                </p>
+                {formData.phone && validatePhone(formData.phone, countryCode) && !phoneError && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400"
+                  >
+                    <Check className="w-3 h-3" />
+                    <span>Valide</span>
+                  </motion.div>
+                )}
+              </div>
+              {phoneError && (
+                <motion.p
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1"
+                >
+                  <AlertCircle className="w-3 h-3" />
+                  {phoneError}
+                </motion.p>
+              )}
             </div>
 
             {/* Status Messages */}
@@ -836,7 +934,12 @@ Envoyé depuis innov8production.com
                           onChange={(e) => setCurrentEvent(prev => ({ ...prev, eventDate: e.target.value }))}
                           min={new Date().toISOString().split('T')[0]}
                           className="input-field"
+                          required
                         />
+                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <span>📅</span>
+                          <span>Sélectionnez une date future pour votre événement</span>
+                        </p>
                       </div>
 
                       {/* Time Slot - Radio Buttons */}
@@ -844,23 +947,56 @@ Envoyé depuis innov8production.com
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                           Horaire *
                         </label>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-3 gap-4">
                           {timeSlots.map((slot) => (
-                            <button
+                            <motion.button
                               key={slot.value}
                               type="button"
                               onClick={() => setCurrentEvent(prev => ({ ...prev, timeSlot: slot.value }))}
-                              className={`p-3 rounded-lg border-2 transition-all text-center ${
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.98 }}
+                              className={`relative overflow-hidden p-5 rounded-2xl border-2 transition-all text-center backdrop-blur-sm ${
                                 currentEvent.timeSlot === slot.value
-                                  ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                                  ? 'border-purple-500 bg-gradient-to-br from-purple-500/20 to-pink-500/20 shadow-lg shadow-purple-500/25'
+                                  : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-purple-400 hover:shadow-md'
                               }`}
                             >
-                              <div className="text-2xl mb-1">{slot.icon}</div>
-                              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                              {/* Shine effect on hover */}
+                              <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                                initial={{ x: '-100%' }}
+                                whileHover={{ x: '200%' }}
+                                transition={{ duration: 0.6 }}
+                              />
+                              
+                              {/* Selected indicator */}
+                              {currentEvent.timeSlot === slot.value && (
+                                <motion.div
+                                  layoutId="timeSlotSelected"
+                                  className="absolute top-2 right-2 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
+                                  initial={{ scale: 0, rotate: -180 }}
+                                  animate={{ scale: 1, rotate: 0 }}
+                                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                >
+                                  <Check className="w-4 h-4 text-white" />
+                                </motion.div>
+                              )}
+                              
+                              <motion.div 
+                                className="text-3xl mb-2"
+                                animate={currentEvent.timeSlot === slot.value ? { scale: [1, 1.2, 1] } : {}}
+                                transition={{ duration: 0.3 }}
+                              >
+                                {slot.icon}
+                              </motion.div>
+                              <div className={`text-sm font-semibold transition-colors ${
+                                currentEvent.timeSlot === slot.value
+                                  ? 'text-purple-700 dark:text-purple-300'
+                                  : 'text-gray-700 dark:text-gray-300'
+                              }`}>
                                 {slot.label}
                               </div>
-                            </button>
+                            </motion.button>
                           ))}
                         </div>
                       </div>
@@ -870,23 +1006,59 @@ Envoyé depuis innov8production.com
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                           Type de Forfait *
                         </label>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-4">
                           {packageTypes.map((type) => (
-                            <button
+                            <motion.button
                               key={type.value}
                               type="button"
-                              onClick={() => setCurrentEvent(prev => ({ ...prev, packageType: type.value }))}
-                              className={`p-4 rounded-lg border-2 transition-all text-center ${
+                              onClick={() => setCurrentEvent(prev => ({ ...prev, packageType: type.value, packageLevel: '' }))}
+                              whileHover={{ scale: 1.03, y: -4 }}
+                              whileTap={{ scale: 0.97 }}
+                              className={`relative overflow-hidden p-6 rounded-2xl border-2 transition-all text-center backdrop-blur-sm group ${
                                 currentEvent.packageType === type.value
-                                  ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-2'
-                                  : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                                  ? 'border-purple-500 bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-purple-500/20 shadow-xl shadow-purple-500/30'
+                                  : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-purple-400 hover:bg-gradient-to-br hover:from-purple-50/50 hover:to-pink-50/50 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 hover:shadow-lg'
                               }`}
                             >
-                              <div className="text-3xl mb-2">{type.icon}</div>
-                              <div className="text-sm font-bold text-gray-900 dark:text-white">
+                              {/* Shine effect */}
+                              <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                                initial={{ x: '-100%' }}
+                                whileHover={{ x: '200%' }}
+                                transition={{ duration: 0.7 }}
+                              />
+                              
+                              {/* Selected indicator */}
+                              {currentEvent.packageType === type.value && (
+                                <motion.div
+                                  layoutId="packageTypeSelected"
+                                  className="absolute top-3 right-3 w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+                                  initial={{ scale: 0, rotate: -180 }}
+                                  animate={{ scale: 1, rotate: 0 }}
+                                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                >
+                                  <Check className="w-4 h-4 text-white" />
+                                </motion.div>
+                              )}
+                              
+                              <motion.div 
+                                className="text-4xl mb-3 relative z-10"
+                                animate={currentEvent.packageType === type.value ? { 
+                                  scale: [1, 1.15, 1],
+                                  rotate: [0, 5, -5, 0]
+                                } : {}}
+                                transition={{ duration: 0.5 }}
+                              >
+                                {type.icon}
+                              </motion.div>
+                              <div className={`text-base font-bold relative z-10 transition-colors ${
+                                currentEvent.packageType === type.value
+                                  ? 'text-purple-700 dark:text-purple-300'
+                                  : 'text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400'
+                              }`}>
                                 {type.label}
                               </div>
-                            </button>
+                            </motion.button>
                           ))}
                         </div>
                       </div>
@@ -917,15 +1089,32 @@ Envoyé depuis innov8production.com
                               return (
                                 <motion.div
                                   key={level.value}
-                                  initial={false}
-                                  animate={{ height: 'auto' }}
-                                  className={`rounded-xl border-2 transition-all overflow-hidden ${
+                                  layout
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                  className={`relative overflow-hidden rounded-2xl border-2 backdrop-blur-sm transition-all ${
                                     isSelected
-                                      ? 'border-primary bg-primary/10 shadow-lg'
-                                      : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                                      ? 'border-purple-500 bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-purple-500/20 shadow-xl shadow-purple-500/30'
+                                      : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-purple-400 hover:shadow-lg'
                                   }`}
                                 >
-                                  <button
+                                  {/* Animated background for selected state */}
+                                  {isSelected && (
+                                    <motion.div
+                                      className="absolute inset-0 opacity-50"
+                                      animate={{
+                                        background: [
+                                          'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(168, 85, 247, 0.1) 100%)',
+                                          'linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(168, 85, 247, 0.1) 50%, rgba(236, 72, 153, 0.1) 100%)',
+                                          'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(168, 85, 247, 0.1) 100%)',
+                                        ]
+                                      }}
+                                      transition={{ duration: 3, repeat: Infinity }}
+                                    />
+                                  )}
+                                  
+                                  <motion.button
                                     type="button"
                                     onClick={() => {
                                       // Toggle expansion and selection
@@ -939,29 +1128,65 @@ Envoyé depuis innov8production.com
                                         setExpandedPackageLevel(level.value);
                                       }
                                     }}
-                                    className="w-full p-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
+                                    whileHover={{ scale: 1.01 }}
+                                    whileTap={{ scale: 0.99 }}
+                                    className="relative w-full p-5 flex items-center justify-between hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 transition-all"
                                   >
-                                    <div className="flex items-center gap-4">
-                                      <div className="text-3xl">{packageData.icon}</div>
+                                    <div className="flex items-center gap-4 relative z-10">
+                                      <motion.div 
+                                        className="text-4xl"
+                                        animate={isSelected ? { 
+                                          scale: [1, 1.15, 1],
+                                          rotate: [0, 5, -5, 0]
+                                        } : {}}
+                                        transition={{ duration: 0.5 }}
+                                      >
+                                        {packageData.icon}
+                                      </motion.div>
                                       <div className="text-left">
-                                        <div className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                        <div className={`text-xl font-bold flex items-center gap-2 transition-colors ${
+                                          isSelected
+                                            ? 'text-purple-700 dark:text-purple-300'
+                                            : 'text-gray-900 dark:text-white'
+                                        }`}>
                                           {packageData.name}
-                                          {isSelected && <Check className="w-5 h-5 text-primary" />}
+                                          {isSelected && (
+                                            <motion.div
+                                              initial={{ scale: 0, rotate: -180 }}
+                                              animate={{ scale: 1, rotate: 0 }}
+                                              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                              className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full"
+                                            >
+                                              <Check className="w-4 h-4 text-white" />
+                                            </motion.div>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 relative z-10">
                                       {packageData.price > 0 && (
-                                        <div className="text-right">
-                                          <div className="text-lg font-bold text-primary">
+                                        <motion.div 
+                                          className="text-right"
+                                          whileHover={{ scale: 1.05 }}
+                                        >
+                                          <div className={`text-xl font-bold transition-colors ${
+                                            isSelected
+                                              ? 'text-purple-600 dark:text-purple-400'
+                                              : 'text-primary'
+                                          }`}>
                                             {packageData.price} DT
                                           </div>
-                                          <div className="text-xs text-gray-500">Prix</div>
-                                        </div>
+                                          <div className="text-xs text-gray-500 dark:text-gray-400">Prix</div>
+                                        </motion.div>
                                       )}
-                                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                      <motion.div
+                                        animate={{ rotate: isExpanded ? 90 : 0 }}
+                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                      >
+                                        <ChevronRight className="w-6 h-6 text-gray-400" />
+                                      </motion.div>
                                     </div>
-                                  </button>
+                                  </motion.button>
 
                                   {/* Expandable Package Details */}
                                   <AnimatePresence>

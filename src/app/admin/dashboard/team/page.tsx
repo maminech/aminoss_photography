@@ -381,7 +381,7 @@ function EditMemberModal({
     
     const widget = window.cloudinary.createUploadWidget(
       {
-        cloudName: 'dc67gl8fu',
+        cloudName: 'dm22wlmpx',
         uploadPreset: 'ml_default',
         sources: ['local', 'url', 'camera'],
         multiple: false,

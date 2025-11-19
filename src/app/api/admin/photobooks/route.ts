@@ -1,14 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const adminCookie = cookieStore.get('admin-session');
+    const session = await getServerSession(authOptions);
 
-    if (!adminCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    console.log('🔐 Admin photobooks request - Session:', session?.user?.email || 'None');
+
+    if (!session || !session.user) {
+      console.log('❌ No session found');
+      return NextResponse.json({ 
+        error: 'Unauthorized - Please log in to admin panel',
+        needsLogin: true 
+      }, { status: 401 });
+    }
+
+    // Check if user is admin (case-insensitive)
+    const userRole = (session.user as any).role;
+    if (!userRole || userRole.toLowerCase() !== 'admin') {
+      console.log('❌ User is not admin:', userRole);
+      return NextResponse.json({ 
+        error: 'Forbidden - Admin access required',
+        needsLogin: true 
+      }, { status: 403 });
     }
 
     // Get filter from query params
@@ -67,10 +83,10 @@ export async function GET(request: NextRequest) {
 // Update photobook status (admin only)
 export async function PATCH(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const adminCookie = cookieStore.get('admin-session');
+    const session = await getServerSession(authOptions);
 
-    if (!adminCookie) {
+    const userRole = (session.user as any)?.role;
+    if (!session || !userRole || userRole.toLowerCase() !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
       eventType: invoice.eventType,
       eventDate: invoice.eventDate.toISOString(),
       eventLocation: invoice.eventLocation,
+      eventRemarks: invoice.eventRemarks,
       items: invoice.items as Array<{
         description: string;
         quantity: number;
@@ -60,6 +61,13 @@ export async function POST(req: NextRequest) {
       totalAmount: invoice.totalAmount,
       paidAmount: invoice.paidAmount,
       paymentStatus: invoice.paymentStatus,
+      paymentHistory: invoice.paymentHistory as Array<{
+        amount: number;
+        date: string;
+        method?: string;
+      }> || [],
+      instagramLinks: invoice.instagramLinks || [],
+      planDetails: invoice.planDetails || [],
       notes: invoice.notes,
     };
 

@@ -39,7 +39,7 @@ export default function NavigationButton({
   };
 
   const baseClasses = position === 'fixed' 
-    ? 'fixed top-4 left-4 z-[60]' 
+    ? 'fixed top-24 sm:top-6 left-4 z-40' 
     : 'relative';
 
   const buttonClasses = `

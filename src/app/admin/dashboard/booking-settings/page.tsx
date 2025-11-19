@@ -56,7 +56,7 @@ export default function BookingSettingsPage() {
       formData.append('upload_preset', 'innov8_portfolio');
       formData.append('folder', 'packages');
 
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dc67gl8fu';
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx';
       
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,

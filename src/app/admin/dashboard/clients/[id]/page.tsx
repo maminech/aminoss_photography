@@ -57,6 +57,8 @@ export default function ClientDetailPage() {
   const [selectedGalleryForQr, setSelectedGalleryForQr] = useState<Gallery | null>(null);
   const [generatingQr, setGeneratingQr] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [nameModalOpen, setNameModalOpen] = useState(false);
+  const [brideGroomNames, setBrideGroomNames] = useState({ brideName: '', groomName: '' });
 
   const [galleryForm, setGalleryForm] = useState({
     name: '',
@@ -122,16 +124,28 @@ export default function ClientDetailPage() {
   };
 
   const handleUploadSuccess = (result: any) => {
-    const photo: UploadedPhoto = {
-      cloudinaryId: result.info.public_id,
-      url: result.info.secure_url,
-      thumbnailUrl: result.info.thumbnail_url || result.info.secure_url,
-      width: result.info.width,
-      height: result.info.height,
-      fileSize: result.info.bytes,
-    };
+    try {
+      if (!result?.info) {
+        console.error('Invalid upload result:', result);
+        alert('❌ Upload failed - invalid result');
+        return;
+      }
 
-    setUploadedPhotos((prev) => [...prev, photo]);
+      const photo: UploadedPhoto = {
+        cloudinaryId: result.info.public_id,
+        url: result.info.secure_url,
+        thumbnailUrl: result.info.thumbnail_url || result.info.secure_url,
+        width: result.info.width,
+        height: result.info.height,
+        fileSize: result.info.bytes,
+      };
+
+      setUploadedPhotos((prev) => [...prev, photo]);
+      console.log('✅ Photo uploaded successfully:', photo.cloudinaryId);
+    } catch (error) {
+      console.error('Error processing upload:', error);
+      alert('❌ Error processing upload. Please try again.');
+    }
   };
 
   const handleSavePhotos = async () => {
@@ -188,23 +202,43 @@ export default function ClientDetailPage() {
 
   const handleGenerateQr = async (gallery: Gallery) => {
     setSelectedGalleryForQr(gallery);
-    setQrModalOpen(true);
 
     if (gallery.qrCodeUrl) {
-      return; // QR already generated
+      // QR already generated, just show it
+      setQrModalOpen(true);
+      return;
     }
 
+    // Show name input modal first
+    setNameModalOpen(true);
+  };
+
+  const handleGenerateQrWithNames = async () => {
+    if (!brideGroomNames.brideName || !brideGroomNames.groomName) {
+      alert('Please enter both bride and groom names');
+      return;
+    }
+
+    setNameModalOpen(false);
+    setQrModalOpen(true);
     setGeneratingQr(true);
 
     try {
-      const res = await fetch(`/api/admin/events/${gallery.id}/generate-qr`, {
+      const res = await fetch(`/api/admin/events/${selectedGalleryForQr?.id}/generate-qr`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          brideName: brideGroomNames.brideName,
+          groomName: brideGroomNames.groomName,
+        }),
       });
 
       if (res.ok) {
         const data = await res.json();
         // Update local state
-        setSelectedGalleryForQr({ ...gallery, qrCodeUrl: data.qrCodeDataURL });
+        if (selectedGalleryForQr) {
+          setSelectedGalleryForQr({ ...selectedGalleryForQr, qrCodeUrl: data.qrCodeDataURL });
+        }
         fetchClientData();
       } else {
         const data = await res.json();
@@ -571,6 +605,68 @@ export default function ClientDetailPage() {
         </div>
       )}
 
+      {/* Bride & Groom Name Input Modal */}
+      {nameModalOpen && selectedGalleryForQr && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Enter Couple Names</h2>
+              <button onClick={() => setNameModalOpen(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                These names will appear on the photobooth prints for <strong>{selectedGalleryForQr.name}</strong>
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Bride&apos;s Name *
+                </label>
+                <input
+                  type="text"
+                  value={brideGroomNames.brideName}
+                  onChange={(e) => setBrideGroomNames({ ...brideGroomNames, brideName: e.target.value })}
+                  placeholder="Enter bride's name"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Groom&apos;s Name *
+                </label>
+                <input
+                  type="text"
+                  value={brideGroomNames.groomName}
+                  onChange={(e) => setBrideGroomNames({ ...brideGroomNames, groomName: e.target.value })}
+                  placeholder="Enter groom's name"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setNameModalOpen(false)}
+                  className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleGenerateQrWithNames}
+                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                >
+                  Generate QR Code
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Bulk Upload Modal */}
       {uploadModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -603,27 +699,57 @@ export default function ClientDetailPage() {
               </div>
 
               <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center bg-gray-50 dark:bg-dark-700/50">
-                <CldUploadWidget
-                  uploadPreset="innov8_portfolio"
-                  onSuccess={handleUploadSuccess}
-                  options={{
-                    multiple: true,
-                    maxFiles: 50,
-                    resourceType: 'image',
-                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-                  }}
-                >
-                  {({ open }) => (
-                    <button
-                      type="button"
-                      onClick={() => open()}
-                      className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
-                    >
-                      <FiUpload className="w-5 h-5" />
-                      <span>Upload Photos</span>
-                    </button>
-                  )}
-                </CldUploadWidget>
+                {!selectedGallery ? (
+                  <div className="text-center py-4">
+                    <p className="text-orange-600 dark:text-orange-400 font-medium mb-2">
+                      ⚠️ Please select a gallery first
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Choose which gallery you want to upload photos to
+                    </p>
+                  </div>
+                ) : (
+                  <CldUploadWidget
+                    uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "innov8_portfolio"}
+                    onSuccess={handleUploadSuccess}
+                    onError={(error) => {
+                      console.error('Upload error:', error);
+                      alert('❌ Upload failed. Please check your internet connection and try again.');
+                    }}
+                    options={{
+                      multiple: true,
+                      maxFiles: 50,
+                      resourceType: 'image',
+                      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+                      folder: `galleries/${selectedGallery}`,
+                      cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx',
+                    }}
+                  >
+                    {({ open }) => (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (!selectedGallery) {
+                            alert('⚠️ Please select a gallery first');
+                            return;
+                          }
+                          if (open) {
+                            open();
+                          } else {
+                            console.error('Upload widget not ready');
+                            alert('❌ Upload widget is not ready. Please refresh the page.');
+                          }
+                        }}
+                        disabled={!selectedGallery}
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <FiUpload className="w-5 h-5" />
+                        <span>Upload Photos</span>
+                      </button>
+                    )}
+                  </CldUploadWidget>
+                )}
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
                   Upload multiple photos at once (JPG, PNG, WEBP)
                 </p>

@@ -11,13 +11,15 @@ import { MdVideoLibrary } from 'react-icons/md';
 import LightboxModal from '@/components/LightboxModal';
 import AlbumLightboxModal from '@/components/AlbumLightboxModal';
 import StoriesViewer from '@/components/StoriesViewer';
+import ReelsViewer from '@/components/ReelsViewer';
 import ThemeSwitcherModal from '@/components/ThemeSwitcherModal';
 import PublicPWAInstallPrompt from '@/components/PublicPWAInstallPrompt';
 import { MediaItem, Category } from '@/types';
 import { getSampleImages } from '@/lib/sample-data';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import dynamic from 'next/dynamic';
-import AnimatedIntro from '@/modules/intro/AnimatedIntro';
 import RemerciementsSection from '@/modules/remerciements/RemerciementsSection';
 import { useTheme } from 'next-themes';
 import ProfessionalModeErrorBoundary from '@/components/ProfessionalModeErrorBoundary';
@@ -86,12 +88,15 @@ interface Post {
 export default function HomePage() {
   const router = useRouter();
   const { currentTheme } = useLayoutTheme();
+  const { t } = useLanguage();
   const [posts, setPosts] = useState<Post[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({});
   const [activeTab, setActiveTab] = useState<'posts' | 'videos'>('posts');
   const [albumLightboxOpen, setAlbumLightboxOpen] = useState(false);
   const [videoPlayerOpen, setVideoPlayerOpen] = useState(false);
+  const [reelsViewerOpen, setReelsViewerOpen] = useState(false);
+  const [initialVideoIndex, setInitialVideoIndex] = useState(0);
   const [instagramStats, setInstagramStats] = useState({
     followers_count: 0,
     follows_count: 0,
@@ -104,7 +109,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [storiesOpen, setStoriesOpen] = useState(false);
   const [initialHighlightIndex, setInitialHighlightIndex] = useState(0);
-  const [showIntro, setShowIntro] = useState(false);
   const [showThemeSwitcher, setShowThemeSwitcher] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -112,34 +116,43 @@ export default function HomePage() {
   const [pullDistance, setPullDistance] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
 
+  // Setup video autoplay with Intersection Observer
+  useEffect(() => {
+    // Small delay to ensure videos are in DOM
+    const timer = setTimeout(() => {
+      const videos = document.querySelectorAll('video[data-autoplay="true"]');
+      
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) {
+              // Video is visible, play it
+              video.play().catch(() => {});
+            } else {
+              // Video is not visible, pause it
+              video.pause();
+            }
+          });
+        },
+        {
+          threshold: 0.25, // Video needs to be 25% visible (more responsive)
+        }
+      );
+
+      videos.forEach((video) => observer.observe(video));
+
+      return () => {
+        videos.forEach((video) => observer.unobserve(video));
+      };
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [posts, videos, activeTab]); // Re-run when content changes
+
   useEffect(() => {
     setMounted(true);
-    // Check if user has selected a mode before
-    if (typeof window !== 'undefined') {
-      const modeSelected = localStorage.getItem('modeSelected');
-      const currentPath = window.location.pathname;
-      
-      // Only redirect to mode selection if not already there and mode not selected
-      if (!modeSelected && currentPath !== '/mode-selection') {
-        // First-time visitor - redirect to mode selection
-        router.push('/mode-selection');
-        return;
-      }
-      
-      // Check if user has visited before (for intro animation)
-      const hasVisited = localStorage.getItem('hasVisited');
-      if (!hasVisited && modeSelected) {
-        setShowIntro(true);
-      }
-    }
-  }, [router]);
-
-  const handleIntroComplete = () => {
-    setShowIntro(false);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('hasVisited', 'true');
-    }
-  };
+  }, []);
 
   // If Professional theme, show Novo-style homepage with error boundary
   if (currentTheme === 'professional') {
@@ -217,24 +230,26 @@ export default function HomePage() {
         const instagramPosts = await instagramRes.json();
         console.log('Loaded Instagram posts:', instagramPosts.length);
         
-        // Convert Instagram posts to Post format
-        const convertedInstagramPosts: Post[] = instagramPosts.map((instaPost: any) => ({
-          id: instaPost.id,
-          title: instaPost.caption ? instaPost.caption.substring(0, 50) : 'Instagram Post',
-          description: instaPost.caption || '',
-          coverImage: instaPost.thumbnailUrl || instaPost.mediaUrl, // Use mediaUrl as fallback
-          images: [{
+        // Convert Instagram posts to Post format - FILTER OUT VIDEOS (they're in videos array)
+        const convertedInstagramPosts: Post[] = instagramPosts
+          .filter((instaPost: any) => instaPost.mediaType !== 'VIDEO') // Only include IMAGE posts
+          .map((instaPost: any) => ({
             id: instaPost.id,
-            url: instaPost.mediaUrl,
-            alt: instaPost.caption || 'Instagram Post',
-          }],
-          imageCount: 1,
-          category: 'Instagram' as Category,
-          tags: ['Instagram'],
-          isInstagram: true,
-          instagramPermalink: instaPost.permalink,
-          createdAt: instaPost.timestamp,
-        }));
+            title: instaPost.caption ? instaPost.caption.substring(0, 50) : 'Instagram Post',
+            description: instaPost.caption || '',
+            coverImage: instaPost.thumbnailUrl || instaPost.mediaUrl, // Use mediaUrl as fallback
+            images: [{
+              id: instaPost.id,
+              url: instaPost.mediaUrl,
+              alt: instaPost.caption || 'Instagram Post',
+            }],
+            imageCount: 1,
+            category: 'Instagram' as Category,
+            tags: ['Instagram'],
+            isInstagram: true,
+            instagramPermalink: instaPost.permalink,
+            createdAt: instaPost.timestamp,
+          }));
 
         // Merge and sort by date (most recent first)
         const allPosts = [...fetchedPosts, ...convertedInstagramPosts].sort(
@@ -346,9 +361,9 @@ export default function HomePage() {
 
   // Display media based on active tab
   const displayMedia = activeTab === 'posts' 
-    ? [...posts.filter(p => p.coverImage), ...videos.filter(v => v.url && v.thumbnailUrl)].sort(
+    ? [...posts.filter(p => p.coverImage && p.imageCount > 0), ...videos.filter(v => v.url && v.thumbnailUrl)].sort(
         (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-      ) // POSTS tab: Show both photos and videos together, sorted by date
+      ) // POSTS tab: Show both photos and videos together, sorted by date (filter out video thumbnails that are just posts)
     : videos.filter(v => v.url && v.thumbnailUrl); // VIDEOS tab: Only show videos
 
   // Dynamic highlights from database
@@ -401,9 +416,6 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Animated Intro - First Visit Only */}
-      {showIntro && <AnimatedIntro onComplete={handleIntroComplete} />}
-      
       <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Pull to Refresh Indicator */}
       {pullDistance > 0 && (
@@ -443,6 +455,56 @@ export default function HomePage() {
           {settings.siteName || 'Innov8 Production'}
         </motion.h1>
         <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+          
+          {/* Client Login Button - Animated */}
+          <Link href="/client/login">
+            <motion.button
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                boxShadow: [
+                  '0 0 20px rgba(212, 175, 55, 0.3)',
+                  '0 0 30px rgba(212, 175, 55, 0.5)',
+                  '0 0 20px rgba(212, 175, 55, 0.3)'
+                ]
+              }}
+              transition={{ 
+                opacity: { duration: 0.3 },
+                y: { duration: 0.3 },
+                boxShadow: { 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
+                }
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative px-4 py-2 bg-gradient-to-r from-[#d4af37] via-[#f4d03f] to-[#d4af37] bg-[length:200%_100%] text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all active:scale-90 touch-manipulation group overflow-hidden"
+              style={{ animation: 'shimmer 3s infinite' }}
+              aria-label={t('client.login')}
+              title={t('client.viewGallery')}
+            >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                animate={{
+                  x: ['-100%', '100%']
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'linear'
+                }}
+              />
+              <span className="relative z-10 flex items-center gap-2 text-sm">
+                <FiUser className="w-4 h-4" />
+                <span className="hidden xs:inline">Client</span>
+              </span>
+            </motion.button>
+          </Link>
+          
           {/* Menu Button */}
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }}
@@ -450,8 +512,8 @@ export default function HomePage() {
             transition={{ delay: 0.2 }}
             onClick={() => setMenuOpen(true)}
             className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all active:scale-90 touch-manipulation group min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Open Menu"
-            title="Open Navigation Menu"
+            aria-label={t('common.home')}
+            title={t('common.home')}
           >
             <FiMenu className="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors" />
           </motion.button>
@@ -506,7 +568,7 @@ export default function HomePage() {
                     ? instagramStats.media_count 
                     : posts.length + videos.length}
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> posts</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> {t('home.posts')}</span>
               </div>
               <div className="flex-shrink-0">
                 <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
@@ -516,7 +578,7 @@ export default function HomePage() {
                       : instagramStats.followers_count
                     : '2.8k'}
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> followers</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> {t('home.followers')}</span>
               </div>
               <div className="flex-shrink-0">
                 <span className="font-semibold text-gray-900 dark:text-gray-100 block xs:inline">
@@ -526,7 +588,7 @@ export default function HomePage() {
                       : instagramStats.follows_count
                     : '312'}
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> following</span>
+                <span className="text-gray-900 dark:text-gray-100 ml-0 xs:ml-1 block xs:inline text-[10px] xs:text-xs sm:text-sm"> {t('home.following')}</span>
               </div>
             </div>
 
@@ -559,7 +621,7 @@ export default function HomePage() {
                 backgroundColor: settings.primaryColor || '#c67548'
               }}
             >
-              <span className="relative z-10">Demande un Devis</span>
+              <span className="relative z-10">{t('booking.title')}</span>
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
             </motion.button>
           </Link>
@@ -569,7 +631,16 @@ export default function HomePage() {
               whileTap={{ scale: 0.98 }}
               className="w-full px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm hover:shadow-md touch-manipulation"
             >
-              Contact
+              {t('nav.contact')}
+            </motion.button>
+          </Link>
+          <Link href="/about" className="flex-shrink-0">
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm hover:shadow-md touch-manipulation"
+            >
+              {t('nav.about')}
             </motion.button>
           </Link>
           <a 
@@ -582,7 +653,7 @@ export default function HomePage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-3 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white shadow-md hover:shadow-xl touch-manipulation flex items-center gap-1.5 sm:gap-2"
-              title="Follow us on Instagram"
+              title={t('home.followUs')}
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -590,15 +661,6 @@ export default function HomePage() {
               <span className="hidden xs:inline">Instagram</span>
             </motion.button>
           </a>
-          <Link href="/about" className="flex-shrink-0">
-            <motion.button 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold transition-all text-[11px] xs:text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm hover:shadow-md touch-manipulation"
-            >
-              About Us
-            </motion.button>
-          </Link>
         </div>
 
         {/* Dynamic Highlights - Instagram Stories Style */}
@@ -689,7 +751,7 @@ export default function HomePage() {
           >
             <BsGrid3X3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
-              POSTS
+              {t('home.posts').toUpperCase()}
             </span>
           </button>
           <button
@@ -702,7 +764,7 @@ export default function HomePage() {
           >
             <MdVideoLibrary className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest">
-              VIDEOS
+              {t('nav.videos').toUpperCase()}
             </span>
           </button>
         </div>
@@ -735,10 +797,10 @@ export default function HomePage() {
               )}
             </motion.div>
             <h3 className="text-2xl sm:text-3xl font-light text-gray-900 dark:text-white mb-3">
-              No {activeTab === 'posts' ? 'Posts' : 'Videos'} Yet
+              {activeTab === 'posts' ? t('gallery.noImages') : t('videos.noVideos')}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm sm:text-base">
-              Check back soon for amazing content!
+              {t('common.checkBackSoon')}
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -781,21 +843,42 @@ export default function HomePage() {
                     >
                       <video
                         src={video.url}
+                        poster={video.thumbnailUrl}
                         loop
                         muted
                         playsInline
-                        preload="metadata"
-                        className="w-full h-full object-cover cursor-pointer"
-                        onMouseEnter={(e) => {
+                        webkit-playsinline="true"
+                        preload="auto"
+                        autoPlay
+                        crossOrigin="anonymous"
+                        data-autoplay="true"
+                        className="w-full h-full object-cover cursor-pointer touch-manipulation"
+                        style={{
+                          WebkitTransform: 'translate3d(0, 0, 0)',
+                          transform: 'translate3d(0, 0, 0)'
+                        }}
+                        onCanPlay={(e) => {
+                          // Play as soon as video can play
                           e.currentTarget.play().catch(() => {});
                         }}
+                        onMouseEnter={(e) => {
+                          // Desktop: play on hover
+                          if (!('ontouchstart' in window)) {
+                            e.currentTarget.play().catch(() => {});
+                          }
+                        }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.pause();
-                          e.currentTarget.currentTime = 0;
+                          // Desktop: pause on leave
+                          if (!('ontouchstart' in window)) {
+                            e.currentTarget.pause();
+                            e.currentTarget.currentTime = 0;
+                          }
                         }}
                         onClick={() => {
-                          setCurrentVideo(video);
-                          setVideoPlayerOpen(true);
+                          // Click opens Reels viewer - Instagram style vertical swipe
+                          const videoIndex = videos.findIndex(v => v.id === video.id);
+                          setInitialVideoIndex(videoIndex >= 0 ? videoIndex : 0);
+                          setReelsViewerOpen(true);
                         }}
                       />
                       
@@ -909,8 +992,9 @@ export default function HomePage() {
                       e.currentTarget.currentTime = 0;
                     }}
                     onClick={() => {
-                      setCurrentVideo(video);
-                      setVideoPlayerOpen(true);
+                      const videoIndex = videos.findIndex(v => v.id === video.id);
+                      setInitialVideoIndex(videoIndex >= 0 ? videoIndex : 0);
+                      setReelsViewerOpen(true);
                     }}
                   />
 
@@ -938,7 +1022,7 @@ export default function HomePage() {
           onClick={handleRefresh}
           disabled={refreshing}
           className="fixed bottom-20 right-6 z-40 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full shadow-2xl flex items-center justify-center backdrop-blur-sm disabled:opacity-50 active:shadow-3xl transition-all touch-manipulation"
-          title="Refresh content to see latest photos"
+          title={t('common.loading')}
         >
           {refreshing ? (
             <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
@@ -1018,72 +1102,13 @@ export default function HomePage() {
         />
       )}
 
-      {/* Video Player Modal - Instagram Style with Swipe Gestures */}
-      {videoPlayerOpen && currentVideo && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black z-[100] flex items-center justify-center touch-none"
-          onClick={() => {
-            setVideoPlayerOpen(false);
-            setCurrentVideo(null);
-          }}
-        >
-          {/* Close button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setVideoPlayerOpen(false);
-              setCurrentVideo(null);
-            }}
-            className="absolute top-4 right-4 z-20 p-4 bg-white/10 backdrop-blur-md rounded-full text-white active:bg-white/30 transition-all duration-200 active:scale-95 touch-manipulation"
-          >
-            <FiX className="w-6 h-6" />
-          </motion.button>
-          
-          {/* Video container with smooth animation and swipe to dismiss */}
-          <motion.div
-            initial={{ scale: 0.85, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.85, opacity: 0, y: 50 }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0, bottom: 0.7 }}
-            onDragEnd={(e, info) => {
-              if (info.offset.y > 100 || info.velocity.y > 500) {
-                setVideoPlayerOpen(false);
-                setCurrentVideo(null);
-              }
-            }}
-            transition={{ 
-              type: "spring",
-              damping: 30,
-              stiffness: 350,
-              duration: 0.3
-            }}
-            className="relative max-w-full max-h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <video
-              src={currentVideo.url}
-              controls
-              autoPlay
-              playsInline
-              controlsList="nodownload"
-              className="max-w-[95vw] max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl touch-auto"
-              style={{
-                objectFit: 'contain',
-              }}
-            >
-              Your browser does not support the video tag.
-            </video>
-          </motion.div>
-        </motion.div>
+      {/* Reels Viewer - Instagram Style Vertical Swipe */}
+      {reelsViewerOpen && videos.length > 0 && (
+        <ReelsViewer
+          videos={videos}
+          initialIndex={initialVideoIndex}
+          onClose={() => setReelsViewerOpen(false)}
+        />
       )}
 
       {/* Theme Switcher Modal */}
@@ -1127,67 +1152,90 @@ export default function HomePage() {
 
             {/* Menu Header */}
             <div className="px-6 pt-2 pb-4 border-b border-gray-200 dark:border-gray-800">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center">Navigation</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center">{t('common.home')}</h2>
             </div>
 
             {/* Menu Items - Instagram Style */}
             <nav className="p-3 overflow-y-auto max-h-[calc(85vh-120px)]">
+              {/* 1. Home */}
               <Link 
                 href="/" 
                 onClick={() => setMenuOpen(false)} 
                 className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
               >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
                   <FiHome className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Home</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Explore our work</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">{t('common.home')}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('home.exploreGallery')}</span>
                 </div>
               </Link>
               
-              <Link 
-                href="/about" 
-                onClick={() => setMenuOpen(false)} 
-                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                  <FiUser className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">About Us</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Our story & mission</span>
-                </div>
-              </Link>
-
+              {/* 2. Book a Session */}
               <Link 
                 href="/booking" 
                 onClick={() => setMenuOpen(false)} 
                 className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
               >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center shadow-lg">
                   <FiBookmark className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Book a Session</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Reserve your date</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">{t('home.bookSession')}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('booking.subtitle')}</span>
                 </div>
               </Link>
               
+              {/* 3. Contact Us */}
               <Link 
                 href="/contact" 
                 onClick={() => setMenuOpen(false)} 
                 className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
               >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow-lg">
                   <FiMail className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Contact</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Get in touch</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">{t('nav.contact')}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('home.getInTouch')}</span>
                 </div>
               </Link>
 
+              {/* 4. About Us */}
+              <Link 
+                href="/about" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
+                  <FiUser className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">{t('nav.about')}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('home.ourStory')}</span>
+                </div>
+              </Link>
+
+              {/* 5. Client Login */}
+              <Link 
+                href="/client/login" 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
+              >
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
+                  <FiUser className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">{t('client.login')}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('client.viewGallery')}</span>
+                </div>
+              </Link>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 dark:border-gray-800 my-3"></div>
+
+              {/* Additional Links */}
               <a 
                 href="https://www.instagram.com/innov8_production" 
                 target="_blank"
@@ -1195,71 +1243,25 @@ export default function HomePage() {
                 onClick={() => setMenuOpen(false)} 
                 className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
               >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center shadow-lg">
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                   </svg>
                 </div>
                 <div className="flex-1">
                   <span className="text-lg font-semibold text-gray-900 dark:text-white block">Instagram</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Follow us @innov8_production</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('home.followUs')}</span>
                 </div>
               </a>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 dark:border-gray-800 my-3"></div>
-
-              {/* Admin & Client Links */}
-              <Link 
-                href="/admin/dashboard" 
-                onClick={() => setMenuOpen(false)} 
-                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
-                  <FiSettings className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Admin Dashboard</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Manage content & settings</span>
-                </div>
-              </Link>
-
-              <Link 
-                href="/client/login" 
-                onClick={() => setMenuOpen(false)} 
-                className="flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors mb-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center">
-                  <FiUser className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Client Portal</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Access your gallery</span>
-                </div>
-              </Link>
-
-              {/* Theme Settings */}
-              <button 
-                onClick={() => { setMenuOpen(false); setShowThemeSwitcher(true); }}
-                className="w-full flex items-center gap-4 p-4 active:bg-gray-100 dark:active:bg-gray-800 rounded-2xl transition-colors"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
-                  <FiGrid className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 text-left">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white block">Switch Theme</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Simple ⇄ Professional</span>
-                </div>
-              </button>
             </nav>
 
             {/* Close Button */}
             <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
               <button
                 onClick={() => setMenuOpen(false)}
-                className="w-full py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold text-base active:scale-95 transition-transform"
+                className="w-full py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-full font-semibold text-base active:scale-95 transition-transform shadow-lg"
               >
-                Close
+                {t('gallery.close')}
               </button>
             </div>
           </motion.div>

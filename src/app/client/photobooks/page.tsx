@@ -311,16 +311,31 @@ export default function ClientPhotobooksPage() {
                       <span className="uppercase tracking-wide">{photobook.status}</span>
                     </div>
 
-                    {/* Delete Button - Only for drafts */}
-                    {photobook.status === 'draft' && (
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setDeleteConfirm(photobook.id)}
-                        className="absolute top-3 left-3 p-2 backdrop-blur-xl bg-red-500/20 border border-red-500/30 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300"
-                      >
-                        <FiTrash2 className="w-4 h-4" />
-                      </motion.button>
+                    {/* Quick Actions - Top Left */}
+                    {(photobook.status === 'draft' || photobook.status === 'submitted') && (
+                      <div className="absolute top-3 left-3 flex gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setDeleteConfirm(photobook.id)}
+                          className="p-2 backdrop-blur-xl bg-red-500/20 border border-red-500/30 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300"
+                          title="Delete photobook"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                        </motion.button>
+                        <Link
+                          href={`/client/photobook?galleryId=${photobook.gallery.id}&photobookId=${photobook.id}`}
+                        >
+                          <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 backdrop-blur-xl bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-all duration-300"
+                            title="Edit photobook"
+                          >
+                            <FiEdit className="w-4 h-4" />
+                          </motion.div>
+                        </Link>
+                      </div>
                     )}
                   </div>
 
@@ -352,22 +367,34 @@ export default function ClientPhotobooksPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-3">
-                      {photobook.status === 'draft' && (
-                        <Link
-                          href={`/client/photobook?galleryId=${photobook.gallery.id}&photobookId=${photobook.id}`}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold"
-                        >
-                          <FiEdit className="w-4 h-4" />
-                          <span>Continue Editing</span>
-                        </Link>
-                      )}
-                      {photobook.status !== 'draft' && (
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        {(photobook.status === 'draft' || photobook.status === 'submitted') && (
+                          <Link
+                            href={`/client/photobook?galleryId=${photobook.gallery.id}&photobookId=${photobook.id}`}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-300 font-semibold text-sm"
+                          >
+                            <FiEdit className="w-4 h-4" />
+                            <span>{photobook.status === 'draft' ? 'Continue Editing' : 'Edit'}</span>
+                          </Link>
+                        )}
+                        {(photobook.status === 'approved' || photobook.status === 'printing' || photobook.status === 'completed') && (
+                          <Link
+                            href={`/client/photobook?galleryId=${photobook.gallery.id}&photobookId=${photobook.id}`}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/10 text-gray-300 rounded-xl hover:bg-white/20 transition-all duration-300 font-semibold text-sm"
+                          >
+                            <FiEye className="w-4 h-4" />
+                            <span>View</span>
+                          </Link>
+                        )}
+                      </div>
+                      {(photobook.status === 'draft' || photobook.status === 'submitted') && (
                         <button
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/10 text-gray-300 rounded-xl hover:bg-white/20 transition-all duration-300 font-semibold"
+                          onClick={() => setDeleteConfirm(photobook.id)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 border border-red-500/30 transition-all duration-300 font-semibold text-sm"
                         >
-                          <FiEye className="w-4 h-4" />
-                          <span>View Details</span>
+                          <FiTrash2 className="w-4 h-4" />
+                          <span>Delete</span>
                         </button>
                       )}
                     </div>

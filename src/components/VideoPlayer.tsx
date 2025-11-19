@@ -94,7 +94,7 @@ export default function VideoPlayer({ video }: VideoPlayerProps) {
         </div>
       )}
 
-      {/* Video Element */}
+      {/* Video Element - iOS Safari Compatible */}
       <video
         ref={videoRef}
         className={`w-full h-full object-contain ${showThumbnail ? 'invisible' : 'visible'}`}
@@ -104,33 +104,61 @@ export default function VideoPlayer({ video }: VideoPlayerProps) {
         onEnded={() => setIsPlaying(false)}
         onClick={togglePlay}
         playsInline
+        webkit-playsinline="true"
+        preload="metadata"
+        crossOrigin="anonymous"
+        style={{
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          transform: 'translate3d(0, 0, 0)'
+        }}
       />
 
-      {/* Thumbnail Overlay (shown before play) */}
+      {/* Thumbnail Overlay (shown before play) - iOS Safari Compatible */}
       {showThumbnail && (
         <div 
-          className="absolute inset-0 cursor-pointer"
+          className="absolute inset-0 cursor-pointer touch-manipulation"
           onClick={handlePlayClick}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            handlePlayClick();
+          }}
+          style={{
+            WebkitTapHighlightColor: 'transparent',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none'
+          }}
         >
           {video.thumbnailUrl && (
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-              style={{ backgroundImage: `url(${video.thumbnailUrl})` }}
+              style={{ 
+                backgroundImage: `url(${video.thumbnailUrl})`,
+                WebkitTransform: 'translate3d(0, 0, 0)',
+                transform: 'translate3d(0, 0, 0)'
+              }}
             />
           )}
           
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
           
-          {/* Play Button */}
+          {/* Play Button - iOS Touch Optimized */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-2xl group-hover:bg-[#d4af37] group-hover:text-white transition-colors">
-              <FiPlay className="w-10 h-10 text-gray-900 group-hover:text-white ml-1 transition-colors" />
+            <div className="w-24 h-24 md:w-20 md:h-20 bg-white/90 rounded-full flex items-center justify-center shadow-2xl group-hover:bg-[#d4af37] group-hover:text-white transition-colors touch-manipulation">
+              <FiPlay className="w-12 h-12 md:w-10 md:h-10 text-gray-900 group-hover:text-white ml-1 transition-colors" />
             </div>
           </motion.div>
+          
+          {/* iOS Hint */}
+          <div className="absolute bottom-4 left-0 right-0 text-center md:hidden">
+            <p className="text-white/80 text-xs font-medium bg-black/40 px-3 py-1 rounded-full inline-block backdrop-blur-sm">
+              Tap to play
+            </p>
+          </div>
         </div>
       )}
 

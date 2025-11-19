@@ -41,6 +41,10 @@ interface Invoice {
   paymentStatus: string;
   paymentMethod?: string;
   paymentDate?: string;
+  paymentHistory?: Array<{ amount: number; date: string; method?: string }>;
+  eventRemarks?: string;
+  instagramLinks?: string[];
+  planDetails?: string[];
   issueDate: string;
   dueDate?: string;
   notes?: string;
@@ -124,6 +128,10 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
       totalAmount: subtotal,
       paidAmount: 0,
       paymentStatus: 'unpaid',
+      paymentHistory: [],
+      eventRemarks: '',
+      instagramLinks: [],
+      planDetails: [],
       issueDate: new Date().toISOString().split('T')[0],
       termsConditions: 'Un acompte de 30% est requis pour confirmer la réservation.'
     };
@@ -804,12 +812,36 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                     <label className="block text-sm mb-2">Montant payé</label>
                     <input
                       type="number"
-                      value={invoice.paidAmount}
-                      onChange={(e) => setInvoice({ ...invoice, paidAmount: parseFloat(e.target.value) || 0 })}
+                      value={invoice.paidAmount || 0}
+                      onChange={(e) => {
+                        const paidAmount = parseFloat(e.target.value) || 0;
+                        const totalAmount = invoice.totalAmount || 0;
+                        
+                        // Auto-calculate payment status
+                        let paymentStatus = 'unpaid';
+                        if (paidAmount >= totalAmount && totalAmount > 0) {
+                          paymentStatus = 'paid';
+                        } else if (paidAmount > 0) {
+                          paymentStatus = 'partial';
+                        }
+                        
+                        setInvoice({ 
+                          ...invoice, 
+                          paidAmount,
+                          paymentStatus
+                        });
+                      }}
                       className="input-field text-sm"
                       min="0"
+                      max={invoice.totalAmount}
                       step="0.01"
+                      placeholder="0.00"
                     />
+                    {invoice.paidAmount !== undefined && invoice.totalAmount && (
+                      <p className="text-xs mt-1 text-gray-500">
+                        Reste: {((invoice.totalAmount || 0) - (invoice.paidAmount || 0)).toFixed(2)} DT
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm mb-2">Méthode de paiement</label>
@@ -833,6 +865,181 @@ export default function InvoiceEditor({ booking, existingInvoice, onClose, onSav
                       onChange={(e) => setInvoice({ ...invoice, paymentDate: e.target.value })}
                       className="input-field text-sm"
                     />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Event Details & Planning */}
+            {isEditing && (
+              <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+                <h3 className="text-sm font-bold mb-4">DÉTAILS DE L'ÉVÉNEMENT</h3>
+                <div className="space-y-4">
+                  {/* Event Remarks */}
+                  <div>
+                    <label className="block text-sm mb-2">Remarques sur l'événement</label>
+                    <textarea
+                      value={invoice.eventRemarks || ''}
+                      onChange={(e) => setInvoice({ ...invoice, eventRemarks: e.target.value })}
+                      className="textarea-field text-sm"
+                      rows={2}
+                      placeholder="Informations spéciales, préférences du client..."
+                    />
+                  </div>
+
+                  {/* Instagram Links */}
+                  <div>
+                    <label className="block text-sm mb-2">Liens Instagram</label>
+                    <div className="space-y-2">
+                      {(invoice.instagramLinks || []).map((link, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={link}
+                            onChange={(e) => {
+                              const newLinks = [...(invoice.instagramLinks || [])];
+                              newLinks[index] = e.target.value;
+                              setInvoice({ ...invoice, instagramLinks: newLinks });
+                            }}
+                            className="input-field text-sm flex-1"
+                            placeholder="@username ou lien Instagram"
+                          />
+                          <button
+                            onClick={() => {
+                              const newLinks = (invoice.instagramLinks || []).filter((_, i) => i !== index);
+                              setInvoice({ ...invoice, instagramLinks: newLinks });
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => {
+                          setInvoice({ 
+                            ...invoice, 
+                            instagramLinks: [...(invoice.instagramLinks || []), ''] 
+                          });
+                        }}
+                        className="btn-secondary text-sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Ajouter un lien Instagram
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Plan Details / Timeline */}
+                  <div>
+                    <label className="block text-sm mb-2">Plan mariage / Timeline</label>
+                    <div className="space-y-2">
+                      {(invoice.planDetails || []).map((detail, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={detail}
+                            onChange={(e) => {
+                              const newDetails = [...(invoice.planDetails || [])];
+                              newDetails[index] = e.target.value;
+                              setInvoice({ ...invoice, planDetails: newDetails });
+                            }}
+                            className="input-field text-sm flex-1"
+                            placeholder="Ex: 14h00 - Arrivée des mariés"
+                          />
+                          <button
+                            onClick={() => {
+                              const newDetails = (invoice.planDetails || []).filter((_, i) => i !== index);
+                              setInvoice({ ...invoice, planDetails: newDetails });
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => {
+                          setInvoice({ 
+                            ...invoice, 
+                            planDetails: [...(invoice.planDetails || []), ''] 
+                          });
+                        }}
+                        className="btn-secondary text-sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Ajouter une étape
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Payment History */}
+                  <div>
+                    <label className="block text-sm mb-2">Historique des paiements</label>
+                    <div className="space-y-2">
+                      {(invoice.paymentHistory || []).map((payment, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input
+                            type="number"
+                            value={payment.amount}
+                            onChange={(e) => {
+                              const newHistory = [...(invoice.paymentHistory || [])];
+                              newHistory[index] = { ...payment, amount: parseFloat(e.target.value) || 0 };
+                              setInvoice({ ...invoice, paymentHistory: newHistory });
+                            }}
+                            className="input-field text-sm w-32"
+                            placeholder="Montant"
+                            step="0.01"
+                          />
+                          <input
+                            type="date"
+                            value={payment.date}
+                            onChange={(e) => {
+                              const newHistory = [...(invoice.paymentHistory || [])];
+                              newHistory[index] = { ...payment, date: e.target.value };
+                              setInvoice({ ...invoice, paymentHistory: newHistory });
+                            }}
+                            className="input-field text-sm flex-1"
+                          />
+                          <select
+                            value={payment.method || ''}
+                            onChange={(e) => {
+                              const newHistory = [...(invoice.paymentHistory || [])];
+                              newHistory[index] = { ...payment, method: e.target.value };
+                              setInvoice({ ...invoice, paymentHistory: newHistory });
+                            }}
+                            className="input-field text-sm w-40"
+                          >
+                            <option value="">Méthode</option>
+                            <option value="cash">Espèces</option>
+                            <option value="bank_transfer">Virement</option>
+                            <option value="check">Chèque</option>
+                            <option value="credit_card">Carte</option>
+                          </select>
+                          <button
+                            onClick={() => {
+                              const newHistory = (invoice.paymentHistory || []).filter((_, i) => i !== index);
+                              setInvoice({ ...invoice, paymentHistory: newHistory });
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => {
+                          setInvoice({ 
+                            ...invoice, 
+                            paymentHistory: [...(invoice.paymentHistory || []), { amount: 0, date: new Date().toISOString().split('T')[0] }] 
+                          });
+                        }}
+                        className="btn-secondary text-sm"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Ajouter un paiement
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

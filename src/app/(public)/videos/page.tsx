@@ -6,10 +6,12 @@ import VideoPlayer from '@/components/VideoPlayer';
 import NavigationButton from '@/components/NavigationButton';
 import { VideoItem } from '@/types';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { FiPlay, FiX, FiMaximize2, FiVolume2, FiVolumeX } from 'react-icons/fi';
 
 export default function VideosPage() {
   const { currentTheme } = useLayoutTheme();
+  const { t } = useLanguage();
   const isProfessional = currentTheme === 'professional';
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,7 +75,7 @@ export default function VideosPage() {
               className="text-center mb-16"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
-                Videos & Cinematography
+                {t('videos.title')}
               </h1>
               
               <motion.div
@@ -84,7 +86,7 @@ export default function VideosPage() {
               />
 
               <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-lato leading-relaxed max-w-3xl mx-auto">
-                Cinematic stories brought to life through videography
+                {t('videos.subtitle')}
               </p>
             </motion.div>
 
@@ -100,7 +102,7 @@ export default function VideosPage() {
                       : 'bg-transparent text-[#1a1a1a] dark:text-gray-100 border border-gray-300 hover:border-[#d4af37]'
                   }`}
                 >
-                  {category}
+                  {category === 'all' ? t('gallery.all') : t(`gallery.${category}`)}
                 </button>
               ))}
             </div>
@@ -215,7 +217,7 @@ export default function VideosPage() {
               </div>
             ) : (
               <div className="text-center py-16">
-                <p className="text-gray-500 font-lato text-lg">No videos available yet.</p>
+                <p className="text-gray-500 font-lato text-lg">{t('videos.noVideos')}</p>
               </div>
             )}
           </div>
@@ -361,8 +363,8 @@ export default function VideosPage() {
               })}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">No videos available yet.</p>
+            <div className="text-center py-20">
+              <p className="text-gray-500 dark:text-gray-400 text-lg">{t('videos.noVideos')}</p>
             </div>
           )}
         </motion.div>

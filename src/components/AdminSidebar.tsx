@@ -11,6 +11,7 @@ import {
   FiTrendingUp
 } from 'react-icons/fi';
 import { MdPalette } from 'react-icons/md';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ interface NotificationCounts {
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState<NotificationCounts>({
     unreadMessages: 0,
     newPhotoSelections: 0,
@@ -55,26 +57,27 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   }, []);
 
   const menuItems = [
-    { name: 'Overview', icon: FiHome, href: '/admin/dashboard' },
-    { name: 'Leads & Quote Requests', icon: FiTrendingUp, href: '/admin/dashboard/leads', badge: notifications.tracking },
-    { name: 'All Bookings (Grouped)', icon: FiCheck, href: '/admin/bookings-tracking', badge: notifications.newBookings },
-    { name: 'Calendar & Confirmed', icon: FiCalendar, href: '/admin/dashboard/calendar' },
-    { name: 'Messages', icon: FiMail, href: '/admin/dashboard/messages', badge: notifications.unreadMessages },
-    { name: 'Clients', icon: FiUser, href: '/admin/dashboard/clients' },
-    { name: 'Selected for Print', icon: FiCheck, href: '/admin/dashboard/selected-photos', badge: notifications.newPhotoSelections },
-    { name: 'Albums', icon: FiImage, href: '/admin/dashboard/albums' },
-    { name: 'Photos', icon: FiImage, href: '/admin/dashboard/photos' },
-    { name: 'Videos & Reels', icon: FiVideo, href: '/admin/dashboard/videos' },
-    { name: 'Instagram', icon: FiInstagram, href: '/admin/dashboard/instagram' },
-    { name: 'Photobooks', icon: FiBook, href: '/admin/dashboard/photobooks' },
-    { name: 'Packages (Devis)', icon: FiPackage, href: '/admin/dashboard/packs' },
-    { name: 'Booking Settings', icon: FiPackage, href: '/admin/dashboard/booking-settings' },
-    { name: 'Design', icon: MdPalette, href: '/admin/dashboard/design' },
-    { name: 'Content', icon: FiFileText, href: '/admin/dashboard/content' },
-    { name: 'Team', icon: FiUsers, href: '/admin/dashboard/team' },
-    { name: 'Remerciements', icon: FiMail, href: '/admin/dashboard/remerciements' },
-    { name: 'Calendar Integration', icon: FiCalendar, href: '/admin/dashboard/calendar-integration' },
-    { name: 'Settings', icon: FiSettings, href: '/admin/dashboard/settings' },
+    { name: t('admin.overview'), icon: FiHome, href: '/admin/dashboard' },
+    { name: t('admin.leadsQuoteRequests'), icon: FiTrendingUp, href: '/admin/dashboard/leads', badge: notifications.tracking },
+    { name: t('admin.allBookingsGrouped'), icon: FiCheck, href: '/admin/bookings-tracking', badge: notifications.newBookings },
+    { name: t('admin.calendarConfirmed'), icon: FiCalendar, href: '/admin/dashboard/calendar' },
+    { name: t('admin.factures'), icon: FiFileText, href: '/admin/factures' },
+    { name: t('admin.messages'), icon: FiMail, href: '/admin/dashboard/messages', badge: notifications.unreadMessages },
+    { name: t('admin.clients'), icon: FiUser, href: '/admin/dashboard/clients' },
+    { name: t('admin.selectedForPrint'), icon: FiCheck, href: '/admin/dashboard/selected-photos', badge: notifications.newPhotoSelections },
+    { name: t('admin.albums'), icon: FiImage, href: '/admin/dashboard/albums' },
+    { name: t('admin.photos'), icon: FiImage, href: '/admin/dashboard/photos' },
+    { name: t('admin.photosAndReels'), icon: FiVideo, href: '/admin/dashboard/videos' },
+    { name: t('admin.instagram'), icon: FiInstagram, href: '/admin/dashboard/instagram' },
+    { name: t('admin.photobooks'), icon: FiBook, href: '/admin/dashboard/photobooks' },
+    { name: t('admin.packagesDevis'), icon: FiPackage, href: '/admin/dashboard/packs' },
+    { name: t('admin.bookingSettings'), icon: FiPackage, href: '/admin/dashboard/booking-settings' },
+    { name: t('admin.design'), icon: MdPalette, href: '/admin/dashboard/design' },
+    { name: t('admin.content'), icon: FiFileText, href: '/admin/dashboard/content' },
+    { name: t('admin.team'), icon: FiUsers, href: '/admin/dashboard/team' },
+    { name: t('admin.remerciements'), icon: FiMail, href: '/admin/dashboard/remerciements' },
+    { name: t('admin.calendarIntegration'), icon: FiCalendar, href: '/admin/dashboard/calendar-integration' },
+    { name: t('admin.settings'), icon: FiSettings, href: '/admin/dashboard/settings' },
   ];
 
   return (
@@ -86,7 +89,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Admin Panel</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('admin.panel')}</h2>
           <button
             onClick={onClose}
             className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -159,14 +162,14 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition mb-2"
           >
             <FiHome className="w-5 h-5" />
-            <span className="font-medium">View Site</span>
+            <span className="font-medium">{t('admin.viewSite')}</span>
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: '/admin/login' })}
             className="flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition w-full"
           >
             <FiLogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <span className="font-medium">{t('admin.logout')}</span>
           </button>
         </div>
       </div>

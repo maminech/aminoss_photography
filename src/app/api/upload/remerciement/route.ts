@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 
+// Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dm22wlmpx',
+  api_key: process.env.CLOUDINARY_API_KEY || '816775898924348',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'mbU--NngMju5dzFgvO_LExO7nnc',
 });
 
 /**
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
     const result = await new Promise<any>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          folder: 'Innov8_photography/remerciements',
+          folder: 'innov8_portfolio/ui/testimonials',
           resource_type: 'auto',
           transformation: [
             { width: 1920, height: 1080, crop: 'limit', quality: 'auto:good' },

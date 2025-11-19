@@ -27,7 +27,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { photobookId, title, notes, pages, design, coverPhotoUrl } = await request.json();
+    const body = await request.json();
+    console.log('Submit photobook request:', { 
+      photobookId: body.photobookId, 
+      hasPages: !!body.pages,
+      pagesCount: body.pages?.length,
+      hasDesign: !!body.design,
+      title: body.title
+    });
+
+    const { photobookId, title, notes, pages } = body;
 
     if (!photobookId) {
       return NextResponse.json({ error: 'Photobook ID required' }, { status: 400 });
@@ -42,40 +51,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    // Calculate total pages from design if available, otherwise from pages array
+    // Calculate total pages and cover photo from pages array
     let totalPages = 0;
-    let finalCoverPhotoUrl = coverPhotoUrl;
+    let finalCoverPhotoUrl = null;
 
-    if (design && design.pages) {
-      totalPages = design.pages.length;
-      // Try to extract cover photo from first page if not provided
-      if (!finalCoverPhotoUrl && design.pages[0]) {
-        const firstPage = design.pages[0];
-        const imageElement = firstPage.children?.find((child: any) => child.type === 'image');
-        if (imageElement && imageElement.src) {
-          finalCoverPhotoUrl = imageElement.src;
-        }
-      }
-    } else if (pages && pages.length > 0) {
+    if (pages && pages.length > 0) {
       totalPages = pages.length;
-      // Get cover photo URL from first page for old-style photobooks
-      if (!finalCoverPhotoUrl) {
-        const firstPagePhotos = pages[0]?.photos;
-        finalCoverPhotoUrl = firstPagePhotos && firstPagePhotos.length > 0 
-          ? firstPagePhotos[0].url 
-          : null;
-      }
+      // Get cover photo URL from first page
+      const firstPagePhotos = pages[0]?.photos;
+      finalCoverPhotoUrl = firstPagePhotos && firstPagePhotos.length > 0 
+        ? firstPagePhotos[0].url 
+        : null;
     }
 
     if (totalPages === 0) {
       return NextResponse.json({ error: 'Photobook must have at least one page' }, { status: 400 });
     }
 
-    // Generate PDF URL placeholder (client will need to export PDF separately)
-    // The design JSON is saved and admin can regenerate PDF from it
-    const pdfUrl = design ? `/api/photobook/${photobookId}/pdf` : null;
+    console.log('Updating photobook:', {
+      photobookId,
+      totalPages,
+      hasCoverPhoto: !!finalCoverPhotoUrl,
+      pagesData: pages.length
+    });
 
-    // Update photobook to submitted status with design field
+    // Update photobook to submitted status
     const updated = await prisma.photobook.update({
       where: { id: photobookId },
       data: {
@@ -84,29 +84,33 @@ export async function POST(request: NextRequest) {
         totalPages: totalPages,
         status: 'submitted',
         coverPhotoUrl: finalCoverPhotoUrl,
-        design: design || photobook.design, // Save Polotno design state
-        pdfUrl: pdfUrl, // Reference to PDF generation endpoint
         submittedAt: new Date(),
         updatedAt: new Date(),
-      } as any,
+      },
     });
 
-    // Only handle pages for old-style photobooks
+    // Handle pages for custom photobook editor
     if (pages && pages.length > 0) {
+      console.log('Deleting old pages and creating new ones');
+      
       // Delete existing pages
       await prisma.photobookPage.deleteMany({
         where: { photobookId: photobookId },
       });
 
       // Create new pages
+      const pagesData = pages.map((page: any) => ({
+        photobookId: photobookId,
+        pageNumber: page.pageNumber,
+        layoutType: page.layoutType,
+        photos: page.photos,
+        notes: page.notes || null,
+      }));
+
+      console.log('Creating pages:', pagesData.length);
+      
       await prisma.photobookPage.createMany({
-        data: pages.map((page: any) => ({
-          photobookId: photobookId,
-          pageNumber: page.pageNumber,
-          layoutType: page.layoutType,
-          photos: page.photos,
-          notes: page.notes || null,
-        })),
+        data: pagesData,
       });
     }
 

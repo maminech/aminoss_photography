@@ -136,6 +136,55 @@ export default function AdminVideosPage() {
     }
   };
 
+  // Bulk delete videos
+  const bulkDeleteVideos = async () => {
+    const count = selectedVideos.size;
+    const options = await new Promise<'database' | 'both' | null>((resolve) => {
+      const choice = confirm(
+        `❌ Delete ${count} selected video${count > 1 ? 's' : ''}?\n\n` +
+        'Click OK to delete from DATABASE ONLY (keeps in Cloudinary)\n' +
+        'Click Cancel then choose "Delete from Both" to delete everywhere'
+      );
+      
+      if (choice) {
+        resolve('database');
+      } else {
+        const deleteBoth = confirm(
+          `⚠️ DELETE ${count} VIDEO${count > 1 ? 'S' : ''} FROM BOTH?\n\n` +
+          'This will permanently delete the videos from:\n' +
+          '✓ Your website database\n' +
+          '✓ Cloudinary storage\n\n' +
+          'This CANNOT be undone!\n\n' +
+          'Click OK to delete from BOTH'
+        );
+        resolve(deleteBoth ? 'both' : null);
+      }
+    });
+
+    if (!options) return; // User cancelled
+
+    try {
+      const deleteFromCloudinary = options === 'both';
+      const promises = Array.from(selectedVideos).map(id => {
+        const video = videos.find(v => v.id === id);
+        if (!video) return Promise.resolve();
+        
+        return fetch(`/api/admin/videos?id=${id}&deleteFromCloudinary=${deleteFromCloudinary}`, {
+          method: 'DELETE',
+        });
+      });
+
+      await Promise.all(promises);
+      alert(`✅ Deleted ${count} video${count > 1 ? 's' : ''}`);
+      fetchVideos();
+      setSelectedVideos(new Set());
+      setBulkEditMode(false);
+    } catch (error) {
+      console.error('Error bulk deleting:', error);
+      alert('❌ Failed to delete videos');
+    }
+  };
+
   // Toggle video selection
   const toggleVideoSelection = (id: string) => {
     const newSelection = new Set(selectedVideos);
@@ -331,9 +380,73 @@ export default function AdminVideosPage() {
           </div>
         </div>
 
+        {/* Bulk Actions Toolbar */}
+        {bulkEditMode && (
+          <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-4 mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center space-x-4">
+                <div className="font-semibold text-gray-900 dark:text-gray-100">
+                  {selectedVideos.size} video{selectedVideos.size !== 1 ? 's' : ''} selected
+                </div>
+                <button
+                  onClick={selectAll}
+                  className="text-sm text-primary hover:text-primary/80 font-medium transition"
+                >
+                  Select All ({filteredVideos.length})
+                </button>
+                <button
+                  onClick={clearSelection}
+                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium transition"
+                >
+                  Clear Selection
+                </button>
+              </div>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => setBulkEditModalOpen(true)}
+                  disabled={selectedVideos.size === 0}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FiEdit2 className="w-4 h-4" />
+                  <span>Bulk Edit</span>
+                </button>
+                <button
+                  onClick={bulkDeleteVideos}
+                  disabled={selectedVideos.size === 0}
+                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FiTrash2 className="w-4 h-4" />
+                  <span>Delete Selected</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setBulkEditMode(false);
+                    setSelectedVideos(new Set());
+                  }}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+                >
+                  <FiX className="w-4 h-4" />
+                  <span>Exit Bulk Mode</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Category Filter */}
         <div className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Filter by Category</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">Filter by Category</h3>
+            {!bulkEditMode && filteredVideos.length > 0 && (
+              <button
+                onClick={() => setBulkEditMode(true)}
+                className="flex items-center space-x-2 px-3 py-1.5 text-sm bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition"
+              >
+                <FiEdit2 className="w-4 h-4" />
+                <span>Bulk Select</span>
+              </button>
+            )}
+          </div>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
@@ -380,8 +493,24 @@ export default function AdminVideosPage() {
             {filteredVideos.map((video) => (
               <div
                 key={video.id}
-                className="bg-white dark:bg-dark-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden group"
+                className={`bg-white dark:bg-dark-800 rounded-lg shadow-sm border-2 overflow-hidden group transition ${
+                  bulkEditMode && selectedVideos.has(video.id)
+                    ? 'border-primary ring-2 ring-primary/30'
+                    : 'border-gray-200 dark:border-gray-700'
+                }`}
               >
+                {/* Bulk Selection Checkbox */}
+                {bulkEditMode && (
+                  <div className="absolute top-2 left-2 z-20">
+                    <input
+                      type="checkbox"
+                      checked={selectedVideos.has(video.id)}
+                      onChange={() => toggleVideoSelection(video.id)}
+                      className="w-6 h-6 text-primary border-2 border-white rounded focus:ring-2 focus:ring-primary cursor-pointer"
+                    />
+                  </div>
+                )}
+
                 {/* Thumbnail */}
                 <div className="relative aspect-video bg-gray-900">
                   <Image
@@ -483,6 +612,16 @@ export default function AdminVideosPage() {
           </div>
         )}
       </main>
+
+      {/* Bulk Edit Modal */}
+      {bulkEditModalOpen && (
+        <BulkEditModal
+          count={selectedVideos.size}
+          onClose={() => setBulkEditModalOpen(false)}
+          onSave={bulkUpdateVideos}
+          categories={categories.filter((c) => c !== 'all')}
+        />
+      )}
 
       {/* Edit Modal */}
       {editModalOpen && selectedVideo && (
@@ -879,6 +1018,251 @@ function PreviewVideoModal({
             <p className="text-gray-300">{video.description}</p>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function BulkEditModal({
+  count,
+  onClose,
+  onSave,
+  categories,
+}: {
+  count: number;
+  onClose: () => void;
+  onSave: (data: Partial<VideoData>) => void;
+  categories: string[];
+}) {
+  const [formData, setFormData] = useState<{
+    category?: string;
+    featured?: boolean;
+    showOnHomepage?: boolean;
+    showInGallery?: boolean;
+    showInProfessionalMode?: boolean;
+    backgroundVideo?: boolean;
+  }>({});
+
+  const [fieldsToUpdate, setFieldsToUpdate] = useState<Set<string>>(new Set());
+
+  const toggleField = (field: string) => {
+    const newFields = new Set(fieldsToUpdate);
+    if (newFields.has(field)) {
+      newFields.delete(field);
+      const newFormData = { ...formData };
+      delete newFormData[field as keyof typeof formData];
+      setFormData(newFormData);
+    } else {
+      newFields.add(field);
+    }
+    setFieldsToUpdate(newFields);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (fieldsToUpdate.size === 0) {
+      alert('Please select at least one field to update');
+      return;
+    }
+    
+    const dataToUpdate: Partial<VideoData> = {};
+    fieldsToUpdate.forEach(field => {
+      dataToUpdate[field as keyof VideoData] = formData[field as keyof typeof formData] as any;
+    });
+    
+    onSave(dataToUpdate);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-dark-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Bulk Edit Videos</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Updating {count} video{count !== 1 ? 's' : ''}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+          >
+            <FiX className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              💡 Select which fields you want to update. Only checked fields will be modified.
+            </p>
+          </div>
+
+          {/* Category */}
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fieldsToUpdate.has('category')}
+                onChange={() => toggleField('category')}
+                className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="font-medium text-gray-900 dark:text-gray-100">Update Category</span>
+            </label>
+            {fieldsToUpdate.has('category') && (
+              <select
+                value={formData.category || ''}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="input-field"
+              >
+                <option value="">Select category...</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {/* Featured */}
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fieldsToUpdate.has('featured')}
+                onChange={() => toggleField('featured')}
+                className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="font-medium text-gray-900 dark:text-gray-100">Update Featured Status</span>
+            </label>
+            {fieldsToUpdate.has('featured') && (
+              <label className="flex items-center space-x-3 ml-8">
+                <input
+                  type="checkbox"
+                  checked={formData.featured || false}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">⭐ Set as featured</span>
+              </label>
+            )}
+          </div>
+
+          {/* Show on Homepage */}
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fieldsToUpdate.has('showOnHomepage')}
+                onChange={() => toggleField('showOnHomepage')}
+                className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="font-medium text-gray-900 dark:text-gray-100">Update Homepage Display</span>
+            </label>
+            {fieldsToUpdate.has('showOnHomepage') && (
+              <label className="flex items-center space-x-3 ml-8">
+                <input
+                  type="checkbox"
+                  checked={formData.showOnHomepage || false}
+                  onChange={(e) => setFormData({ ...formData, showOnHomepage: e.target.checked })}
+                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">🏠 Show on homepage</span>
+              </label>
+            )}
+          </div>
+
+          {/* Show in Gallery */}
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fieldsToUpdate.has('showInGallery')}
+                onChange={() => toggleField('showInGallery')}
+                className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="font-medium text-gray-900 dark:text-gray-100">Update Gallery Visibility</span>
+            </label>
+            {fieldsToUpdate.has('showInGallery') && (
+              <label className="flex items-center space-x-3 ml-8">
+                <input
+                  type="checkbox"
+                  checked={formData.showInGallery || false}
+                  onChange={(e) => setFormData({ ...formData, showInGallery: e.target.checked })}
+                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">🎥 Show in videos page</span>
+              </label>
+            )}
+          </div>
+
+          {/* Show in Professional Mode */}
+          <div className="border border-amber-200 dark:border-amber-700 rounded-lg p-4 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20">
+            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fieldsToUpdate.has('showInProfessionalMode')}
+                onChange={() => toggleField('showInProfessionalMode')}
+                className="w-5 h-5 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
+              />
+              <span className="font-medium text-amber-900 dark:text-amber-300">✨ Update Professional Mode Display</span>
+            </label>
+            {fieldsToUpdate.has('showInProfessionalMode') && (
+              <label className="flex items-center space-x-3 ml-8">
+                <input
+                  type="checkbox"
+                  checked={formData.showInProfessionalMode || false}
+                  onChange={(e) => setFormData({ ...formData, showInProfessionalMode: e.target.checked })}
+                  className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
+                />
+                <span className="text-sm text-amber-800 dark:text-amber-300">Show in professional/luxury theme</span>
+              </label>
+            )}
+          </div>
+
+          {/* Background Video */}
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fieldsToUpdate.has('backgroundVideo')}
+                onChange={() => toggleField('backgroundVideo')}
+                className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="font-medium text-gray-900 dark:text-gray-100">Update Background Video Status</span>
+            </label>
+            {fieldsToUpdate.has('backgroundVideo') && (
+              <label className="flex items-center space-x-3 ml-8">
+                <input
+                  type="checkbox"
+                  checked={formData.backgroundVideo || false}
+                  onChange={(e) => setFormData({ ...formData, backgroundVideo: e.target.checked })}
+                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">🎬 Use as background video</span>
+              </label>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={fieldsToUpdate.size === 0}
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Update {count} Video{count !== 1 ? 's' : ''}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

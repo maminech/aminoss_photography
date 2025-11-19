@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { 
   FiInstagram, 
   FiRefreshCw, 
@@ -67,14 +68,14 @@ export default function InstagramIntegrationPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: 'success', text: `Instagram connected as @${data.username}` });
+        toast.success(`Instagram connected as @${data.username}`);
         setAccessToken('');
         fetchSyncStatus();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to connect Instagram' });
+        toast.error(data.error || 'Failed to connect Instagram');
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to connect Instagram' });
+      toast.error('Failed to connect Instagram');
     } finally {
       setLoading(false);
     }
@@ -92,17 +93,15 @@ export default function InstagramIntegrationPage() {
       const data = await response.json();
 
       if (response.ok) {
-        const postsText = data.data.posts ? `${data.data.posts} posts, ` : '';
-        setMessage({ 
-          type: 'success', 
-          text: `Synced ${postsText}${data.data.highlights} highlights, ${data.data.stories} stories` 
-        });
+        const postsText = data.data.posts ? `${data.data.posts} posts` : '';
+        const uploaded = data.data.uploaded ? `, uploaded ${data.data.uploaded} files` : '';
+        toast.success(`✅ Synced ${postsText}${uploaded}`);
         fetchSyncStatus();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to sync Instagram' });
+        toast.error(data.error || 'Failed to sync Instagram');
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to sync Instagram' });
+      toast.error('Failed to sync Instagram');
     } finally {
       setSyncing(false);
     }
@@ -114,7 +113,6 @@ export default function InstagramIntegrationPage() {
     }
 
     setLoading(true);
-    setMessage(null);
 
     try {
       const response = await fetch('/api/admin/instagram/clear', {
@@ -124,16 +122,13 @@ export default function InstagramIntegrationPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ 
-          type: 'success', 
-          text: `Deleted ${data.count} Instagram posts. Click Sync Now to re-sync with Cloudinary URLs.` 
-        });
+        toast.success(`Deleted ${data.count} Instagram posts. Click Sync Now to re-sync with Cloudinary URLs.`);
         fetchSyncStatus();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to clear posts' });
+        toast.error(data.error || 'Failed to clear posts');
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to clear Instagram posts' });
+      toast.error('Failed to clear Instagram posts');
     } finally {
       setLoading(false);
     }

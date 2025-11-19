@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import EnhancedBookingForm from '@/modules/booking/EnhancedBookingForm';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import NavigationButton from '@/components/NavigationButton';
 
 export default function BookingPage() {
   const { currentTheme } = useLayoutTheme();
+  const { t } = useLanguage();
   const isProfessional = currentTheme === 'professional';
 
   if (isProfessional) {
@@ -23,7 +25,7 @@ export default function BookingPage() {
               className="text-center mb-16"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
-                Demande de Devis
+                {t('booking.title')}
               </h1>
               
               <motion.div
@@ -34,7 +36,7 @@ export default function BookingPage() {
               />
               
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Réservez votre séance photo ou demandez un devis personnalisé
+                {t('booking.subtitle')}
               </p>
             </motion.div>
 
@@ -64,10 +66,10 @@ export default function BookingPage() {
           className="text-center mb-8 sm:mb-12"
         >
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Demande de Devis
+            {t('booking.title')}
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Réservez votre séance photo ou demandez un devis personnalisé
+            {t('booking.subtitle')}
           </p>
         </motion.div>
 

@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 
-// Dynamically import PhotobookEditorV3 (client-side only)
-const PhotobookEditorV3 = dynamic(
-  () => import('@/components/PhotobookEditorV3'),
+// Dynamically import PhotobookEditor (client-side only)
+const PhotobookEditor = dynamic(
+  () => import('@/components/PhotobookEditor'),
   { ssr: false }
 );
 
@@ -110,120 +110,7 @@ export default function PhotobookEditorPage() {
     loadData();
   }, [galleryId, photobookId]);
 
-  const handleSave = async (design: any) => {
-    try {
-      // Always use POST endpoint - it handles both create and update
-      const body: any = {
-        galleryId,
-        design,
-        title: photobook?.title || `Photobook ${new Date().toLocaleDateString()}`,
-      };
-      
-      // If we have a photobookId, include it for update
-      if (photobookId || photobook?.id) {
-        body.photobookId = photobookId || photobook.id;
-      }
 
-      const response = await fetch('/api/client/photobook', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save photobook');
-      }
-
-      const data = await response.json();
-      
-      // Update photobook state with returned data
-      if (data.photobook) {
-        setPhotobook(data.photobook);
-        
-        // Update URL if this was a new photobook (no photobookId in URL yet)
-        if (!photobookId && data.photobook.id) {
-          const newUrl = `/client/photobook?galleryId=${galleryId}&photobookId=${data.photobook.id}`;
-          window.history.replaceState(null, '', newUrl);
-        }
-      }
-      
-      return { success: true, photobook: data.photobook };
-    } catch (error) {
-      console.error('Error saving photobook:', error);
-      throw error; // Let the editor handle the error display
-    }
-  };
-
-  const handleSubmit = async (design: any, coverPhotoUrl: string | null) => {
-    try {
-      // First, ensure the photobook is saved with latest design
-      let currentPhotobookId = photobookId || photobook?.id;
-      
-      if (!currentPhotobookId) {
-        // If no photobook ID yet, save it first
-        const saveResult = await handleSave(design);
-        if (saveResult && saveResult.photobook) {
-          currentPhotobookId = saveResult.photobook.id;
-        }
-      }
-
-      if (!currentPhotobookId) {
-        throw new Error('Failed to save photobook before submission');
-      }
-
-      // Generate PDF metadata for submission
-      const pdfMetadata = {
-        generatedAt: new Date().toISOString(),
-        pageCount: design?.pages?.length || 0,
-        designVersion: 'polotno-v3',
-      };
-
-      // Now submit the photobook with PDF generation flag
-      const response = await fetch('/api/client/photobook/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          photobookId: currentPhotobookId,
-          title: photobook?.title || `Photobook ${new Date().toLocaleDateString()}`,
-          design,
-          coverPhotoUrl,
-          generatePDF: true, // Flag to indicate admin should have PDF access
-          pdfMetadata,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to submit photobook');
-      }
-
-      const data = await response.json();
-      
-      // Show success message with PDF info
-      const message = data.message || 'Photobook submitted successfully!';
-      const pdfNote = '\\n\\nThe design has been saved and is available for the admin to download as PDF.';
-      alert(message + pdfNote);
-      
-      router.push('/client/photobooks');
-    } catch (error: any) {
-      console.error('Error submitting photobook:', error);
-      alert(error.message || 'Failed to submit photobook. Please try again.');
-      throw error; // Re-throw to let the editor handle it
-    }
-  };
-
-  const handleExport = (blob: Blob) => {
-    // Create download link
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `photobook-${Date.now()}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
 
   if (loading) {
     return (
@@ -265,15 +152,23 @@ export default function PhotobookEditorPage() {
   }
 
   return (
-    <PhotobookEditorV3
-      galleryId={galleryId}
-      photobookId={photobookId || undefined}
-      photos={photos}
-      initialDesign={photobook?.design}
-      onSave={handleSave}
-      onSubmit={handleSubmit}
-      onExport={handleExport}
-      onClose={() => router.push('/client/photobooks')}
-    />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <PhotobookEditor
+        galleryId={galleryId}
+        selectedPhotos={photos.map((p, index) => ({
+          id: p.id,
+          url: p.url,
+          thumbnailUrl: p.thumbnailUrl || p.url,
+          photoNumber: index + 1,
+          width: p.width,
+          height: p.height,
+        }))}
+        onClose={() => router.push('/client/photobooks')}
+        onComplete={() => {
+          alert('Photobook created successfully!');
+          router.push('/client/photobooks');
+        }}
+      />
+    </div>
   );
 }

@@ -7,7 +7,7 @@ const teamMembers = [
     name: 'Innov8',
     role: 'Lead Photographer & Creative Director',
     bio: 'Professional photographer with 10+ years of experience, specializing in weddings and portraits.',
-    image: 'https://res.cloudinary.com/dc67gl8fu/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg',
+    image: 'https://res.cloudinary.com/dm22wlmpx/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg',
     instagram: '@ami_noss.photography',
     email: 'Innov8@photography.com',
     order: 1,

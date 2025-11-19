@@ -421,6 +421,12 @@ model Invoice {
   paymentStatus String    @default("unpaid") // unpaid, partial, paid
   paymentMethod String? // cash, bank_transfer, check, credit_card
   paymentDate   DateTime?
+  paymentHistory Json[] @default([]) // Array of {amount, date, method}
+
+  // Event details
+  eventRemarks String? @db.String // Special notes about the event
+  instagramLinks String[] @default([]) // Client's Instagram handles
+  planDetails String[] @default([]) // Event timeline/plan details
 
   // Invoice metadata
   issueDate       DateTime  @default(now())

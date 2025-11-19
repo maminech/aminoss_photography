@@ -5,10 +5,19 @@ import { useState } from 'react';
 import { FiLayout, FiCheck, FiX } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
 import { ThemeType } from '@/types/theme';
+import { usePathname } from 'next/navigation';
 
 export default function ThemeSwitcher() {
   const { currentTheme, switchTheme, availableThemes, themeConfig } = useLayoutTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Only show on home pages (simple mode homepage and professional-home)
+  const isHomepage = pathname === '/' || pathname === '/professional-home';
+  
+  if (!isHomepage) {
+    return null;
+  }
 
   const themes = {
     simple: {

@@ -75,10 +75,18 @@ export default function InstagramFeed({ images, videos = [], combinedMedia, onIm
   const [stories, setStories] = useState<Story[]>([]);
   const [playingVideos, setPlayingVideos] = useState<Set<string>>(new Set());
   const [mutedVideos, setMutedVideos] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
   const videoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({});
 
   // Use combined media if provided, otherwise just images
   const mediaItems = combinedMedia || images;
+
+  // Set loading to false when media is loaded
+  useEffect(() => {
+    if (mediaItems && mediaItems.length > 0) {
+      setLoading(false);
+    }
+  }, [mediaItems]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,6 +164,51 @@ export default function InstagramFeed({ images, videos = [], combinedMedia, onIm
   const isVideo = (item: MediaItem | VideoItem): item is VideoItem => {
     return 'type' in item && item.type === 'video';
   };
+
+  // Show loading skeleton while data is loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-dark-900 py-8">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="animate-pulse space-y-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white dark:bg-dark-800 rounded-xl shadow-md overflow-hidden">
+                <div className="flex items-center gap-3 p-4">
+                  <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16" />
+                  </div>
+                </div>
+                <div className="aspect-square bg-gray-200 dark:bg-gray-700" />
+                <div className="p-4 space-y-2">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no media
+  if (!mediaItems || mediaItems.length === 0) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-dark-900 flex items-center justify-center py-20">
+        <div className="text-center">
+          <Camera className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            No Posts Yet
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            Instagram posts will appear here once synced
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-dark-900">

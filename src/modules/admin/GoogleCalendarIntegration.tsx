@@ -24,6 +24,30 @@ export default function GoogleCalendarIntegration() {
 
   useEffect(() => {
     fetchSettings();
+    
+    // Check for OAuth callback parameters
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get('success');
+    const error = params.get('error');
+    
+    if (success === 'connected') {
+      setStatus('success');
+      setMessage('✅ Google Calendar connecté avec succès!');
+      // Clear URL parameters
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (error) {
+      setStatus('error');
+      const errorMessages: Record<string, string> = {
+        'access_denied': '❌ Accès refusé. Vous devez autoriser l\'application.',
+        'no_code': '❌ Code d\'autorisation manquant.',
+        'not_configured': '❌ Identifiants Google Calendar non configurés. Consultez GOOGLE_CALENDAR_SETUP_GUIDE.md',
+        'token_exchange_failed': '❌ Échec de l\'échange de token. Vérifiez vos identifiants.',
+        'unknown': '❌ Une erreur inconnue s\'est produite.',
+      };
+      setMessage(errorMessages[error] || `❌ Erreur: ${error}`);
+      // Clear URL parameters
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, []);
 
   const fetchSettings = async () => {
@@ -52,12 +76,22 @@ export default function GoogleCalendarIntegration() {
       } else {
         setStatus('error');
         console.error('Google Calendar auth error:', data);
-        setMessage(data.message || data.error || 'Erreur lors de la connexion à Google Calendar');
+        
+        // Provide helpful error messages
+        if (res.status === 503) {
+          setMessage(
+            '⚠️ Google Calendar non configuré. ' +
+            'Veuillez ajouter les identifiants OAuth dans les variables d\'environnement. ' +
+            'Consultez GOOGLE_CALENDAR_SETUP_GUIDE.md pour les instructions.'
+          );
+        } else {
+          setMessage(data.message || data.error || 'Erreur lors de la connexion à Google Calendar');
+        }
       }
     } catch (error) {
       console.error('Error connecting to Google Calendar:', error);
       setStatus('error');
-      setMessage('Erreur lors de la connexion: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      setMessage('Erreur réseau: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
     } finally {
       setConnecting(false);
     }

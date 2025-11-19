@@ -5,8 +5,12 @@ import Footer from '@/components/Footer';
 import AdminProviders from '@/components/AdminProviders';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { LayoutThemeProvider } from '@/contexts/ThemeContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import ThemeWrapper from '@/components/ThemeWrapper';
 import DynamicStyles from '@/components/DynamicStyles';
+import ToastProvider from '@/components/ToastProvider';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { EnhancedErrorBoundary, NetworkErrorBoundary } from '@/components/EnhancedErrorBoundary';
 import '@/styles/globals.css';
 
 const inter = Inter({ 
@@ -126,26 +130,61 @@ export default function RootLayout({
             `,
           }}
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        {/* iOS Safari specific optimizations */}
+        <meta name="apple-touch-fullscreen" content="yes" />
+        <meta name="format-detection" content="telephone=yes" />
+        <meta name="format-detection" content="date=yes" />
+        <meta name="format-detection" content="address=yes" />
+        <meta name="format-detection" content="email=yes" />
+        {/* Prevent iOS text size adjustment */}
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            /* iOS Safari video optimizations */
+            video {
+              -webkit-transform: translate3d(0, 0, 0);
+              transform: translate3d(0, 0, 0);
+            }
+            /* Improve touch responsiveness */
+            * {
+              -webkit-tap-highlight-color: transparent;
+              -webkit-touch-callout: none;
+            }
+            /* Better iOS scrolling */
+            body {
+              -webkit-overflow-scrolling: touch;
+            }
+          `
+        }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
         <link 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700;900&family=Open+Sans:wght@300;400;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Lora:wght@400;500;600;700&family=Merriweather:wght@300;400;700;900&family=Raleway:wght@300;400;500;600;700;800;900&family=Nunito:wght@300;400;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&family=Josefin+Sans:wght@300;400;600;700&family=Bebas+Neue&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Cinzel:wght@400;600;700;900&family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Pacifico&family=Righteous&family=Archivo+Black&display=swap" 
           rel="stylesheet" 
         />
+        <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript" async></script>
       </head>
       <body className="bg-white dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-        <ThemeProvider>
-          <LayoutThemeProvider>
-            <AdminProviders>
-              <DynamicStyles />
-              {children}
-            </AdminProviders>
-          </LayoutThemeProvider>
-        </ThemeProvider>
+        <EnhancedErrorBoundary>
+          <NetworkErrorBoundary>
+            <ThemeProvider>
+              <LayoutThemeProvider>
+                <LanguageProvider>
+                  <AdminProviders>
+                    <DynamicStyles />
+                    <ToastProvider />
+                    {children}
+                  </AdminProviders>
+                </LanguageProvider>
+              </LayoutThemeProvider>
+            </ThemeProvider>
+          </NetworkErrorBoundary>
+        </EnhancedErrorBoundary>
       </body>
     </html>
   );

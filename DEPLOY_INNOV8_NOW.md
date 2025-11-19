@@ -175,7 +175,7 @@ nslookup innov8.tn
 ### Issue: Images not loading
 **Solution:** 
 1. Check Cloudinary credentials in Vercel environment variables
-2. Verify `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=dc67gl8fu`
+2. Verify `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=dm22wlmpx`
 
 ### Issue: Admin login fails
 **Solution:**

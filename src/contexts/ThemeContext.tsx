@@ -19,7 +19,7 @@ interface LayoutThemeProviderProps {
   defaultTheme?: ThemeType;
 }
 
-export function LayoutThemeProvider({ children, defaultTheme = 'simple' }: LayoutThemeProviderProps) {
+export function LayoutThemeProvider({ children, defaultTheme = 'professional' }: LayoutThemeProviderProps) {
   const [currentTheme, setCurrentTheme] = useState<ThemeType>(defaultTheme);
   const [mounted, setMounted] = useState(false);
 
@@ -29,6 +29,9 @@ export function LayoutThemeProvider({ children, defaultTheme = 'simple' }: Layou
     const storedTheme = localStorage.getItem(THEME_STORAGE_KEY) as ThemeType;
     if (storedTheme && (storedTheme === 'simple' || storedTheme === 'professional')) {
       setCurrentTheme(storedTheme);
+    } else {
+      // If no theme is stored, default to professional
+      setCurrentTheme('professional');
     }
   }, []);
 

@@ -37,8 +37,6 @@ export default function PublicLayout({
         {children}
       </main>
       {!isSimpleMode && !isProfessionalHome && !isProfessionalRoot && <Footer />}
-      {/* Global Options Button - available on all pages */}
-      <GlobalOptionsButton />
     </ThemeWrapper>
   );
 }

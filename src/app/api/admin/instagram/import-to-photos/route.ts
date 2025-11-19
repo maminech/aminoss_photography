@@ -2,14 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
-import { v2 as cloudinary } from 'cloudinary';
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import cloudinary from '@/lib/cloudinary';
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { postIds, type } = body; // type: 'photos' or 'videos' or undefined for all
 
     // Get Instagram posts from database
@@ -27,9 +20,22 @@ export async function POST(req: Request) {
       orderBy: { timestamp: 'desc' },
     });
 
+    console.log(`📊 Found ${instagramPosts.length} Instagram posts in database`);
+
     if (instagramPosts.length === 0) {
+      console.log('❌ No Instagram posts found in database. Please sync Instagram first.');
       return NextResponse.json(
-        { error: 'No Instagram posts found to import' },
+        { 
+          error: 'No Instagram posts found to import',
+          message: 'Please click "Sync Now" first to fetch posts from Instagram, then try importing again.',
+          stats: {
+            importedPhotos: 0,
+            importedVideos: 0,
+            imported: 0,
+            skipped: 0,
+            total: 0,
+          }
+        },
         { status: 404 }
       );
     }
@@ -78,18 +84,43 @@ export async function POST(req: Request) {
         if (!post.mediaUrl.includes('cloudinary')) {
           console.log(`📤 Uploading ${post.mediaType} ${post.instagramId} to Cloudinary...`);
           
-          const urlToUpload = isVideo ? post.thumbnailUrl : post.mediaUrl;
-          const uploadResult = await cloudinary.uploader.upload(urlToUpload || '', {
-            folder: 'innov8_portfolio/instagram',
-            resource_type: 'image',
-            transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
-          });
-          
-          cloudinaryUrl = uploadResult.secure_url;
-          cloudinaryThumbnail = uploadResult.secure_url.replace(
-            '/upload/',
-            '/upload/w_800,h_800,c_fill,q_90,f_auto/'
-          );
+          if (isVideo) {
+            // Upload actual video file to Cloudinary
+            console.log(`🎥 Uploading video file for ${post.instagramId}`);
+            try {
+              const uploadResult = await cloudinary.uploader.upload(post.mediaUrl || '', {
+                folder: 'innov8_portfolio/instagram/reels',
+                resource_type: 'video',
+                transformation: [{ quality: 'auto:good' }],
+              });
+              
+              cloudinaryUrl = uploadResult.secure_url;
+              // Generate thumbnail from video
+              cloudinaryThumbnail = uploadResult.secure_url.replace(
+                '/video/upload/',
+                '/video/upload/w_800,h_800,c_fill,q_90,f_auto/'
+              ).replace(/\.[^.]+$/, '.jpg');
+              
+              console.log(`✅ Uploaded video to Cloudinary: ${cloudinaryUrl}`);
+            } catch (videoError) {
+              console.error(`Failed to upload video ${post.instagramId}:`, videoError);
+              // Fallback to Instagram URLs
+              console.log(`⚠️ Using Instagram URLs as fallback`);
+            }
+          } else {
+            // Upload image to Cloudinary
+            const uploadResult = await cloudinary.uploader.upload(post.mediaUrl || '', {
+              folder: 'innov8_portfolio/instagram',
+              resource_type: 'image',
+              transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
+            });
+            
+            cloudinaryUrl = uploadResult.secure_url;
+            cloudinaryThumbnail = uploadResult.secure_url.replace(
+              '/upload/',
+              '/upload/w_800,h_800,c_fill,q_90,f_auto/'
+            );
+          }
           
           // Update Instagram post with Cloudinary URL
           await prisma.instagramPost.update({
@@ -111,7 +142,7 @@ export async function POST(req: Request) {
           await prisma.video.create({
             data: {
               cloudinaryId: post.instagramId,
-              url: post.mediaUrl, // Original video URL
+              url: cloudinaryUrl, // Cloudinary video URL
               thumbnailUrl: cloudinaryThumbnail,
               title: title,
               description: post.caption || '',

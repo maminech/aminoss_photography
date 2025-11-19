@@ -6,8 +6,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FiMail, FiLock, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
 import Logo from '@/components/Logo';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function ClientLoginForm() {
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
@@ -21,9 +23,9 @@ function ClientLoginForm() {
 
   useEffect(() => {
     if (expired === 'true') {
-      setError('Your session has expired. Please log in again.');
+      setError(t('client.sessionExpired'));
     }
-  }, [expired]);
+  }, [expired, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +63,7 @@ function ClientLoginForm() {
           className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 mb-8 transition"
         >
           <FiArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
+          {t('common.back')} {t('common.home')}
         </Link>
 
         {/* Login Card */}
@@ -73,9 +75,9 @@ function ClientLoginForm() {
                 <Logo size="md" variant="light" />
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white text-center">Client Portal</h1>
+            <h1 className="text-2xl font-bold text-white text-center">{t('client.login')}</h1>
             <p className="text-primary-100 dark:text-primary-200 text-center mt-2">
-              Access your photos and galleries
+              {t('client.viewGallery')}
             </p>
           </div>
 
@@ -91,7 +93,7 @@ function ClientLoginForm() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email Address
+                  {t('client.email')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -105,14 +107,14 @@ function ClientLoginForm() {
                     }
                     required
                     className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent transition placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    placeholder="your@email.com"
+                    placeholder={t('client.email')}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Password
+                  {t('client.password')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -139,10 +141,10 @@ function ClientLoginForm() {
                 {loading ? (
                   <span className="inline-flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Signing in...
+                    {t('client.loggingIn')}
                   </span>
                 ) : (
-                  'Sign In'
+                  t('client.loginButton')
                 )}
               </button>
             </form>

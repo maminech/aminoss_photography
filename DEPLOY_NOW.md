@@ -9,7 +9,7 @@ You'll need to add these environment variables to Vercel:
 DATABASE_URL=mongodb+srv://Innov8:Innov82001@innov8.lyu8e0q.mongodb.net/Innov8-portfolio
 NEXTAUTH_SECRET=your-secret-key-here
 NEXTAUTH_URL=https://your-domain.vercel.app
-CLOUDINARY_CLOUD_NAME=dc67gl8fu
+CLOUDINARY_CLOUD_NAME=dm22wlmpx
 CLOUDINARY_API_KEY=your-cloudinary-api-key
 CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 EMAIL_USER=innov8.tn@gmail.com

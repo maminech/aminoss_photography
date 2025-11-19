@@ -49,7 +49,7 @@ async function testSync() {
         formData.append('folder', 'innov8_portfolio/instagram');
         
         const uploadResponse = await fetch(
-          'https://api.cloudinary.com/v1_1/dc67gl8fu/image/upload',
+          'https://api.cloudinary.com/v1_1/dm22wlmpx/image/upload',
           {
             method: 'POST',
             body: formData,

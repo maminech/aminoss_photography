@@ -2,11 +2,11 @@
 
 /**
  * Client Testimonials Page
- * Beautiful form for clients to submit testimonials with images
+ * Display approved testimonials and allow submission
  */
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { 
@@ -16,11 +16,29 @@ import {
   Upload,
   Send,
   CheckCircle,
-  Star
+  Star,
+  Quote,
+  Calendar,
+  Sparkles
 } from 'lucide-react';
+
+interface Testimonial {
+  id: string;
+  clientName: string;
+  rating: number;
+  comment: string;
+  eventType: string | null;
+  eventDate: Date | null;
+  photoUrl: string | null;
+  featured: boolean;
+  createdAt: Date;
+}
 
 export default function TestimonialsPage() {
   const router = useRouter();
+  const [showForm, setShowForm] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     type: 'testimonial' as 'testimonial' | 'text' | 'image',
     content: '',
@@ -31,6 +49,24 @@ export default function TestimonialsPage() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Load testimonials
+  useEffect(() => {
+    const loadTestimonials = async () => {
+      try {
+        const res = await fetch('/api/public/testimonials');
+        if (res.ok) {
+          const data = await res.json();
+          setTestimonials(data.testimonials || []);
+        }
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTestimonials();
+  }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -116,10 +152,13 @@ export default function TestimonialsPage() {
             
             <div className="flex gap-4 justify-center">
               <button
-                onClick={() => setSubmitted(false)}
+                onClick={() => {
+                  setSubmitted(false);
+                  setShowForm(false);
+                }}
                 className="btn-secondary"
               >
-                Envoyer un autre
+                Voir les témoignages
               </button>
               <button
                 onClick={() => router.push('/')}
@@ -136,7 +175,7 @@ export default function TestimonialsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-white to-primary/10 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -146,22 +185,161 @@ export default function TestimonialsPage() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <Heart className="w-8 h-8 text-primary" />
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-              Partagez Votre Expérience
+              {showForm ? 'Partagez Votre Expérience' : 'Témoignages de nos Clients'}
             </h1>
             <Heart className="w-8 h-8 text-primary" />
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Votre témoignage nous aide à grandir et inspire d'autres couples. Partagez vos moments précieux avec nous! ✨
+            {showForm 
+              ? "Votre témoignage nous aide à grandir et inspire d'autres couples. Partagez vos moments précieux avec nous! ✨"
+              : "Découvrez les expériences uniques de nos clients et leurs moments inoubliables ✨"
+            }
           </p>
+          
+          {/* Toggle Button */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6"
+          >
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="btn-primary inline-flex items-center gap-2"
+            >
+              {showForm ? (
+                <>
+                  <Star className="w-5 h-5" />
+                  Voir les témoignages
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  Partagez votre expérience
+                </>
+              )}
+            </button>
+          </motion.div>
         </motion.div>
 
+        {/* Testimonials Display */}
+        {!showForm && (
+          <div className="space-y-8">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">Chargement des témoignages...</p>
+              </div>
+            ) : testimonials.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-card p-12 text-center"
+              >
+                <Sparkles className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Aucun témoignage pour le moment
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  Soyez le premier à partager votre expérience!
+                </p>
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="btn-primary"
+                >
+                  Partagez votre témoignage
+                </button>
+              </motion.div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {testimonials.map((testimonial, index) => (
+                  <motion.div
+                    key={testimonial.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`glass-card p-6 ${testimonial.featured ? 'border-2 border-primary/50 bg-primary/5' : ''}`}
+                  >
+                    {testimonial.featured && (
+                      <div className="flex items-center gap-2 mb-3">
+                        <Star className="w-5 h-5 text-primary fill-primary" />
+                        <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                          Témoignage vedette
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Photo */}
+                    {testimonial.photoUrl && (
+                      <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-4">
+                        <Image
+                          src={testimonial.photoUrl}
+                          alt={testimonial.clientName}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-5 h-5 ${
+                            i < testimonial.rating
+                              ? 'text-yellow-500 fill-yellow-500'
+                              : 'text-gray-300 dark:text-gray-600'
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Comment */}
+                    <div className="relative mb-4">
+                      <Quote className="absolute -top-2 -left-2 w-8 h-8 text-primary/20" />
+                      <p className="text-gray-700 dark:text-gray-300 italic pl-6">
+                        "{testimonial.comment}"
+                      </p>
+                    </div>
+
+                    {/* Author */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div>
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          {testimonial.clientName}
+                        </p>
+                        {testimonial.eventType && (
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {testimonial.eventType}
+                          </p>
+                        )}
+                      </div>
+                      {testimonial.eventDate && (
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                          <Calendar className="w-4 h-4" />
+                          {new Date(testimonial.eventDate).toLocaleDateString('fr-FR', {
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Form */}
-        <motion.form
+        {showForm && (
+          <motion.form
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onSubmit={handleSubmit}
-          className="glass-card p-8 space-y-6"
+          className="glass-card p-8 space-y-6 max-w-4xl mx-auto"
         >
           {/* Type Selection */}
           <div>
@@ -303,31 +481,34 @@ export default function TestimonialsPage() {
               Votre témoignage sera examiné avant publication
             </p>
           </div>
-        </motion.form>
+          </motion.form>
+        )}
 
         {/* Info Card */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="mt-8 glass-card p-6 bg-primary/5 dark:bg-primary/10 border-2 border-primary/20"
-        >
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-              <Heart className="w-6 h-6 text-primary" />
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-8 glass-card p-6 bg-primary/5 dark:bg-primary/10 border-2 border-primary/20 max-w-4xl mx-auto"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <Heart className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  Pourquoi partager votre témoignage?
+                </h3>
+                <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                  <li>✨ Aidez d'autres couples à choisir leur photographe</li>
+                  <li>💝 Partagez vos émotions et souvenirs précieux</li>
+                  <li>🌟 Inspirez et rendez hommage à votre histoire</li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                Pourquoi partager votre témoignage?
-              </h3>
-              <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                <li>✨ Aidez d'autres couples à choisir leur photographe</li>
-                <li>💝 Partagez vos émotions et souvenirs précieux</li>
-                <li>🌟 Inspirez et rendez hommage à votre histoire</li>
-              </ul>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

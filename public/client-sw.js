@@ -62,10 +62,18 @@ self.addEventListener('fetch', (event) => {
             return cached;
           }
           return fetch(request).then((response) => {
-            if (response && response.status === 200) {
-              cache.put(request, response.clone());
+            // Only cache successful responses
+            if (response && response.status === 200 && response.type !== 'opaque') {
+              // Clone immediately before any operations
+              const responseToCache = response.clone();
+              cache.put(request, responseToCache).catch(() => {
+                // Silently fail for large images or quota issues
+              });
             }
             return response;
+          }).catch((err) => {
+            console.log('Image fetch failed:', url.pathname);
+            throw err;
           });
         });
       })
@@ -80,9 +88,14 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(request).then((cached) => {
         return cached || fetch(request).then((response) => {
-          if (response && response.status === 200) {
+          // Only cache successful, non-opaque responses
+          if (response && response.status === 200 && response.type !== 'opaque') {
+            // Clone immediately before caching
+            const responseToCache = response.clone();
             caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, response.clone());
+              cache.put(request, responseToCache).catch(() => {
+                // Silently fail cache writes
+              });
             });
           }
           return response;
@@ -96,13 +109,22 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
-        // Cache successful responses
-        if (response && response.status === 200) {
-          const responseClone = response.clone();
-          caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(request, responseClone);
-          });
+        // Don't cache non-successful responses or opaque responses
+        if (!response || response.status !== 200 || response.type === 'opaque') {
+          return response;
         }
+        
+        // Clone BEFORE any other operations
+        const responseToCache = response.clone();
+        
+        // Cache in background (don't await)
+        caches.open(RUNTIME_CACHE).then((cache) => {
+          cache.put(request, responseToCache).catch((err) => {
+            // Silently fail cache writes (e.g., for large responses)
+            console.log('Cache write skipped:', url.pathname);
+          });
+        });
+        
         return response;
       })
       .catch(() => {

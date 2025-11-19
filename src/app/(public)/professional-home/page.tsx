@@ -5,12 +5,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiInstagram, FiFacebook, FiMail, FiPhone, FiMenu, FiX, FiGrid, FiLayers } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiInstagram, FiFacebook, FiMail, FiPhone, FiMenu, FiX, FiGrid, FiLayers, FiUser } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function ProfessionalHomePage() {
   const router = useRouter();
   const { currentTheme, switchTheme } = useLayoutTheme();
+  const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -216,37 +219,78 @@ export default function ProfessionalHomePage() {
                 href="/gallery" 
                 className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
               >
-                Gallery
+                {t('nav.gallery')}
               </Link>
               <Link 
                 href="/about" 
                 className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
               >
-                About
+                {t('nav.about')}
               </Link>
               <Link 
                 href="/videos" 
                 className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
               >
-                Videos
+                {t('nav.videos')}
               </Link>
               <Link 
                 href="/admin/dashboard" 
                 className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
               >
-                Admin
+                {t('admin.dashboard')}
               </Link>
-              <Link 
-                href="/client/login" 
-                className="text-white hover:text-[#d4af37] transition-colors font-lato text-xs lg:text-sm uppercase tracking-[0.2em]"
-              >
-                Client
+              
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+              
+              {/* Client Login Button - Animated */}
+              <Link href="/client/login">
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1,
+                    boxShadow: [
+                      '0 0 20px rgba(212, 175, 55, 0.4)',
+                      '0 0 35px rgba(212, 175, 55, 0.6)',
+                      '0 0 20px rgba(212, 175, 55, 0.4)'
+                    ]
+                  }}
+                  transition={{ 
+                    opacity: { duration: 0.5, delay: 2.2 },
+                    scale: { duration: 0.5, delay: 2.2 },
+                    boxShadow: { 
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: 'easeInOut'
+                    }
+                  }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative px-5 py-2.5 bg-gradient-to-r from-[#d4af37] via-[#f4d03f] to-[#d4af37] bg-[length:200%_100%] text-white font-semibold rounded-full shadow-lg hover:shadow-2xl transition-all overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    animate={{
+                      x: ['-100%', '100%']
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: 'linear'
+                    }}
+                  />
+                  <span className="relative z-10 flex items-center gap-2 font-lato text-xs uppercase tracking-[0.15em]">
+                    <FiUser className="w-4 h-4" />
+                    {t('client.login')}
+                  </span>
+                </motion.button>
               </Link>
               <Link 
                 href="/contact" 
                 className="px-4 lg:px-6 py-2 lg:py-3 bg-[#d4af37] text-white font-lato text-xs lg:text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300"
               >
-                Contact
+                {t('nav.contact')}
               </Link>
             </div>
 
@@ -270,43 +314,127 @@ export default function ProfessionalHomePage() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
                 >
-                  Gallery
+                  {t('nav.gallery')}
                 </Link>
                 <Link 
                   href="/about" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
                 >
-                  About
+                  {t('nav.about')}
                 </Link>
                 <Link 
                   href="/videos" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
                 >
-                  Videos
+                  {t('nav.videos')}
                 </Link>
                 <Link 
                   href="/admin/dashboard" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
                 >
-                  Admin Dashboard
+                  {t('admin.dashboard')}
                 </Link>
+                
+                {/* Language Switcher - Mobile */}
+                <div className="py-3 border-b border-white/10 flex justify-center">
+                  <LanguageSwitcher />
+                </div>
+                
+                {/* Client Portal Button - Mobile with Animation */}
                 <Link 
                   href="/client/login" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-white hover:text-[#d4af37] transition-colors font-lato text-sm uppercase tracking-[0.2em] py-3 border-b border-white/10"
                 >
-                  Client Portal
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ 
+                      opacity: 1, 
+                      x: 0,
+                      boxShadow: [
+                        '0 0 20px rgba(212, 175, 55, 0.4)',
+                        '0 0 30px rgba(212, 175, 55, 0.6)',
+                        '0 0 20px rgba(212, 175, 55, 0.4)'
+                      ]
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.3, delay: 0.5 },
+                      x: { duration: 0.3, delay: 0.5 },
+                      boxShadow: { 
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'easeInOut'
+                      }
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative mt-2 px-6 py-4 bg-gradient-to-r from-[#d4af37] via-[#f4d03f] to-[#d4af37] rounded-lg text-white font-lato text-sm uppercase tracking-[0.2em] text-center overflow-hidden"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      animate={{
+                        x: ['-100%', '100%']
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: 'linear'
+                      }}
+                    />
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <FiUser className="w-5 h-5" />
+                      Client Portal
+                    </span>
+                  </motion.div>
                 </Link>
+                
+                {/* Contact Button - Mobile with Animation */}
                 <Link 
                   href="/contact" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-center px-6 py-3 bg-[#d4af37] text-white font-lato text-sm uppercase tracking-[0.2em] hover:bg-white hover:text-[#1a1a1a] transition-all duration-300 mt-2"
                 >
-                  Contact
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ 
+                      opacity: 1, 
+                      x: 0,
+                      boxShadow: [
+                        '0 0 20px rgba(212, 175, 55, 0.4)',
+                        '0 0 30px rgba(212, 175, 55, 0.6)',
+                        '0 0 20px rgba(212, 175, 55, 0.4)'
+                      ]
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.3, delay: 0.6 },
+                      x: { duration: 0.3, delay: 0.6 },
+                      boxShadow: { 
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: 'easeInOut'
+                      }
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative mt-2 px-6 py-4 bg-gradient-to-r from-[#d4af37] via-[#f4d03f] to-[#d4af37] rounded-lg text-white font-lato text-sm uppercase tracking-[0.2em] text-center overflow-hidden"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      animate={{
+                        x: ['-100%', '100%']
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: 'linear'
+                      }}
+                    />
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <FiMail className="w-5 h-5" />
+                      {t('nav.contact')}
+                    </span>
+                  </motion.div>
                 </Link>
+                
                 {/* Mobile Social Links */}
                 <div className="flex items-center justify-center space-x-4 pt-4 border-t border-white/10">
                   <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-[#d4af37] hover:border-[#d4af37] transition-all duration-300">
@@ -412,22 +540,20 @@ export default function ProfessionalHomePage() {
           transition={{ duration: 1, delay: 2.2 }} 
           className="absolute inset-0 flex flex-col items-center justify-center z-30 text-center px-4 sm:px-6 pointer-events-none"
         >
-          <div className="pointer-events-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-playfair font-bold text-white mb-4 sm:mb-6 leading-tight">
-            Capturing Life's
-            <br />
-            Beautiful Moments
+          <div className="pointer-events-auto text-center w-full">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-playfair font-bold text-white mb-4 sm:mb-6 leading-tight text-center">
+            {t('home.heroHeading')}
           </h1>
           
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: '60px' }}
             transition={{ duration: 0.8, delay: 2.5 }}
-            className="h-[2px] bg-[#d4af37] mb-6 sm:mb-8"
+            className="h-[2px] bg-[#d4af37] mb-6 sm:mb-8 mx-auto"
           />
 
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 font-lato max-w-xl lg:max-w-2xl mb-8 sm:mb-10 lg:mb-12 leading-relaxed px-4">
-            Professional photography that tells your unique story through artistry and passion
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 font-lato max-w-xl lg:max-w-2xl mb-8 sm:mb-10 lg:mb-12 leading-relaxed px-4 mx-auto text-center">
+            {t('home.heroDescription')}
           </p>
 
           <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none px-4">
@@ -448,7 +574,7 @@ export default function ProfessionalHomePage() {
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 
                 {/* Text */}
-                <span className="relative z-10">Demande de Devis</span>
+                <span className="relative z-10">{t('booking.title')}</span>
                 
                 {/* Arrow */}
                 <FiChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
@@ -474,7 +600,7 @@ export default function ProfessionalHomePage() {
                 <FiGrid className="w-4 h-4 relative z-10 group-hover:rotate-90 transition-transform duration-500" />
                 
                 {/* Text */}
-                <span className="relative z-10 font-semibold">Explore Gallery</span>
+                <span className="relative z-10 font-semibold">{t('home.exploreGallery')}</span>
                 
                 {/* Arrow */}
                 <FiChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />

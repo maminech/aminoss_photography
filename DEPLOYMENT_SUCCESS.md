@@ -48,7 +48,7 @@ Environment: Production
 
 #### 4. CLOUDINARY_CLOUD_NAME
 ```
-Value: dc67gl8fu
+Value: dm22wlmpx
 Environment: Production, Preview, Development
 ```
 

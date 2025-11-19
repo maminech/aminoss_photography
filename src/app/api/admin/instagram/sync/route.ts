@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
     console.log('🔄 Starting Instagram sync...');
 
-    // Try to fetch Instagram Media (Feed Posts) - requires Business account
+    // Try to fetch Instagram Media (Feed Posts)
     const mediaResponse = await fetch(
       `https://graph.instagram.com/${userId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&limit=50&access_token=${accessToken}`
     );
@@ -62,9 +62,7 @@ export async function POST(req: Request) {
     if (!mediaResponse.ok) {
       const error = await mediaResponse.json();
       console.error('Instagram Media API Error:', error);
-      console.log('ℹ️ Note: Feed posts require Instagram Business Account with proper permissions');
       
-      // Check if it's a permissions error
       if (error.error?.code === 190 || error.error?.code === 10 || error.error?.message?.includes('business')) {
         return NextResponse.json({
           error: 'Instagram Business Account Required',
@@ -73,8 +71,7 @@ export async function POST(req: Request) {
         }, { status: 400 });
       }
       
-      // Continue with highlights/stories only
-      console.log('⚠️ Skipping feed posts, will try highlights only');
+      console.log('⚠️ Skipping feed posts');
     } else {
       const mediaData = await mediaResponse.json();
       mediaPosts = mediaData.data || [];
@@ -86,12 +83,20 @@ export async function POST(req: Request) {
     let syncedStories = 0;
     let uploadedToCloudinary = 0;
 
+    // Import Cloudinary
+    const cloudinary = await import('cloudinary').then(m => m.v2);
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
     // Sync Instagram Feed Posts and upload to Cloudinary
     for (const post of mediaPosts) {
       try {
-        // Handle CAROUSEL_ALBUM - fetch children media
+        // Handle CAROUSEL_ALBUM
         if (post.media_type === 'CAROUSEL_ALBUM') {
-          console.log(`📦 Found carousel album ${post.id}, fetching children...`);
+          console.log(`📦 Found carousel album ${post.id}`);
           
           try {
             const childrenResponse = await fetch(
@@ -102,51 +107,31 @@ export async function POST(req: Request) {
               const childrenData = await childrenResponse.json();
               const children = childrenData.data || [];
               
-              console.log(`  📸 Found ${children.length} items in carousel`);
-              
-              // Process each child media item
               for (const child of children) {
                 if (child.media_type === 'IMAGE') {
                   let cloudinaryUrl = child.media_url;
                   let cloudinaryThumbnail = child.media_url;
 
-                  console.log(`📤 Uploading carousel image ${child.id} to Cloudinary...`);
-                  
                   try {
-                    const formBody = new URLSearchParams({
-                      file: child.media_url || '',
-                      upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'innov8_portfolio',
+                    const uploadResult = await cloudinary.uploader.upload(child.media_url, {
                       folder: 'innov8_portfolio/instagram',
+                      resource_type: 'image',
                     });
 
-                    const uploadResponse = await fetch(
-                      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-                      {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: formBody.toString(),
-                      }
+                    cloudinaryUrl = uploadResult.secure_url;
+                    cloudinaryThumbnail = uploadResult.secure_url.replace(
+                      '/upload/',
+                      '/upload/w_800,h_800,c_fill,q_90,f_auto/'
                     );
-
-                    if (uploadResponse.ok) {
-                      const uploadResult = await uploadResponse.json();
-                      cloudinaryUrl = uploadResult.secure_url;
-                      cloudinaryThumbnail = uploadResult.secure_url.replace(
-                        '/upload/',
-                        '/upload/w_800,h_800,c_fill,q_90,f_auto/'
-                      );
-                      uploadedToCloudinary++;
-                      console.log(`✅ Uploaded carousel image to Cloudinary: ${cloudinaryUrl}`);
-                    }
+                    uploadedToCloudinary++;
                   } catch (uploadError) {
-                    console.error(`Upload error for carousel item ${child.id}:`, uploadError);
+                    console.error(`Upload failed:`, uploadError);
                   }
 
-                  // Save each carousel image as separate post
                   await prisma.instagramPost.upsert({
                     where: { instagramId: child.id },
                     update: {
-                      caption: post.caption || '', // Use parent carousel caption
+                      caption: post.caption || '',
                       mediaType: 'IMAGE',
                       mediaUrl: cloudinaryUrl,
                       thumbnailUrl: cloudinaryThumbnail,
@@ -171,56 +156,49 @@ export async function POST(req: Request) {
               }
             }
           } catch (carouselError) {
-            console.error(`Error fetching carousel children for ${post.id}:`, carouselError);
+            console.error(`Carousel error:`, carouselError);
           }
           
-          continue; // Skip to next post after processing carousel
+          continue;
         }
 
-        // Sync both images and videos (use thumbnail for videos)
+        // Sync images and videos
         if (post.media_type === 'IMAGE' || post.media_type === 'VIDEO') {
           let cloudinaryUrl = post.media_url;
           let cloudinaryThumbnail = post.thumbnail_url || post.media_url;
 
-          // Upload thumbnail to Cloudinary (videos use thumbnail_url for display)
-          const urlToUpload = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
-          console.log(`📤 Uploading ${post.media_type} ${post.id} to Cloudinary...`);
-          
           try {
-            // Use URLSearchParams for proper form encoding
-            const formBody = new URLSearchParams({
-              file: urlToUpload || '',
-              upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'innov8_portfolio',
-              folder: 'innov8_portfolio/instagram',
-            });
+            if (post.media_type === 'VIDEO') {
+              const uploadResult = await cloudinary.uploader.upload(post.media_url, {
+                folder: 'innov8_portfolio/instagram/reels',
+                resource_type: 'video',
+              });
 
-            const uploadResponse = await fetch(
-              `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody.toString(),
+              cloudinaryUrl = uploadResult.secure_url;
+              
+              if (post.thumbnail_url) {
+                const thumbResult = await cloudinary.uploader.upload(post.thumbnail_url, {
+                  folder: 'innov8_portfolio/instagram/reels',
+                  resource_type: 'image',
+                });
+                cloudinaryThumbnail = thumbResult.secure_url;
               }
-            );
+              uploadedToCloudinary++;
+            } else {
+              const uploadResult = await cloudinary.uploader.upload(post.media_url, {
+                folder: 'innov8_portfolio/instagram',
+                resource_type: 'image',
+              });
 
-            if (uploadResponse.ok) {
-              const uploadResult = await uploadResponse.json();
               cloudinaryUrl = uploadResult.secure_url;
               cloudinaryThumbnail = uploadResult.secure_url.replace(
                 '/upload/',
                 '/upload/w_800,h_800,c_fill,q_90,f_auto/'
               );
               uploadedToCloudinary++;
-              console.log(`✅ Uploaded to Cloudinary: ${cloudinaryUrl}`);
-            } else {
-              const errorData = await uploadResponse.json();
-              console.error(`Failed to upload ${post.id} to Cloudinary:`, errorData);
             }
           } catch (uploadError) {
-            console.error(`Upload error for ${post.id}:`, uploadError);
-            // Keep Instagram URL as fallback
+            console.error(`Upload failed:`, uploadError);
           }
 
           await prisma.instagramPost.upsert({
@@ -249,113 +227,8 @@ export async function POST(req: Request) {
           syncedPosts++;
         }
       } catch (error) {
-        console.error(`Error syncing post ${post.id}:`, error);
+        console.error(`Error syncing post:`, error);
       }
-    }
-
-    // Also fetch Instagram Highlights (Stories) if available
-    try {
-      console.log('🔍 Attempting to fetch Instagram highlights...');
-      
-      // Try the media_insights edge for highlights
-      const highlightsResponse = await fetch(
-        `https://graph.instagram.com/${userId}/stories?fields=id,name,cover_media{thumbnail_url}&access_token=${accessToken}`
-      );
-
-      console.log('Highlights API response status:', highlightsResponse.status);
-      
-      if (!highlightsResponse.ok) {
-        const errorData = await highlightsResponse.json();
-        console.log('Highlights API error:', JSON.stringify(errorData, null, 2));
-        throw new Error(`Highlights API returned ${highlightsResponse.status}: ${JSON.stringify(errorData)}`);
-      }
-
-      const highlightsData = await highlightsResponse.json();
-      console.log('Highlights API response:', JSON.stringify(highlightsData, null, 2));
-      
-      const highlights: InstagramHighlight[] = highlightsData.data || [];
-
-      console.log(`📚 Found ${highlights.length} highlights`);
-
-      if (highlights.length > 0) {
-        // Sync each highlight
-        for (let index = 0; index < highlights.length; index++) {
-          const highlight = highlights[index];
-          
-          try {
-            // Fetch stories in this highlight
-            const storiesResponse = await fetch(
-              `https://graph.instagram.com/${highlight.id}/stories?fields=id,media_type,media_url,thumbnail_url,timestamp&access_token=${accessToken}`
-            );
-
-            if (!storiesResponse.ok) {
-              console.error(`Failed to fetch stories for highlight ${highlight.id}`);
-              continue;
-            }
-
-            const storiesData = await storiesResponse.json();
-            const stories: InstagramMedia[] = storiesData.data || [];
-
-            console.log(`  📖 Highlight "${highlight.name}": ${stories.length} stories`);
-
-            // Upsert highlight
-            const dbHighlight = await prisma.instagramHighlight.upsert({
-              where: { instagramId: highlight.id },
-              update: {
-                name: highlight.name,
-                coverImage: highlight.cover_media?.thumbnail_url || '',
-                order: index,
-                active: true,
-                updatedAt: new Date(),
-              },
-              create: {
-                instagramId: highlight.id,
-                name: highlight.name,
-                coverImage: highlight.cover_media?.thumbnail_url || '',
-                order: index,
-                active: true,
-              },
-            });
-
-            syncedHighlights++;
-
-            // Delete existing stories for this highlight
-            await prisma.instagramStory.deleteMany({
-              where: { highlightId: dbHighlight.id },
-            });
-
-            // Insert stories
-            for (let storyIndex = 0; storyIndex < stories.length; storyIndex++) {
-              const story = stories[storyIndex];
-              
-              await prisma.instagramStory.create({
-                data: {
-                  highlightId: dbHighlight.id,
-                  instagramId: story.id,
-                  mediaType: story.media_type,
-                  mediaUrl: story.media_url,
-                  thumbnailUrl: story.thumbnail_url || story.media_url,
-                  timestamp: new Date(story.timestamp),
-                  order: storyIndex,
-                },
-              });
-
-              syncedStories++;
-            }
-          } catch (error) {
-            console.error(`Error syncing highlight ${highlight.id}:`, error);
-          }
-        }
-      }
-    } catch (highlightError: any) {
-      console.error('❌ Highlights sync error:', highlightError);
-      console.error('Error details:', highlightError.message);
-      console.log('\n⚠️ Instagram Highlights require:');
-      console.log('1. Instagram Business or Creator account');
-      console.log('2. Account must be connected to a Facebook Page');
-      console.log('3. Access token needs instagram_basic and instagram_manage_insights permissions');
-      console.log('4. Stories API is limited and may not be available for all accounts');
-      console.log('\nℹ️ Highlights sync failed but posts were synced successfully.');
     }
 
     // Update last sync time
@@ -364,15 +237,12 @@ export async function POST(req: Request) {
       data: { instagramLastSync: new Date() },
     });
 
-    console.log(`✅ Sync complete: ${syncedPosts} posts, ${syncedHighlights} highlights, ${syncedStories} stories`);
-
     return NextResponse.json({
       success: true,
-      message: `Successfully synced ${syncedPosts} posts, ${syncedHighlights} highlights, ${syncedStories} stories`,
+      message: `Successfully synced ${syncedPosts} posts. Uploaded ${uploadedToCloudinary} files to Cloudinary.`,
       data: {
         posts: syncedPosts,
-        highlights: syncedHighlights,
-        stories: syncedStories,
+        uploaded: uploadedToCloudinary,
       },
     });
   } catch (error: any) {
@@ -384,7 +254,7 @@ export async function POST(req: Request) {
   }
 }
 
-// GET endpoint to check sync status
+// GET endpoint
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -394,20 +264,14 @@ export async function GET(req: Request) {
 
     const settings = await prisma.siteSettings.findFirst();
     const postsCount = await prisma.instagramPost.count();
-    const highlightsCount = await prisma.instagramHighlight.count();
-    const storiesCount = await prisma.instagramStory.count();
 
     return NextResponse.json({
       connected: !!settings?.instagramAccessToken,
       username: settings?.instagramUsername,
       lastSync: settings?.instagramLastSync,
-      autoSync: settings?.instagramAutoSync,
       postsCount,
-      highlightsCount,
-      storiesCount,
     });
   } catch (error: any) {
-    console.error('Error getting sync status:', error);
     return NextResponse.json(
       { error: 'Failed to get sync status' },
       { status: 500 }

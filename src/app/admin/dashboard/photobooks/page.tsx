@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import { useSession } from 'next-auth/react';
 import {
   FiBook,
   FiCheck,
@@ -19,11 +20,17 @@ import {
   FiChevronRight,
   FiDownload,
   FiStar,
+  FiTrash2,
+  FiUser,
+  FiCalendar,
+  FiChevronDown,
+  FiChevronUp,
+  FiImage,
 } from 'react-icons/fi';
 
-// Dynamically import PhotobookEditorV3 for viewing Polotno designs
-const PhotobookEditorV3 = dynamic(
-  () => import('@/components/PhotobookEditorV3'),
+// Dynamically import PhotobookEditor for viewing photobook designs
+const PhotobookEditor = dynamic(
+  () => import('@/components/PhotobookEditor'),
   { ssr: false }
 );
 
@@ -67,8 +74,8 @@ interface Photobook {
 
 type StatusFilter = 'all' | 'submitted' | 'approved' | 'printing' | 'completed' | 'draft';
 
-// New interface for Polotno-designed photobooks
-interface PolotnoPhotobook {
+// Interface for custom editor photobooks
+interface CustomEditorPhotobook {
   id: string;
   title: string;
   status: string;
@@ -89,9 +96,10 @@ interface PolotnoPhotobook {
 }
 
 export default function AdminPhotobooksPage() {
+  const { data: session } = useSession();
   const [photobooks, setPhotobooks] = useState<Photobook[]>([]);
-  const [polotnoPhotobooks, setPolotnoPhotobooks] = useState<PolotnoPhotobook[]>([]);
-  const [viewingPolotnoDesign, setViewingPolotnoDesign] = useState<PolotnoPhotobook | null>(null);
+  const [customEditorPhotobooks, setCustomEditorPhotobooks] = useState<CustomEditorPhotobook[]>([]);
+  const [viewingCustomDesign, setViewingCustomDesign] = useState<CustomEditorPhotobook | null>(null);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -99,19 +107,51 @@ export default function AdminPhotobooksPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [updating, setUpdating] = useState(false);
+  const [expandedClients, setExpandedClients] = useState<Set<string>>(new Set());
+  const [expandedGalleries, setExpandedGalleries] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    // Fetch all photobooks (both old-style and custom editor)
     fetchPhotobooks();
-    fetchPolotnoPhotobooks();
+    // Note: All photobooks are fetched together
   }, []);
 
   const fetchPhotobooks = async () => {
     try {
-      const res = await fetch('/api/admin/photobooks');
+      const res = await fetch('/api/admin/photobooks', {
+        cache: 'no-store',
+      });
+      
       if (res.ok) {
         const data = await res.json();
-        // Filter for old-style photobooks (without design field)
-        setPhotobooks(data.photobooks?.filter((pb: any) => !pb.design) || []);
+        const allPhotobooks = data.photobooks || [];
+        
+        // Separate photobooks by type
+        const customEditorBooks = allPhotobooks.filter((pb: any) => 
+          pb.design !== null && pb.design !== undefined
+        );
+        
+        const pageBasedBooks = allPhotobooks.filter((pb: any) => 
+          (pb.design === null || pb.design === undefined) && 
+          pb.pages && Array.isArray(pb.pages)
+        );
+        
+        setPhotobooks(pageBasedBooks);
+        setCustomEditorPhotobooks(customEditorBooks);
+        
+        // Auto-expand all clients for better mobile UX
+        const allClients = new Set(allPhotobooks.map((p: any) => p.client?.name).filter(Boolean));
+        setExpandedClients(allClients);
+        
+        const allGalleries = new Set<string>();
+        allPhotobooks.forEach((p: any) => {
+          if (p.client?.name && p.gallery?.name) {
+            allGalleries.add(`${p.client.name}-${p.gallery.name}`);
+          }
+        });
+        setExpandedGalleries(allGalleries);
+      } else if (res.status === 401) {
+        window.location.href = '/admin/login';
       }
     } catch (error) {
       console.error('Error fetching photobooks:', error);
@@ -120,20 +160,13 @@ export default function AdminPhotobooksPage() {
     }
   };
 
-  const fetchPolotnoPhotobooks = async () => {
-    try {
-      const res = await fetch('/api/admin/photobooks');
-      if (res.ok) {
-        const data = await res.json();
-        // Filter for new Polotno photobooks (with design field)
-        setPolotnoPhotobooks(data.photobooks?.filter((pb: any) => pb.design) || []);
-      }
-    } catch (error) {
-      console.error('Error fetching Polotno photobooks:', error);
-    }
+  // REMOVED: No need for separate fetch since we fetch everything together above
+  const fetchCustomEditorPhotobooks = async () => {
+    // This is now handled in fetchPhotobooks() above
+    // Keeping function for backward compatibility but it does nothing
   };
 
-  const updatePolotnoPhotobookStatus = async (photobookId: string, status: string) => {
+  const updateCustomEditorPhotobookStatus = async (photobookId: string, status: string) => {
     try {
       const res = await fetch(`/api/admin/photobooks/${photobookId}`, {
         method: 'PATCH',
@@ -142,7 +175,7 @@ export default function AdminPhotobooksPage() {
       });
 
       if (res.ok) {
-        await fetchPolotnoPhotobooks();
+        await fetchCustomEditorPhotobooks();
         alert(`Photobook status updated to: ${status}`);
       }
     } catch (error) {
@@ -177,6 +210,55 @@ export default function AdminPhotobooksPage() {
     }
   };
 
+  const deletePhotobook = async (photobookId: string) => {
+    if (!confirm('Are you sure you want to delete this photobook? This action cannot be undone.')) {
+      return;
+    }
+
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/admin/photobooks/${photobookId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        await fetchPhotobooks();
+        if (selectedPhotobook?.id === photobookId) {
+          setPreviewOpen(false);
+          setSelectedPhotobook(null);
+        }
+        alert('Photobook deleted successfully');
+      } else {
+        alert('Error deleting photobook');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error deleting photobook');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const toggleClient = (clientName: string) => {
+    const newExpanded = new Set(expandedClients);
+    if (newExpanded.has(clientName)) {
+      newExpanded.delete(clientName);
+    } else {
+      newExpanded.add(clientName);
+    }
+    setExpandedClients(newExpanded);
+  };
+
+  const toggleGallery = (galleryKey: string) => {
+    const newExpanded = new Set(expandedGalleries);
+    if (newExpanded.has(galleryKey)) {
+      newExpanded.delete(galleryKey);
+    } else {
+      newExpanded.add(galleryKey);
+    }
+    setExpandedGalleries(newExpanded);
+  };
+
   const openPreview = (photobook: Photobook) => {
     setSelectedPhotobook(photobook);
     setCurrentPageIndex(0);
@@ -185,11 +267,34 @@ export default function AdminPhotobooksPage() {
 
   const filteredPhotobooks = photobooks.filter(photobook => {
     const matchesStatus = statusFilter === 'all' || photobook.status === statusFilter;
-    const matchesSearch = photobook.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      photobook.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      photobook.gallery.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (photobook.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (photobook.client?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (photobook.gallery?.name || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesStatus && matchesSearch;
   });
+
+  const filteredCustomEditorPhotobooks = customEditorPhotobooks.filter(photobook => {
+    const matchesStatus = statusFilter === 'all' || photobook.status === statusFilter;
+    const matchesSearch = (photobook.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (photobook.client?.name || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  // Group photobooks by client, then by gallery (event)
+  const groupedPhotobooks = filteredPhotobooks.reduce((acc, photobook) => {
+    const clientName = photobook.client?.name || 'Unknown Client';
+    const galleryName = photobook.gallery?.name || 'Unknown Gallery';
+    
+    if (!acc[clientName]) {
+      acc[clientName] = {};
+    }
+    if (!acc[clientName][galleryName]) {
+      acc[clientName][galleryName] = [];
+    }
+    acc[clientName][galleryName].push(photobook);
+    
+    return acc;
+  }, {} as Record<string, Record<string, Photobook[]>>);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -212,11 +317,11 @@ export default function AdminPhotobooksPage() {
   };
 
   const stats = {
-    total: photobooks.length,
-    submitted: photobooks.filter(p => p.status === 'submitted').length,
-    approved: photobooks.filter(p => p.status === 'approved').length,
-    printing: photobooks.filter(p => p.status === 'printing').length,
-    completed: photobooks.filter(p => p.status === 'completed').length,
+    total: photobooks.length + customEditorPhotobooks.length,
+    submitted: photobooks.filter(p => p.status === 'submitted').length + customEditorPhotobooks.filter(p => p.status === 'submitted').length,
+    approved: photobooks.filter(p => p.status === 'approved').length + customEditorPhotobooks.filter(p => p.status === 'approved').length,
+    printing: photobooks.filter(p => p.status === 'printing').length + customEditorPhotobooks.filter(p => p.status === 'printing').length,
+    completed: photobooks.filter(p => p.status === 'completed').length + customEditorPhotobooks.filter(p => p.status === 'completed').length,
   };
 
   if (loading) {
@@ -230,38 +335,51 @@ export default function AdminPhotobooksPage() {
   return (
     <div className="p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Photobook Management
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Review, approve, and manage client photobook orders
-          </p>
-        </div>
-        <motion.a
-          href="/client/photobooks"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
-        >
-          <FiBook className="w-5 h-5" />
-          Create New Photobook
-        </motion.a>
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          📚 Photobook Management
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Review, approve, and manage client photobook submissions
+        </p>
       </div>
 
-      {/* NEW: Polotno Photobook Designs Section */}
-      {polotnoPhotobooks.length > 0 && (
+      {/* Stats Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-6">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="text-2xl md:text-3xl font-bold">{stats.total}</div>
+          <div className="text-sm opacity-90">Total</div>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="text-2xl md:text-3xl font-bold">{stats.submitted}</div>
+          <div className="text-sm opacity-90">Submitted</div>
+        </div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="text-2xl md:text-3xl font-bold">{stats.approved}</div>
+          <div className="text-sm opacity-90">Approved</div>
+        </div>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="text-2xl md:text-3xl font-bold">{stats.printing}</div>
+          <div className="text-sm opacity-90">Printing</div>
+        </div>
+        <div className="bg-gradient-to-br from-gray-500 to-gray-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="text-2xl md:text-3xl font-bold">{stats.completed}</div>
+          <div className="text-sm opacity-90">Completed</div>
+        </div>
+      </div>
+
+      {/* Custom Editor Photobook Designs Section */}
+      {filteredCustomEditorPhotobooks.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <FiStar className="w-6 h-6 text-purple-600" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-              New Photobook Designs ({polotnoPhotobooks.length})
+              Custom Editor Photobooks ({filteredCustomEditorPhotobooks.length})
             </h2>
           </div>
           
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {polotnoPhotobooks.map((pb) => (
+            {filteredCustomEditorPhotobooks.map((pb) => (
               <div key={pb.id} className="bg-white dark:bg-dark-800 rounded-lg border-2 border-purple-500 shadow-lg overflow-hidden">
                 <div className="h-40 bg-gradient-to-br from-purple-500 to-primary flex items-center justify-center">
                   <FiBook className="w-16 h-16 text-white opacity-50" />
@@ -279,14 +397,14 @@ export default function AdminPhotobooksPage() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => setViewingPolotnoDesign(pb)}
+                      onClick={() => setViewingCustomDesign(pb)}
                       className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-medium transition"
                     >
                       <FiEye className="w-4 h-4" />
                       View Design
                     </button>
                     <button
-                      onClick={() => updatePolotnoPhotobookStatus(pb.id, pb.status === 'draft' ? 'approved' : 'completed')}
+                      onClick={() => updateCustomEditorPhotobookStatus(pb.id, pb.status === 'draft' ? 'approved' : 'completed')}
                       className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition"
                       title="Approve"
                     >
@@ -299,30 +417,6 @@ export default function AdminPhotobooksPage() {
           </div>
         </div>
       )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-6">
-        <div className="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Total</div>
-        </div>
-        <div className="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl md:text-3xl font-bold text-blue-600">{stats.submitted}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Submitted</div>
-        </div>
-        <div className="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl md:text-3xl font-bold text-green-600">{stats.approved}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Approved</div>
-        </div>
-        <div className="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl md:text-3xl font-bold text-purple-600">{stats.printing}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Printing</div>
-        </div>
-        <div className="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl md:text-3xl font-bold text-gray-600">{stats.completed}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
-        </div>
-      </div>
 
       {/* Filters */}
       <div className="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
@@ -359,82 +453,211 @@ export default function AdminPhotobooksPage() {
         </div>
       </div>
 
-      {/* Photobooks List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {filteredPhotobooks.map((photobook) => (
-          <motion.div
-            key={photobook.id}
-            layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-dark-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition"
-          >
-            {/* Cover Image */}
-            <div className="relative aspect-[3/2] bg-gray-100 dark:bg-dark-700">
-              {photobook.coverPhotoUrl ? (
-                <Image
-                  src={photobook.coverPhotoUrl}
-                  alt={photobook.title}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <FiBook className="w-12 h-12 text-gray-400" />
-                </div>
-              )}
-              <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(photobook.status)}`}>
-                {getStatusIcon(photobook.status)}
-                {photobook.status}
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-              <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 truncate">
-                {photobook.title}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                {photobook.client.name} • {photobook.gallery.name}
-              </p>
-              <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                <span>{photobook.format}</span>
-                <span>{photobook.totalPages} pages</span>
-              </div>
-
-              {/* Actions */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => openPreview(photobook)}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition"
-                >
-                  <FiEye className="w-4 h-4" />
-                  <span className="text-sm font-medium">Preview</span>
-                </button>
-                {photobook.status === 'submitted' && (
-                  <button
-                    onClick={() => updatePhotobookStatus(photobook.id, 'approved')}
-                    disabled={updating}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
-                  >
-                    <FiCheck className="w-4 h-4" />
-                    <span className="text-sm font-medium">Approve</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {filteredPhotobooks.length === 0 && (
+      {/* Photobooks Organized by Client and Event */}
+      {Object.keys(groupedPhotobooks).length === 0 && filteredCustomEditorPhotobooks.length === 0 ? (
         <div className="text-center py-12">
           <FiBook className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">
             {searchQuery || statusFilter !== 'all' ? 'No photobooks match your filters' : 'No photobooks yet'}
           </p>
         </div>
-      )}
+      ) : Object.keys(groupedPhotobooks).length > 0 ? (
+        <div className="space-y-6">
+          {Object.entries(groupedPhotobooks).map(([clientName, galleries]) => {
+            const isClientExpanded = expandedClients.has(clientName);
+            const clientPhotobookCount = Object.values(galleries).flat().length;
+
+            return (
+              <motion.div
+                key={clientName}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white dark:bg-dark-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+              >
+                {/* Client Header */}
+                <button
+                  onClick={() => toggleClient(clientName)}
+                  className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-dark-700 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                      <FiUser className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="text-left">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        {clientName}
+                      </h2>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {clientPhotobookCount} photobook{clientPhotobookCount !== 1 ? 's' : ''} • {Object.keys(galleries).length} event{Object.keys(galleries).length !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  </div>
+                  {isClientExpanded ? (
+                    <FiChevronUp className="w-6 h-6 text-gray-400" />
+                  ) : (
+                    <FiChevronDown className="w-6 h-6 text-gray-400" />
+                  )}
+                </button>
+
+                {/* Client's Galleries/Events */}
+                <AnimatePresence>
+                  {isClientExpanded && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 pt-0 space-y-4">
+                        {Object.entries(galleries).map(([galleryName, galleryPhotobooks]) => {
+                          const galleryKey = `${clientName}-${galleryName}`;
+                          const isGalleryExpanded = expandedGalleries.has(galleryKey);
+
+                          return (
+                            <div
+                              key={galleryKey}
+                              className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+                            >
+                              {/* Gallery/Event Header */}
+                              <button
+                                onClick={() => toggleGallery(galleryKey)}
+                                className="w-full p-3 flex items-center justify-between bg-gray-50 dark:bg-dark-700 hover:bg-gray-100 dark:hover:bg-dark-600 transition"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <FiCalendar className="w-4 h-4 text-gray-500" />
+                                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                                    {galleryName}
+                                  </span>
+                                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    ({galleryPhotobooks.length})
+                                  </span>
+                                </div>
+                                {isGalleryExpanded ? (
+                                  <FiChevronUp className="w-5 h-5 text-gray-400" />
+                                ) : (
+                                  <FiChevronDown className="w-5 h-5 text-gray-400" />
+                                )}
+                              </button>
+
+                              {/* Photobooks in this Gallery */}
+                              <AnimatePresence>
+                                {isGalleryExpanded && (
+                                  <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: 'auto' }}
+                                    exit={{ height: 0 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="p-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                      {galleryPhotobooks.map((photobook) => (
+                                        <div
+                                          key={photobook.id}
+                                          className="bg-white dark:bg-dark-900 rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden hover:shadow-lg transition"
+                                        >
+                                          {/* Cover Image */}
+                                          <div className="relative aspect-[3/2] bg-gray-100 dark:bg-dark-700">
+                                            {photobook.coverPhotoUrl ? (
+                                              <Image
+                                                src={photobook.coverPhotoUrl}
+                                                alt={photobook.title}
+                                                fill
+                                                className="object-cover"
+                                              />
+                                            ) : (
+                                              <div className="absolute inset-0 flex items-center justify-center">
+                                                <FiBook className="w-12 h-12 text-gray-400" />
+                                              </div>
+                                            )}
+                                            <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(photobook.status)}`}>
+                                              {getStatusIcon(photobook.status)}
+                                              {photobook.status}
+                                            </div>
+                                          </div>
+
+                                          {/* Content */}
+                                          <div className="p-3">
+                                            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1 truncate">
+                                              {photobook.title}
+                                            </h3>
+                                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                              <span>{photobook.format}</span>
+                                              <span>{photobook.totalPages} pages</span>
+                                            </div>
+
+                                            {/* Actions */}
+                                            <div className="space-y-2">
+                                              <div className="grid grid-cols-2 gap-2">
+                                                <button
+                                                  onClick={() => openPreview(photobook)}
+                                                  className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-dark-600 transition text-xs font-medium"
+                                                >
+                                                  <FiEye className="w-3 h-3" />
+                                                  Preview
+                                                </button>
+                                                {photobook.status === 'submitted' && (
+                                                  <button
+                                                    onClick={() => updatePhotobookStatus(photobook.id, 'approved')}
+                                                    disabled={updating}
+                                                    className="flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 text-xs font-medium"
+                                                  >
+                                                    <FiCheck className="w-3 h-3" />
+                                                    Approve
+                                                  </button>
+                                                )}
+                                              </div>
+                                              <div className="grid grid-cols-2 gap-2">
+                                                <a
+                                                  href={`/api/admin/photobooks/${photobook.id}/export-pdf`}
+                                                  target="_blank"
+                                                  className="flex items-center justify-center gap-1 px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition text-xs font-medium"
+                                                >
+                                                  <FiDownload className="w-3 h-3" />
+                                                  PDF
+                                                </a>
+                                                {photobook.status === 'submitted' && (
+                                                  <button
+                                                    onClick={() => {
+                                                      const reason = prompt('Rejection reason:');
+                                                      if (reason) {
+                                                        updatePhotobookStatus(photobook.id, 'draft', reason);
+                                                      }
+                                                    }}
+                                                    disabled={updating}
+                                                    className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 text-xs font-medium"
+                                                  >
+                                                    <FiX className="w-3 h-3" />
+                                                    Reject
+                                                  </button>
+                                                )}
+                                              </div>
+                                              <button
+                                                onClick={() => deletePhotobook(photobook.id)}
+                                                disabled={updating}
+                                                className="w-full flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 dark:bg-dark-700 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition disabled:opacity-50 text-xs font-medium"
+                                              >
+                                                <FiTrash2 className="w-3 h-3" />
+                                                Delete
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+      ) : null}
 
       {/* Preview Modal */}
       <AnimatePresence>
@@ -630,9 +853,9 @@ export default function AdminPhotobooksPage() {
         )}
       </AnimatePresence>
 
-      {/* Polotno Design Viewer Modal */}
+      {/* Custom Design Viewer Modal */}
       <AnimatePresence>
-        {viewingPolotnoDesign && (
+        {viewingCustomDesign && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -645,14 +868,14 @@ export default function AdminPhotobooksPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {viewingPolotnoDesign.title}
+                      {viewingCustomDesign.title}
                     </h2>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {viewingPolotnoDesign.client?.name} • {viewingPolotnoDesign.totalPages} pages
+                      {viewingCustomDesign.client?.name} • {viewingCustomDesign.totalPages} pages
                     </p>
                   </div>
                   <button
-                    onClick={() => setViewingPolotnoDesign(null)}
+                    onClick={() => setViewingCustomDesign(null)}
                     className="p-2 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition"
                   >
                     <FiX className="w-6 h-6 text-gray-700 dark:text-gray-300" />
@@ -662,12 +885,17 @@ export default function AdminPhotobooksPage() {
 
               {/* Editor (Read-Only View) */}
               <div className="flex-1 overflow-hidden">
-                {viewingPolotnoDesign.gallery && (
-                  <PhotobookEditorV3
-                    galleryId={viewingPolotnoDesign.id}
-                    photos={viewingPolotnoDesign.gallery.photos}
-                    initialDesign={viewingPolotnoDesign.design}
-                    onSave={() => {}} // Admin view is read-only
+                {viewingCustomDesign.gallery && (
+                  <PhotobookEditor
+                    galleryId={viewingCustomDesign.id}
+                    selectedPhotos={viewingCustomDesign.gallery.photos.map((p: any, idx: number) => ({
+                      id: p.id,
+                      url: p.url,
+                      thumbnailUrl: p.url,
+                      photoNumber: idx + 1,
+                    }))}
+                    onClose={() => setViewingCustomDesign(null)}
+                    onComplete={() => {}} // Admin view is read-only
                   />
                 )}
               </div>

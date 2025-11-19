@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiDownload, FiAward, FiCamera } from 'react-icons/fi';
 import { useLayoutTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import NavigationButton from '@/components/NavigationButton';
 
 interface TeamMember {
@@ -31,13 +32,14 @@ interface AboutSettings {
 
 export default function AboutPage() {
   const { currentTheme } = useLayoutTheme();
+  const { t } = useLanguage();
   const isProfessional = currentTheme === 'professional';
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [settings, setSettings] = useState<AboutSettings>({
     aboutTitle: 'About Innov8 Production',
     aboutBio: "I'm the founder of Innov8 Production, a creative wedding and event photography studio based in Moknine, Sousse Governorate, Tunisia. We specialize in capturing timeless moments with passion and precision.",
     aboutContent: 'Innov8 Production is a creative wedding and event photography studio based in Sousse, Tunisia, led by Aymen Ben Ammar. We specialize in capturing timeless moments with passion and precision.',
-    aboutImage: 'https://res.cloudinary.com/dc67gl8fu/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg',
+    aboutImage: 'https://res.cloudinary.com/dm22wlmpx/image/upload/v1762143346/575979105_1773518303328582_3518430202353162681_n_wmnkpr.jpg',
     aboutStatProjects: '+270',
     aboutStatFollowers: '+47.6K',
     aboutStatSatisfaction: '100%',
@@ -138,7 +140,7 @@ export default function AboutPage() {
                     href="/contact"
                     className="inline-block px-10 py-4 bg-[#1a1a1a] text-white font-lato font-medium text-sm uppercase tracking-[0.2em] hover:bg-[#d4af37] transition-all duration-300"
                   >
-                    Work With Me
+                    {t('contact.getInTouch')}
                   </Link>
                 </div>
               </motion.div>
@@ -154,25 +156,25 @@ export default function AboutPage() {
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatProjects}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Projects
+                  {t('home.posts')}
                 </div>
               </div>
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatFollowers}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Followers
+                  {t('home.followers')}
                 </div>
               </div>
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatSatisfaction}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Satisfaction
+                  {t('common.success')}
                 </div>
               </div>
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-playfair font-bold text-[#d4af37] mb-2">{settings.aboutStatExperience}</div>
                 <div className="text-sm md:text-base font-lato uppercase tracking-wider text-gray-600">
-                  Years Experience
+                  {t('about.yearsExperience')}
                 </div>
               </div>
             </motion.div>
@@ -186,7 +188,7 @@ export default function AboutPage() {
                 className="text-center mb-12"
               >
                 <h2 className="text-3xl md:text-4xl font-playfair font-bold text-[#1a1a1a] dark:text-gray-100 mb-8">
-                  What I Do
+                  {t('about.whatIDo')}
                 </h2>
                 <motion.div
                   initial={{ width: 0 }}
@@ -199,9 +201,9 @@ export default function AboutPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
-                  { icon: FiCamera, title: 'Wedding Photography', desc: 'Capturing your special day with elegance and emotion' },
-                  { icon: FiAward, title: 'Portrait Sessions', desc: 'Professional portraits that showcase your unique personality' },
-                  { icon: FiCamera, title: 'Fashion & Editorial', desc: 'Creative and artistic fashion photography' }
+                  { icon: FiCamera, title: t('about.weddingPhotography'), desc: t('about.weddingDesc') },
+                  { icon: FiAward, title: t('about.portraitSessions'), desc: t('about.portraitDesc') },
+                  { icon: FiCamera, title: t('about.fashionEditorial'), desc: t('about.fashionDesc') }
                 ].map((service, index) => (
                   <motion.div
                     key={index}
