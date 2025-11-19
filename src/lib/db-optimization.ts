@@ -38,33 +38,26 @@ export const imageQueries = {
   /**
    * Get featured images with caching
    */
-  getFeaturedImages: unstable_cache(
-    async (limit: number = 20) => {
-      return await prisma.image.findMany({
-        where: {
-          featured: true,
-          showInGallery: true,
-        },
-        select: {
-          id: true,
-          url: true,
-          thumbnailUrl: true,
-          title: true,
-          description: true,
-          category: true,
-          width: true,
-          height: true,
-        },
-        orderBy: { order: 'desc' },
-        take: limit,
-      });
-    },
-    ['featured-images'],
-    {
-      tags: [CACHE_TAGS.PHOTOS],
-      revalidate: CACHE_DURATION.MEDIUM,
-    }
-  ),
+  getFeaturedImages: async (limit: number = 20) => {
+    return await prisma.image.findMany({
+      where: {
+        featured: true,
+        showInGallery: true,
+      },
+      select: {
+        id: true,
+        url: true,
+        thumbnailUrl: true,
+        title: true,
+        description: true,
+        category: true,
+        width: true,
+        height: true,
+      },
+      orderBy: { order: 'desc' },
+      take: limit,
+    });
+  },
 
   /**
    * Get gallery images with pagination and caching
@@ -133,42 +126,35 @@ export const albumQueries = {
   /**
    * Get homepage albums (Instagram-style posts)
    */
-  getHomepageAlbums: unstable_cache(
-    async (limit: number = 20) => {
-      return await prisma.album.findMany({
-        where: {
-          showOnHomepage: true,
-          images: {
-            some: {}, // Only albums with images
+  getHomepageAlbums: async (limit: number = 20) => {
+    return await prisma.album.findMany({
+      where: {
+        showOnHomepage: true,
+        images: {
+          some: {}, // Only albums with images
+        },
+      },
+      include: {
+        images: {
+          orderBy: { order: 'asc' },
+          select: {
+            id: true,
+            url: true,
+            thumbnailUrl: true,
+            width: true,
+            height: true,
+            title: true,
+            description: true,
           },
         },
-        include: {
-          images: {
-            orderBy: { order: 'asc' },
-            select: {
-              id: true,
-              url: true,
-              thumbnailUrl: true,
-              width: true,
-              height: true,
-              title: true,
-              description: true,
-            },
-          },
-        },
-        orderBy: [
-          { order: 'desc' },
-          { createdAt: 'desc' },
-        ],
-        take: limit,
-      });
-    },
-    ['homepage-albums'],
-    {
-      tags: [CACHE_TAGS.ALBUMS, CACHE_TAGS.POSTS],
-      revalidate: CACHE_DURATION.SHORT,
-    }
-  ),
+      },
+      orderBy: [
+        { order: 'desc' },
+        { createdAt: 'desc' },
+      ],
+      take: limit,
+    });
+  },
 
   /**
    * Get all albums for gallery with efficient loading
@@ -217,39 +203,32 @@ export const videoQueries = {
   /**
    * Get public videos with caching
    */
-  getPublicVideos: unstable_cache(
-    async (limit: number = 20) => {
-      return await prisma.video.findMany({
-        where: {
-          showInGallery: true,
-          cloudinaryId: {
-            not: null,
-          },
+  getPublicVideos: async (limit: number = 20) => {
+    return await prisma.video.findMany({
+      where: {
+        showInGallery: true,
+        cloudinaryId: {
+          not: undefined,
         },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          cloudinaryId: true,
-          url: true,
-          thumbnailUrl: true,
-          category: true,
-          featured: true,
-          createdAt: true,
-        },
-        orderBy: [
-          { order: 'desc' },
-          { createdAt: 'desc' },
-        ],
-        take: limit,
-      });
-    },
-    ['public-videos'],
-    {
-      tags: [CACHE_TAGS.VIDEOS],
-      revalidate: CACHE_DURATION.MEDIUM,
-    }
-  ),
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        cloudinaryId: true,
+        url: true,
+        thumbnailUrl: true,
+        category: true,
+        featured: true,
+        createdAt: true,
+      },
+      orderBy: [
+        { order: 'desc' },
+        { createdAt: 'desc' },
+      ],
+      take: limit,
+    });
+  },
 };
 
 /**
@@ -259,30 +238,23 @@ export const testimonialQueries = {
   /**
    * Get approved testimonials with caching
    */
-  getApprovedTestimonials: unstable_cache(
-    async () => {
-      return await prisma.testimonial.findMany({
-        where: { approved: true },
-        select: {
-          id: true,
-          clientName: true,
-          content: true,
-          rating: true,
-          eventType: true,
-          eventDate: true,
-          showOnHomepage: true,
-        },
-        orderBy: [
-          { createdAt: 'desc' },
-        ],
-      });
-    },
-    ['approved-testimonials'],
-    {
-      tags: [CACHE_TAGS.TESTIMONIALS],
-      revalidate: CACHE_DURATION.LONG,
-    }
-  ),
+  getApprovedTestimonials: async () => {
+    return await prisma.testimonial.findMany({
+      where: { approved: true },
+      select: {
+        id: true,
+        clientName: true,
+        message: true,
+        rating: true,
+        eventType: true,
+        eventDate: true,
+        showOnHomepage: true,
+      },
+      orderBy: [
+        { createdAt: 'desc' },
+      ],
+    });
+  },
 };
 
 /**
@@ -302,7 +274,6 @@ export const dashboardQueries = {
       totalBookings,
       totalTeamMembers,
       unreadMessages,
-      tracking,
     ] = await Promise.all([
       prisma.image.count(),
       prisma.video.count(),
@@ -310,8 +281,7 @@ export const dashboardQueries = {
       prisma.client.count(),
       prisma.booking.count(),
       prisma.teamMember.count(),
-      prisma.contactMessage.count({ where: { read: false } }),
-      prisma.leadTracking.count({ where: { status: { not: 'completed' } } }),
+      prisma.contactMessage.count(),
     ]);
 
     return {
@@ -322,7 +292,6 @@ export const dashboardQueries = {
       totalBookings,
       totalTeamMembers,
       unreadMessages,
-      tracking,
     };
   },
 };
